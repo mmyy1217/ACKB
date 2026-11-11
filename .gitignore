@@ -6,3 +6,7 @@ node_modules/
 /dist/
 /work/
 *.run
+
+/.impeccable/review/
+/.impeccable/questions/
+/.impeccable/mocks/
