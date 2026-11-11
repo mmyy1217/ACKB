@@ -1,335 +1,235 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T03:38:22+00:00",
+  "generatedAt": "2026-11-11T06:42:37+00:00",
   "title": "Design System: CCE OPS",
   "extensions": {
     "colorMeta": {
       "ink": {
         "role": "neutral",
-        "displayName": "深灰正文",
+        "displayName": "黑色正文",
         "tonalRamp": [
-          "oklch(15% 0.0177 227.4)",
-          "oklch(26% 0.0177 227.4)",
-          "oklch(38% 0.0177 227.4)",
-          "oklch(50% 0.0177 227.4)",
-          "oklch(62% 0.0177 227.4)",
-          "oklch(74% 0.0177 227.4)",
-          "oklch(86% 0.0177 227.4)",
-          "oklch(95% 0.0177 227.4)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "muted": {
         "role": "neutral",
-        "displayName": "次级灰字",
+        "displayName": "灰色说明",
         "tonalRamp": [
-          "oklch(15% 0.0223 226.1)",
-          "oklch(26% 0.0223 226.1)",
-          "oklch(38% 0.0223 226.1)",
-          "oklch(50% 0.0223 226.1)",
-          "oklch(62% 0.0223 226.1)",
-          "oklch(74% 0.0223 226.1)",
-          "oklch(86% 0.0223 226.1)",
-          "oklch(95% 0.0200 226.1)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "accent": {
         "role": "primary",
-        "displayName": "深青强调",
+        "displayName": "黑色强调",
         "tonalRamp": [
-          "oklch(15% 0.0600 183.6)",
-          "oklch(26% 0.0823 183.6)",
-          "oklch(38% 0.0823 183.6)",
-          "oklch(50% 0.0823 183.6)",
-          "oklch(62% 0.0823 183.6)",
-          "oklch(74% 0.0823 183.6)",
-          "oklch(86% 0.0560 183.6)",
-          "oklch(95% 0.0200 183.6)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "focus": {
-        "role": "primary",
-        "displayName": "青色焦点",
+        "role": "neutral",
+        "displayName": "黑色焦点",
         "tonalRamp": [
-          "oklch(15% 0.0600 183.3)",
-          "oklch(26% 0.0934 183.3)",
-          "oklch(38% 0.0934 183.3)",
-          "oklch(50% 0.0934 183.3)",
-          "oklch(62% 0.0934 183.3)",
-          "oklch(74% 0.0934 183.3)",
-          "oklch(86% 0.0560 183.3)",
-          "oklch(95% 0.0200 183.3)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "selected": {
         "role": "neutral",
-        "displayName": "列表选择浅青",
+        "displayName": "接口选中灰",
         "tonalRamp": [
-          "oklch(15% 0.0113 176.3)",
-          "oklch(26% 0.0113 176.3)",
-          "oklch(38% 0.0113 176.3)",
-          "oklch(50% 0.0113 176.3)",
-          "oklch(62% 0.0113 176.3)",
-          "oklch(74% 0.0113 176.3)",
-          "oklch(86% 0.0113 176.3)",
-          "oklch(95% 0.0113 176.3)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "surface": {
         "role": "neutral",
-        "displayName": "内容白",
+        "displayName": "白色内容面",
         "tonalRamp": [
-          "oklch(15% 0.0000 0.0)",
-          "oklch(26% 0.0000 0.0)",
-          "oklch(38% 0.0000 0.0)",
-          "oklch(50% 0.0000 0.0)",
-          "oklch(62% 0.0000 0.0)",
-          "oklch(74% 0.0000 0.0)",
-          "oklch(86% 0.0000 0.0)",
-          "oklch(95% 0.0000 0.0)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "nav": {
         "role": "neutral",
-        "displayName": "导航雾灰",
+        "displayName": "浅灰导航",
         "tonalRamp": [
-          "oklch(15% 0.0021 197.1)",
-          "oklch(26% 0.0021 197.1)",
-          "oklch(38% 0.0021 197.1)",
-          "oklch(50% 0.0021 197.1)",
-          "oklch(62% 0.0021 197.1)",
-          "oklch(74% 0.0021 197.1)",
-          "oklch(86% 0.0021 197.1)",
-          "oklch(95% 0.0021 197.1)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "subtle": {
         "role": "neutral",
-        "displayName": "代码浅底",
+        "displayName": "浅灰代码与表头",
         "tonalRamp": [
-          "oklch(15% 0.0025 165.1)",
-          "oklch(26% 0.0025 165.1)",
-          "oklch(38% 0.0025 165.1)",
-          "oklch(50% 0.0025 165.1)",
-          "oklch(62% 0.0025 165.1)",
-          "oklch(74% 0.0025 165.1)",
-          "oklch(86% 0.0025 165.1)",
-          "oklch(95% 0.0025 165.1)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "line": {
         "role": "neutral",
         "displayName": "区域分隔灰",
         "tonalRamp": [
-          "oklch(15% 0.0076 186.9)",
-          "oklch(26% 0.0076 186.9)",
-          "oklch(38% 0.0076 186.9)",
-          "oklch(50% 0.0076 186.9)",
-          "oklch(62% 0.0076 186.9)",
-          "oklch(74% 0.0076 186.9)",
-          "oklch(86% 0.0076 186.9)",
-          "oklch(95% 0.0076 186.9)"
-        ]
-      },
-      "nav-active": {
-        "role": "neutral",
-        "displayName": "导航选择浅青",
-        "tonalRamp": [
-          "oklch(15% 0.0158 177.1)",
-          "oklch(26% 0.0158 177.1)",
-          "oklch(38% 0.0158 177.1)",
-          "oklch(50% 0.0158 177.1)",
-          "oklch(62% 0.0158 177.1)",
-          "oklch(74% 0.0158 177.1)",
-          "oklch(86% 0.0158 177.1)",
-          "oklch(95% 0.0158 177.1)"
-        ]
-      },
-      "nav-active-ink": {
-        "role": "primary",
-        "displayName": "导航选择深青",
-        "tonalRamp": [
-          "oklch(15% 0.0600 181.9)",
-          "oklch(26% 0.0737 181.9)",
-          "oklch(38% 0.0737 181.9)",
-          "oklch(50% 0.0737 181.9)",
-          "oklch(62% 0.0737 181.9)",
-          "oklch(74% 0.0737 181.9)",
-          "oklch(86% 0.0560 181.9)",
-          "oklch(95% 0.0200 181.9)"
-        ]
-      },
-      "nav-hover": {
-        "role": "neutral",
-        "displayName": "导航悬停浅灰",
-        "tonalRamp": [
-          "oklch(15% 0.0069 174.4)",
-          "oklch(26% 0.0069 174.4)",
-          "oklch(38% 0.0069 174.4)",
-          "oklch(50% 0.0069 174.4)",
-          "oklch(62% 0.0069 174.4)",
-          "oklch(74% 0.0069 174.4)",
-          "oklch(86% 0.0069 174.4)",
-          "oklch(95% 0.0069 174.4)"
-        ]
-      },
-      "row-hover": {
-        "role": "neutral",
-        "displayName": "行悬停浅灰",
-        "tonalRamp": [
-          "oklch(15% 0.0059 170.4)",
-          "oklch(26% 0.0059 170.4)",
-          "oklch(38% 0.0059 170.4)",
-          "oklch(50% 0.0059 170.4)",
-          "oklch(62% 0.0059 170.4)",
-          "oklch(74% 0.0059 170.4)",
-          "oklch(86% 0.0059 170.4)",
-          "oklch(95% 0.0059 170.4)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "row-line": {
         "role": "neutral",
-        "displayName": "行分隔灰",
+        "displayName": "表格行线灰",
         "tonalRamp": [
-          "oklch(15% 0.0035 174.5)",
-          "oklch(26% 0.0035 174.5)",
-          "oklch(38% 0.0035 174.5)",
-          "oklch(50% 0.0035 174.5)",
-          "oklch(62% 0.0035 174.5)",
-          "oklch(74% 0.0035 174.5)",
-          "oklch(86% 0.0035 174.5)",
-          "oklch(95% 0.0035 174.5)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
       "input-line": {
         "role": "neutral",
-        "displayName": "输入边界灰",
+        "displayName": "控件边界灰",
         "tonalRamp": [
-          "oklch(15% 0.0173 178.2)",
-          "oklch(26% 0.0173 178.2)",
-          "oklch(38% 0.0173 178.2)",
-          "oklch(50% 0.0173 178.2)",
-          "oklch(62% 0.0173 178.2)",
-          "oklch(74% 0.0173 178.2)",
-          "oklch(86% 0.0173 178.2)",
-          "oklch(95% 0.0173 178.2)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
-      "button-hover-line": {
+      "hover": {
         "role": "neutral",
-        "displayName": "按钮悬停边界灰",
+        "displayName": "悬停灰",
         "tonalRamp": [
-          "oklch(15% 0.0226 174.8)",
-          "oklch(26% 0.0226 174.8)",
-          "oklch(38% 0.0226 174.8)",
-          "oklch(50% 0.0226 174.8)",
-          "oklch(62% 0.0226 174.8)",
-          "oklch(74% 0.0226 174.8)",
-          "oklch(86% 0.0226 174.8)",
-          "oklch(95% 0.0200 174.8)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       },
-      "signature": {
+      "nav-active": {
         "role": "neutral",
-        "displayName": "签名深青灰",
+        "displayName": "导航选中灰",
         "tonalRamp": [
-          "oklch(15% 0.0476 178.9)",
-          "oklch(26% 0.0476 178.9)",
-          "oklch(38% 0.0476 178.9)",
-          "oklch(50% 0.0476 178.9)",
-          "oklch(62% 0.0476 178.9)",
-          "oklch(74% 0.0476 178.9)",
-          "oklch(86% 0.0476 178.9)",
-          "oklch(95% 0.0200 178.9)"
-        ]
-      },
-      "callout-bg": {
-        "role": "neutral",
-        "displayName": "证据提示暖底",
-        "tonalRamp": [
-          "oklch(15% 0.0111 89.7)",
-          "oklch(26% 0.0111 89.7)",
-          "oklch(38% 0.0111 89.7)",
-          "oklch(50% 0.0111 89.7)",
-          "oklch(62% 0.0111 89.7)",
-          "oklch(74% 0.0111 89.7)",
-          "oklch(86% 0.0111 89.7)",
-          "oklch(95% 0.0111 89.7)"
-        ]
-      },
-      "callout-ink": {
-        "role": "neutral",
-        "displayName": "证据提示棕字",
-        "tonalRamp": [
-          "oklch(15% 0.0600 76.1)",
-          "oklch(26% 0.0701 76.1)",
-          "oklch(38% 0.0701 76.1)",
-          "oklch(50% 0.0701 76.1)",
-          "oklch(62% 0.0701 76.1)",
-          "oklch(74% 0.0701 76.1)",
-          "oklch(86% 0.0560 76.1)",
-          "oklch(95% 0.0200 76.1)"
+          "#171717",
+          "#505050",
+          "#626262",
+          "#888",
+          "#bdbdbd",
+          "#d4d4d4",
+          "#e8e8e8",
+          "#f7f7f7"
         ]
       }
     },
     "typographyMeta": {
       "headline": {
-        "displayName": "页面标题",
-        "purpose": "页面当前视图名称。"
+        "displayName": "顶栏视图标题",
+        "purpose": "与正文同尺寸，以 600 字重区分。"
       },
       "body": {
-        "displayName": "基础正文",
-        "purpose": "系统说明和基础文字。"
+        "displayName": "正文与搜索",
+        "purpose": "12px 正文及搜索输入。"
       },
       "label": {
-        "displayName": "控件文字",
-        "purpose": "筛选、按钮与详情说明。"
+        "displayName": "紧凑控件",
+        "purpose": "11px 导航、筛选与标签页。"
       },
       "button": {
-        "displayName": "按钮文字",
-        "purpose": "安静按钮的紧凑行高。"
+        "displayName": "常规操作",
+        "purpose": "11px 文字、18px 行高的安静按钮。"
       },
       "caption": {
         "displayName": "元数据",
-        "purpose": "来源、分类与补充说明。"
+        "purpose": "10px 表头、来源与说明。"
       },
       "title-mono": {
-        "displayName": "详情接口名",
-        "purpose": "当前技术标识符。"
+        "displayName": "详情名称",
+        "purpose": "14px 等宽名称，长名称允许折行。"
       },
       "row-mono": {
-        "displayName": "列表接口名",
-        "purpose": "接口列表的技术名称。"
+        "displayName": "列表名称",
+        "purpose": "11px 等宽名称，保持单行。"
       },
       "code": {
-        "displayName": "代码",
-        "purpose": "签名与来源代码。"
+        "displayName": "签名与源码",
+        "purpose": "11px 等宽代码，长行在块内滚动。"
       }
     },
-    "shadows": [
-      {
-        "name": "search-focus-boundary",
-        "value": "0 0 0 1px var(--accent)",
-        "purpose": "搜索聚焦时加粗边界；常态没有投影。"
-      }
-    ],
-    "motion": [
-      {
-        "name": "button-background",
-        "value": "background-color .15s ease",
-        "purpose": "按钮背景状态变化；prefers-reduced-motion: reduce 下禁用。"
-      }
-    ],
+    "shadows": [],
+    "motion": [],
     "breakpoints": [
       {
-        "name": "wide-min",
-        "value": "1600px"
+        "name": "compact-desktop",
+        "value": "1220px"
       },
       {
-        "name": "compact-max",
-        "value": "1180px"
-      },
-      {
-        "name": "stacked-max",
+        "name": "narrow",
         "value": "800px"
       }
     ]
@@ -339,110 +239,102 @@
       "name": "安静按钮",
       "kind": "button",
       "refersTo": "button-quiet",
-      "description": "导出、复制和分页等常规操作。",
-      "html": "<button class=\"ds-quiet\" type=\"button\">复制签名</button>",
-      "css": ".ds-quiet{border:1px solid var(--line,#dce3e2);background:var(--surface,#fff);color:var(--ink,#202b30);padding:6px 11px;font:12px/1.4 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif);border-radius:var(--radius,5px);white-space:nowrap;cursor:pointer;transition:background-color .15s ease}.ds-quiet:hover:enabled{background:var(--nav,#f4f6f6);border-color:#a7bab4}.ds-quiet:focus-visible{outline:2px solid var(--focus,#128276);outline-offset:3px;}.ds-quiet:disabled{cursor:default;opacity:.45}@media(prefers-reduced-motion:reduce){.ds-quiet{transition:none}}"
+      "description": "导出、复制和分页等常规操作，使用紧凑灰阶边界。",
+      "html": "<button class=\"ds-quiet\" type=\"button\">导出 JSON</button>",
+      "css": ".ds-quiet{background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);padding:3px 7px;font:11px/18px var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);border-radius:var(--radius,2px);white-space:nowrap;cursor:pointer}.ds-quiet:hover:not(:disabled){background:var(--hover,#efefef);border-color:#888}.ds-quiet:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}.ds-quiet:disabled{opacity:.45;cursor:default}"
     },
     {
       "name": "文字按钮",
       "kind": "button",
       "refersTo": "button-text",
-      "description": "重置筛选等次级操作。",
+      "description": "重置筛选等次级操作，悬停变黑并加下划线。",
       "html": "<button class=\"ds-text\" type=\"button\">重置筛选</button>",
-      "css": ".ds-text{border:0;background:none;color:var(--accent,#086b61);padding:4px;font:11px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif);cursor:pointer;transition:background-color .15s ease}.ds-text:hover{text-decoration:underline}.ds-text:focus-visible{outline:2px solid var(--focus,#128276);outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-text{transition:none}}"
+      "css": ".ds-text{padding:2px 0;background:none;border:0;border-radius:var(--radius,2px);color:var(--muted,#626262);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-text:hover{color:var(--ink,#171717);text-decoration:underline}.ds-text:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
     },
     {
       "name": "搜索框",
       "kind": "input",
       "refersTo": "search",
-      "description": "边框包住图标与原生输入，焦点作用于整体。",
-      "html": "<label class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 20 20\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"8.5\" cy=\"8.5\" r=\"5.5\" stroke=\"currentColor\" stroke-width=\"1.5\"/><path d=\"m13 13 4 4\" stroke=\"currentColor\" stroke-width=\"1.5\"/></svg><input type=\"search\" aria-label=\"搜索接口或配套定义\" placeholder=\"搜索名称、类型、builtin、架构条件…\"></label>",
-      "css": ".ds-search{display:flex;align-items:center;gap:9px;border:1px solid #bac9c5;border-radius:var(--radius,5px);padding:0 11px;height:38px;color:var(--ink,#202b30);font:12px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif)}.ds-search:focus-within{border-color:var(--accent,#086b61);box-shadow:0 0 0 1px var(--accent,#086b61)}.ds-search svg{color:var(--muted,#596970);flex-shrink:0}.ds-search input{width:100%;min-width:0;height:100%;border:0;background:transparent;outline:none;color:inherit;font:inherit;caret-color:var(--accent,#086b61)}.ds-search input::placeholder{color:var(--muted,#596970);opacity:1}"
+      "description": "26px 边框容器包住原生输入和快捷键提示，无搜索图标。",
+      "html": "<label class=\"ds-search\"><input type=\"search\" aria-label=\"搜索接口或配套定义\" placeholder=\"搜索名称、类型、builtin、条件…\"><kbd>/</kbd></label>",
+      "css": ".ds-search{display:flex;align-items:center;min-width:140px;height:26px;box-sizing:border-box;padding:0 6px;border:1px solid var(--input-line,#bdbdbd);border-radius:var(--radius,2px);color:var(--ink,#171717);font:12px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-search:focus-within{outline:1px solid var(--focus,#171717);border-color:var(--focus,#171717)}.ds-search input{min-width:0;width:100%;border:0;outline:0;background:transparent;font:inherit;color:inherit;caret-color:var(--ink,#171717)}.ds-search input::placeholder{color:var(--muted,#626262);opacity:1}.ds-search kbd{color:var(--muted,#626262);font:11px var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);padding:0 3px}@media(max-width:800px){.ds-search{height:28px}.ds-search kbd{display:none}}"
+    },
+    {
+      "name": "原生域筛选",
+      "kind": "input",
+      "refersTo": "filter",
+      "description": "域筛选使用 112px 宽、26px 高的原生选择器。",
+      "html": "<label class=\"ds-filter\">域<select aria-label=\"接口域\"><option>全部接口域</option><option>AI Core</option><option>Vector / AVE</option><option>SIMT</option></select></label>",
+      "css": ".ds-filter{display:flex;align-items:center;gap:4px;white-space:nowrap;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-filter select{width:112px;height:26px;box-sizing:border-box;padding:0 3px;border:1px solid var(--input-line,#bdbdbd);background:var(--surface,#fff);border-radius:var(--radius,2px);font:inherit;color:inherit;cursor:pointer}.ds-filter select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}@media(max-width:800px){.ds-filter{min-width:0}.ds-filter select{min-width:0;width:100%;height:28px;flex:1}}"
     },
     {
       "name": "侧栏导航",
       "kind": "nav",
       "refersTo": "navigation-item",
-      "description": "当前项以浅底、深青文字与加重表示。",
+      "description": "136px 窄侧栏中的紧凑文字导航，当前项以灰底及加重表示。",
       "html": "<nav class=\"ds-nav\" aria-label=\"内容类型\"><button class=\"ds-nav-item\" aria-current=\"page\" type=\"button\">指令接口 <span>1,818</span></button><button class=\"ds-nav-item\" type=\"button\">配套定义 <span>1,240</span></button><button class=\"ds-nav-item\" type=\"button\">扫描报告</button></nav>",
-      "css": ".ds-nav{display:grid;gap:3px;background:var(--nav,#f4f6f6);padding:12px}.ds-nav-item{display:flex;align-items:center;justify-content:space-between;gap:5px;width:100%;padding:9px 12px;border:0;border-radius:var(--radius,5px);background:transparent;color:var(--ink,#202b30);font:13px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif);text-align:left;cursor:pointer;transition:background-color .15s ease}.ds-nav-item span{font-size:11px;color:var(--muted,#596970);font-variant-numeric:tabular-nums}.ds-nav-item[aria-current]{background:#e0eeea;color:#075b51;font-weight:650}.ds-nav-item:hover{background:#e7edeb}.ds-nav-item:focus-visible{outline:2px solid var(--focus,#128276);outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-nav-item{transition:none}}"
-    },
-    {
-      "name": "接口族标签",
-      "kind": "chip",
-      "refersTo": "tag",
-      "description": "只补充分类，不作为交互按钮。",
-      "html": "<span class=\"ds-tag\">搬运 / DMA</span>",
-      "css": ".ds-tag{padding:1px 6px;background:var(--nav,#f4f6f6);color:var(--muted,#596970);border-radius:3px;font:10px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif)}"
-    },
-    {
-      "name": "列表与详情容器",
-      "kind": "card",
-      "refersTo": "catalog-container",
-      "description": "一条外边界包住列表与详情，不为每条接口另设卡片。",
-      "html": "<div class=\"ds-container\"><section class=\"ds-list\" aria-label=\"检索结果\">接口列表</section><section class=\"ds-detail\" aria-label=\"接口详情\">接口详情</section></div>",
-      "css": ".ds-container{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);border:1px solid var(--line,#dce3e2);border-radius:var(--radius,5px);overflow:hidden;background:var(--surface,#fff);color:var(--ink,#202b30);font:12px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif)}.ds-list{border-right:1px solid var(--line,#dce3e2);padding:14px}.ds-detail{padding:20px 22px 26px}@media(max-width:800px){.ds-container{display:block}.ds-list{border-right:0;border-bottom:1px solid var(--line,#dce3e2)}}"
+      "css": ".ds-nav{width:136px;box-sizing:border-box;display:grid;gap:1px;background:var(--nav,#f7f7f7);padding:6px;border-right:1px solid var(--line,#d4d4d4)}.ds-nav-item{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:26px;box-sizing:border-box;border:0;background:transparent;padding:3px 5px;border-radius:var(--radius,2px);text-align:left;white-space:nowrap;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-nav-item span{margin-left:4px;color:var(--muted,#626262);font-size:10px;font-variant-numeric:tabular-nums}.ds-nav-item:hover{background:var(--hover,#efefef)}.ds-nav-item[aria-current]{background:var(--nav-active,#e2e2e2);font-weight:650}.ds-nav-item:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
     },
     {
       "name": "选中接口行",
       "kind": "custom",
       "refersTo": "catalog-row-selected",
-      "description": "名称与重载数对应，选择状态有语义标记。",
-      "html": "<table class=\"ds-table\"><tbody><tr class=\"ds-row\"><td><button class=\"ds-row-button\" type=\"button\" aria-current=\"true\"><span class=\"ds-name\">copy_gm_to_cbuf</span><span class=\"ds-hint\">搬运 / DMA · 全局接口</span></button></td><td class=\"ds-count\">2</td></tr></tbody></table>",
-      "css": ".ds-table{width:100%;border-collapse:collapse}.ds-row td{padding:9px 14px;border-bottom:1px solid #edf0ef;background:var(--selected,#eaf4f1);vertical-align:middle}.ds-row:hover td{background:#f2f7f5}.ds-row-button{display:block;max-width:100%;padding:0;border:0;background:none;color:var(--ink,#202b30);text-align:left;cursor:pointer}.ds-name{display:block;font:650 12px/1.6 var(--mono, ui-monospace, SFMono-Regular, Consolas, \"Liberation Mono\", monospace);color:var(--accent,#086b61);overflow-wrap:anywhere}.ds-hint{display:block;margin-top:2px;color:var(--muted,#596970);font:10px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-count{text-align:right;font:11px var(--mono, ui-monospace, SFMono-Regular, Consolas, \"Liberation Mono\", monospace);color:var(--muted,#596970)}.ds-row-button:focus-visible{outline:2px solid var(--focus,#128276);outline-offset:3px;}"
+      "description": "名称、指令族、域与重载数同一行；名称可省略，完整限定名保留在提示中。",
+      "html": "<table class=\"ds-table\"><thead><tr><th scope=\"col\">接口 / 名称</th><th scope=\"col\">指令族</th><th scope=\"col\">域</th><th scope=\"col\">重载</th></tr></thead><tbody><tr class=\"ds-row-selected\"><td><button class=\"ds-row-button\" type=\"button\" title=\"copy_gm_to_cbuf\" aria-current=\"true\"><span class=\"ds-name\">copy_gm_to_cbuf</span></button></td><td>搬运 / DMA</td><td>AI Core</td><td>2</td></tr></tbody></table>",
+      "css": ".ds-table{width:100%;border-collapse:collapse;table-layout:fixed;text-align:left;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-table th{height:25px;box-sizing:border-box;padding:3px 8px;color:var(--muted,#626262);background:var(--subtle,#f5f5f5);border-bottom:1px solid var(--line,#d4d4d4);font-size:10px;font-weight:500;white-space:nowrap}.ds-table th:nth-child(2){width:108px}.ds-table th:nth-child(3){width:66px}.ds-table th:last-child{width:44px}.ds-table td{height:26px;box-sizing:border-box;padding:0 8px;border-bottom:1px solid var(--row-line,#ededed);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-table td:first-child{padding:0}.ds-table th:last-child,.ds-table td:last-child{text-align:right;font-variant-numeric:tabular-nums}.ds-table tbody tr:hover{background:var(--subtle,#f5f5f5)}.ds-table tbody tr.ds-row-selected{background:var(--selected,#e8e8e8)}.ds-row-button{display:block;width:100%;height:25px;box-sizing:border-box;padding:2px 8px;border:0;border-radius:0;background:transparent;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit;cursor:pointer}.ds-name{font:11px/20px var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace)}.ds-row-selected .ds-name{font-weight:700}.ds-row-button:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px;outline-offset:-2px}@media(max-width:800px){.ds-table th{padding:3px 4px}.ds-table th:nth-child(2){width:88px}.ds-table th:nth-child(3){width:48px}.ds-table th:last-child{width:32px}.ds-table td{height:29px;padding:0 4px;font-size:10px}.ds-row-button{height:28px;padding:3px 4px}.ds-name{font-size:10px}}"
     },
     {
       "name": "详情标签页",
       "kind": "nav",
       "refersTo": "detail-tab",
-      "description": "当前页以下划线、加重及 aria-selected 表示。",
+      "description": "11px 文字、14px 间隔；当前项用黑色下划线及 aria-selected 表示。",
       "html": "<div class=\"ds-tabs\" role=\"tablist\" aria-label=\"详情内容\"><button type=\"button\" role=\"tab\" aria-selected=\"true\" tabindex=\"0\">接口定义</button><button type=\"button\" role=\"tab\" aria-selected=\"false\" tabindex=\"-1\">来源证据</button><button type=\"button\" role=\"tab\" aria-selected=\"false\" tabindex=\"-1\">实验记录</button></div>",
-      "css": ".ds-tabs{display:flex;gap:20px;padding:0 22px;border-bottom:1px solid var(--line,#dce3e2)}.ds-tabs button{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted,#596970);font:12px/1.6 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif);padding:10px 0;cursor:pointer;transition:background-color .15s ease}.ds-tabs button[aria-selected=\"true\"]{color:var(--accent,#086b61);border-bottom-color:var(--accent,#086b61);font-weight:600}.ds-tabs button:focus-visible{outline:2px solid var(--focus,#128276);outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-tabs button{transition:none}}"
+      "css": ".ds-tabs{display:flex;gap:14px;padding:0 10px;border-top:1px solid var(--line,#d4d4d4);border-bottom:1px solid var(--line,#d4d4d4)}.ds-tabs button{position:relative;border:0;background:transparent;padding:6px 0;border-radius:0;color:var(--muted,#626262);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-tabs button:hover{color:var(--ink,#171717)}.ds-tabs button[aria-selected=\"true\"]{color:var(--ink,#171717);font-weight:650}.ds-tabs button[aria-selected=\"true\"]::after{content:\"\";position:absolute;height:2px;background:var(--ink,#171717);bottom:-1px;left:0;right:0}.ds-tabs button:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}@media(max-width:800px){.ds-tabs button{padding:8px 0}}"
     },
     {
       "name": "接口签名块",
       "kind": "custom",
       "refersTo": "code-block",
-      "description": "长签名保留空白语义并允许换行。",
+      "description": "11px 代码保留原始空白；长行在代码块内横向滚动。",
       "html": "<pre class=\"ds-code\"><code>void copy_gm_to_cbuf(\n  __cbuf__ void * dst,\n  __gm__ void * src,\n  uint64_t config,\n  uint32_t padFuncMode\n);</code></pre>",
-      "css": ".ds-code{font:11px/1.9 var(--mono, ui-monospace, SFMono-Regular, Consolas, \"Liberation Mono\", monospace);padding:14px;background:var(--subtle,#f8faf9);color:#234b43;border:1px solid var(--line,#dce3e2);border-radius:var(--radius,5px);margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2}.ds-code code{font-family:inherit}"
+      "css": ".ds-code{max-width:100%;overflow:auto;margin:5px 0 8px;padding:7px 8px;background:var(--subtle,#f5f5f5);color:var(--ink,#171717);border-radius:var(--radius,2px);font:11px/1.6 var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);white-space:pre;tab-size:2}.ds-code code{font:inherit}"
     },
     {
       "name": "证据边界说明",
       "kind": "custom",
       "refersTo": "callout",
-      "description": "暖色块承载尚未验证的范围说明。",
+      "description": "浅灰平面和灰色文字承载尚未验证的范围说明。",
       "html": "<div class=\"ds-callout\">参数单位、合法值和设备支持范围尚未逐项验证。指令族按名称规则归类，仅用于导航。</div>",
-      "css": ".ds-callout{padding:12px 14px;background:#f8f5ed;color:#6d5126;font:11px/1.8 var(--sans, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans CJK SC\", \"Microsoft YaHei\", sans-serif);border-radius:var(--radius,5px);margin-top:16px}"
+      "css": ".ds-callout{padding:7px 8px;margin:10px 0;background:var(--subtle,#f5f5f5);color:#505050;font:10px/1.6 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}"
     }
   ],
   "narrative": {
     "northStar": "器件规格表",
-    "overview": "冷白内容面、雾灰导航和深青选择色构成紧凑的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCE 接口、条件与来源的核对。\n\n本文件记录 `web/style.css`、`web/index.html` 和 `web/app.js` 的实际系统；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。",
+    "overview": "白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCE 接口、条件与来源的核对。\n\n本文件记录 `web/style.css`、`web/index.html` 和 `web/app.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。",
     "keyCharacteristics": [
-      "紧凑表格与按需阅读详情。",
+      "单行接口表与窄幅详情并置。",
       "系统中文字体与技术等宽字体并用。",
-      "细线分区、浅色层次、文字说明状态。",
+      "黑白灰、细线分区、文字说明状态。",
       "原生控件、可见键盘焦点、离线自包含。"
     ],
     "rules": [
       {
         "name": "The Evidence Rule",
-        "body": "状态点、选中底色和提示色必须有对应文字；声明状态不能以颜色暗示已通过设备验证。",
+        "body": "选择状态与证据状态必须有对应文字；静态声明不能以颜色暗示已通过编译、运行或设备验证。",
         "section": "colors"
       }
     ],
     "dos": [
       "**Do** 复用前置令牌和原生控件，保持离线可用。",
-      "**Do** 为长技术标识符保留换行，并同时检查桌面与窄屏。",
-      "**Do** 保留文字状态、可见焦点和选中反馈。",
-      "**Do** 使用细线、浅底与字号组织紧凑信息。"
+      "**Do** 保持桌面统一顶栏、单行接口表与窄幅详情，并检查窄屏顺序阅读。",
+      "**Do** 保留文字状态、可见焦点、选中反馈及完整可复制来源。",
+      "**Do** 使用细线、灰阶浅底、字重与对齐组织紧凑信息。"
     ],
     "donts": [
       "**Don't** 用装饰卡片、渐变或大图替代接口表格。",
-      "**Don't** 仅凭绿色状态点表达编译、运行或设备支持结论。",
+      "**Don't** 用彩色状态或选中反馈暗示编译、运行或设备支持结论。",
       "**Don't** 引入在线字体、CDN 图标或运行依赖。",
-      "**Don't** 隐藏无法换行的签名、条件或来源以迁就列宽。"
+      "**Don't** 因单行列表或窄详情而截断实际签名、条件和来源内容。"
     ]
   }
 }

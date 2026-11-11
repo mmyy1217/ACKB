@@ -10,32 +10,31 @@
 <body>
 <a class="skip-link" href="#main">跳到接口列表</a>
 <header class="topbar">
-  <a class="brand" href="#"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><path d="M9 4H4v18h5M17 4h5v18h-5M11 9l4 4-4 4" stroke="currentColor" stroke-width="1.8"/></svg><span>CCE OPS</span></a>
-  <span class="product-label">Huawei Ascend 指令接口手册</span>
+  <a class="brand" href="#" aria-label="CCE OPS 首页">CCE OPS</a>
+  <h1 id="page-title">指令接口</h1>
+  <div class="toolbar">
+    <label class="search"><input id="search" type="search" placeholder="搜索名称、类型、builtin、条件…" aria-label="搜索接口或配套定义" autocomplete="off"><kbd>/</kbd></label>
+    <label class="filter">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
+    <label class="filter">文件<select id="file" aria-label="源文件"><option value="">全部源文件</option></select></label>
+  </div>
+  <button id="download" class="quiet-button">导出 JSON</button>
   <div class="top-meta"><span class="version" id="version"></span><a href="https://github.com/mmyy1217/CCE-OPS" target="_blank" rel="noopener">仓库</a></div>
 </header>
 <div class="workspace">
   <aside class="sidebar" aria-label="指令分类">
-    <div class="sidebar-head">浏览手册</div>
     <nav class="views" aria-label="内容类型">
       <button data-view="interfaces" class="view active">指令接口 <span id="nav-interfaces"></span></button>
       <button data-view="definitions" class="view">配套定义 <span id="nav-definitions"></span></button>
       <button data-view="report" class="view">扫描报告</button>
     </nav>
     <section id="family-section"><h2>指令族</h2><div id="families"></div></section>
-    <div class="sidebar-note"><span class="status-dot"></span>静态提取版本<p>声明来自工具链头文件。<br>编译与运行验证尚未开展。</p></div>
+    <div class="sidebar-note">静态提取<p>编译与运行尚未验证</p></div>
   </aside>
   <main id="main" tabindex="-1">
-    <div class="page-heading"><div><h1 id="page-title">指令接口</h1><p id="page-subtitle">查找接口，比较重载，追溯源码。</p></div><button id="download" class="quiet-button">导出 JSON</button></div>
     <div class="mobile-nav"><label>浏览<select id="mobile-view"><option value="interfaces">指令接口</option><option value="definitions">配套定义</option><option value="report">扫描报告</option></select></label><label id="mobile-family-label">指令族<select id="mobile-family"></select></label></div>
     <div id="catalog-view">
-      <div class="toolbar">
-        <label class="search"><svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="m13 13 4 4" stroke="currentColor" stroke-width="1.5"/></svg><input id="search" type="search" placeholder="搜索名称、类型、builtin、架构条件…" aria-label="搜索接口或配套定义" autocomplete="off"><kbd>/</kbd></label>
-        <label class="filter">接口域<select id="group"><option value="">全部接口域</option></select></label>
-        <label class="filter">源文件<select id="file"><option value="">全部源文件</option></select></label>
-      </div>
       <div class="catalog-layout">
-        <section class="list-pane" aria-label="检索结果"><div class="list-summary"><span id="result-count" role="status" aria-live="polite"></span><button id="reset" class="text-button">重置筛选</button></div><div class="table-scroll"><table class="interface-table"><thead><tr><th scope="col">接口 / 名称</th><th scope="col">域</th><th scope="col" class="number">重载</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden><h2>没有匹配的条目</h2><p>试试更短的名称，或重置筛选。</p><button class="quiet-button" id="empty-reset">重置筛选</button></div></div><div class="pagination"><button id="previous" class="quiet-button" aria-label="上一页">上一页</button><span id="page-number"></span><button id="next" class="quiet-button" aria-label="下一页">下一页</button></div></section>
+        <section class="list-pane" aria-label="检索结果"><div class="list-summary"><span id="result-count" role="status" aria-live="polite"></span><button id="reset" class="text-button">重置筛选</button></div><div class="table-scroll"><table class="interface-table"><thead><tr><th scope="col">接口 / 名称</th><th scope="col" id="classification-heading">指令族</th><th scope="col">域</th><th scope="col" class="number">重载</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden><h2>没有匹配的条目</h2><p>试试更短的名称，或重置筛选。</p><button class="quiet-button" id="empty-reset">重置筛选</button></div></div><div class="pagination"><button id="previous" class="quiet-button" aria-label="上一页">上一页</button><span id="page-number"></span><button id="next" class="quiet-button" aria-label="下一页">下一页</button></div></section>
         <section id="detail" class="detail-pane" aria-label="接口详情" tabindex="-1"></section>
       </div>
     </div>

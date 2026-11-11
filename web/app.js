@@ -76,7 +76,8 @@ function render() {
   $('#catalog-view').hidden = report;$('#report').hidden = !report;
   $('#family-section').hidden = state.view !== 'interfaces';$('#mobile-family-label').hidden = state.view !== 'interfaces';
   $('#page-title').textContent = {interfaces:'指令接口',definitions:'配套定义',report:'扫描报告'}[state.view];
-  $('#page-subtitle').textContent = {interfaces:'查找接口，比较重载，追溯源码。',definitions:'阅读接口使用的类型、常量、宏与辅助定义。',report:'查看扫描范围、解析结果与尚未验证的边界。'}[state.view];
+  $('.toolbar').hidden = report;
+  $('#classification-heading').textContent = state.view === 'definitions' ? '定义类型' : '指令族';
   syncControls();
   if (report) {renderReport();saveHash();return;}
   const matches = filtered();
@@ -102,8 +103,9 @@ function renderRows() {
   const page = visible.slice(state.page * PAGE_SIZE,(state.page + 1) * PAGE_SIZE);
   $('#rows').innerHTML = page.map(g => {
     const selected = g.items.some(r => r.id === state.selected);
-    const hint = state.view === 'definitions' ? kinds[g.items[0].kind] : `${g.family} · ${g.items[0].namespace || '全局接口'}`;
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span><span class="row-hint">${esc(hint)}</span></button></td><td>${esc(shortGroup[g.group])}</td><td class="number">${g.items.length}</td></tr>`;
+    const classification = state.view === 'definitions' ? kinds[g.items[0].kind] : g.family;
+    const qualified = [g.items[0].namespace,g.name].filter(Boolean).join('::');
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td>${esc(classification)}</td><td>${esc(shortGroup[g.group])}</td><td class="number">${g.items.length}</td></tr>`;
   }).join('');
   $('#previous').disabled = state.page === 0;$('#next').disabled = (state.page + 1) * PAGE_SIZE >= visible.length;
   $('#page-number').textContent = visible.length ? `${state.page + 1} / ${Math.ceil(visible.length / PAGE_SIZE)} 页` : '0 / 0 页';
@@ -122,7 +124,7 @@ function renderDetail() {
   const current = visible.find(g => g.items.some(x => x.id === r.id));
   const options = current?.items || [r];
   const countLabel = isInterface(r) ? `${options.length} 条重载 / 声明` : `${options.length} 条定义`;
-  pane.innerHTML = `<div class="detail-heading"><div class="detail-domain"><span>${esc(r.group)}</span><span class="tag">${esc(r.family === '配套定义' ? kinds[r.kind] : r.family)}</span></div><h2>${esc(r.name)}</h2>${r.namespace ? `<div class="qualified">${esc(r.namespace)}::${esc(r.name)}</div>` : ''}<div class="detail-actions"><button id="copy-signature" class="quiet-button">复制签名</button><button id="copy-link" class="quiet-button">复制链接</button><span class="detail-status"><span class="status-dot"></span>头文件声明</span></div></div><div class="detail-tabs" role="tablist" aria-label="详情内容">${[['definition','接口定义'],['source','来源证据'],['experiments','实验记录']].map(([id,title]) => `<button id="tab-${id}" role="tab" data-tab="${id}" aria-controls="detail-content" tabindex="${state.tab === id ? 0 : -1}" aria-selected="${state.tab === id}">${title}</button>`).join('')}</div><div class="detail-body" id="detail-content" role="tabpanel" aria-labelledby="tab-${state.tab}"><label class="overloads">${esc(countLabel)}<select id="overload" aria-label="选择重载或声明">${options.map((x,i) => `<option value="${x.id}" ${x.id === r.id ? 'selected' : ''}>${i + 1}. ${esc(x.return_type || kinds[x.kind])} · ${esc(x.parameters?.join(', ') || x.source.file)}</option>`).join('')}</select></label>${state.tab === 'source' ? sourceContent(r) : state.tab === 'experiments' ? experimentsContent() : definitionContent(r)}</div>`;
+  pane.innerHTML = `<div class="detail-heading"><h2>${esc(r.name)}</h2><div class="detail-domain"><span>${esc(r.group)}</span><span>${esc(r.family === '配套定义' ? kinds[r.kind] : r.family)}</span></div>${r.namespace ? `<div class="qualified">${esc(r.namespace)}::${esc(r.name)}</div>` : ''}<div class="detail-actions"><button id="copy-signature" class="quiet-button">复制签名</button><button id="copy-link" class="quiet-button">复制链接</button><span class="detail-status">头文件声明</span></div></div><div class="detail-tabs" role="tablist" aria-label="详情内容">${[['definition','接口定义'],['source','来源证据'],['experiments','实验记录']].map(([id,title]) => `<button id="tab-${id}" role="tab" data-tab="${id}" aria-controls="detail-content" tabindex="${state.tab === id ? 0 : -1}" aria-selected="${state.tab === id}">${title}</button>`).join('')}</div><div class="detail-body" id="detail-content" role="tabpanel" aria-labelledby="tab-${state.tab}"><label class="overloads">${esc(countLabel)}<select id="overload" aria-label="选择重载或声明">${options.map((x,i) => `<option value="${x.id}" ${x.id === r.id ? 'selected' : ''}>${i + 1}. ${esc(x.return_type || kinds[x.kind])} · ${esc(x.parameters?.join(', ') || x.source.file)}</option>`).join('')}</select></label>${state.tab === 'source' ? sourceContent(r) : state.tab === 'experiments' ? experimentsContent() : definitionContent(r)}</div>`;
   $('#copy-signature').onclick = () => copyText(formatSignature(r));
   $('#copy-link').onclick = () => copyText(location.href);
   $('#overload').onchange = e => {state.selected = e.target.value;saveHash();renderDetail();$('#overload').focus({preventScroll:true});};

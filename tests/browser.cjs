@@ -28,6 +28,28 @@ const { chromium } = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.locator('.detail-heading h2').waitFor();
     await fit();
     assert.match(await page.locator('#result-count').innerText(), /5,714/);
+    const density = await page.evaluate(() => {
+      const box = selector => document.querySelector(selector).getBoundingClientRect();
+      const header = box('.topbar');
+      return {
+        headerHeight: header.height,
+        sidebarWidth: box('.sidebar').width,
+        detailWidth: box('#detail').width,
+        listWidth: box('.list-pane').width,
+        rowHeight: box('#rows tr').height,
+        singleToolbar: ['.brand','#page-title','#search','#group','#file','#download'].every(selector => {
+          const bounds = box(selector);
+          return bounds.top >= header.top && bounds.bottom <= header.bottom;
+        }),
+        columns: document.querySelector('#rows tr').children.length,
+        panelsFit: box('.list-pane').bottom <= box('footer').top && box('#detail').bottom <= box('footer').top,
+        rowNameLines: box('.row-name').height / parseFloat(getComputedStyle(document.querySelector('.row-name')).lineHeight)
+      };
+    });
+    assert.ok(density.headerHeight <= 40 && density.singleToolbar, 'Desktop controls must share one compact topbar');
+    assert.ok(density.sidebarWidth <= 136 && density.detailWidth <= 330 && density.listWidth > density.detailWidth * 2, 'Catalog must own most of the width');
+    assert.ok(density.rowHeight <= 26 && density.rowNameLines <= 1 && density.columns === 4, 'Name, family, domain and overload count must share one compact row');
+    assert.ok(density.panelsFit, 'List and detail must scroll inside the workspace above the footer');
     await page.keyboard.press('/');
     assert.equal(await page.locator('#search').evaluate(el => el === document.activeElement), true);
     await page.locator('#search').fill('avld');

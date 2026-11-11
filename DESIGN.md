@@ -1,134 +1,133 @@
 ---
 name: CCE OPS
-description: Huawei Ascend CCE 指令接口离线手册的现行视觉约定
+description: Huawei Ascend CCE 指令接口离线手册的黑白灰紧凑视觉约定
 colors:
-  ink: "#202b30"
-  muted: "#596970"
-  accent: "#086b61"
-  focus: "#128276"
-  selected: "#eaf4f1"
+  ink: "#171717"
+  muted: "#626262"
+  accent: "#171717"
+  focus: "#171717"
+  selected: "#e8e8e8"
   surface: "#fff"
-  nav: "#f4f6f6"
-  subtle: "#f8faf9"
-  line: "#dce3e2"
-  nav-active: "#e0eeea"
-  nav-active-ink: "#075b51"
-  nav-hover: "#e7edeb"
-  row-hover: "#f2f7f5"
-  row-line: "#edf0ef"
-  input-line: "#bac9c5"
-  button-hover-line: "#a7bab4"
-  signature: "#234b43"
-  callout-bg: "#f8f5ed"
-  callout-ink: "#6d5126"
+  nav: "#f7f7f7"
+  subtle: "#f5f5f5"
+  line: "#d4d4d4"
+  row-line: "#ededed"
+  input-line: "#bdbdbd"
+  hover: "#efefef"
+  nav-active: "#e2e2e2"
 typography:
   headline:
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
-    fontSize: "24px"
-    fontWeight: 650
-    lineHeight: 1.3
-    letterSpacing: "-0.025em"
+    fontSize: "12px"
+    fontWeight: 600
+    lineHeight: 1.5
   body:
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
-    fontSize: "13px"
+    fontSize: "12px"
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.5
   label:
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
-    fontSize: "12px"
-    fontWeight: 400
-    lineHeight: 1.6
-  button:
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
-    fontSize: "12px"
-    fontWeight: 400
-    lineHeight: 1.4
-  caption:
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
     fontSize: "11px"
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.5
+  button:
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
+    fontSize: "11px"
+    fontWeight: 400
+    lineHeight: "18px"
+  caption:
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif'
+    fontSize: "10px"
+    fontWeight: 400
+    lineHeight: 1.5
   title-mono:
     fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace'
-    fontSize: "21px"
+    fontSize: "14px"
     fontWeight: 650
-    lineHeight: 1.45
-    letterSpacing: "-0.025em"
+    lineHeight: 1.4
   row-mono:
     fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace'
-    fontSize: "12px"
+    fontSize: "11px"
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: "20px"
   code:
     fontFamily: 'ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace'
     fontSize: "11px"
     fontWeight: 400
-    lineHeight: 1.9
+    lineHeight: 1.6
 rounded:
-  default: "5px"
-  compact: "3px"
+  default: "2px"
+  flat: "0px"
 spacing:
-  micro: "4px"
-  tight: "8px"
-  control: "12px"
-  cell: "14px"
+  micro: "2px"
+  compact: "3px"
+  gap: "4px"
+  tight: "6px"
+  content: "8px"
+  panel: "10px"
   section: "16px"
-  content: "20px"
-  detail: "22px"
-  group: "24px"
-  page: "28px"
 components:
+  topbar:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    padding: "0 10px"
+    height: "40px"
   button-quiet:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     typography: "{typography.button}"
     rounded: "{rounded.default}"
-    padding: "6px 11px"
+    padding: "3px 7px"
   button-text:
-    textColor: "{colors.accent}"
-    typography: "{typography.caption}"
-    padding: "{spacing.micro}"
+    textColor: "{colors.muted}"
+    typography: "{typography.label}"
+    rounded: "{rounded.default}"
+    padding: "2px 0"
   search:
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.default}"
+    padding: "0 6px"
+    height: "26px"
+  filter:
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     typography: "{typography.label}"
     rounded: "{rounded.default}"
-    padding: "0 11px"
-    height: "38px"
+    padding: "0 3px"
+    height: "26px"
+    width: "112px"
   navigation-item:
     textColor: "{colors.ink}"
+    typography: "{typography.label}"
     rounded: "{rounded.default}"
-    padding: "9px 12px"
+    padding: "3px 5px"
   navigation-item-active:
     backgroundColor: "{colors.nav-active}"
-    textColor: "{colors.nav-active-ink}"
-  tag:
-    backgroundColor: "{colors.nav}"
-    textColor: "{colors.muted}"
-    rounded: "{rounded.compact}"
-    padding: "1px 6px"
-  catalog-container:
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.default}"
+    textColor: "{colors.ink}"
   catalog-row-selected:
     backgroundColor: "{colors.selected}"
-    textColor: "{colors.accent}"
+    textColor: "{colors.ink}"
     typography: "{typography.row-mono}"
-    padding: "9px 14px"
+    height: "26px"
   detail-tab:
     textColor: "{colors.muted}"
     typography: "{typography.label}"
-    padding: "10px 0"
+    rounded: "{rounded.flat}"
+    padding: "6px 0"
   code-block:
     backgroundColor: "{colors.subtle}"
-    textColor: "{colors.signature}"
+    textColor: "{colors.ink}"
     typography: "{typography.code}"
     rounded: "{rounded.default}"
-    padding: "{spacing.cell}"
+    padding: "7px 8px"
   callout:
-    backgroundColor: "{colors.callout-bg}"
-    textColor: "{colors.callout-ink}"
-    rounded: "{rounded.default}"
-    padding: "12px 14px"
+    backgroundColor: "{colors.subtle}"
+    textColor: "#505050"
+    rounded: "{rounded.flat}"
+    padding: "7px 8px"
 ---
 
 # Design System: CCE OPS
@@ -137,95 +136,90 @@ components:
 
 **Creative North Star: "器件规格表"**
 
-冷白内容面、雾灰导航和深青选择色构成紧凑的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCE 接口、条件与来源的核对。
+白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCE 接口、条件与来源的核对。
 
-本文件记录 `web/style.css`、`web/index.html` 和 `web/app.js` 的实际系统；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。
+本文件记录 `web/style.css`、`web/index.html` 和 `web/app.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。
 
 **Key Characteristics:**
 
-- 紧凑表格与按需阅读详情。
+- 单行接口表与窄幅详情并置。
 - 系统中文字体与技术等宽字体并用。
-- 细线分区、浅色层次、文字说明状态。
+- 黑白灰、细线分区、文字说明状态。
 - 原生控件、可见键盘焦点、离线自包含。
 
 ## Colors
 
 ### Primary
 
-深青 `accent` 用于链接、选中接口名、当前标签页下划线与声明状态点；`focus` 专用于键盘焦点。`selected` 和 `nav-active` 分别承载表格与导航的选择背景，导航选中文字使用 `nav-active-ink`。
+`accent` 与正文 `ink` 同为黑色，`focus` 也沿用黑色；系统不使用装饰色。选中接口行使用 `selected`，导航当前项使用 `nav-active`；加重文字与浅灰背景共同表示选择。当前标签页使用黑色文字及底边线。
 
 ### Neutral
 
-`surface` 是内容底色，`nav` 区分侧栏与标签，`subtle` 承载表头及代码。`ink` 表示主要内容，`muted` 表示说明和元数据。`line` 划分区域，`row-line` 划分紧凑表格行；`input-line` 和 `button-hover-line` 表达控件边界。`nav-hover`、`row-hover` 只反馈悬停。
+`surface` 是内容底色，`nav` 区分侧栏，`subtle` 承载表头、代码、条件及证据说明。`ink` 表示主要内容，`muted` 表示说明和元数据。`line` 划分区域，`row-line` 划分紧凑表格行，`input-line` 表达控件边界。`hover` 用于按钮与导航悬停，表格悬停使用 `subtle`。证据说明使用灰色文字，不依赖彩色提示。
 
-暖灰黄 `callout-bg` 配合 `callout-ink` 说明证据限制；签名使用 `signature`。这些是内容语义色，不是第二套品牌强调色。
-
-**The Evidence Rule.** 状态点、选中底色和提示色必须有对应文字；声明状态不能以颜色暗示已通过设备验证。
+**The Evidence Rule.** 选择状态与证据状态必须有对应文字；静态声明不能以颜色暗示已通过编译、运行或设备验证。
 
 ## Typography
 
-中文说明使用系统无衬线栈，标识符、签名、路径与哈希使用系统等宽栈；不加载在线字体。基础正文使用 `body`，常见说明使用 `label`，元数据使用 `caption`。详情说明段落行高（1.8），最长（72ch）。
+中文说明使用系统无衬线栈，标识符、签名、路径与哈希使用系统等宽栈；不加载在线字体。正文使用 `body`，搜索沿用正文大小；控件与导航使用 `label`，表头和元数据使用 `caption`。顶栏视图标题使用 `headline`，与正文同尺寸、以字重区分。品牌名称为（15px / 750），字距（−0.03em）。
 
-页面标题使用 `headline`；详情名称使用 `title-mono`，列表名称使用 `row-mono`，代码块使用 `code`。侧栏主项加重（650），标签页选中加重（600）。表头和次级提示为（10px）；不要将这一层级扩展到正文。品牌字重（750），用于名称本身。
+详情名称使用 `title-mono`，列表名称使用 `row-mono`，代码块使用 `code`；选中接口名加重（700），导航和当前标签页加重（650）。详情小标题为（11px / 650）；来源、条件及重载选项为（10px）等宽文字。前置令牌分别保留正文（12px）、列表（11px）、详情标题（14px）及代码（11px）的实际层级，不恢复旧版大标题。
 
 ## Layout
 
-顶部栏高（64px）；工作区由侧栏（184px）与弹性主区组成。主区留白为上（26px）、左右（28px）。接口容器用一条外边界划分列表与详情，列宽为 `minmax(300px,.92fr)` / `minmax(360px,1.08fr)`；高度 `calc(100vh - 270px)`，最小（600px），两区独立滚动。表头固定，列表行内边距（9px 14px），详情主要内边距（20px 22px 26px）。
+桌面顶栏高（40px），CCE OPS、视图标题、搜索、域和文件筛选、JSON 导出及元信息同处一行。工作区由窄侧栏（136px）与弹性主区组成，主区左右留白（8px）。接口列表占剩余宽度，详情固定（330px）；工作面高 `calc(100vh - 63px)`、最小（400px），列表与详情各自滚动，以单像素竖线分隔，无外层卡片。
 
-- 宽度至少（1600px）：主区左右留白（36px），列表与详情最小宽度调整为（420px / 550px）。
-- 宽度至多（1180px）：侧栏（160px），主区左右留白（18px）；搜索独占一行，筛选同行；表格暂时隐藏“域”列，详情左右留白（18px）。
-- 宽度至多（800px）：顶部（58px），侧栏替换为原生选择器；主区左右留白（16px），列表与详情顺序排列。列表滚动区高（180–360px），详情随页面展开；“域”列恢复。主标题（22px），详情名称（19px）；隐藏搜索快捷键提示。
+结果摘要高（30px），表头高（25px），数据行高（26px）；名称、指令族、域、重载数同一行。后三列分别为（108px / 66px / 44px），名称列弹性占满。名称按钮高（25px）、内边距（2px 8px）；其余单元格横向内边距（8px）。详情标题区内边距（8px 10px），正文为（8px 10px 16px）。
 
-间距是既有紧凑步长的组合，不强行套用统一的倍数网格。长标识符、条件、签名与哈希允许换行；报告表格可在自身容器横向滚动。
+- 宽度至多（1220px）：隐藏版本号，顶栏仍保持单行；详情收至（300px），文件筛选收至（160px）。
+- 宽度至多（800px）：顶栏紧凑换行，搜索独占一行、域与文件筛选共享下一行；搜索和筛选高（28px）。侧栏替换为原生浏览与指令族选择器，主区左右留白（6px）。列表与详情顺序排列，列表滚动区高（100–320px）；数据行高（29px），名称按钮高（28px）、名称文字（10px）。后三列收至（88px / 48px / 32px），详情名称仍为（14px）。搜索快捷键提示隐藏，重载选择器高（28px）。
+
+间距使用既有紧凑步长，不强行套用统一倍数网格。列表中的过长名称单行省略，名称按钮保留完整限定名提示；详情名称、条件、路径与哈希允许折行。代码保留原始空白，长行在代码块内横向滚动；报告表格也在自身容器滚动。
 
 ## Elevation & Depth
 
-常态不使用投影。导航底色、代码浅底、单像素边界和选中底色承担层级。搜索聚焦时的 `0 0 0 1px var(--accent)` 是边界加粗；全局键盘焦点为（2px）描边、外偏移（3px）。底部通知使用深色实底，无阴影。
+不使用投影。浅灰底、单像素边界与选中背景承担层级。搜索聚焦时使用（1px）黑色描边并加深边框；全局键盘焦点为（2px）描边、外偏移（1px），列表按钮及详情区域的焦点向内偏移（−2px）。底部通知使用黑底白字，无阴影。
 
-按钮仅过渡背景色（0.15s ease）；不移动或缩放。用户启用减少动态效果时禁用过渡并使用即时滚动。
+交互状态即时切换，无过渡、位移或缩放动画。用户启用减少动态效果时保持即时滚动。
 
 ## Shapes
 
-控件、导航项、主容器、代码块与说明框使用 `default` 圆角；小标签和快捷键提示使用 `compact` 圆角。表格本身保持平直分隔线。状态点是直径（6px）的实心圆。图标为线性内联 SVG，不引入字体图标或位图依赖。
+按钮、输入框、选择器和代码块使用 `default` 小圆角；表格、接口名称按钮、详情标签页及说明块保持平直轮廓。以直线边界组织工作区，不为每条接口加独立卡片。当前界面不使用装饰图标或状态圆点。
 
 ## Components
 
 ### Buttons
 
-操作使用白底细边框的安静按钮；悬停变为导航浅底并加深边框。文字操作无边框，深青色，悬停加下划线。禁用按钮透明度（0.45），取消手形光标；保留可见焦点。
+操作使用白底细边框的安静按钮；常规内边距（3px 7px），字行高（18px）。悬停使用 `hover` 并加深边框。分页按钮收至（0 6px），详情操作收至（0 5px）、字号（10px）。重置筛选为灰色文字按钮，内边距（2px 0），悬停变黑并加下划线。禁用按钮透明度（0.45），取消手形光标；保留可见焦点。
 
 ### Inputs / Fields
 
-搜索框与筛选选择器高（38px）。搜索由边框容器包住图标、无边框输入和快捷键提示；焦点反馈作用于整个容器。筛选和重载均使用原生 `select`；重载选项采用等宽字体并限制在详情宽度内。
+桌面搜索与筛选高（26px）。搜索由边框容器包住原生输入和快捷键提示，横向内边距（6px），无搜索图标；焦点作用于整个容器。域选择器宽（112px），文件选择器宽（186px）。筛选和重载均使用原生 `select`；重载选项使用（10px）等宽文字，桌面高（25px），宽度限制在详情区内。
 
 ### Navigation
 
-侧栏是纵向文字列表，右侧数字使用等宽数字排列。当前项以浅青底、深青字及加重区分。移动端使用带文字标签的选择器。详情标签页以文字和底边线表示当前项；支持左右箭头、Home 与 End 切换，并保留焦点。
-
-### Tags / Containers
-
-标签是不可交互的浅灰小矩形，补充接口族信息。主容器是细边框的列表和详情组合；不把每条接口包装成独立卡片。扫描报告沿用表格、分隔线和说明框。
+侧栏是纵向文字列表，行高至少（26px），内边距（3px 5px）；右侧数字为（10px），使用等宽数字排列。当前项以灰底和加重文字区分。移动端使用带文字标签的选择器。详情标签页采用（11px）文字、间距（14px），当前项以下沿（2px）黑线及加重表示；支持左右箭头、Home 与 End 切换，并保留焦点。
 
 ### Interface rows / Detail
 
-每行显示等宽接口名、次级说明及右对齐重载数；选中行使用 `selected`，名称加重并变为深青。选择接口后更新详情并聚焦详情区域，窄屏同时滚动到详情；切换重载后保留选择器焦点。详情按名称、操作、标签页、重载与正文组织，来源位置和完整签名保持可读、可复制。
+接口行的名称、分类、域和右对齐重载数保持单行，分类直接显示为表格文字，不使用标签组件。选中行使用 `selected`，名称加重。选择接口后更新详情并聚焦详情区域，窄屏同时滚动到详情；切换重载后保留选择器焦点。详情按名称、操作、标签页、重载与正文组织，来源位置和完整签名保持可读、可复制。
 
 ### Code / Evidence
 
-代码块保持换行及空白语义，长内容在块内折行。条件使用更紧凑的细边框浅底块。暖色说明框只解释尚未核验的边界，不代替具体状态文字。报告中的待处理项使用原生 `details` 折叠。
+代码块采用（11px / 1.6）等宽文字，内边距（7px 8px），保留换行及原始空白；长行在块内滚动。条件采用（10px / 1.6）等宽文字、内边距（4px 6px）并允许折行。证据说明使用浅灰平面、内边距（7px 8px）与（10px / 1.6）灰色文字；不使用暖色或成功色。报告中的待处理项使用原生 `details` 折叠。
 
 ## Do's and Don'ts
 
 ### Do:
 
 - **Do** 复用前置令牌和原生控件，保持离线可用。
-- **Do** 为长技术标识符保留换行，并同时检查桌面与窄屏。
-- **Do** 保留文字状态、可见焦点和选中反馈。
-- **Do** 使用细线、浅底与字号组织紧凑信息。
+- **Do** 保持桌面统一顶栏、单行接口表与窄幅详情，并检查窄屏顺序阅读。
+- **Do** 保留文字状态、可见焦点、选中反馈及完整可复制来源。
+- **Do** 使用细线、灰阶浅底、字重与对齐组织紧凑信息。
 
 ### Don't:
 
 - **Don't** 用装饰卡片、渐变或大图替代接口表格。
-- **Don't** 仅凭绿色状态点表达编译、运行或设备支持结论。
+- **Don't** 用彩色状态或选中反馈暗示编译、运行或设备支持结论。
 - **Don't** 引入在线字体、CDN 图标或运行依赖。
-- **Don't** 隐藏无法换行的签名、条件或来源以迁就列宽。
+- **Don't** 因单行列表或窄详情而截断实际签名、条件和来源内容。
