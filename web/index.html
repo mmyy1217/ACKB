@@ -17,6 +17,15 @@
     <label class="filter" title="本项目按来源头文件划分的接口组，不代表设备支持范围">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
     <label class="filter">文件<select id="file" aria-label="源文件"><option value="">全部源文件</option></select></label>
   </div>
+  <details class="compatibility-menu"><summary id="compatibility-summary">架构 / 弃用</summary><div class="compatibility-panel">
+    <label>CANN 版本<select id="catalog-version" aria-label="CANN 版本" disabled></select></label>
+    <label>芯片型号<select id="chip" aria-label="芯片型号"><option value="">未指定芯片</option></select></label>
+    <label>核目标参考<output id="core-targets">先选择芯片</output></label>
+    <label>架构条件<select id="architecture" aria-label="架构条件"><option value="">全部架构条件</option></select></label>
+    <label>条件结果<select id="availability" aria-label="条件结果"><option value="">全部条件结果</option><option value="possible">符合或待确认</option><option value="matches">条件符合</option><option value="excluded">条件排除</option><option value="unknown">待确认</option></select></label>
+    <label>弃用标记<select id="deprecation" aria-label="弃用标记"><option value="">全部弃用状态</option><option value="marked">有弃用标记</option><option value="conditional">条件性弃用标记</option><option value="unmarked">未检出标记</option></select></label>
+    <p>芯片选择使用平台配置的 NpuArch；核目标仅展示配置，不推断核支持。其他宏保持未知。条件符合不等于可编译。仅有本版本，尚不能判断首次弃用版本。</p>
+  </div></details>
   <button id="download" class="quiet-button">导出 JSON</button>
   <div class="top-meta"><span class="version" id="version"></span><a href="https://github.com/mmyy1217/CCE-OPS" target="_blank" rel="noopener">仓库</a></div>
 </header>

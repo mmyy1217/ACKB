@@ -55,3 +55,13 @@ npm run test:browser
 git diff --check
 git status --short
 ```
+
+## 架构元数据与版本差异
+
+口径和限制见 [兼容性证据](docs/compatibility.md)。构建自动读取数据旁的同版本 `targets.json`；可选，缺失时仅提供宏条件场景。
+
+```sh
+python scripts/targets.py --toolkit "$CCE_OPS_TOOLKIT" --version '9.3.0~weekly.20261104.01' --output 'data/9.3.0~weekly.20261104.01/targets.json'
+node tests/compatibility-browser.cjs
+python scripts/compare.py <before.json> <after.json> --output <diff.json>
+```

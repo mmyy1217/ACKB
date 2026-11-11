@@ -216,3 +216,12 @@ noscript { display: block; padding: 12px; }
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; }
 }
+
+.compatibility-menu { position: relative; flex-shrink: 0; font-size: 11px; }
+.compatibility-menu > summary { cursor: pointer; padding: 3px 5px; border: 1px solid var(--input-line); border-radius: var(--radius); }
+.compatibility-panel { position: absolute; right: 0; top: 30px; width: 320px; max-width: calc(100vw - 20px); padding: 8px; background: var(--surface); border: 1px solid var(--line); }
+.compatibility-panel label { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: center; gap: 6px; margin-bottom: 4px; }
+.compatibility-panel select { width: 100%; min-width: 0; height: 26px; background: var(--surface); border: 1px solid var(--input-line); font-size: 11px; }
+.compatibility-panel p { margin: 6px 0 0; color: var(--muted); font-size: 10px; }
+@media (max-width:800px) { .compatibility-panel { position: fixed; top: 38px; right: 8px; } }
+body { overflow-anchor: none; }

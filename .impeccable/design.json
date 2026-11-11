@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T07:25:53+00:00",
+  "generatedAt": "2026-11-11T08:33:17+00:00",
   "title": "Design System: CCE OPS",
   "extensions": {
     "colorMeta": {
@@ -338,6 +338,14 @@
       "description": "实时范围、当前族或筛选范围与重置操作；容器至多 560px 时仅视觉隐藏冗余总计。",
       "html": "<div class=\"ds-progress-preview\"><div class=\"ds-list-summary\"><div class=\"ds-progress-summary\"><span class=\"ds-viewport-range\" title=\"当前视口中的名称组范围\" aria-label=\"当前可见第 1 至 35 个，共 1818 个名称组\">1–35 / 1818</span><span class=\"ds-progress-scope\">全部指令</span><span class=\"ds-result-count\" role=\"status\" aria-live=\"polite\">1,818 个名称 · 5,714 条记录</span></div><button class=\"ds-progress-reset\" type=\"button\">重置筛选</button></div></div>",
       "css": ".ds-progress-preview{container-type:inline-size}.ds-list-summary{display:flex;align-items:center;justify-content:space-between;gap:8px;height:30px;padding:0 8px;background:var(--surface,#fff);color:var(--muted,#626262);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-progress-summary{display:flex;align-items:center;min-width:0;gap:8px;white-space:nowrap}.ds-viewport-range{color:var(--ink,#171717);font:600 11px/1.5 var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);font-variant-numeric:tabular-nums}.ds-progress-scope{max-width:96px;overflow:hidden;text-overflow:ellipsis}.ds-progress-reset{flex:none;padding:2px 0;background:none;border:0;border-radius:var(--radius,2px);color:var(--muted,#626262);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-progress-reset:hover{color:var(--ink,#171717);text-decoration:underline}.ds-progress-reset:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}@container(max-width:560px){.ds-result-count{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}}"
+    },
+    {
+      "name": "架构 / 弃用面板",
+      "kind": "custom",
+      "refersTo": "compatibility-panel",
+      "description": "原生折叠入口的紧凑局部预览；核目标只读。正式页面支持 Escape 归还入口焦点及点击外部关闭，窄屏固定于顶部 38px、右侧 8px。",
+      "html": "<details class=\"ds-compatibility\" open><summary>架构 / 弃用</summary><div class=\"ds-compatibility-panel\"><label>芯片型号<select aria-label=\"芯片型号\"><option>未指定芯片</option></select></label><label>核目标参考<output>先选择芯片</output></label><label>条件结果<select aria-label=\"条件结果\"><option>全部条件结果</option><option>待确认</option></select></label><p>核目标仅展示配置，不推断核支持。条件符合不等于可编译。</p></div></details>",
+      "css": ".ds-compatibility{color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-compatibility>summary{width:max-content;cursor:pointer;padding:3px 5px;border:1px solid var(--input-line,#bdbdbd);border-radius:var(--radius,2px)}.ds-compatibility-panel{width:320px;max-width:calc(100vw - 20px);box-sizing:border-box;margin-top:4px;padding:8px;background:var(--surface,#fff);border:1px solid var(--line,#d4d4d4)}.ds-compatibility-panel label{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:6px;margin-bottom:4px}.ds-compatibility-panel select{width:100%;min-width:0;height:26px;background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);border-radius:var(--radius,2px);font:inherit}.ds-compatibility-panel p{margin:6px 0 0;color:var(--muted,#626262);font-size:10px}.ds-compatibility summary:focus-visible,.ds-compatibility select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
     }
   ],
   "narrative": {

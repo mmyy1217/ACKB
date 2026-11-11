@@ -3,14 +3,22 @@
 
 import argparse
 import json
+import hashlib
 from pathlib import Path
 
 from catalog import ROOT, VERSION, validate
+from compatibility import analyze
 
 
 def build(source, output):
     data = json.loads(source.read_text())
     validate(data)
+    target_path = source.with_name('targets.json')
+    targets = json.loads(target_path.read_text()) if target_path.exists() else {'version': data['version'], 'targets': []}
+    if targets['version'] != data['version']:
+        raise ValueError('Target metadata version differs from catalog')
+    analyze(data, targets['targets'])
+    data['compatibility']['analyzer_sha256'] = hashlib.sha256((ROOT / 'scripts/compatibility.py').read_bytes()).hexdigest()
     page = (ROOT / 'web/index.html').read_text()
     payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     page = page.replace('/*__STYLE__*/', (ROOT / 'web/style.css').read_text())

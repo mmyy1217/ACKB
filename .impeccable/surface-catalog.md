@@ -17,3 +17,5 @@ FIRST VIEWPORT：40px 桌面顶栏合并 CCE OPS、视图标题、搜索、筛�
 FORM：遵循用户本轮对黑白、单行与间距的直接要求，替换原有深青与宽松布局。保留接口选择、重载、来源与实验记录的并置结构（原结构 seed:2ee58f22080cd9b8）；签名选择后即时关联来源是核心交互。
 
 FINISH：unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+架构扩展：统一顶栏增加一个原生折叠入口，展开 320px 宽紧凑面板；芯片、宏场景、条件与弃用保持原生选择器。默认关闭以保留列表密度。详情显示当前目标和宏定义证据，不使用成功颜色暗示支持；窄屏面板限制在视口内，Escape 或点击外部关闭。

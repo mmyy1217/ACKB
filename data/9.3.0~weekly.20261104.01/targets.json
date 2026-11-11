@@ -1,0 +1,1274 @@
+{
+  "version": "9.3.0~weekly.20261104.01",
+  "targets": [
+    {
+      "chip": "Ascend031",
+      "family": "Ascend031",
+      "aic_version": "AIC-T-300",
+      "npu_arch": 3004,
+      "cores": {
+        "ccec_aic_version": "dav-t300",
+        "ccec_aiv_version": "dav-t300"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend031.ini",
+        "sha256": "2cde2ae633fb74ba72973248b5346d3d90721dabf661eb9798ddbd5fbbb932e9",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend035",
+      "family": "Ascend035",
+      "aic_version": "AIC-N-350",
+      "npu_arch": 3505,
+      "cores": {
+        "ccec_aic_version": "dav-n350"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend035.ini",
+        "sha256": "4857ec6bf96e23ec008874bed8a42776d5e6c2677f30381cb15d89c0fbd7f9aa",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend035A",
+      "family": "Ascend035",
+      "aic_version": "AIC-N-350",
+      "npu_arch": 3505,
+      "cores": {
+        "ccec_aic_version": "dav-n350"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend035A.ini",
+        "sha256": "fcd602138e3d235b8fd218ed1aa2b8b2a995b39f9286a252122a471444755594",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend035B",
+      "family": "Ascend035",
+      "aic_version": "AIC-N-350",
+      "npu_arch": 3505,
+      "cores": {
+        "ccec_aic_version": "dav-n350"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend035B.ini",
+        "sha256": "f04cccba0a53208ffc67fba57340ece088324d2f03f0e119c89bfdf77ef19237",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310B1",
+      "family": "Ascend310B",
+      "aic_version": "AIC-M-300",
+      "npu_arch": 3002,
+      "cores": {
+        "ccec_aic_version": "dav-m300",
+        "ccec_aiv_version": "dav-m300"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310B1.ini",
+        "sha256": "63990355d9134be188d2914ab8f6ce7beba52e8b32ef642cbfa594167c2ee625",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310B2",
+      "family": "Ascend310B",
+      "aic_version": "AIC-M-300",
+      "npu_arch": 3002,
+      "cores": {
+        "ccec_aic_version": "dav-m300",
+        "ccec_aiv_version": "dav-m300"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310B2.ini",
+        "sha256": "a5a85f3419aae1dc4e97c97741af7d4ac24d4da714b496403332819b2bc52735",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310B3",
+      "family": "Ascend310B",
+      "aic_version": "AIC-M-300",
+      "npu_arch": 3002,
+      "cores": {
+        "ccec_aic_version": "dav-m300",
+        "ccec_aiv_version": "dav-m300"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310B3.ini",
+        "sha256": "4cac092be66bc2182104786464edb0bacdc073ff48eecd7a57577def93bf7645",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310B4",
+      "family": "Ascend310B",
+      "aic_version": "AIC-M-300",
+      "npu_arch": 3002,
+      "cores": {
+        "ccec_aic_version": "dav-m300",
+        "ccec_aiv_version": "dav-m300"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310B4.ini",
+        "sha256": "8afeceb9890a7e0a142ed73af6e1114bd505f63084fd800e38830fe62c0f4f82",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310P1",
+      "family": "Ascend310P",
+      "aic_version": "AIC-M-200",
+      "npu_arch": 2002,
+      "cores": {
+        "ccec_aic_version": "dav-m200",
+        "ccec_aiv_version": "dav-m200-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310P1.ini",
+        "sha256": "f203c880a5f58aee22ab968c6807f5eb7e116a02326e79ea85466b9fd2db2924",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310P3",
+      "family": "Ascend310P",
+      "aic_version": "AIC-M-200",
+      "npu_arch": 2002,
+      "cores": {
+        "ccec_aic_version": "dav-m200",
+        "ccec_aiv_version": "dav-m200-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310P3.ini",
+        "sha256": "b989c38e8d97ed2f91087f10e18df6aae621fee8d4b8d12a531e73155ae73c00",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310P5",
+      "family": "Ascend310P",
+      "aic_version": "AIC-M-200",
+      "npu_arch": 2002,
+      "cores": {
+        "ccec_aic_version": "dav-m200",
+        "ccec_aiv_version": "dav-m200-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310P5.ini",
+        "sha256": "d3f15f61956e8f62f29fd4f94b210ab50930b7a5c5d8e3996cb3836a74807897",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend310P7",
+      "family": "Ascend310P",
+      "aic_version": "AIC-M-200",
+      "npu_arch": 2002,
+      "cores": {
+        "ccec_aic_version": "dav-m200",
+        "ccec_aiv_version": "dav-m200-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend310P7.ini",
+        "sha256": "e6d372bc98ec7133b5ca92e2a87796ba3a1984d0e982e2dccab8d123f083aee7",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend350_354f",
+      "family": "Ascend350",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend350_354f.ini",
+        "sha256": "dc761762e21859254afc151b8ed43c02462a156880198431abfec34973215875",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend350_355e",
+      "family": "Ascend350",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend350_355e.ini",
+        "sha256": "6c5cb0b7795933720a5be204d582d829b2f9780d535df661665ff264c8163150",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910A",
+      "family": "Ascend910",
+      "aic_version": "AIC-C-100",
+      "npu_arch": 1001,
+      "cores": {
+        "ccec_aic_version": "dav-c100"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910A.ini",
+        "sha256": "af59660833e190db52f5a5f97d79b188793f646b29047205f7e65ab06927ef70",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B",
+      "family": "Ascend910",
+      "aic_version": "AIC-C-100",
+      "npu_arch": 1001,
+      "cores": {
+        "ccec_aic_version": "dav-c100"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B.ini",
+        "sha256": "cc6e7e8acbae558783122b07aceb2a39bc24cfff3e7dc93ea2e65ad2176f5669",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B1",
+      "family": "Ascend910B",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B1.ini",
+        "sha256": "c526edbdda810f4c117303a127728d26a1c8a49246b7d57d09a96a233a99bdfb",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B2",
+      "family": "Ascend910B",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B2.ini",
+        "sha256": "307315c7d531f2ed86549a095d525592a641f4e81c2d3404541f6400e9d2471e",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B2C",
+      "family": "Ascend910B",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B2C.ini",
+        "sha256": "98ca0e91492d376889ae5b821f2e38e30ef16b65ba47b1bff95fcf836091b1a2",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B3",
+      "family": "Ascend910B",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B3.ini",
+        "sha256": "80e84c675e9ac7c189042c0862aa81e3a43b041686ceae09cbc97ec11f683a49",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B4-1",
+      "family": "Ascend910B",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B4-1.ini",
+        "sha256": "91f063a34a536aafdcece7d891c5b96e8b8ff02f1c8a16ddce7d4b509cbccd6c",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910B4",
+      "family": "Ascend910B",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910B4.ini",
+        "sha256": "314c14eefb53807216db8ed5486367e7ad615079d613423aa66ce2a0d22c74e1",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910PremiumA",
+      "family": "Ascend910",
+      "aic_version": "AIC-C-100",
+      "npu_arch": 1001,
+      "cores": {
+        "ccec_aic_version": "dav-c100"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910PremiumA.ini",
+        "sha256": "547c5231523f5587c50915d1d98f00815898c1a1b60da451a1698b49664c81fc",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910ProA",
+      "family": "Ascend910",
+      "aic_version": "AIC-C-100",
+      "npu_arch": 1001,
+      "cores": {
+        "ccec_aic_version": "dav-c100"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910ProA.ini",
+        "sha256": "45dbd3d629057773671e90add64c2e1d071b2043d87eaba9aadc2cbe7e66479c",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910ProB",
+      "family": "Ascend910",
+      "aic_version": "AIC-C-100",
+      "npu_arch": 1001,
+      "cores": {
+        "ccec_aic_version": "dav-c100"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910ProB.ini",
+        "sha256": "311eb8f79bde0d6c5489748123e60596135edb774dddca88dc83fa8e1247b963",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9362",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9362.ini",
+        "sha256": "ffd0e8d061db7fa8b3877bcbaf8151edac77abcf3a50df95b42b21e2332a9ca3",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9363",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9363.ini",
+        "sha256": "80e796548748dbde76fca89c046bb6e85562f45b8115357db57bb498be61e63e",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9372",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9372.ini",
+        "sha256": "9a1c94efb07445ab27085da03b84cede5c50e426372e93545e883286e5ef8863",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9381",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9381.ini",
+        "sha256": "56e03655456594bf215b0f8315d8add875d8fefeaceb068c9ad2b9f0efbec0ce",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9382",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9382.ini",
+        "sha256": "d2d84c0ded236393ef40284673cb62bc234e503ed4f0967f31a637f965aadd29",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9391",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9391.ini",
+        "sha256": "b8ef2ec387b46821e9ee2b39b6b815ca4d15d197e8aca1ad912deced554f09ca",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend910_9392",
+      "family": "Ascend910_93",
+      "aic_version": "AIC-C-220",
+      "npu_arch": 2201,
+      "cores": {
+        "ccec_aic_version": "dav-c220-cube",
+        "ccec_aiv_version": "dav-c220-vec",
+        "ccec_cube_version": "dav-c220-cube",
+        "ccec_vector_version": "dav-c220-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend910_9392.ini",
+        "sha256": "7cc774afae581e223352d433076c4a2c4547385792ba71b4e568ac6831c51dc2",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_950x",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_950x.ini",
+        "sha256": "41c7918e9bfd3b2d280acd6e161763638b3bc8b095e3ec38b9d297467abf957a",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_950y",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_950y.ini",
+        "sha256": "3550115c2842f403adceb50925e05f19130edcf423e32fd538c8ce6da410700e",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9571",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9571.ini",
+        "sha256": "9b8c10700e523372886c69aa71ea228d101ddc01d210a75a63aef83dc3440b87",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9572",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9572.ini",
+        "sha256": "045861cea4b3b0d6342ba8cf0b20175e3ffe835d891be79fd52360eef53c75bf",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9573",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9573.ini",
+        "sha256": "914b7d8090ec695a4a8be05e8f03562d5e125087191650c5c83ecb237d2bb794",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9574",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9574.ini",
+        "sha256": "844997ce90e81642e37dcce42ebff057277355367f7d96857320d04ef5438300",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9575",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9575.ini",
+        "sha256": "908ec90e36fcd550cdf243082e0eef0b827bb6c8a88faa5d58be5ae73c40149f",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9576",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9576.ini",
+        "sha256": "8a3d7d9a85a6b7509f59d19550b1f70140be7a7380f57d85da9d759d822f6180",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9577",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9577.ini",
+        "sha256": "c233921ab533f709c687dcdee02a98983964e1ea8317b831f15872bbaf424b46",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9578",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9578.ini",
+        "sha256": "03ce63664b5ae929d94f8e5411c7cd81978f00e596e2bb1cc88f7fdd6256d2d4",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9581",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9581.ini",
+        "sha256": "184b5bc490c505a553efce0d7bb8b87273d501245b69034bc57f84281e1c6c55",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9581x",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9581x.ini",
+        "sha256": "23a4cbd4fc383c20c9ce31f6c457deff9512a5af3efdff4d4f3390ad2a8cf1c2",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9582",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9582.ini",
+        "sha256": "26a9caca4d1854e5eb95dbc5725249ddf0d7fcd85676f2f377149d38cb3ed251",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9582x",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9582x.ini",
+        "sha256": "5c1753c57b63a64e857a69010e36052123857782842e5475469bcd7e3b484f24",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9583",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9583.ini",
+        "sha256": "b5d322d9d1b07935ccf209990f741994d9d54aa77bcb93ebfec4f074f8db89cd",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9584",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9584.ini",
+        "sha256": "e3e5fb37a9b8e105c287064bf2b6357643fe44c71413db0d013f888f28e11940",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9585",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9585.ini",
+        "sha256": "3482fe44509640b41ef04c76f45022c6afa58deb4b32ffac983c631708be3ab6",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9586",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9586.ini",
+        "sha256": "1fdad0a424958ab1b9562a7f8ed444503e310621772cb405d7f47e30924ba7be",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9587",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9587.ini",
+        "sha256": "3c5ca7fbc971be1fa10866879fd6a0a3688b5de3bb18b70684b5d1ae31eedc9f",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9588",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9588.ini",
+        "sha256": "1747fec6e5a21ef4445f4035c95dfcfdc702de9f193401775a7abd3da58ac9bb",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9591",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9591.ini",
+        "sha256": "244eb2662eeba23027bdf2779a4c35b03ca2e40e8a114a15421514ceec8d3b5f",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9592",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9592.ini",
+        "sha256": "8a47be8547e55872dd7e321525e33672afe32a923a9ab274934278c75000e02b",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9595",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9595.ini",
+        "sha256": "7c1cda82d85ec23de95636da012ddf8dfd264fbe9377cd285179af935620dae0",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_9596",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_9596.ini",
+        "sha256": "e92a27eeb1f0eeac3f97f7d75395584e580b069b747f8db469a3e134a44511b3",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_95A1",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_95A1.ini",
+        "sha256": "4af3f8b810d2865917fe7ac1e5e0c3e4f0ac8c82120fba4d4857a9c684823488",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950DT_95A2",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950DT_95A2.ini",
+        "sha256": "58e8229a5ca1807bebc23afc6e592077bc15a94dee9a612bedcedb78a8c8d7a9",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_950z",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_950z.ini",
+        "sha256": "c0784a586ec0146b7455be73db5a185d4d946dcada23764f527b81c8dc1724f3",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_9579",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_9579.ini",
+        "sha256": "d11f9d441f1c99fee1196d15ce0bb463cf13deae79276343aa8f250cd8877221",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_957b",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_957b.ini",
+        "sha256": "cf2a04c331703c748e08180701b74ee28cb030c5a19dc6b1c37e9c21b81d4b35",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_957bx",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_957bx.ini",
+        "sha256": "6d9ecf62d467f736fee9657afeb82b6ccca822e78fd1f2124dcdd8c2be3d65ad",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_957c",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_957c.ini",
+        "sha256": "b7ff54e9883901edf5e96732d6f049d0e0f5caca0616257233fd92d42e0bcd18",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_957d",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_957d.ini",
+        "sha256": "bc9e010f907b3357753762aed9652a6262c0b5c463732f3847a1e6c9030ed93e",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_9589",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_9589.ini",
+        "sha256": "8bd7154459b34dba41899b494a798c7845e40585ae4226c7b5a1f20291498d99",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_958b",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_958b.ini",
+        "sha256": "11a6ead950ad43181fea5296cd0246bd0f3f9639cf78761d77dde4802d5dec18",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Ascend950PR_9599",
+      "family": "Ascend950",
+      "aic_version": "AIC-C-310",
+      "npu_arch": 3510,
+      "cores": {
+        "ccec_aic_version": "dav-c310-cube",
+        "ccec_aiv_version": "dav-c310-vec",
+        "ccec_cube_version": "dav-c310-cube",
+        "ccec_vector_version": "dav-c310-vec"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Ascend950PR_9599.ini",
+        "sha256": "b6a19979a539bfc0cbbe4bc0d55c2ddef6cc3a38fc2714dcdbde34e7eb9afb7f",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Kirin9020",
+      "family": "Kirin9020",
+      "aic_version": "AIC-L-310",
+      "npu_arch": 3103,
+      "cores": {
+        "ccec_aic_version": "dav-l310"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Kirin9020.ini",
+        "sha256": "2bde17782e736f8082d297ce5dd084cc47c1a14774692f86328c9071c61957b6",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Kirin9030",
+      "family": "Kirin9030",
+      "aic_version": "AIC-L-311",
+      "npu_arch": 3113,
+      "cores": {
+        "ccec_aic_version": "dav-l311"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Kirin9030.ini",
+        "sha256": "ce22ea83cafdc5243350a402b5fbfe4be8fc56c81fdccd7f24c127625057b5ad",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "Kirin9050",
+      "family": "Kirin9050",
+      "aic_version": "AIC-L-510",
+      "npu_arch": 5101,
+      "cores": {
+        "ccec_aic_version": "dav-l510"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/Kirin9050.ini",
+        "sha256": "5fb805036e892ec8389ade2cbe4a5143a0c17aa2a53d2d025098fe053b3a4597",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "KirinDev0001",
+      "family": "KirinDev0001",
+      "aic_version": "AIC-L-516",
+      "npu_arch": 5161,
+      "cores": {
+        "ccec_aic_version": "dav-516r1"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/KirinDev0001.ini",
+        "sha256": "e135ff9fa88f3728452a361c19f24d23fa48868d6738cdbc3b543f0e7e532ef3",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "KirinDev0002",
+      "family": "KirinDev0002",
+      "aic_version": "AIC-L-516",
+      "npu_arch": 5165,
+      "cores": {
+        "ccec_aic_version": "dav-516r5"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/KirinDev0002.ini",
+        "sha256": "cc0627d534abb4d282d1230d34f665881506f3bd4dd2fdf73cc89f960f96169a",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "KirinDev0003",
+      "family": "KirinDev0003",
+      "aic_version": "AIC-L-516",
+      "npu_arch": 5163,
+      "cores": {
+        "ccec_aic_version": "dav-516r3"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/KirinDev0003.ini",
+        "sha256": "a9891fb3e746ad5cfee32ad7310b3d8c068a8a4a91661c99706250f75d06e503",
+        "section": "version",
+        "package_verified": false
+      }
+    },
+    {
+      "chip": "KirinX90",
+      "family": "KirinX90",
+      "aic_version": "AIC-L-300",
+      "npu_arch": 3003,
+      "cores": {
+        "ccec_aic_version": "dav-l300"
+      },
+      "source": {
+        "file": "x86_64-linux/data/platform_config/KirinX90.ini",
+        "sha256": "c314069930d2fe60b97e7a3ac2179085feb2dd48ec6f4815e6f6a10e81853623",
+        "section": "version",
+        "package_verified": false
+      }
+    }
+  ]
+}

@@ -2,6 +2,6 @@
   "name": "cce-ops",
   "version": "0.1.0",
   "private": true,
-  "scripts": { "test:browser": "node tests/browser.cjs" },
+  "scripts": { "test:browser": "node tests/browser.cjs && node tests/compatibility-browser.cjs" },
   "devDependencies": { "playwright": "1.65.0" }
 }

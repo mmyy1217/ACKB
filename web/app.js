@@ -10,7 +10,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {view:'interfaces',family:'',query:'',group:'',file:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -21,14 +21,20 @@ const fileMap = new Map(data.files.map(f => [f.path,f]));
 function saveHash(replace = true) {
   const p = new URLSearchParams();
   if (state.view !== 'interfaces') p.set('view',state.view);
-  for (const key of ['family','query','group','file','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
+  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
   const target = '#' + p.toString();
   if (location.hash !== target) history[replace ? 'replaceState' : 'pushState'](null,'',target);
 }
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   state.view = ['interfaces','definitions','report'].includes(p.get('view')) ? p.get('view') : 'interfaces';
-  for (const key of ['family','query','group','file']) state[key] = p.get(key) || '';
+  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation']) state[key] = p.get(key) || '';
+  const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
+  if (target) state.architecture = '__NPU_ARCH__=' + target.npu_arch;
+  else state.chip = '';
+  if (!data.compatibility.profiles.some(t => t.id === state.architecture)) state.architecture = '';
+  if (!['','possible','matches','excluded','unknown'].includes(state.availability)) state.availability = '';
+  if (!['','marked','conditional','unmarked'].includes(state.deprecation)) state.deprecation = '';
   state.selected = p.get('r') || '';
   if (!p.has('view') && byId.has(state.selected) && !isInterface(byId.get(state.selected))) state.view = 'definitions';
   state.limit = BATCH_SIZE;
@@ -49,7 +55,7 @@ async function copyText(value) {
   toast('已复制');
 }
 function download() {
-  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+  const blob = new Blob([JSON.stringify({...data, records: filtered(), selection: {view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation}, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
   const url = URL.createObjectURL(blob), a = document.createElement('a');
   a.href = url; a.download = `cce-ops-${data.version}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
 }
@@ -63,11 +69,21 @@ function makeGroups(items) {
   }
   return [...groups.values()];
 }
+function compatibilityMatches(r) {
+  return (!state.deprecation || r.deprecation.status === state.deprecation) &&
+    (!state.architecture || !state.availability || (state.availability === 'possible' ? r.compatibility.profiles[state.architecture] !== 'excluded' : r.compatibility.profiles[state.architecture] === state.availability));
+}
 function filtered() {
   const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  return baseRecords().filter(r => (!state.family || r.family === state.family) && (!state.group || r.group === state.group) && (!state.file || r.source.file === state.file) && terms.every(t => searchTexts.get(r.id).includes(t)));
+  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || r.family === state.family) && (!state.group || r.group === state.group) && (!state.file || r.source.file === state.file) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
+  const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
+  $('#core-targets').textContent = target ? [...new Set(Object.values(target.cores))].join(' / ') : '先选择芯片';
+  for (const key of ['chip','architecture','availability','deprecation']) $('#' + key).value = state[key];
+  $('#availability').disabled = !state.architecture;
+  $('#compatibility-summary').textContent = state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(makeGroups(records.filter(r => isInterface(r) && compatibilityMatches(r) && (!family || r.family === family))).length);});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
   document.querySelectorAll('[data-view]').forEach(b => {b.classList.toggle('active',b.dataset.view === state.view); if (b.dataset.view === state.view) b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
@@ -92,7 +108,7 @@ function render(revealSelection = false) {
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
   $('#result-count').textContent = `${fmt(visible.length)} 个名称 · ${fmt(matches.length)} 条记录`;
-  $('#progress-scope').textContent = state.family || (state.query || state.group || state.file ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
+  $('#progress-scope').textContent = state.family || (state.query || state.group || state.file || state.architecture || state.deprecation ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);
   $('#empty').hidden = visible.length !== 0;
   if (!matches.some(r => r.id === state.selected)) {
@@ -272,12 +288,18 @@ function renderDetail() {
     state.tab = tabs[index];renderDetail();$('#tab-' + state.tab).focus();
   };
 }
+function compatibilityContent(r) {
+  const labels = {matches:'条件符合',excluded:'条件排除',unknown:'待确认'};
+  const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
+  const result = state.architecture ? `${state.architecture}：${labels[r.compatibility.profiles[state.architecture]] || '待确认'}` : '未选择架构条件';
+  return `<h3>架构与弃用</h3>${target ? `<p>${esc(target.chip)} · ${esc(target.aic_version)} · ${esc([...new Set(Object.values(target.cores))].join(' / '))}</p><details><summary>芯片映射来源（安装目录，未核验原包）</summary><p class="condition">${esc(target.source.file)} [version]</p><p class="condition">SHA-256 ${esc(target.source.sha256)}</p></details>` : ''}<p class="condition">${esc(result)}</p><p>${r.deprecation.status === 'conditional' ? '条件性弃用标记（需核对宏分支）' : r.deprecation.status === 'marked' ? '有弃用标记（本版本）' : '未检出弃用标记（不代表未弃用）'} · 编译未验证 · 运行未验证</p>${r.deprecation.evidence ? `<details><summary>弃用证据</summary><pre><code>${esc(r.deprecation.evidence)}</code></pre>${r.deprecation.macro_definitions.map(m => `<p>${esc(sourceLabel(m.source))}</p><pre><code>${esc(m.signature)}</code></pre>${m.conditions.map(c => `<div class="condition">${esc(c)}</div>`).join('')}`).join('')}</details>` : ''}<p>仅核对声明条件；包含路径与核目标的宏环境尚未验证。首次弃用版本及替代接口待确认。</p>`;
+}
 function definitionContent(r) {
   const conds = visibleConditions(r);
   const calls = (r.calls || []).map(name => records.find(x => x.name === name && x.namespace?.endsWith('__cce_scalar'))).filter(Boolean);
   const types = [...new Set((r.parameters || []).join(' ').match(/[A-Za-z_]\w*/g) || [])].map(name => records.find(x => x.kind === 'type' && x.name === name)).filter(Boolean).slice(0,12);
   const links = (items) => items.map(x => `<button class="related-link" data-ref="${x.id}"><code>${esc(x.namespace ? x.namespace + '::' + x.name : x.name)}</code></button>`).join('');
-  return `<h3>${r.kind === 'interface' ? '接口签名' : '声明内容'}</h3><pre class="signature"><code>${esc(formatSignature(r))}</code></pre><dl class="detail-meta"><dt>接口形式</dt><dd>${esc(kinds[r.kind])}${r.generated ? ' · 宏展开生成' : ''}</dd><dt>来源位置</dt><dd class="source-ref">${esc(sourceLabel(r.source))}</dd>${r.return_type ? `<dt>返回类型</dt><dd><code>${esc(r.return_type)}</code></dd>` : ''}</dl>${r.parameters?.length ? `<h3>参数声明</h3><table class="parameter-table"><thead><tr><th>序号</th><th>类型 / 名称 / 默认值</th></tr></thead><tbody>${r.parameters.map((p,i) => `<tr><td>${i + 1}</td><td><code>${esc(p)}</code></td></tr>`).join('')}</tbody></table>` : ''}<h3>可见条件</h3>${conds.length ? conds.map(c => `<div class="condition">${esc(c)}</div>`).join('') : '<p>声明处未发现额外条件。调用入口仍可能附加条件，不能据此推断全架构支持。</p>'}${types.length ? '<h3>相关类型</h3>' + links(types) : ''}${calls.length ? '<h3>下层接口调用</h3>' + links(calls) : ''}<h3>关联 builtin</h3>${r.builtins.length ? r.builtins.map(b => `<div class="condition">${esc(b)}</div>`).join('') : '<p>本条声明未提取到直接 builtin 引用。</p>'}<div class="callout">${r.parameters?.includes('...') ? '原始头文件以可变参数声明此接口，精确参数约束尚待核对。' : '参数单位、合法值和设备支持范围尚未逐项验证。'} 指令族按名称规则归类，仅用于导航。</div>`;
+  return `<h3>${r.kind === 'interface' ? '接口签名' : '声明内容'}</h3><pre class="signature"><code>${esc(formatSignature(r))}</code></pre><dl class="detail-meta"><dt>接口形式</dt><dd>${esc(kinds[r.kind])}${r.generated ? ' · 宏展开生成' : ''}</dd><dt>来源位置</dt><dd class="source-ref">${esc(sourceLabel(r.source))}</dd>${r.return_type ? `<dt>返回类型</dt><dd><code>${esc(r.return_type)}</code></dd>` : ''}</dl>${compatibilityContent(r)}${r.parameters?.length ? `<h3>参数声明</h3><table class="parameter-table"><thead><tr><th>序号</th><th>类型 / 名称 / 默认值</th></tr></thead><tbody>${r.parameters.map((p,i) => `<tr><td>${i + 1}</td><td><code>${esc(p)}</code></td></tr>`).join('')}</tbody></table>` : ''}<h3>可见条件</h3>${conds.length ? conds.map(c => `<div class="condition">${esc(c)}</div>`).join('') : '<p>声明处未发现额外条件。调用入口仍可能附加条件，不能据此推断全架构支持。</p>'}${types.length ? '<h3>相关类型</h3>' + links(types) : ''}${calls.length ? '<h3>下层接口调用</h3>' + links(calls) : ''}<h3>关联 builtin</h3>${r.builtins.length ? r.builtins.map(b => `<div class="condition">${esc(b)}</div>`).join('') : '<p>本条声明未提取到直接 builtin 引用。</p>'}<div class="callout">${r.parameters?.includes('...') ? '原始头文件以可变参数声明此接口，精确参数约束尚待核对。' : '参数单位、合法值和设备支持范围尚未逐项验证。'} 指令族按名称规则归类，仅用于导航。</div>`;
 }
 function sourceContent(r) {
   const file = fileMap.get(r.source.file);
@@ -357,8 +379,8 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {Object.assign(state,{family:'',query:'',group:'',file:'',selected:'',tab:'definition'});render();}
-function switchView(view) {Object.assign(state,{view,family:'',query:'',group:'',file:'',selected:'',tab:'definition'});render();}
+function reset() {Object.assign(state,{family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function switchView(view) {Object.assign(state,{view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#version').textContent = data.version;
 $('#footer-source').textContent = `${data.files.length} 个源文件 · CANN ${data.version}`;
@@ -368,9 +390,12 @@ $('#families').innerHTML = [['','全部指令'],...families.map(f => [f,f])].map
 $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + families.map(f => `<option>${esc(f)}</option>`).join('');
 $('#group').innerHTML += [...new Set(records.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
 $('#file').innerHTML += data.files.map(f => `<option>${esc(f.path)}</option>`).join('');
+$('#chip').innerHTML += data.compatibility.chip_mappings.map(t => `<option>${esc(t.chip)}</option>`).join('');
+$('#architecture').innerHTML += data.compatibility.profiles.map(p => `<option value="${esc(p.id)}">${esc(p.label)}</option>`).join('');
+$('#catalog-version').innerHTML = `<option>${esc(data.version)}</option>`;
 $('#download').onclick = download;
 $('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';render();});
-for (const key of ['group','file']) $('#' + key).onchange = e => {state[key]=e.target.value;state.selected='';render();};
+for (const key of ['group','file','chip','architecture','availability','deprecation']) $('#' + key).onchange = e => {state[key]=e.target.value;if (key === 'chip') {const t = data.compatibility.chip_mappings.find(t => t.chip === state.chip);state.architecture = t ? '__NPU_ARCH__=' + t.npu_arch : '';state.availability = t ? 'possible' : '';}if (key === 'architecture') {state.availability = state.architecture ? 'possible' : '';state.chip = '';}state.selected='';render();};
 $('#reset').onclick = reset;$('#empty-reset').onclick = reset;
 $('#mobile-view').onchange = e => switchView(e.target.value);
 $('#mobile-family').onchange = e => {state.family=e.target.value;state.selected='';render();};
@@ -383,7 +408,9 @@ $('#rows').addEventListener('click',e => {
   if (mobile.matches) {readingDetail=true;$('#detail').scrollIntoView({block:'start'});$('#detail').focus({preventScroll:true});}
   else $('#detail').focus({preventScroll:true});
 });
+document.addEventListener('click',e => {if (!e.target.closest('.compatibility-menu')) $('.compatibility-menu').open = false;});
 document.addEventListener('keydown',e => {
+  if (e.key === 'Escape' && $('.compatibility-menu').open) {$('.compatibility-menu').open = false;$('#compatibility-summary').focus();return;}
   if (e.key === '/' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName) && state.view !== 'report') {e.preventDefault();$('#search').focus();}
   if (e.key === 'Escape' && document.activeElement === $('#search')) {reset();$('#search').focus();}
 });

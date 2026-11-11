@@ -99,6 +99,12 @@ components:
     padding: "0 3px"
     height: "26px"
     width: "112px"
+  compatibility-panel:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    padding: "8px"
+    width: "320px"
   navigation-item:
     textColor: "{colors.ink}"
     typography: "{typography.label}"
@@ -193,6 +199,8 @@ components:
 - 宽度至多（1220px）：隐藏版本号，顶栏仍保持单行；未保存宽度偏好时，详情默认为（300px），文件筛选收至（160px）。
 - 宽度至多（800px）：顶栏紧凑换行，搜索独占一行、域与文件筛选共享下一行；搜索和筛选高（28px）。侧栏替换为原生浏览与指令族选择器，主区左右留白（6px）。列表与详情同在主文档中顺序展开，不限制列表高度；分隔线隐藏，详情取消吸附和栏内滚动。数据行高（29px），名称按钮高（28px）、名称文字（10px）。后三列收至（88px / 48px / 32px），详情名称仍为（14px）。搜索快捷键提示隐藏，重载选择器高（28px）。
 
+架构 / 弃用面板在桌面相对入口右对齐、距顶部（30px），宽度由 `compatibility-panel` 定义，最大宽度为视口减（20px）。宽度至多（800px）时改为固定定位，距顶部（38px）、右侧（8px）；面板内选择器仍高（26px）。
+
 间距使用既有紧凑步长，不强行套用统一倍数网格。列表中的过长名称单行省略，名称按钮保留完整限定名提示；详情名称、条件、路径与哈希允许折行。代码保留原始空白，长行在代码块内横向滚动；报告表格也在自身容器滚动。
 
 ## Elevation & Depth
@@ -214,6 +222,12 @@ components:
 ### Inputs / Fields
 
 桌面搜索与筛选高（26px）。搜索由边框容器包住原生输入和快捷键提示，横向内边距（6px），无搜索图标；焦点作用于整个容器。域选择器宽（112px），文件选择器宽（186px）。筛选和重载均使用原生 `select`；重载选项使用（10px）等宽文字，桌面高（25px），宽度限制在详情区内。
+
+### Architecture / Deprecation menu
+
+统一顶栏使用原生 `details` / `summary` 折叠入口，默认关闭；入口为（11px）文字、内边距（3px 5px），沿用控件边框和小圆角。展开面板继承白底、灰色细线边界与紧凑字号，无投影；内边距由 `compatibility-panel` 定义。字段每行采用（64px）标签列与弹性控件列，列间距（6px）、行下间距（4px）；选择器高（26px）、字号（11px）。底部边界说明为（10px）灰色文字，顶部间距（6px）。
+
+核目标参考以只读 `output` 呈现，不制作可选筛选器。按 Escape 关闭并将焦点归还入口，点击面板外关闭；其余展开交互保留原生语义。条件、弃用和未验证边界使用文字说明，继承既有灰阶证据表达。
 
 ### Navigation
 

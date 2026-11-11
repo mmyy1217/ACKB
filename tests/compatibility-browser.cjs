@@ -1,0 +1,63 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const {pathToFileURL} = require('node:url');
+const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
+(async () => {
+  const browser = await chromium.launch({executablePath:process.env.CCE_OPS_CHROME || '/usr/bin/google-chrome', headless:true,args:['--no-sandbox']});
+  try {
+    const page = await browser.newPage({viewport:{width:1440,height:1000}});
+    const errors = [], network = [];
+    page.on('pageerror', e => errors.push(e.message));
+    page.on('request', r => {if (/^https?:/.test(r.url())) network.push(r.url());});
+    await page.goto(pathToFileURL(path.resolve('dist/index.html')).href);
+    await page.locator('.compatibility-menu summary').first().click();
+    await page.locator('#chip').selectOption('Ascend910B2');
+    assert.equal(await page.locator('#architecture').inputValue(),'__NPU_ARCH__=2201');
+    assert.equal(await page.locator('#availability').inputValue(),'possible');
+    assert.match(await page.locator('#core-targets').innerText(),/dav-c220-cube/);
+    assert.match(await page.locator('#detail').innerText(),/Ascend910B2/);
+    await page.locator('#chip').selectOption('Ascend950PR_9579');
+    assert.equal(await page.locator('#architecture').inputValue(),'__NPU_ARCH__=3510');
+    assert.match(await page.locator('#core-targets').innerText(),/dav-c310-vec/);
+    await page.locator('#architecture').selectOption('__CCE_AICORE__=220');
+    assert.equal(await page.locator('#chip').inputValue(),'');
+    await page.locator('#availability').selectOption('excluded');
+    assert.match(await page.locator('#detail').innerText(),/条件排除/);
+    const excluded = await page.locator('#result-count').innerText();
+    await page.locator('#availability').selectOption('matches');
+    assert.notEqual(await page.locator('#result-count').innerText(),excluded);
+    assert.match(await page.locator('#detail').innerText(),/条件符合/);
+    await page.reload();
+    assert.equal(await page.locator('#architecture').inputValue(),'__CCE_AICORE__=220');
+    assert.equal(await page.locator('#availability').inputValue(),'matches');
+    await page.keyboard.press('Escape');
+    await page.locator('#reset').click();
+    await page.locator('.compatibility-menu summary').first().click();
+    await page.locator('#deprecation').selectOption('conditional');
+    assert.match(await page.locator('#detail').innerText(),/条件性弃用标记/);
+    await page.locator('#detail summary').filter({hasText:'弃用证据'}).click();
+    assert.match(await page.locator('#detail').innerText(),/DEPRECATED_AFTER_V210/);
+    const event = page.waitForEvent('download');
+    await page.locator('#download').click();
+    const file = await event;
+    const payload = JSON.parse(await fs.readFile(await file.path(),'utf8'));
+    assert.ok(payload.records.length > 0 && payload.records.length < 5714);
+    assert.ok(payload.records.every(r => r.deprecation.status === 'conditional'));
+    assert.equal(payload.selection.deprecation,'conditional');
+    await page.locator('.compatibility-menu summary').first().click();
+    for (const width of [1440,1024,390,320]) {
+      await page.setViewportSize({width,height:900});
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),true);
+      const menu = await page.locator('.compatibility-panel').boundingBox();
+      assert.ok(menu.x >= 0 && menu.x + menu.width <= width, JSON.stringify({width,menu}));
+      await page.screenshot({path:`.impeccable/review/compatibility-${width}.png`});
+    }
+    await page.keyboard.press('Escape');
+    await page.locator('#reset').click();
+    assert.equal(await page.locator('#chip').inputValue(),'');
+    assert.equal(await page.locator('#deprecation').inputValue(),'');
+    assert.deepEqual(errors,[]);assert.deepEqual(network,[]);
+    console.log('PASS: chip mapping, macro scenarios, condition states, conditional deprecation evidence, filtered export, deep links and four viewport layouts.');
+  } finally {await browser.close();}
+})().catch(e => {console.error(e);process.exitCode=1;});
