@@ -12,7 +12,8 @@ const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其
 const BATCH_SIZE = 60;
 const state = {view:'interfaces',family:'',query:'',group:'',file:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
-let visible = [], timer, readingDetail = false, loadScheduled = false;
+let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
+let updatePanelWidths = () => {};
 const sourceLabel = s => `${s.file}:${s.line}${s.end_line > s.line ? '–' + s.end_line : ''}`;
 const searchTexts = new Map(records.map(r => [r.id,[r.name,r.signature,r.group,r.family,r.namespace,...r.builtins,...r.conditions,r.source.file].join(' ').toLowerCase()]));
 const fileMap = new Map(data.files.map(f => [f.path,f]));
@@ -82,7 +83,7 @@ function render(revealSelection = false) {
   $('.toolbar').hidden = report;
   $('#classification-heading').textContent = state.view === 'definitions' ? '定义类型' : '指令族';
   syncControls();
-  if (report) {renderReport();saveHash();return;}
+  if (report) {setProgressActive(false);renderReport();saveHash();return;}
   const matches = filtered();
   visible = makeGroups(matches);
   const query = state.query.trim().toLowerCase();
@@ -91,6 +92,8 @@ function render(revealSelection = false) {
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
   $('#result-count').textContent = `${fmt(visible.length)} 个名称 · ${fmt(matches.length)} 条记录`;
+  $('#progress-scope').textContent = state.family || (state.query || state.group || state.file ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
+  setProgressActive(visible.length > 0);
   $('#empty').hidden = visible.length !== 0;
   if (!matches.some(r => r.id === state.selected)) {
     state.selected = matches[0]?.id || '';
@@ -119,7 +122,13 @@ function updateLoadStatus() {
 }
 function renderRows() {
   $('#rows').innerHTML = rowHTML(visible.slice(0,state.limit));
-  updateLoadStatus();
+  updateLoadStatus();queueProgress();
+}
+function appendThrough(limit) {
+  const start = state.limit;
+  state.limit = Math.min(visible.length,Math.max(start,limit));
+  if (state.limit > start) $('#rows').insertAdjacentHTML('beforeend',rowHTML(visible.slice(start,state.limit)));
+  updateLoadStatus();queueProgress();
 }
 function markSelectedRow() {
   const group = visible.find(g => g.items.some(r => r.id === state.selected));
@@ -128,6 +137,7 @@ function markSelectedRow() {
     button.closest('tr').classList.toggle('selected',selected);
     if (selected) button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');
   });
+  queueProgress();
 }
 function queueMore() {
   if (loadScheduled) return;
@@ -137,12 +147,92 @@ function queueMore() {
     if (state.view === 'report' || readingDetail || state.limit >= visible.length) return;
     const bounds = $('#load-status').getBoundingClientRect();
     if (bounds.top > innerHeight + 300 || bounds.bottom < 0) return;
-    const start = state.limit;
-    state.limit = Math.min(state.limit + BATCH_SIZE,visible.length);
-    $('#rows').insertAdjacentHTML('beforeend',rowHTML(visible.slice(start,state.limit)));
-    updateLoadStatus();
+    appendThrough(state.limit + BATCH_SIZE);
     queueMore();
   });
+}
+function setProgressActive(active) {
+  $('#scroll-navigation').hidden = !active;
+  $('.workspace').classList.toggle('progress-active',active);
+  updatePanelWidths();queueProgress();
+}
+function rowMetrics() {
+  const row = $('#rows tr');
+  if (!row) return null;
+  const bounds = row.getBoundingClientRect();
+  const top = $('.topbar').getBoundingClientRect().height + $('.list-summary').offsetHeight + $('.interface-table thead').offsetHeight;
+  const capacity = Math.max(1,Math.floor((innerHeight - top) / bounds.height));
+  return {rowTop:bounds.top,rowHeight:bounds.height,top,capacity,maxOffset:Math.max(0,visible.length - capacity)};
+}
+function updateProgress() {
+  if (state.view === 'report') return;
+  const m = rowMetrics(), total = visible.length;
+  if (!m || !total) {$('#viewport-range').textContent = '0–0 / 0';return;}
+  const clampIndex = index => Math.max(0,Math.min(state.limit - 1,index));
+  let start = clampIndex(Math.floor((m.top - m.rowTop) / m.rowHeight));
+  let end = Math.max(start + 1,Math.min(state.limit,Math.ceil((innerHeight - m.rowTop) / m.rowHeight)));
+  const detailBounds = $('#detail').getBoundingClientRect();
+  const inDetail = readingDetail && detailBounds.top < innerHeight && detailBounds.bottom > m.top;
+  if (inDetail) {
+    start = Math.max(0,visible.findIndex(g => g.items.some(r => r.id === state.selected)));
+    end = start + 1;
+  }
+  const label = inDetail ? `详情 ${start + 1} / ${total}` : `${start + 1}–${end} / ${total}`;
+  $('#viewport-range').textContent = label;
+  $('#viewport-range').setAttribute('aria-label',inDetail ? `当前详情为筛选结果第 ${start + 1} 个，共 ${total} 个名称组` : `当前可见第 ${start + 1} 至 ${end} 个，共 ${total} 个名称组`);
+  const rail = $('#scroll-rail'), trackHeight = rail.clientHeight;
+  const thumbHeight = Math.min(trackHeight,Math.max(28,trackHeight * Math.min(total,m.capacity) / total));
+  const thumbTop = m.maxOffset ? Math.min(1,start / m.maxOffset) * (trackHeight - thumbHeight) : 0;
+  $('#scroll-thumb').style.height = thumbHeight + 'px';
+  $('#scroll-thumb').style.transform = `translateY(${thumbTop}px)`;
+  $('#rail-position').style.top = Math.min(trackHeight - 22,thumbTop + thumbHeight / 2) + 'px';
+  $('#rail-position').textContent = label;
+  rail.setAttribute('aria-valuemax',m.maxOffset + 1);
+  rail.setAttribute('aria-valuenow',Math.min(start,m.maxOffset) + 1);
+  rail.setAttribute('aria-valuetext',label + ' 个名称组');
+}
+function queueProgress() {
+  if (progressScheduled) return;
+  progressScheduled = true;
+  requestAnimationFrame(() => {progressScheduled=false;updateProgress();});
+}
+function jumpToOffset(offset) {
+  const m = rowMetrics();
+  if (!m || state.view === 'report') return;
+  readingDetail = false;
+  const index = Math.max(0,Math.min(m.maxOffset,Math.round(offset)));
+  appendThrough(Math.ceil((index + m.capacity + 1) / BATCH_SIZE) * BATCH_SIZE);
+  window.scrollTo(0,index ? m.rowTop + scrollY + index * m.rowHeight - m.top : 0);
+  queueProgress();queueMore();
+}
+function initScrollNavigation() {
+  const rail = $('#scroll-rail');
+  let grabOffset = null;
+  const seek = clientY => {
+    const m = rowMetrics();if (!m) return;
+    const track = rail.getBoundingClientRect(), thumbHeight = $('#scroll-thumb').getBoundingClientRect().height;
+    const fraction = (clientY - track.top - grabOffset) / Math.max(1,track.height - thumbHeight);
+    jumpToOffset(Math.max(0,Math.min(1,fraction)) * m.maxOffset);
+  };
+  rail.onpointerdown = event => {
+    if (event.button !== 0) return;
+    event.preventDefault();updateProgress();rail.focus({preventScroll:true});
+    const thumb = $('#scroll-thumb').getBoundingClientRect();
+    grabOffset = event.target === $('#scroll-thumb') ? event.clientY - thumb.top : thumb.height / 2;
+    rail.setPointerCapture(event.pointerId);rail.classList.add('dragging');seek(event.clientY);
+  };
+  rail.onpointermove = event => {if (grabOffset !== null) seek(event.clientY);};
+  rail.onpointerup = rail.onpointercancel = rail.onlostpointercapture = () => {grabOffset=null;rail.classList.remove('dragging');};
+  rail.onkeydown = event => {
+    const m = rowMetrics();if (!m) return;
+    const steps = {ArrowUp:-1,ArrowLeft:-1,ArrowDown:1,ArrowRight:1,PageUp:-m.capacity,PageDown:m.capacity};
+    if (!(event.key in steps) && !['Home','End'].includes(event.key)) return;
+    event.preventDefault();
+    const current = Number(rail.getAttribute('aria-valuenow')) - 1;
+    jumpToOffset(event.key === 'Home' ? 0 : event.key === 'End' ? m.maxOffset : current + steps[event.key]);
+  };
+  $('#jump-start').onclick = () => jumpToOffset(0);
+  $('#jump-end').onclick = () => jumpToOffset(visible.length);
 }
 function formatSignature(r) {
   if (r.kind !== 'interface') return r.signature;
@@ -262,8 +352,9 @@ function initPanelResize() {
       save();
     };
   }
-  new ResizeObserver(() => root.style.setProperty('--header-height',$('.topbar').getBoundingClientRect().height + 'px')).observe($('.topbar'));
-  window.addEventListener('resize',() => {apply();queueMore();});
+  updatePanelWidths = apply;
+  new ResizeObserver(() => {root.style.setProperty('--header-height',$('.topbar').getBoundingClientRect().height + 'px');queueProgress();}).observe($('.topbar'));
+  window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
 function reset() {Object.assign(state,{family:'',query:'',group:'',file:'',selected:'',tab:'definition'});render();}
@@ -298,6 +389,8 @@ document.addEventListener('keydown',e => {
 });
 window.addEventListener('hashchange',() => {readHash();render(true);});
 window.addEventListener('scroll',queueMore,{passive:true});
+window.addEventListener('scroll',queueProgress,{passive:true});
 if ('IntersectionObserver' in window) new IntersectionObserver(queueMore,{rootMargin:'300px 0px'}).observe($('#load-status'));
 initPanelResize();
+initScrollNavigation();
 readHash();render(Boolean(new URLSearchParams(location.hash.slice(1)).get('r')));

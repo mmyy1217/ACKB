@@ -134,6 +134,15 @@ components:
     textColor: "{colors.muted}"
     typography: "{typography.caption}"
     padding: "6px 8px"
+  scroll-navigation:
+    backgroundColor: "{colors.surface}"
+    width: "16px"
+  progress-summary:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.muted}"
+    typography: "{typography.label}"
+    padding: "0 8px"
+    height: "30px"
 ---
 
 # Design System: CCE OPS
@@ -177,6 +186,8 @@ components:
 
 左右分隔区域宽（5px），中央为（1px）竖线。左栏默认（136px）、范围（128–360px）；右栏默认（330px）、范围（260–720px）。实际最大值随窗口收紧，为中间列表保留至少（300px）；允许时以 `localStorage` 记住宽度。
 
+有结果的索引视图在页面最左侧固定显示（16px）定位轨道，工作区同步让出（16px）；空结果和扫描报告隐藏轨道并收回留白。结果摘要实时显示当前视口名称组范围 / 当前指令族或筛选结果总数，并标明范围标签；范围采用（11px / 600）等宽文字。列表容器宽度至多（560px）时，仅视觉隐藏冗余总计，保留可见范围、范围标签和重置操作及总计的辅助技术语义。
+
 结果摘要高（30px），表头高（25px），数据行高（26px）；名称、指令族、域、重载数同一行。后三列分别为（108px / 66px / 44px），名称列弹性占满。名称按钮高（25px）、内边距（2px 8px）；其余单元格横向内边距（8px）。详情标题区内边距（8px 10px），正文为（8px 10px 16px）。
 
 - 宽度至多（1220px）：隐藏版本号，顶栏仍保持单行；未保存宽度偏好时，详情默认为（300px），文件筛选收至（160px）。
@@ -217,6 +228,10 @@ components:
 ### Resizable separators
 
 分隔线可拖动、聚焦，悬停、键盘焦点与拖动时中央竖线变黑。左右方向键每次沿对应方向移动（10px），按住 Shift 时为（40px）；Home / End 设置当前允许的最小 / 最大宽度，Enter 或双击恢复默认值。使用 `separator` 语义、竖向方向与当前宽度属性；窄屏隐藏。
+
+### Scroll navigation / Visible range
+
+轨道为（1px）灰线，滑块宽（6px）、最小高（28px），悬停、焦点或拖动时变黑；提示为（10px）等宽范围文字，上下内联 SVG 首尾按钮各高（22px）。滑块按全部筛选结果数与视口容量映射，不受已加载批次数影响。点击、拖动或首尾按钮直接追加至目标并保留已有行；方向键移动一行，Page Up / Down 移动一视口，Home / End 到首尾。轨道使用可聚焦的 `scrollbar` 语义及当前范围文字；窄屏明确阅读详情时，范围显示“详情 n / N”。
 
 ### Code / Evidence
 

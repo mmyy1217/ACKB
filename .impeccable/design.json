@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T07:06:57+00:00",
+  "generatedAt": "2026-11-11T07:25:53+00:00",
   "title": "Design System: CCE OPS",
   "extensions": {
     "colorMeta": {
@@ -322,6 +322,22 @@
       "description": "列表末尾显示已加载名称数量；全部显示后改为完成文字，空结果时隐藏。",
       "html": "<div class=\"ds-load-status\" role=\"status\" aria-live=\"polite\">已显示 60 / 1,818 个名称 · 向下滚动继续加载</div>",
       "css": ".ds-load-status{min-height:30px;box-sizing:border-box;padding:6px 8px;border-top:1px solid var(--line,#d4d4d4);color:var(--muted,#626262);font:10px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);text-align:center}"
+    },
+    {
+      "name": "结果定位轨道",
+      "kind": "custom",
+      "refersTo": "scroll-navigation",
+      "description": "16px 轨道局部预览；正式页面固定在最左端，按全部筛选结果映射，提供首尾按钮和当前范围提示。",
+      "html": "<nav class=\"ds-scroll-navigation\" aria-label=\"结果进度与快速定位\"><button type=\"button\" aria-label=\"跳到结果开头\" title=\"跳到结果开头\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M3 2h8M3 8l4-4 4 4M7 4v8\"/></svg></button><div class=\"ds-scroll-rail\" role=\"scrollbar\" tabindex=\"0\" aria-label=\"按当前筛选结果定位\" aria-orientation=\"vertical\" aria-valuemin=\"1\" aria-valuemax=\"1785\" aria-valuenow=\"1\" aria-valuetext=\"1–35 / 1818 个名称组\" title=\"拖动或点击定位；方向键微调，Home / End 到首尾\"><div class=\"ds-scroll-thumb\"></div><output class=\"ds-rail-position\" aria-hidden=\"true\">1–35 / 1818</output></div><button type=\"button\" aria-label=\"跳到结果末尾\" title=\"跳到结果末尾\"><svg viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M3 12h8M3 6l4 4 4-4M7 2v8\"/></svg></button></nav>",
+      "css": ".ds-scroll-navigation{position:relative;width:16px;height:164px;display:flex;flex-direction:column;background:var(--surface,#fff)}.ds-scroll-navigation button{height:22px;flex:none;border:0;border-radius:var(--radius,2px);padding:2px;background:transparent;color:var(--muted,#626262);cursor:pointer}.ds-scroll-navigation button:hover{color:var(--ink,#171717);background:var(--hover,#efefef)}.ds-scroll-navigation button:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}.ds-scroll-navigation svg{display:block;width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.25}.ds-scroll-rail{position:relative;flex:1;min-height:28px;cursor:pointer;touch-action:none;user-select:none}.ds-scroll-rail::before{content:\"\";position:absolute;top:0;bottom:0;left:7px;width:1px;background:var(--line,#d4d4d4)}.ds-scroll-thumb{position:absolute;top:0;left:5px;width:6px;min-height:28px;border-radius:var(--radius,2px);background:var(--muted,#626262);cursor:grab}.ds-scroll-rail:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px;outline-offset:-2px}.ds-scroll-rail:hover .ds-scroll-thumb,.ds-scroll-rail:focus-visible .ds-scroll-thumb,.ds-scroll-rail.ds-dragging .ds-scroll-thumb{background:var(--ink,#171717)}.ds-scroll-rail.ds-dragging,.ds-scroll-rail.ds-dragging .ds-scroll-thumb{cursor:grabbing}.ds-rail-position{display:none;position:absolute;left:18px;top:14px;z-index:1;white-space:nowrap;border:1px solid var(--line,#d4d4d4);border-radius:var(--radius,2px);padding:2px 5px;background:var(--surface,#fff);color:var(--ink,#171717);font:10px/1.5 var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);pointer-events:none}.ds-scroll-rail:hover .ds-rail-position,.ds-scroll-rail:focus-visible .ds-rail-position,.ds-scroll-rail.ds-dragging .ds-rail-position{display:block}"
+    },
+    {
+      "name": "当前可见范围摘要",
+      "kind": "custom",
+      "refersTo": "progress-summary",
+      "description": "实时范围、当前族或筛选范围与重置操作；容器至多 560px 时仅视觉隐藏冗余总计。",
+      "html": "<div class=\"ds-progress-preview\"><div class=\"ds-list-summary\"><div class=\"ds-progress-summary\"><span class=\"ds-viewport-range\" title=\"当前视口中的名称组范围\" aria-label=\"当前可见第 1 至 35 个，共 1818 个名称组\">1–35 / 1818</span><span class=\"ds-progress-scope\">全部指令</span><span class=\"ds-result-count\" role=\"status\" aria-live=\"polite\">1,818 个名称 · 5,714 条记录</span></div><button class=\"ds-progress-reset\" type=\"button\">重置筛选</button></div></div>",
+      "css": ".ds-progress-preview{container-type:inline-size}.ds-list-summary{display:flex;align-items:center;justify-content:space-between;gap:8px;height:30px;padding:0 8px;background:var(--surface,#fff);color:var(--muted,#626262);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-progress-summary{display:flex;align-items:center;min-width:0;gap:8px;white-space:nowrap}.ds-viewport-range{color:var(--ink,#171717);font:600 11px/1.5 var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);font-variant-numeric:tabular-nums}.ds-progress-scope{max-width:96px;overflow:hidden;text-overflow:ellipsis}.ds-progress-reset{flex:none;padding:2px 0;background:none;border:0;border-radius:var(--radius,2px);color:var(--muted,#626262);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-progress-reset:hover{color:var(--ink,#171717);text-decoration:underline}.ds-progress-reset:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}@container(max-width:560px){.ds-result-count{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}}"
     }
   ],
   "narrative": {
