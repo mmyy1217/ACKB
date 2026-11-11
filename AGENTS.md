@@ -49,7 +49,7 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-可设置 `CCE_OPS_CHROME` 使用已有 Chrome；`CCE_OPS_PLAYWRIGHT` 可指定已有 Playwright 模块路径。测试覆盖离线无网络请求、搜索、组合筛选、重载、来源、键盘、深链接、空状态、报告、导出及 1440/1024/390/320 宽度；截图写入 `.impeccable/review/`，不入库。
+可设置 `CCE_OPS_CHROME` 使用已有 Chrome；`CCE_OPS_PLAYWRIGHT` 可指定已有 Playwright 模块路径。测试覆盖连续追加、栏宽拖动与键盘调整、宽度记忆、离线无网络请求、搜索、组合筛选、重载、来源、深链接、空状态、报告、导出及 1440/1024/390/320 宽度；截图写入 `.impeccable/review/`，不入库。
 
 ```sh
 git diff --check

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T06:42:37+00:00",
+  "generatedAt": "2026-11-11T07:06:57+00:00",
   "title": "Design System: CCE OPS",
   "extensions": {
     "colorMeta": {
@@ -239,7 +239,7 @@
       "name": "安静按钮",
       "kind": "button",
       "refersTo": "button-quiet",
-      "description": "导出、复制和分页等常规操作，使用紧凑灰阶边界。",
+      "description": "导出和复制等常规操作，使用紧凑灰阶边界。",
       "html": "<button class=\"ds-quiet\" type=\"button\">导出 JSON</button>",
       "css": ".ds-quiet{background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);padding:3px 7px;font:11px/18px var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);border-radius:var(--radius,2px);white-space:nowrap;cursor:pointer}.ds-quiet:hover:not(:disabled){background:var(--hover,#efefef);border-color:#888}.ds-quiet:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}.ds-quiet:disabled{opacity:.45;cursor:default}"
     },
@@ -271,9 +271,9 @@
       "name": "侧栏导航",
       "kind": "nav",
       "refersTo": "navigation-item",
-      "description": "136px 窄侧栏中的紧凑文字导航，当前项以灰底及加重表示。",
+      "description": "默认 136px 的可调侧栏中的紧凑文字导航，当前项以灰底及加重表示。",
       "html": "<nav class=\"ds-nav\" aria-label=\"内容类型\"><button class=\"ds-nav-item\" aria-current=\"page\" type=\"button\">指令接口 <span>1,818</span></button><button class=\"ds-nav-item\" type=\"button\">配套定义 <span>1,240</span></button><button class=\"ds-nav-item\" type=\"button\">扫描报告</button></nav>",
-      "css": ".ds-nav{width:136px;box-sizing:border-box;display:grid;gap:1px;background:var(--nav,#f7f7f7);padding:6px;border-right:1px solid var(--line,#d4d4d4)}.ds-nav-item{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:26px;box-sizing:border-box;border:0;background:transparent;padding:3px 5px;border-radius:var(--radius,2px);text-align:left;white-space:nowrap;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-nav-item span{margin-left:4px;color:var(--muted,#626262);font-size:10px;font-variant-numeric:tabular-nums}.ds-nav-item:hover{background:var(--hover,#efefef)}.ds-nav-item[aria-current]{background:var(--nav-active,#e2e2e2);font-weight:650}.ds-nav-item:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
+      "css": ".ds-nav{width:var(--sidebar-width,136px);box-sizing:border-box;display:grid;gap:1px;background:var(--nav,#f7f7f7);padding:6px}.ds-nav-item{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:26px;box-sizing:border-box;border:0;background:transparent;padding:3px 5px;border-radius:var(--radius,2px);text-align:left;white-space:nowrap;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);cursor:pointer}.ds-nav-item span{margin-left:4px;color:var(--muted,#626262);font-size:10px;font-variant-numeric:tabular-nums}.ds-nav-item:hover{background:var(--hover,#efefef)}.ds-nav-item[aria-current]{background:var(--nav-active,#e2e2e2);font-weight:650}.ds-nav-item:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
     },
     {
       "name": "选中接口行",
@@ -306,6 +306,22 @@
       "description": "浅灰平面和灰色文字承载尚未验证的范围说明。",
       "html": "<div class=\"ds-callout\">参数单位、合法值和设备支持范围尚未逐项验证。指令族按名称规则归类，仅用于导航。</div>",
       "css": ".ds-callout{padding:7px 8px;margin:10px 0;background:var(--subtle,#f5f5f5);color:#505050;font:10px/1.6 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}"
+    },
+    {
+      "name": "栏宽分隔线",
+      "kind": "custom",
+      "refersTo": "splitter",
+      "description": "5px 拖动区域中央绘制 1px 竖线；此处预览局部截面，完整页面在顶栏下方吸附。",
+      "html": "<div class=\"ds-splitter-preview\"><div class=\"ds-splitter\" role=\"separator\" tabindex=\"0\" aria-label=\"调整左侧栏宽度\" aria-orientation=\"vertical\" aria-valuemin=\"128\" aria-valuemax=\"360\" aria-valuenow=\"136\" aria-valuetext=\"136 像素\" title=\"拖动或用方向键调整；双击或 Enter 恢复默认宽度\"></div></div>",
+      "css": ".ds-splitter-preview{height:120px}.ds-splitter{position:relative;width:5px;height:100%;cursor:col-resize;touch-action:none;user-select:none}.ds-splitter::after{content:\"\";position:absolute;left:2px;top:0;bottom:0;width:1px;background:var(--line,#d4d4d4)}.ds-splitter:hover::after,.ds-splitter:focus-visible::after,.ds-splitter.ds-dragging::after{background:var(--ink,#171717)}.ds-splitter:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:-1px}"
+    },
+    {
+      "name": "连续加载状态",
+      "kind": "custom",
+      "refersTo": "load-status",
+      "description": "列表末尾显示已加载名称数量；全部显示后改为完成文字，空结果时隐藏。",
+      "html": "<div class=\"ds-load-status\" role=\"status\" aria-live=\"polite\">已显示 60 / 1,818 个名称 · 向下滚动继续加载</div>",
+      "css": ".ds-load-status{min-height:30px;box-sizing:border-box;padding:6px 8px;border-top:1px solid var(--line,#d4d4d4);color:var(--muted,#626262);font:10px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);text-align:center}"
     }
   ],
   "narrative": {

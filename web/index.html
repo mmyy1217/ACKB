@@ -14,27 +14,29 @@
   <h1 id="page-title">指令接口</h1>
   <div class="toolbar">
     <label class="search"><input id="search" type="search" placeholder="搜索名称、类型、builtin、条件…" aria-label="搜索接口或配套定义" autocomplete="off"><kbd>/</kbd></label>
-    <label class="filter">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
+    <label class="filter" title="本项目按来源头文件划分的接口组，不代表设备支持范围">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
     <label class="filter">文件<select id="file" aria-label="源文件"><option value="">全部源文件</option></select></label>
   </div>
   <button id="download" class="quiet-button">导出 JSON</button>
   <div class="top-meta"><span class="version" id="version"></span><a href="https://github.com/mmyy1217/CCE-OPS" target="_blank" rel="noopener">仓库</a></div>
 </header>
 <div class="workspace">
-  <aside class="sidebar" aria-label="指令分类">
+  <aside id="sidebar" class="sidebar" aria-label="指令分类">
     <nav class="views" aria-label="内容类型">
       <button data-view="interfaces" class="view active">指令接口 <span id="nav-interfaces"></span></button>
       <button data-view="definitions" class="view">配套定义 <span id="nav-definitions"></span></button>
       <button data-view="report" class="view">扫描报告</button>
     </nav>
-    <section id="family-section"><h2>指令族</h2><div id="families"></div></section>
+    <section id="family-section"><h2 title="按接口名称关键词归类，仅用于导航">指令族</h2><div id="families"></div></section>
     <div class="sidebar-note">静态提取<p>编译与运行尚未验证</p></div>
   </aside>
+  <div id="resize-sidebar" class="splitter" role="separator" tabindex="0" aria-label="调整左侧栏宽度" aria-orientation="vertical" aria-controls="sidebar" title="拖动或用方向键调整；双击或 Enter 恢复默认宽度"></div>
   <main id="main" tabindex="-1">
     <div class="mobile-nav"><label>浏览<select id="mobile-view"><option value="interfaces">指令接口</option><option value="definitions">配套定义</option><option value="report">扫描报告</option></select></label><label id="mobile-family-label">指令族<select id="mobile-family"></select></label></div>
     <div id="catalog-view">
       <div class="catalog-layout">
-        <section class="list-pane" aria-label="检索结果"><div class="list-summary"><span id="result-count" role="status" aria-live="polite"></span><button id="reset" class="text-button">重置筛选</button></div><div class="table-scroll"><table class="interface-table"><thead><tr><th scope="col">接口 / 名称</th><th scope="col" id="classification-heading">指令族</th><th scope="col">域</th><th scope="col" class="number">重载</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden><h2>没有匹配的条目</h2><p>试试更短的名称，或重置筛选。</p><button class="quiet-button" id="empty-reset">重置筛选</button></div></div><div class="pagination"><button id="previous" class="quiet-button" aria-label="上一页">上一页</button><span id="page-number"></span><button id="next" class="quiet-button" aria-label="下一页">下一页</button></div></section>
+        <section class="list-pane" aria-label="检索结果"><div class="list-summary"><span id="result-count" role="status" aria-live="polite"></span><button id="reset" class="text-button">重置筛选</button></div><div class="table-scroll"><table class="interface-table"><thead><tr><th scope="col">接口 / 名称</th><th scope="col" id="classification-heading" title="按接口名称关键词归类，仅用于导航">指令族</th><th scope="col" title="按来源头文件分组，不代表设备支持范围">域</th><th scope="col" class="number">重载</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden><h2>没有匹配的条目</h2><p>试试更短的名称，或重置筛选。</p><button class="quiet-button" id="empty-reset">重置筛选</button></div></div><div id="load-status" class="load-status" role="status" aria-live="polite"></div></section>
+        <div id="resize-detail" class="splitter" role="separator" tabindex="0" aria-label="调整右侧栏宽度" aria-orientation="vertical" aria-controls="detail" title="拖动或用方向键调整；双击或 Enter 恢复默认宽度"></div>
         <section id="detail" class="detail-pane" aria-label="接口详情" tabindex="-1"></section>
       </div>
     </div>
