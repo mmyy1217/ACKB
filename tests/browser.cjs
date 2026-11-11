@@ -40,7 +40,7 @@ const { chromium } = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     return actual;
   };
   try {
-    await page.goto(entry);
+    await page.goto(entry + '#view=interfaces');
     await page.locator('.detail-heading h2').waitFor();
     await fit();
     assert.match(await page.locator('#result-count').innerText(), /5,714/);

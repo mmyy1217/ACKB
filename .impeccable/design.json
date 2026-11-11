@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T08:33:17+00:00",
+  "generatedAt": "2026-11-11T09:28:37+00:00",
   "title": "Design System: CCE OPS",
   "extensions": {
     "colorMeta": {
@@ -239,8 +239,8 @@
       "name": "安静按钮",
       "kind": "button",
       "refersTo": "button-quiet",
-      "description": "导出和复制等常规操作，使用紧凑灰阶边界。",
-      "html": "<button class=\"ds-quiet\" type=\"button\">导出 JSON</button>",
+      "description": "复制等常规操作使用紧凑灰阶边界与全局 2px 圆角；顶栏导出局部使用 6px 圆角。",
+      "html": "<button class=\"ds-quiet\" type=\"button\">复制签名</button>",
       "css": ".ds-quiet{background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);padding:3px 7px;font:11px/18px var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif);border-radius:var(--radius,2px);white-space:nowrap;cursor:pointer}.ds-quiet:hover:not(:disabled){background:var(--hover,#efefef);border-color:#888}.ds-quiet:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}.ds-quiet:disabled{opacity:.45;cursor:default}"
     },
     {
@@ -257,7 +257,7 @@
       "refersTo": "search",
       "description": "26px 边框容器包住原生输入和快捷键提示，无搜索图标。",
       "html": "<label class=\"ds-search\"><input type=\"search\" aria-label=\"搜索接口或配套定义\" placeholder=\"搜索名称、类型、builtin、条件…\"><kbd>/</kbd></label>",
-      "css": ".ds-search{display:flex;align-items:center;min-width:140px;height:26px;box-sizing:border-box;padding:0 6px;border:1px solid var(--input-line,#bdbdbd);border-radius:var(--radius,2px);color:var(--ink,#171717);font:12px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-search:focus-within{outline:1px solid var(--focus,#171717);border-color:var(--focus,#171717)}.ds-search input{min-width:0;width:100%;border:0;outline:0;background:transparent;font:inherit;color:inherit;caret-color:var(--ink,#171717)}.ds-search input::placeholder{color:var(--muted,#626262);opacity:1}.ds-search kbd{color:var(--muted,#626262);font:11px var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);padding:0 3px}@media(max-width:800px){.ds-search{height:28px}.ds-search kbd{display:none}}"
+      "css": ".ds-search{display:flex;align-items:center;min-width:140px;height:26px;box-sizing:border-box;padding:0 6px;border:1px solid var(--input-line,#bdbdbd);border-radius:6px;color:var(--ink,#171717);font:12px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-search:focus-within{outline:1px solid var(--focus,#171717);border-color:var(--focus,#171717)}.ds-search input{min-width:0;width:100%;border:0;outline:0;background:transparent;font:inherit;color:inherit;caret-color:var(--ink,#171717)}.ds-search input::placeholder{color:var(--muted,#626262);opacity:1}.ds-search kbd{color:var(--muted,#626262);font:11px var(--mono,ui-monospace,SFMono-Regular,Consolas,\"Liberation Mono\",monospace);padding:0 3px}@media(max-width:800px){.ds-search{height:28px}.ds-search kbd{display:none}}"
     },
     {
       "name": "原生域筛选",
@@ -265,7 +265,7 @@
       "refersTo": "filter",
       "description": "域筛选使用 112px 宽、26px 高的原生选择器。",
       "html": "<label class=\"ds-filter\">域<select aria-label=\"接口域\"><option>全部接口域</option><option>AI Core</option><option>Vector / AVE</option><option>SIMT</option></select></label>",
-      "css": ".ds-filter{display:flex;align-items:center;gap:4px;white-space:nowrap;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-filter select{width:112px;height:26px;box-sizing:border-box;padding:0 3px;border:1px solid var(--input-line,#bdbdbd);background:var(--surface,#fff);border-radius:var(--radius,2px);font:inherit;color:inherit;cursor:pointer}.ds-filter select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}@media(max-width:800px){.ds-filter{min-width:0}.ds-filter select{min-width:0;width:100%;height:28px;flex:1}}"
+      "css": ".ds-filter{display:flex;align-items:center;gap:4px;white-space:nowrap;color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-filter select{width:112px;height:26px;box-sizing:border-box;padding:0 3px;border:1px solid var(--input-line,#bdbdbd);background:var(--surface,#fff);border-radius:6px;font:inherit;color:inherit;cursor:pointer}.ds-filter select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}@media(max-width:800px){.ds-filter{min-width:0}.ds-filter select{min-width:0;width:100%;height:28px;flex:1}}"
     },
     {
       "name": "侧栏导航",
@@ -343,9 +343,9 @@
       "name": "架构 / 弃用面板",
       "kind": "custom",
       "refersTo": "compatibility-panel",
-      "description": "原生折叠入口的紧凑局部预览；核目标只读。正式页面支持 Escape 归还入口焦点及点击外部关闭，窄屏固定于顶部 38px、右侧 8px。",
-      "html": "<details class=\"ds-compatibility\" open><summary>架构 / 弃用</summary><div class=\"ds-compatibility-panel\"><label>芯片型号<select aria-label=\"芯片型号\"><option>未指定芯片</option></select></label><label>核目标参考<output>先选择芯片</output></label><label>条件结果<select aria-label=\"条件结果\"><option>全部条件结果</option><option>待确认</option></select></label><p>核目标仅展示配置，不推断核支持。条件符合不等于可编译。</p></div></details>",
-      "css": ".ds-compatibility{color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-compatibility>summary{width:max-content;cursor:pointer;padding:3px 5px;border:1px solid var(--input-line,#bdbdbd);border-radius:var(--radius,2px)}.ds-compatibility-panel{width:320px;max-width:calc(100vw - 20px);box-sizing:border-box;margin-top:4px;padding:8px;background:var(--surface,#fff);border:1px solid var(--line,#d4d4d4)}.ds-compatibility-panel label{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:6px;margin-bottom:4px}.ds-compatibility-panel select{width:100%;min-width:0;height:26px;background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);border-radius:var(--radius,2px);font:inherit}.ds-compatibility-panel p{margin:6px 0 0;color:var(--muted,#626262);font-size:10px}.ds-compatibility summary:focus-visible,.ds-compatibility select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
+      "description": "原生折叠入口的紧凑局部预览，入口与选择器圆角 6px、面板圆角 8px；正式页面桌面相对入口左对齐，窄屏固定于顶部 38px、右侧 8px。无 hash 默认选择 Ascend950PR_9579，已有深链接不覆盖；核目标只读，Escape 归还入口焦点，点击外部关闭。",
+      "html": "<details class=\"ds-compatibility\" open><summary>950PR_9579</summary><div class=\"ds-compatibility-panel\"><label>芯片型号<select aria-label=\"芯片型号\"><option>Ascend950PR_9579</option></select></label><label>核目标参考<output>配置参考（只读）</output></label><label>条件结果<select aria-label=\"条件结果\"><option>符合或待确认</option><option>待确认</option></select></label><p>核目标仅展示配置，不推断核支持。条件符合不等于可编译。</p></div></details>",
+      "css": ".ds-compatibility{color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-compatibility>summary{width:max-content;cursor:pointer;padding:3px 5px;border:1px solid var(--input-line,#bdbdbd);border-radius:6px}.ds-compatibility-panel{border-radius:8px;width:320px;max-width:calc(100vw - 20px);box-sizing:border-box;margin-top:4px;padding:8px;background:var(--surface,#fff);border:1px solid var(--line,#d4d4d4)}.ds-compatibility-panel label{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:6px;margin-bottom:4px}.ds-compatibility-panel select{width:100%;min-width:0;height:26px;background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);border-radius:6px;font:inherit}.ds-compatibility-panel p{margin:6px 0 0;color:var(--muted,#626262);font-size:10px}.ds-compatibility summary:focus-visible,.ds-compatibility select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
     }
   ],
   "narrative": {

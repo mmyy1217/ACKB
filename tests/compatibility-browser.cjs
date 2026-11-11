@@ -11,7 +11,19 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     page.on('pageerror', e => errors.push(e.message));
     page.on('request', r => {if (/^https?:/.test(r.url())) network.push(r.url());});
     await page.goto(pathToFileURL(path.resolve('dist/index.html')).href);
+    for (const width of [1440,1024,390,320]) {
+      await page.setViewportSize({width,height:900});
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),true);
+      if (width > 800) {
+        const positions = await page.evaluate(() => ['#group','#file','#compatibility-summary','#search','#download'].map(s => document.querySelector(s).getBoundingClientRect().left));
+        assert.deepEqual([...positions].sort((a,b) => a-b),positions);
+      }
+      await page.screenshot({path:`.impeccable/review/topbar-${width}.png`});
+    }
+    await page.setViewportSize({width:1440,height:1000});
     await page.locator('.compatibility-menu summary').first().click();
+    assert.equal(await page.locator('#chip').inputValue(),'Ascend950PR_9579');
+    assert.match(await page.locator('#compatibility-summary').innerText(),/950PR_9579/);
     await page.locator('#chip').selectOption('Ascend910B2');
     assert.equal(await page.locator('#architecture').inputValue(),'__NPU_ARCH__=2201');
     assert.equal(await page.locator('#availability').inputValue(),'possible');

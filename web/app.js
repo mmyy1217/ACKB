@@ -29,6 +29,7 @@ function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   state.view = ['interfaces','definitions','report'].includes(p.get('view')) ? p.get('view') : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation']) state[key] = p.get(key) || '';
+  if (!location.hash && data.compatibility.chip_mappings.some(t => t.chip === 'Ascend950PR_9579')) {state.chip = 'Ascend950PR_9579';state.availability = 'possible';}
   const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
   if (target) state.architecture = '__NPU_ARCH__=' + target.npu_arch;
   else state.chip = '';
@@ -82,7 +83,7 @@ function syncControls() {
   $('#core-targets').textContent = target ? [...new Set(Object.values(target.cores))].join(' / ') : '先选择芯片';
   for (const key of ['chip','architecture','availability','deprecation']) $('#' + key).value = state[key];
   $('#availability').disabled = !state.architecture;
-  $('#compatibility-summary').textContent = state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
+  $('#compatibility-summary').textContent = state.chip ? state.chip.replace(/^Ascend/, '') : state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
   document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(makeGroups(records.filter(r => isInterface(r) && compatibilityMatches(r) && (!family || r.family === family))).length);});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;

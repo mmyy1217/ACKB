@@ -59,6 +59,8 @@ typography:
 rounded:
   default: "2px"
   flat: "0px"
+  topbar-control: "6px"
+  topbar-panel: "8px"
 spacing:
   micro: "2px"
   compact: "3px"
@@ -88,18 +90,21 @@ components:
   search:
     textColor: "{colors.ink}"
     typography: "{typography.body}"
-    rounded: "{rounded.default}"
+    rounded: "{rounded.topbar-control}"
     padding: "0 6px"
     height: "26px"
   filter:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     typography: "{typography.label}"
-    rounded: "{rounded.default}"
+    rounded: "{rounded.topbar-control}"
     padding: "0 3px"
     height: "26px"
     width: "112px"
+  button-topbar:
+    rounded: "{rounded.topbar-control}"
   compatibility-panel:
+    rounded: "{rounded.topbar-panel}"
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     typography: "{typography.label}"
@@ -188,7 +193,7 @@ components:
 
 ## Layout
 
-桌面顶栏高（40px）并吸附在页面顶端，CCE OPS、视图标题、搜索、域和文件筛选、JSON 导出及元信息同处一行。主列表随主文档纵向连续展开，不设固定高内滚动容器；结果摘要与表头依次吸附在顶栏下方。两侧栏吸附在顶栏下方，高 `calc(100vh - var(--header-height))`，内容超出时在栏内滚动；主区左右留白（8px），无外层卡片。
+桌面顶栏高（40px）并吸附在页面顶端，CCE OPS、视图标题、域和文件筛选、架构 / 弃用入口、搜索及元信息同处一行，JSON 导出位于最后。主列表随主文档纵向连续展开，不设固定高内滚动容器；结果摘要与表头依次吸附在顶栏下方。两侧栏吸附在顶栏下方，高 `calc(100vh - var(--header-height))`，内容超出时在栏内滚动；主区左右留白（8px），无外层卡片。
 
 左右分隔区域宽（5px），中央为（1px）竖线。左栏默认（136px）、范围（128–360px）；右栏默认（330px）、范围（260–720px）。实际最大值随窗口收紧，为中间列表保留至少（300px）；允许时以 `localStorage` 记住宽度。
 
@@ -197,9 +202,9 @@ components:
 结果摘要高（30px），表头高（25px），数据行高（26px）；名称、指令族、域、重载数同一行。后三列分别为（108px / 66px / 44px），名称列弹性占满。名称按钮高（25px）、内边距（2px 8px）；其余单元格横向内边距（8px）。详情标题区内边距（8px 10px），正文为（8px 10px 16px）。
 
 - 宽度至多（1220px）：隐藏版本号，顶栏仍保持单行；未保存宽度偏好时，详情默认为（300px），文件筛选收至（160px）。
-- 宽度至多（800px）：顶栏紧凑换行，搜索独占一行、域与文件筛选共享下一行；搜索和筛选高（28px）。侧栏替换为原生浏览与指令族选择器，主区左右留白（6px）。列表与详情同在主文档中顺序展开，不限制列表高度；分隔线隐藏，详情取消吸附和栏内滚动。数据行高（29px），名称按钮高（28px）、名称文字（10px）。后三列收至（88px / 48px / 32px），详情名称仍为（14px）。搜索快捷键提示隐藏，重载选择器高（28px）。
+- 宽度至多（800px）：顶栏紧凑换行，域与文件筛选在前、架构 / 弃用入口随后，搜索独占末行；搜索和筛选高（28px）。侧栏替换为原生浏览与指令族选择器，主区左右留白（6px）。列表与详情同在主文档中顺序展开，不限制列表高度；分隔线隐藏，详情取消吸附和栏内滚动。数据行高（29px），名称按钮高（28px）、名称文字（10px）。后三列收至（88px / 48px / 32px），详情名称仍为（14px）。搜索快捷键提示隐藏，重载选择器高（28px）。
 
-架构 / 弃用面板在桌面相对入口右对齐、距顶部（30px），宽度由 `compatibility-panel` 定义，最大宽度为视口减（20px）。宽度至多（800px）时改为固定定位，距顶部（38px）、右侧（8px）；面板内选择器仍高（26px）。
+架构 / 弃用面板在桌面相对入口左对齐、距顶部（30px），宽度由 `compatibility-panel` 定义，最大宽度为视口减（20px）。宽度至多（800px）时改为固定定位，距顶部（38px）、右侧（8px）；面板内选择器仍高（26px）。
 
 间距使用既有紧凑步长，不强行套用统一倍数网格。列表中的过长名称单行省略，名称按钮保留完整限定名提示；详情名称、条件、路径与哈希允许折行。代码保留原始空白，长行在代码块内横向滚动；报告表格也在自身容器滚动。
 
@@ -211,7 +216,7 @@ components:
 
 ## Shapes
 
-按钮、输入框、选择器和代码块使用 `default` 小圆角；表格、接口名称按钮、详情标签页及说明块保持平直轮廓。以直线边界组织工作区，不为每条接口加独立卡片。当前界面不使用装饰图标或状态圆点。
+全局按钮、输入框、选择器和代码块保持 `default` 小圆角；顶栏搜索、选择器、导出按钮与架构入口局部使用 `topbar-control`，展开面板使用 `topbar-panel`。表格、接口名称按钮、详情标签页及说明块保持平直轮廓。以直线边界组织工作区，不为每条接口加独立卡片。当前界面不使用装饰图标或状态圆点。
 
 ## Components
 
@@ -225,7 +230,9 @@ components:
 
 ### Architecture / Deprecation menu
 
-统一顶栏使用原生 `details` / `summary` 折叠入口，默认关闭；入口为（11px）文字、内边距（3px 5px），沿用控件边框和小圆角。展开面板继承白底、灰色细线边界与紧凑字号，无投影；内边距由 `compatibility-panel` 定义。字段每行采用（64px）标签列与弹性控件列，列间距（6px）、行下间距（4px）；选择器高（26px）、字号（11px）。底部边界说明为（10px）灰色文字，顶部间距（6px）。
+统一顶栏使用原生 `details` / `summary` 折叠入口，默认关闭；入口为（11px）文字、内边距（3px 5px），沿用控件边框，圆角使用 `topbar-control`。展开面板继承白底、灰色细线边界与紧凑字号，圆角使用 `topbar-panel`，无投影；内边距由 `compatibility-panel` 定义。字段每行采用（64px）标签列与弹性控件列，列间距（6px）、行下间距（4px）；选择器高（26px）、字号（11px）。底部边界说明为（10px）灰色文字，顶部间距（6px）。
+
+首次打开且 URL 无 hash、数据中存在目标时，默认选择 `Ascend950PR_9579` 和“符合或待确认”，入口显示 `950PR_9579`；已有深链接保持其目标设置。入口在选中其他芯片时同样省略 `Ascend` 前缀。
 
 核目标参考以只读 `output` 呈现，不制作可选筛选器。按 Escape 关闭并将焦点归还入口，点击面板外关闭；其余展开交互保留原生语义。条件、弃用和未验证边界使用文字说明，继承既有灰阶证据表达。
 

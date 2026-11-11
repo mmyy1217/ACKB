@@ -19,3 +19,5 @@ FORM：遵循用户本轮对黑白、单行与间距的直接要求，替换原�
 FINISH：unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 
 架构扩展：统一顶栏增加一个原生折叠入口，展开 320px 宽紧凑面板；芯片、宏场景、条件与弃用保持原生选择器。默认关闭以保留列表密度。详情显示当前目标和宏定义证据，不使用成功颜色暗示支持；窄屏面板限制在视口内，Escape 或点击外部关闭。
+
+顶栏顺序：品牌与视图、域、文件、架构、搜索、版本与仓库、导出 JSON。保留 40px 桌面高度，控件 6px 圆角、面板 8px；首次无哈希打开默认 Ascend950PR_9579，入口显示所选型号。其余工作区不变。
