@@ -1,8 +1,8 @@
-# CCE OPS · Agent 工作入口
+# ACKB · Agent 工作入口
 
 ## 目标与入口
 
-构建 AI 原生的 Huawei Ascend CCE 指令接口可视化仓库。开工先读 [范围](docs/scope.md)、[流程](docs/workflow.md)、[路线](docs/roadmap.md)；页面约定见 [PRODUCT.md](PRODUCT.md)、[DESIGN.md](DESIGN.md) 与 [.impeccable/surface-catalog.md](.impeccable/surface-catalog.md)。README 面向外部读者；执行命令在本文件，详细规程放 docs。
+构建面向 AI as Compiler 的 CCEC / PTX 目标知识库，以 Huawei Ascend CCEC 为主。术语见 [CONTEXT.md](CONTEXT.md)，双后端入口见 [知识索引](docs/knowledge.md)。开工先读 [范围](docs/scope.md)、[流程](docs/workflow.md)、[路线](docs/roadmap.md)；页面约定见 [PRODUCT.md](PRODUCT.md)、[DESIGN.md](DESIGN.md) 与 [.impeccable/surface-catalog.md](.impeccable/surface-catalog.md)。README 面向外部读者；执行命令在本文件，详细规程放 docs。
 
 ## 必须遵守
 
@@ -80,4 +80,23 @@ python scripts/query.py relations <symbol_or_variant_or_record_id>
 python scripts/query.py evidence <record_id>
 python scripts/query.py --offset 5 --limit 5 search --name copy_gm_to_cbuf
 python scripts/query.py schema
+```
+
+## 双后端知识索引
+
+原有 CCEC 声明命令保持兼容；PTX `--data` 接受索引目录。范围、字段与限制见 [知识索引](docs/knowledge.md) 和 [PTX 来源](docs/ptx-index.md)。
+
+```sh
+python scripts/ccec_knowledge.py
+python scripts/ptx_index.py extract --help
+python scripts/ptx_index.py validate
+python scripts/query.py topics
+python scripts/query.py builtins __builtin_cce_abs
+python scripts/query.py get ccec_topic_synchronization
+python scripts/query.py --backend ptx info
+python scripts/query.py --backend ptx topics
+python scripts/query.py --backend ptx search --name mma --architecture sm_89
+python scripts/query.py --backend ptx search --kind all
+python scripts/query.py --backend ptx get warp-level-matrix-instructions-mma
+python scripts/query.py --backend ptx schema
 ```

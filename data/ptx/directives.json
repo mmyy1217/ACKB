@@ -1,0 +1,3153 @@
+[
+  {
+    "anchor": "ptx-module-directives-version",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 344,
+      "sha256": "8071e68a382766efb471da84bb2d9922addae66dba5e59cc3e5b3a0788b1d7e7"
+    },
+    "entry_id": "ptx_03ea857fa563778a3d32a681",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".version"
+    ],
+    "parent_anchor": "ptx-module-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".version": 23,
+      "Description": 344,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 233,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".version",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.1.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "a5092565574a225bd0e00651374a857150bcc336b85bde4eca4ba4be4b3d4917"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "PTX Module Directives: .version"
+  },
+  {
+    "anchor": "ptx-module-directives-target",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 1462,
+      "sha256": "a96411759d58118d0360df110804ba9e8867dad8c15f454bcbc8231d6c74b8a9"
+    },
+    "entry_id": "ptx_6e92963ab18f216c7d385b95",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".target"
+    ],
+    "parent_anchor": "ptx-module-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target strings sm_10 and sm_11",
+          "version": "1.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target strings sm_12 and sm_13",
+          "version": "1.2"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Texturing mode",
+          "version": "1.5"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_20",
+          "version": "2.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_30",
+          "version": "3.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Platform option debug",
+          "version": "3.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_35",
+          "version": "3.1"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target strings sm_32 and sm_50",
+          "version": "4.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target strings sm_37 and sm_52",
+          "version": "4.1"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_53",
+          "version": "4.2"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_60, sm_61, sm_62",
+          "version": "5.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_70",
+          "version": "6.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_72",
+          "version": "6.1"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_75",
+          "version": "6.3"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_80",
+          "version": "7.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_86",
+          "version": "7.1"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_87",
+          "version": "7.4"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_88",
+          "version": "9.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_89",
+          "version": "7.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_90",
+          "version": "7.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_90a",
+          "version": "8.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_100",
+          "version": "8.6"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_100f",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_100a",
+          "version": "8.6"
+        },
+        {
+          "kind": "introduced",
+          "renamed_to": "sm_110",
+          "subject": "Target string sm_101",
+          "version": "8.6"
+        },
+        {
+          "kind": "introduced",
+          "renamed_to": "sm_110f",
+          "subject": "Target string sm_101f",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "renamed_to": "sm_110a",
+          "subject": "Target string sm_101a",
+          "version": "8.6"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_103",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_103f",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_103a",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_107",
+          "version": "9.4"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_107f",
+          "version": "9.4"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_107a",
+          "version": "9.4"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_110",
+          "version": "9.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_110f",
+          "version": "9.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_110a",
+          "version": "9.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_120",
+          "version": "8.7"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_120f",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_120a",
+          "version": "8.7"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_121",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_121f",
+          "version": "8.8"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Target string sm_121a",
+          "version": "8.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".target": 33,
+      "Description": 1462,
+      "Examples": 0,
+      "Notes": 174,
+      "PTX ISA Notes": 2497,
+      "Semantics": 5091,
+      "Syntax": 0,
+      "Target ISA Notes": 63
+    },
+    "rubrics": [
+      ".target",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.1.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 19,
+      "sha256": "2c39aca5b057d54d8c78aa0541e907fd2595e352fed78e7388a897e1533f8b48"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": "The .target directive"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "PTX Module Directives: .target"
+  },
+  {
+    "anchor": "ptx-module-directives-address-size",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 401,
+      "sha256": "ad61a3d4a44b339168ceb163841e0d73a2138d59bc99a32ad67cb7382a5082bb"
+    },
+    "entry_id": "ptx_e99d9106b0e149299b3914cd",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".address_size"
+    ],
+    "parent_anchor": "ptx-module-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".address_size": 40,
+      "Description": 401,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 75,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".address_size",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.1.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "f55978ddd429e8e8400133d9565aea0d0f085020347a130264bb3e8f51e7ec3e"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "PTX Module Directives: .address_size"
+  },
+  {
+    "anchor": "kernel-and-function-directives-entry",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 677,
+      "sha256": "52af9dd15ac1b2055a5576010c970adf15f823842775bd6df886c93730f04386"
+    },
+    "entry_id": "ptx_cc9e4b9ffbb40b91f8ae3dc5",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".entry"
+    ],
+    "parent_anchor": "specifying-kernel-entry-points-and-functions",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "required_since",
+          "subject": "parameter variables are declared in the kernel parameter list",
+          "version": "1.4"
+        },
+        {
+          "kind": "legacy_range",
+          "since_version": "1.0",
+          "subject": "parameter variables are declared in the kernel body",
+          "version": "1.3"
+        },
+        {
+          "bytes": 32764,
+          "kind": "parameter_limit",
+          "subject": "normal parameters",
+          "version": null
+        },
+        {
+          "bytes": 32764,
+          "kind": "parameter_limit",
+          "subject": "normal parameters",
+          "version": "8.1"
+        },
+        {
+          "bytes": 4352,
+          "kind": "parameter_limit",
+          "subject": "normal parameters",
+          "version": "1.5"
+        },
+        {
+          "bytes": 256,
+          "kind": "parameter_limit",
+          "subject": "normal parameters",
+          "version": "1.4"
+        },
+        {
+          "kind": "driver_parameter_limit",
+          "limits": [
+            {
+              "bound": "exact",
+              "bytes": 256,
+              "sm": "sm_1x"
+            },
+            {
+              "bound": "minimum",
+              "bytes": 4096,
+              "sm": "sm_2x"
+            },
+            {
+              "bound": "minimum",
+              "bytes": 32764,
+              "sm": "sm_70"
+            }
+          ],
+          "subject": "CUDA",
+          "version": null
+        },
+        {
+          "kind": "driver_parameter_limit",
+          "limits": [
+            {
+              "bound": "minimum",
+              "bytes": 32764,
+              "sm": "sm_70"
+            },
+            {
+              "bound": "maximum",
+              "bytes": 4352,
+              "sm": "sm_6x"
+            }
+          ],
+          "subject": "OpenCL",
+          "version": null
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".entry": 54,
+      "Description": 677,
+      "Examples": 0,
+      "PTX ISA Notes": 869,
+      "Semantics": 185,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".entry",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.2.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "bbce3aed8797cc3131010f1752a2a33e058bdebabbf0bc85eb8fff05b137053e"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Kernel and Function Directives: .entry"
+  },
+  {
+    "anchor": "kernel-and-function-directives-func",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 2007,
+      "sha256": "75e7967a1a73416e1537a10f7756e872176b54e6c570b08c8548feed9cf1e78d"
+    },
+    "entry_id": "ptx_48fffb5dfc0f77cfd74e713f",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".func"
+    ],
+    "parent_anchor": "specifying-kernel-entry-points-and-functions",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "unsized array parameter",
+          "version": "6.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": ".noreturn directive",
+          "version": "6.4"
+        },
+        {
+          "kind": "introduced",
+          "subject": ".attribute directive",
+          "version": "8.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": ".abi_preserve and .abi_preserve_control directives",
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".func": 20,
+      "Description": 2007,
+      "Examples": 0,
+      "PTX ISA Notes": 338,
+      "Release Notes": 372,
+      "Semantics": 237,
+      "Syntax": 0,
+      "Target ISA Notes": 299
+    },
+    "rubrics": [
+      ".func",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "Release Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.2.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "partial"
+    },
+    "syntax": {
+      "line_count": 3,
+      "sha256": "7115540a11d8f1f27eac87de887b5b43c7010b2d7a965b8bed6561e38677457f"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": "Functions without unsized array parameter"
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_30",
+          "subject": "Unsized array parameter"
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_30",
+          "subject": ".noreturn directive"
+        },
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": ".attribute directive"
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": ".abi_preserve and .abi_preserve_control directives"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Kernel and Function Directives: .func"
+  },
+  {
+    "anchor": "kernel-and-function-directives-alias",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 523,
+      "sha256": "d124e3624c2326822f0df03a030524adfdc7bddafe90e25d0e017de7a4cbbc17"
+    },
+    "entry_id": "ptx_69fee2765ee5ad1198e6dd49",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".alias"
+    ],
+    "parent_anchor": "specifying-kernel-entry-points-and-functions",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": ".alias directive",
+          "version": "6.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".alias": 44,
+      "Description": 523,
+      "Examples": 0,
+      "PTX ISA Notes": 43,
+      "Syntax": 0,
+      "Target ISA Notes": 42
+    },
+    "rubrics": [
+      ".alias",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.2.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "85349585ff228f00844c81d6311bf1ccd70a958f7caa296dc469338d3ce5a0ee"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_30",
+          "subject": ".alias directive"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Kernel and Function Directives: .alias"
+  },
+  {
+    "anchor": "control-flow-directives-branchtargets",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 406,
+      "sha256": "a2335224692bf4e99570da97ead3af84e72b9fe68f46ba64f979bb37f411db79"
+    },
+    "entry_id": "ptx_3ab0d76404b4b5b20d2a6de1",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".branchtargets"
+    ],
+    "parent_anchor": "control-flow-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".branchtargets": 43,
+      "Description": 406,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".branchtargets",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.3.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "3cecb3ee1a6419f663f30f2f0e07872280391a50cbc981f3b4005945b6f6e418"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Control Flow Directives: .branchtargets"
+  },
+  {
+    "anchor": "control-flow-directives-calltargets",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 277,
+      "sha256": "d5adb817baea352a1c1450de8d5a2c36a1dfc1a96894ca4c0c6a58cf736d5daf"
+    },
+    "entry_id": "ptx_a8d2530e1a8771467380726a",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".calltargets"
+    ],
+    "parent_anchor": "control-flow-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".calltargets": 41,
+      "Description": 277,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".calltargets",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.3.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "11b7c655f073e8461695b6f90d6bba9a4de3f63f4a1f370fbd34795e42c5dc28"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Control Flow Directives: .calltargets"
+  },
+  {
+    "anchor": "control-flow-directives-callprototype",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 960,
+      "sha256": "a1685005a2ad407150c40f4cf41babc053b3d1e691ff2e0d3584cb58a75d98da"
+    },
+    "entry_id": "ptx_121ff3403a41db197b0a1fbf",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".callprototype"
+    ],
+    "parent_anchor": "control-flow-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.1"
+        },
+        {
+          "kind": "introduced",
+          "subject": ".noreturn directive",
+          "version": "6.4"
+        },
+        {
+          "kind": "introduced",
+          "subject": ".abi_preserve and .abi_preserve_control directives",
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".callprototype": 48,
+      "Description": 960,
+      "Examples": 0,
+      "PTX ISA Notes": 199,
+      "Syntax": 0,
+      "Target ISA Notes": 147
+    },
+    "rubrics": [
+      ".callprototype",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.3.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 8,
+      "sha256": "44ba881f9a400b09a937f68503474133f89eccc901333c6acb56b3fa8ea22979"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": null
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_30",
+          "subject": ".noreturn directive"
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": ".abi_preserve and .abi_preserve_control directives"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Control Flow Directives: .callprototype"
+  },
+  {
+    "anchor": "performance-tuning-directives-maxnreg",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 60,
+      "sha256": "4e7418ca1c49deab71cb7fdc40513a7ce7b1bf67dd2559b0543b04af3f6b366d"
+    },
+    "entry_id": "ptx_ec09efca4f285546224587fb",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".maxnreg"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".maxnreg": 61,
+      "Description": 60,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 270,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".maxnreg",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "c919523bd4c889523fea731d7bcc06342fdf675e0c840eb6b99bbba231b8bde3"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .maxnreg"
+  },
+  {
+    "anchor": "performance-tuning-directives-maxntid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 249,
+      "sha256": "f005f0be9e380271d673082719d8bd47b4af704301df2bd1d7c434f5065e2182"
+    },
+    "entry_id": "ptx_fad8b279f6746926595e6ead",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".maxntid"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".maxntid": 52,
+      "Description": 249,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 498,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".maxntid",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 3,
+      "sha256": "3165020264b0a613f4f442042cfbcc691f8f3407b0815f9a86e2a9b244b7b75c"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .maxntid"
+  },
+  {
+    "anchor": "performance-tuning-directives-reqntid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 211,
+      "sha256": "e69b4933701e5aa963ce65c0c85308ebb6f14aea6bbeceb67440ef7b1d25930f"
+    },
+    "entry_id": "ptx_d5d9d7e8b9ee5ae4d1477e16",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".reqntid"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".reqntid": 44,
+      "Description": 211,
+      "Examples": 0,
+      "Notes": 81,
+      "PTX ISA Notes": 34,
+      "Semantics": 237,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".reqntid",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 3,
+      "sha256": "fba5665552c405e23d4621c0cc54dda588aebed103d2e4b8146d51032b314a9d"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .reqntid"
+  },
+  {
+    "anchor": "performance-tuning-directives-minnctapersm",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 103,
+      "sha256": "446091ea696d43de91e1d339ddc944ece1c5ce29baa529731ad749d99b31992b"
+    },
+    "entry_id": "ptx_02272d2acd4f93502106062e",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".minnctapersm"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": "as a replacement for .maxnctapersm",
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".minnctapersm": 30,
+      "Description": 103,
+      "Examples": 0,
+      "Notes": 426,
+      "PTX ISA Notes": 69,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".minnctapersm",
+      "Syntax",
+      "Description",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.4.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "24d6afbcc6e476a613a6a37c4a03871d8eb7570b490427bbb81b32df9effc765"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .minnctapersm"
+  },
+  {
+    "anchor": "performance-tuning-directives-maxnctapersm",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 109,
+      "sha256": "cbd3a95d7d9ac8560fd54f31898254aab83fd82cfac4d5b19a585fbe9c143285"
+    },
+    "entry_id": "ptx_3ddab4ab178b3fc760553d02",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".maxnctapersm"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.3"
+        },
+        {
+          "kind": "deprecated",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".maxnctapersm": 30,
+      "Description": 109,
+      "Examples": 0,
+      "Notes": 525,
+      "PTX ISA Notes": 69,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".maxnctapersm",
+      "Syntax",
+      "Description",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.5.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "ac9b04fbc137e43c927013ee12c6c141a8af3c0f78a670a4a2bca0cb629cd397"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .maxnctapersm (deprecated)"
+  },
+  {
+    "anchor": "performance-tuning-directives-noreturn",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 66,
+      "sha256": "b694aec94d0821d513e1f95239ff9669ccd609d4a61e605d6275442b4e4eec5e"
+    },
+    "entry_id": "ptx_98cfeff60f2ef69a95d5b5a2",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".noreturn"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "6.4"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".noreturn": 66,
+      "Description": 66,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 404,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".noreturn",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.6.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "5f3a79dde655d846e0c5eabc498fe46154c6adb38f40c9b022d8449a73bb5479"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_30",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .noreturn"
+  },
+  {
+    "anchor": "performance-tuning-directives-pragma",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 180,
+      "sha256": "939b18a2cfeb90d890dcb79461e590f782d6b11534f0af8f97ca7a1976efa3bf"
+    },
+    "entry_id": "ptx_9828882f3a20c2f643b5b0b6",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".pragma"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".pragma": 40,
+      "Description": 180,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 203,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".pragma",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.7.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "f61eade26b7c4fee147478757d2f50cd1cfbb42c69478b000a2743843d47b565"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .pragma"
+  },
+  {
+    "anchor": "performance-tuning-directives-abi-preserve",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 414,
+      "sha256": "b76b71ec8a97303e1a62db0ecf0c723105a0210f0c0d9b818e41cbff2f2851a3"
+    },
+    "entry_id": "ptx_4dda499f978b8f4ee92280bc",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".abi_preserve"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".abi_preserve": 101,
+      "Description": 414,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 236,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".abi_preserve",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.8.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "ce58c5a1cbd7ef777a8bea86d874fe840a3d0053ec018c2d96e458a80322b163"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .abi_preserve"
+  },
+  {
+    "anchor": "performance-tuning-directives-abi-preserve-control",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 463,
+      "sha256": "050eabe04dd8ea3635fea4b6cc6620c2aeef765659311482c15d8beecfc6933f"
+    },
+    "entry_id": "ptx_c15c7d9d546e8882b5d163f1",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".abi_preserve_control"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".abi_preserve_control": 93,
+      "Description": 463,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 247,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".abi_preserve_control",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.9.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "b167333f21f5da0bb187e1b6aa3a0207e347aedfd656602ca5ffc39893d752c9"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .abi_preserve_control"
+  },
+  {
+    "anchor": "performance-tuning-directives-minperctamemory",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 380,
+      "sha256": "ffe07cd695131bdec57befb1299416bb12cfec5908c9717e40888912c6c8e47b"
+    },
+    "entry_id": "ptx_a41c2bc4f961c37d0f482321",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".minperctamemory"
+    ],
+    "parent_anchor": "performance-tuning-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.4"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".minperctamemory": 59,
+      "Description": 380,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".minperctamemory",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.4.10.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "90143eb6db484938f543626d55686932cd457bd00cbf72877d68d9cc83370f90"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Performance-Tuning Directives: .minperctamemory"
+  },
+  {
+    "anchor": "debugging-directives-atatdwarf",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 0,
+      "sha256": null
+    },
+    "entry_id": "ptx_c8eaf3093d9bdccbd4ff5f6f",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      "@@dwarf"
+    ],
+    "parent_anchor": "debugging-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.2"
+        },
+        {
+          "kind": "deprecated",
+          "subject": "replaced by .section directive",
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "@@dwarf": 25,
+      "Examples": 0,
+      "PTX ISA Notes": 104,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "@@dwarf",
+      "Syntax",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.5.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 7,
+      "sha256": "51164886cfe0c041a50fa0c18499a256c77a1effd08b016c1778a9bbe267a7e4"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Debugging Directives: @@dwarf"
+  },
+  {
+    "anchor": "debugging-directives-section",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 0,
+      "sha256": null
+    },
+    "entry_id": "ptx_bc6957d4a2f249217759cb3c",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".section"
+    ],
+    "parent_anchor": "debugging-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": "replaces @@DWARF syntax",
+          "version": "2.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "label+imm expression",
+          "version": "3.2"
+        },
+        {
+          "kind": "introduced",
+          "subject": ".b16 integers in dwarf-lines",
+          "version": "6.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "defining label inside the DWARF section is",
+          "version": "7.2"
+        },
+        {
+          "kind": "introduced",
+          "subject": "label1-label2 expression",
+          "version": "7.5"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Negative numbers in dwarf lines",
+          "version": "7.5"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".section": 23,
+      "Examples": 0,
+      "PTX ISA Notes": 408,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".section",
+      "Syntax",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.5.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 21,
+      "sha256": "911453c32c9954d9b6a2f5dfae062f51866d1a1841743c8b678c7f851e0dbdd4"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Debugging Directives: .section"
+  },
+  {
+    "anchor": "debugging-directives-file",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 585,
+      "sha256": "0dc1eccea3c21215aaa78c188b4950d78395dc5741b30c89d7a7a23b911ae2a4"
+    },
+    "entry_id": "ptx_3e7f8e43f0018a100b867879",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".file"
+    ],
+    "parent_anchor": "debugging-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "Timestamp and file size",
+          "version": "3.2"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".file": 17,
+      "Description": 585,
+      "Examples": 0,
+      "PTX ISA Notes": 93,
+      "Semantics": 64,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".file",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.5.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "c506c2cdf5998cacff25aa7c155796f96ab005fc4b0fbe5d5dc31704b7b73e64"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Debugging Directives: .file"
+  },
+  {
+    "anchor": "debugging-directives-loc",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 1375,
+      "sha256": "256b656f80f3650a4b86f68133706786236065def609a2d7a7b4acd382d9907b"
+    },
+    "entry_id": "ptx_d2519d253e9fac376ab9acb9",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".loc"
+    ],
+    "parent_anchor": "debugging-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "function_name and inlined_at attributes are",
+          "version": "7.2"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".loc": 21,
+      "Description": 1375,
+      "Examples": 0,
+      "PTX ISA Notes": 113,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".loc",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.5.4.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "3313b154721b9b328a2585aa525ece60b9021a7915c7d2db7b20bccf7b28351d"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Debugging Directives: .loc"
+  },
+  {
+    "anchor": "debugging-directives-loc-intermediate",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 869,
+      "sha256": "fbd27ee5cccb9fdd0204d33c70791b15e74bcc9cec1f7e49e54b058090746e93"
+    },
+    "entry_id": "ptx_97f50282ceab3b3b5a90aed8",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".loc_intermediate"
+    ],
+    "parent_anchor": "debugging-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.4"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".loc_intermediate": 43,
+      "Description": 869,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".loc_intermediate",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.5.5.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "3f4e6ceb76b3f1df1c13d033ef56974cb520f4536e612d7caad8f35929fadade"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Debugging Directives: .loc_intermediate"
+  },
+  {
+    "anchor": "debugging-directives-nv-intermediate-source-section",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 916,
+      "sha256": "17b739724dfdf18212966635d6857897173f09d57b173547a2a7f1efe35a11a7"
+    },
+    "entry_id": "ptx_4f6793bf070c1c6a29cb9c0c",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".nv_intermediate_source_section"
+    ],
+    "parent_anchor": "debugging-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.4"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".nv_intermediate_source_section": 52,
+      "Description": 916,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".nv_intermediate_source_section",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.5.6.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 13,
+      "sha256": "27a47cde1f8999c18a6b192bbb3ee49306d913f39e85c00a7bd750b18ffe3551"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Debugging Directives: .nv_intermediate_source_section"
+  },
+  {
+    "anchor": "linking-directives-extern",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 309,
+      "sha256": "07d1a19c230741fed2349546903bd9b465e02e5a272a741e856fa2310952a82f"
+    },
+    "entry_id": "ptx_629f5426d33893cdef015e0b",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".extern"
+    ],
+    "parent_anchor": "linking-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".extern": 28,
+      "Description": 309,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".extern",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.6.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "92d25b9232a3ed7da2ef9e5d1ba0e5d65b2b874a958061ff0330e5e7028f9b59"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Linking Directives: .extern"
+  },
+  {
+    "anchor": "linking-directives-visible",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 221,
+      "sha256": "7160eccc37679144a231fbfce7bb79ead007694726aa2e2b83f759a92eb36c6f"
+    },
+    "entry_id": "ptx_10c2f8591161a8753e97225c",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".visible"
+    ],
+    "parent_anchor": "linking-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".visible": 40,
+      "Description": 221,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".visible",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.6.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "0f7f4f3ff9effe92b5e4929fe214cf752b085c105f46512086ccd53a30638d99"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Linking Directives: .visible"
+  },
+  {
+    "anchor": "linking-directives-weak",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 412,
+      "sha256": "f5b48eecbef42561339f28fa8f3e96ee761291d4e1b2c3e59d4fbe7693a8a533"
+    },
+    "entry_id": "ptx_507dd4d14b7b320bc80bd442",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".weak"
+    ],
+    "parent_anchor": "linking-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "3.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".weak": 40,
+      "Description": 412,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".weak",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.6.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "3a8d9167ead12dd1b64b7e7f6123ccb79e172a6e501e28588eb76f5127bcd91a"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Linking Directives: .weak"
+  },
+  {
+    "anchor": "linking-directives-common",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 623,
+      "sha256": "5a1f238720ac7b119465f91a29f3e1b95173b50e99c1904921774a41919ce0d5"
+    },
+    "entry_id": "ptx_863dde63f19945889f57c78c",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".common"
+    ],
+    "parent_anchor": "linking-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "5.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".common": 40,
+      "Description": 623,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 43
+    },
+    "rubrics": [
+      ".common",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.6.4.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "570f942848bee008d8f49b8fb61d964e9809d27a0b9b9484d7c784f25869ae94"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": ".common directive"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Linking Directives: .common"
+  },
+  {
+    "anchor": "cluster-dimension-directives-reqnctapercluster",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 375,
+      "sha256": "648bf2420049daccfd08b79c32b14436803660d46662ebdf5f1faffcc1ca2613"
+    },
+    "entry_id": "ptx_6597b51c6c33d4f4a85413f4",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".reqnctapercluster"
+    ],
+    "parent_anchor": "cluster-dimension-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".reqnctapercluster": 42,
+      "Description": 375,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 230,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".reqnctapercluster",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.7.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 3,
+      "sha256": "8240d1084c0a618bbcca1439f85273cf608e473ecab9b6a29af34ea92beebbfc"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Cluster Dimension Directives: .reqnctapercluster"
+  },
+  {
+    "anchor": "cluster-dimension-directives-explicitcluster",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 89,
+      "sha256": "6031ecd9383f7d083d58db0f4ffb381ac35e556c6e1a62b6ddae7d075d444653"
+    },
+    "entry_id": "ptx_8e2f4335df24d3edf6980087",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".explicitcluster"
+    ],
+    "parent_anchor": "cluster-dimension-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".explicitcluster": 82,
+      "Description": 89,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 224,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".explicitcluster",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.7.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "483f4c55578163f9c295ec5088c0ee169d1138563d41569315fb6be82f0e0634"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Cluster Dimension Directives: .explicitcluster"
+  },
+  {
+    "anchor": "cluster-dimension-directives-maxclusterrank",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 85,
+      "sha256": "2b0340f1edfe454319a4d60eb5d68bec45db09c2f9052728060096ebd531e18f"
+    },
+    "entry_id": "ptx_2edd5d27c3d225c5ac34a9e6",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".maxclusterrank"
+    ],
+    "parent_anchor": "cluster-dimension-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".maxclusterrank": 67,
+      "Description": 85,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 343,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".maxclusterrank",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.7.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "4cef382fb4f283f5564d746d5bbb8558f0ec34454aa446ef92568750604f2ee1"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Cluster Dimension Directives: .maxclusterrank"
+  },
+  {
+    "anchor": "miscellaneous-directives-blocksareclusters",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 782,
+      "sha256": "d6af01d7a660f85ac51bfb9e797362f7ef7d62e52efe835b0ca37815033be65d"
+    },
+    "entry_id": "ptx_f055d9eeb1bedc6ce37d2a27",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".blocksareclusters"
+    ],
+    "parent_anchor": "miscellaneous-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".blocksareclusters": 55,
+      "Description": 782,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      ".blocksareclusters",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.8.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "c76c9bc34129765ed5290e4986817573e5a83790d08dc70b1d273976d0d9e68e"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Miscellaneous Directives: .blocksareclusters"
+  },
+  {
+    "anchor": "miscellaneous-directives-language",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 911,
+      "sha256": "d5b0eceb4614a3534b38f7a544864d082150c84a055c67df1dc87936478fc32b"
+    },
+    "entry_id": "ptx_449934135d3f2925118b5298",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      ".language"
+    ],
+    "parent_anchor": "miscellaneous-directives",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      ".language": 71,
+      "Description": 911,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      ".language",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "11.8.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "b3c07ecf0ab9a8d7c8469e60971cc1015252b45dd4ac94d324641ae016c7c289"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Miscellaneous Directives: .language"
+  },
+  {
+    "anchor": "pragma-strings-nounroll",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 908,
+      "sha256": "5b75940a7387ef096f63b7a770cb998119ed136e50794e8a7aa209017ecedb95"
+    },
+    "entry_id": "ptx_28a480e34b17f8500f088bfd",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      "\"nounroll\""
+    ],
+    "parent_anchor": "descriptions-pragma-strings",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "\"nounroll\"": 58,
+      "Description": 908,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 52
+    },
+    "rubrics": [
+      "\"nounroll\"",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "12.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "ff038e5dddbcd4d493fee7cd4d2de672ec35f1bb8a2fa77e7920428ce964090f"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": null
+        },
+        {
+          "aliases": [],
+          "applies": "not_applicable",
+          "relation": "legacy_target_limit",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_1x",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Pragma Strings: \"nounroll\""
+  },
+  {
+    "anchor": "pragma-strings-used-bytes-mask",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 541,
+      "sha256": "54c05ef56417b60a14b3034cc29a7a4b62e285e1451a0b92595d9e11fba44eab"
+    },
+    "entry_id": "ptx_2bc1a72f1d2cdfa54a986c91",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      "\"used_bytes_mask\""
+    ],
+    "parent_anchor": "descriptions-pragma-strings",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "8.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "\"used_bytes_mask\"": 55,
+      "Description": 541,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Semantics": 0,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "\"used_bytes_mask\"",
+      "Syntax",
+      "Description",
+      "Semantics",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "12.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "de0824eedcfa645f09484adb89d7da032af6c49d0e0106984a82b3ba20cc8da2"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_50",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Pragma Strings: \"used_bytes_mask\""
+  },
+  {
+    "anchor": "pragma-strings-enable-smem-spilling",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 1565,
+      "sha256": "ff6c13eed3cd90880e3f0cfa14d956667218ef33049ce3d823c571b023999520"
+    },
+    "entry_id": "ptx_26d168529028a4bf623c603f",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      "\"enable_smem_spilling\""
+    ],
+    "parent_anchor": "descriptions-pragma-strings",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "\"enable_smem_spilling\"": 47,
+      "Description": 1565,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "\"enable_smem_spilling\"",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "12.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "e9526b311f5bd0467b29fc52a2df607ba952f6380d1cd0f5e97848c877d8a181"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_75",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Pragma Strings: \"enable_smem_spilling\""
+  },
+  {
+    "anchor": "pragma-strings-frequency",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 544,
+      "sha256": "894c13695add16645f337b24b88cbc560442b051fff3444541b2eb345e7e0fa5"
+    },
+    "entry_id": "ptx_63e0dc4394f37b70141e66e7",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      "\"frequency\""
+    ],
+    "parent_anchor": "descriptions-pragma-strings",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "\"frequency\"": 44,
+      "Description": 544,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "\"frequency\"",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "12.4.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "7a461360ff59e6b28d6494c53dc6d3368c7faeaf9855f95381c02eb72bdb2ecb"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Pragma Strings: \"frequency\""
+  },
+  {
+    "anchor": "pragma-strings-mma-throughput",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 237,
+      "sha256": "7d03af7b2d282e05574765424d76ca014929395f9905c7a14a88815f30477151"
+    },
+    "entry_id": "ptx_10108c99b633fd41c59a9be1",
+    "experiments": [],
+    "kind": "directive",
+    "mnemonics": [
+      "\"mma_throughput\""
+    ],
+    "parent_anchor": "descriptions-pragma-strings",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "\"mma_throughput\"": 54,
+      "Description": 237,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "\"mma_throughput\"",
+      "Syntax",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "12.5.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "bd48fafa9ddcfd8e60f80b6c7cd5d857e8119bc3056fd15d0afeaab43a29512e"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Pragma Strings: \"mma_throughput\""
+  }
+]

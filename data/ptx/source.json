@@ -1,0 +1,150 @@
+{
+  "extractor_revision": "1",
+  "isa": {
+    "cuda_archive": "13.4.3",
+    "cuda_release_row": "CUDA 13.4, driver r615",
+    "html": {
+      "bytes": 3928317,
+      "name": "ptx-isa-13.4.3-index.html",
+      "sha256": "f1e14ad07468e26bf3724e41be86f3a68ab7914bcf0fc9824a6ad31a1eb2ec26",
+      "url": "https://docs.nvidia.com/cuda/archive/13.4.3/parallel-thread-execution/index.html"
+    },
+    "html_role": "section anchors and instruction metadata",
+    "name": "PTX ISA",
+    "pdf": {
+      "bytes": 31078744,
+      "name": "ptx_isa_9.4.pdf",
+      "sha256": "3851871026ca5bc81d85189cd3a70a2f9a9a4bb32208d927b3f0cd03c7b16e4e",
+      "title_page": "PTX ISA Release 9.4, NVIDIA Corporation, Oct 12, 2026",
+      "url": "https://docs.nvidia.com/cuda/archive/13.4.3/pdf/ptx_isa_9.4.pdf"
+    },
+    "pdf_role": "pinned manual checked from its title page; the extractor hashes it and does not parse PDF text",
+    "version": "9.4"
+  },
+  "limits": [
+    "The HTML snapshot and the PDF are sibling files of CUDA archive 13.4.3. Anchors come from the HTML. The PDF was read at its title page and hashed; PDF pages are not the extraction input.",
+    "Numeric comparison of 'or higher' is an index rule grounded in the programming guide's CC-to-SM numbering and the note's wording. It is not a device run.",
+    "The official GPU table names GeForce RTX 4080 at CC 8.9 and does not name RTX 4080 Laptop.",
+    "Compile, runtime, and performance states stay unverified.",
+    "Two PTX ISA Note sentences stay as sha256 fingerprints: a usage constraint on kernel-function addresses, and an implementation caveat about generic pointers to const space. They do not change sm_89 support."
+  ],
+  "protocol": "ptx-index.v1",
+  "query_target": {
+    "compile_verification": "unverified",
+    "experiments": [],
+    "isa_version_is_not_the_target": true,
+    "ptx_target": "sm_89",
+    "requested_label": "Ada",
+    "requested_name": "RTX 4080 Laptop",
+    "runtime_verification": "unverified",
+    "sku_evidence": {
+      "ada_tuning_guide": {
+        "fact": "This guide defines NVIDIA Ada as devices of compute capability 8.9.",
+        "sha256": "e86ba37e8db39f8863bc555572632d02280215f2e6f5cbbf3acd4685b70f1fcc",
+        "url": "https://docs.nvidia.com/cuda/archive/13.4.3/ada-tuning-guide/index.html"
+      },
+      "cuda_gpu_table": {
+        "markdown_url": "https://developer.nvidia.com/cuda/gpus.md",
+        "row": {
+          "compute_capability": "8.9",
+          "data_center": "NVIDIA L4 NVIDIA L40 NVIDIA L40S",
+          "names_geforce_rtx_4080": true,
+          "names_rtx_4080_laptop": false,
+          "workstation_consumer": "NVIDIA RTX 6000 Ada NVIDIA RTX 5000 Ada NVIDIA RTX 4500 Ada NVIDIA RTX 4000 Ada NVIDIA RTX 4000 SFF Ada NVIDIA RTX 2000 Ada GeForce RTX 4090 GeForce RTX 4080 GeForce RTX 4070 Ti GeForce RTX 4070 GeForce RTX 4060 Ti GeForce RTX 4060 GeForce RTX 4050"
+        },
+        "sha256": "864921385310f9ce7d9911db863aa75286e590e8658b502b0aff28a74ffc03b7",
+        "url": "https://developer.nvidia.com/cuda/gpus"
+      },
+      "sm_naming": {
+        "fact": "The programming guide says compute capability X.Y corresponds to the SM version. Its example is CC 12.0 and sm_120, so CC 8.9 names sm_89. That naming rule does not identify the laptop SKU.",
+        "sha256": "d65e5ba5b1ed1e559f16839c437ec81d715f60a14c18cdf1a76d638bd0d5fd2a",
+        "url": "https://docs.nvidia.com/cuda/archive/13.4.3/cuda-programming-guide/01-introduction/cuda-platform.html#compute-capability-and-streaming-multiprocessor-versions"
+      }
+    }
+  },
+  "release_history": {
+    "isa_9_4": {
+      "cuda_release": "CUDA 13.4, driver r615",
+      "ptx_isa": "9.4",
+      "targets": [
+        "sm_10",
+        "sm_11",
+        "sm_12",
+        "sm_13",
+        "sm_30",
+        "sm_32",
+        "sm_35",
+        "sm_37",
+        "sm_50",
+        "sm_52",
+        "sm_53",
+        "sm_60",
+        "sm_61",
+        "sm_62",
+        "sm_70",
+        "sm_72",
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_87",
+        "sm_88",
+        "sm_89",
+        "sm_90",
+        "sm_90a",
+        "sm_100",
+        "sm_100f",
+        "sm_100a",
+        "sm_103",
+        "sm_103f",
+        "sm_103a",
+        "sm_107",
+        "sm_107f",
+        "sm_107a",
+        "sm_110",
+        "sm_110f",
+        "sm_110a",
+        "sm_120",
+        "sm_120f",
+        "sm_120a",
+        "sm_121",
+        "sm_121f",
+        "sm_121a",
+        "sm_20"
+      ]
+    },
+    "sm_89_introduced": {
+      "cuda_release": "CUDA 11.8, driver r520",
+      "ptx_isa": "7.8",
+      "targets": [
+        "sm_10",
+        "sm_11",
+        "sm_12",
+        "sm_13",
+        "sm_30",
+        "sm_32",
+        "sm_35",
+        "sm_37",
+        "sm_50",
+        "sm_52",
+        "sm_53",
+        "sm_60",
+        "sm_61",
+        "sm_62",
+        "sm_70",
+        "sm_72",
+        "sm_75",
+        "sm_80",
+        "sm_86",
+        "sm_87",
+        "sm_89",
+        "sm_20",
+        "sm_90"
+      ]
+    },
+    "table_anchor": "release-notes-ptx-release-history"
+  },
+  "support_rule": {
+    "id": "explicit_target_note_plus_numeric_cc_order",
+    "summary": "sm_89 support is judged only from Target ISA Notes. Unsuffixed 'sm_X or higher' uses compute-capability order. Same-family wording stays inside that major version and suffix. Architecture lists and suffixed targets such as sm_90a match only when sm_89 is named. Unparsed sentences force unknown. No statement is filled in from the instruction name."
+  }
+}

@@ -1,0 +1,42 @@
+# ACKB 知识索引与查询契约
+
+## 目标与来源
+
+CCEC 与 PTX 分别建库，保留其抽象层差异。CCEC 是 ccec 接受的源码接口层，PTX 是虚拟 ISA；当前不提供两端等价转换。术语见 [CONTEXT](../CONTEXT.md)。
+
+CCEC 原始记录位于版本化 catalog；`data/ccec/knowledge.json` 绑定其 SHA-256，新增 8 个头文件表面主题和 2,222 个 builtin 名称引用。引用中 2 个没有可关联的解析记录，原始 catalog 的 29 个未解析项继续保留。主题包含来源、缺失种子和未知项，不凭名称补造硬件语义。
+
+PTX 固定 ISA 9.4 / CUDA 文档归档 13.4.3。`data/ptx` 保存全部 743 个 HTML 章节目录，221 个指令条目、39 个伪指令、35 个特殊寄存器及 77 个执行模型/状态空间章节。全文不入库，语法与描述仅保存指纹；通过锚点访问官方原文。4 篇中文重点笔记单独保存。来源与支持归类规则见 [PTX 索引](ptx-index.md)。
+
+## 查询协议
+
+命令集中在 [AGENTS.md](../AGENTS.md)。全局参数置于子命令前。
+
+| 入口 | 行为 |
+| --- | --- |
+| 默认 CCEC 声明查询 | 保留 `cce-ops.query.v1`、原有记录/symbol/variant ID 与筛选语义 |
+| CCEC topics / builtins / 对应 ID 查询 | 返回 `ackb.knowledge-query.v1` |
+| `--backend ptx` | 返回 `ackb.knowledge-query.v1`；`--data` 可指定 PTX 索引目录 |
+| topics | 分页列出重点笔记；get 读取正文及未知项 |
+| search | PTX 默认仅 instruction；`--kind all` 搜索全部章节；query 匹配标题、助记符、锚点与章节号，`--name` 精确匹配助记符 |
+| get | PTX 支持 entry_id 或章节 anchor；CCEC 主题与 builtin 使用返回 ID |
+| relations | 章节返回直接子章节；笔记返回引用章节；CCEC 主题/builtin 返回头文件记录引用 |
+| evidence | 知识条目返回来源定位与哈希，原有 CCEC 记录仍返回提取文本 |
+
+响应含 backend、version、provenance、limitations、verification，以及 total、offset、items、next_offset、truncated。结果预算沿用原 CLI，单个条目过大时返回错误，不截断成虚假完整条目。每项最多预览 3 条 evidence，完整引用通过 evidence 分页取得。
+
+知识响应的信封规范见 [Schema](../schemas/knowledge-v1.schema.json)；异构条目由各数据文件定义，Schema 不保证硬件语义正确。PTX 的 schema 命令返回该规范；CCEC 默认 schema 仍返回旧声明协议。失败返回结构化错误和退出码 2。
+
+PTX ID 绑定 ISA 版本、章节号与锚点，不保证跨版本稳定。CCEC 主题 ID 由主题键生成，builtin ID 由名称生成；原有词法签名身份不变。勿用 ID 推断两端语义等价。
+
+## 支持与验证
+
+PTX `--support` 仅筛选文档状态：documented_supported、documented_not_supported、partial、unknown。partial 表示条目内存在不同目标条件，不是所有形式都可用。`get` 的 target_isa / ptx_isa 保留具体形式与版本条件。CCEC 仍使用三值声明条件，不强行转换成 PTX 的支持分类。
+
+目标 `sm_89` 是本轮整理范围，RTX 4080 Laptop 是用户提供的设备名称，尚无设备查询。官方 GPU 表只点名桌面 RTX 4080，笔记本 SKU 的设备证据仍缺失。所有编译、运行和性能状态均未验证。
+
+本机只读检查发现 nvcc 为 CUDA 12.9 / V12.9.86；这与文档归档 13.4.3 不同，不能推断本机编译器接受 PTX ISA 9.4。此环境观察不属于目标 GPU 实验，也不代表用户笔记本已安装该版本。
+
+## 深度缺口
+
+CCEC 还缺完整编译器 builtin 清单、核宏环境、每项参数单位/对齐/副作用、流水与同步语义及真实跨版本历史。PTX 还缺全部语法形式的结构化约束和逐形式目标判定。两边都缺编译/运行探针与性能证据。页面目前继续展示 CCEC；PTX 可通过 CLI、JSON 与本文档阅读。

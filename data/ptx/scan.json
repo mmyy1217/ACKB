@@ -1,0 +1,38 @@
+{
+  "directives_with_notes": 39,
+  "execution_sections": 77,
+  "html_sections": 743,
+  "instruction_sm_89_support": {
+    "documented_not_supported": 71,
+    "documented_supported": 110,
+    "partial": 40,
+    "unknown": 0
+  },
+  "instructions": 221,
+  "kind_total": 743,
+  "kinds": {
+    "directive": 39,
+    "directive_topic": 10,
+    "execution_model": 63,
+    "instruction": 221,
+    "instruction_topic": 229,
+    "introduction": 5,
+    "notice": 4,
+    "other": 80,
+    "release_note": 42,
+    "special_register": 35,
+    "special_register_topic": 1,
+    "state_space": 14
+  },
+  "release_rows": 47,
+  "sm_89_support": {
+    "documented_not_supported": 83,
+    "documented_supported": 171,
+    "partial": 41,
+    "unknown": 0
+  },
+  "special_registers_with_notes": 35,
+  "text_stored": false,
+  "unparsed_ptx_isa_sentences": 2,
+  "unparsed_target_blocks": 0
+}

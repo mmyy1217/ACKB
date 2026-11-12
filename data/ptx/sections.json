@@ -1,0 +1,5946 @@
+[
+  {
+    "anchor": "introduction",
+    "child_count": 4,
+    "kind": "introduction",
+    "parent_anchor": null,
+    "section_number": "1.",
+    "title": "Introduction"
+  },
+  {
+    "anchor": "scalable-data-parallel-computing-using-gpus",
+    "child_count": 0,
+    "kind": "introduction",
+    "parent_anchor": "introduction",
+    "section_number": "1.1.",
+    "title": "Scalable Data-Parallel Computing using GPUs"
+  },
+  {
+    "anchor": "goals-of-ptx",
+    "child_count": 0,
+    "kind": "introduction",
+    "parent_anchor": "introduction",
+    "section_number": "1.2.",
+    "title": "Goals of PTX"
+  },
+  {
+    "anchor": "ptx-isa-version-9-4",
+    "child_count": 0,
+    "kind": "introduction",
+    "parent_anchor": "introduction",
+    "section_number": "1.3.",
+    "title": "PTX ISA Version 9.4"
+  },
+  {
+    "anchor": "document-structure",
+    "child_count": 0,
+    "kind": "introduction",
+    "parent_anchor": "introduction",
+    "section_number": "1.4.",
+    "title": "Document Structure"
+  },
+  {
+    "anchor": "programming-model",
+    "child_count": 3,
+    "kind": "execution_model",
+    "parent_anchor": null,
+    "section_number": "2.",
+    "title": "Programming Model"
+  },
+  {
+    "anchor": "highly-multithreaded-coprocessor",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "programming-model",
+    "section_number": "2.1.",
+    "title": "A Highly Multithreaded Coprocessor"
+  },
+  {
+    "anchor": "thread-hierarchy",
+    "child_count": 3,
+    "kind": "execution_model",
+    "parent_anchor": "programming-model",
+    "section_number": "2.2.",
+    "title": "Thread Hierarchy"
+  },
+  {
+    "anchor": "cooperative-thread-arrays",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "thread-hierarchy",
+    "section_number": "2.2.1.",
+    "title": "Cooperative Thread Arrays"
+  },
+  {
+    "anchor": "cluster-of-cooperative-thread-arrays",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "thread-hierarchy",
+    "section_number": "2.2.2.",
+    "title": "Cluster of Cooperative Thread Arrays"
+  },
+  {
+    "anchor": "grid-of-clusters",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "thread-hierarchy",
+    "section_number": "2.2.3.",
+    "title": "Grid of Clusters"
+  },
+  {
+    "anchor": "memory-hierarchy",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "programming-model",
+    "section_number": "2.3.",
+    "title": "Memory Hierarchy"
+  },
+  {
+    "anchor": "ptx-machine-model",
+    "child_count": 3,
+    "kind": "execution_model",
+    "parent_anchor": null,
+    "section_number": "3.",
+    "title": "PTX Machine Model"
+  },
+  {
+    "anchor": "set-of-simt-multiprocessors",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ptx-machine-model",
+    "section_number": "3.1.",
+    "title": "A Set of SIMT Multiprocessors"
+  },
+  {
+    "anchor": "independent-thread-scheduling",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ptx-machine-model",
+    "section_number": "3.2.",
+    "title": "Independent Thread Scheduling"
+  },
+  {
+    "anchor": "on-chip-shared-memory",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ptx-machine-model",
+    "section_number": "3.3.",
+    "title": "On-chip Shared Memory"
+  },
+  {
+    "anchor": "syntax",
+    "child_count": 5,
+    "kind": "other",
+    "parent_anchor": null,
+    "section_number": "4.",
+    "title": "Syntax"
+  },
+  {
+    "anchor": "source-format",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "syntax",
+    "section_number": "4.1.",
+    "title": "Source Format"
+  },
+  {
+    "anchor": "comments",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "syntax",
+    "section_number": "4.2.",
+    "title": "Comments"
+  },
+  {
+    "anchor": "statements",
+    "child_count": 2,
+    "kind": "other",
+    "parent_anchor": "syntax",
+    "section_number": "4.3.",
+    "title": "Statements"
+  },
+  {
+    "anchor": "directive-statements",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "statements",
+    "section_number": "4.3.1.",
+    "title": "Directive Statements"
+  },
+  {
+    "anchor": "instruction-statements",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "statements",
+    "section_number": "4.3.2.",
+    "title": "Instruction Statements"
+  },
+  {
+    "anchor": "identifiers",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "syntax",
+    "section_number": "4.4.",
+    "title": "Identifiers"
+  },
+  {
+    "anchor": "constants",
+    "child_count": 6,
+    "kind": "other",
+    "parent_anchor": "syntax",
+    "section_number": "4.5.",
+    "title": "Constants"
+  },
+  {
+    "anchor": "integer-constants",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "constants",
+    "section_number": "4.5.1.",
+    "title": "Integer Constants"
+  },
+  {
+    "anchor": "floating-point-constants",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "constants",
+    "section_number": "4.5.2.",
+    "title": "Floating-Point Constants"
+  },
+  {
+    "anchor": "predicate-constants",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "constants",
+    "section_number": "4.5.3.",
+    "title": "Predicate Constants"
+  },
+  {
+    "anchor": "constant-expressions",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "constants",
+    "section_number": "4.5.4.",
+    "title": "Constant Expressions"
+  },
+  {
+    "anchor": "integer-constant-expression-evaluation",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "constants",
+    "section_number": "4.5.5.",
+    "title": "Integer Constant Expression Evaluation"
+  },
+  {
+    "anchor": "summary-of-constant-expression-evaluation-rules",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "constants",
+    "section_number": "4.5.6.",
+    "title": "Summary of Constant Expression Evaluation Rules"
+  },
+  {
+    "anchor": "state-spaces-types-and-variables",
+    "child_count": 5,
+    "kind": "other",
+    "parent_anchor": null,
+    "section_number": "5.",
+    "title": "State Spaces, Types, and Variables"
+  },
+  {
+    "anchor": "state-spaces",
+    "child_count": 8,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces-types-and-variables",
+    "section_number": "5.1.",
+    "title": "State Spaces"
+  },
+  {
+    "anchor": "register-state-space",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.1.",
+    "title": "Register State Space"
+  },
+  {
+    "anchor": "special-register-state-space",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.2.",
+    "title": "Special Register State Space"
+  },
+  {
+    "anchor": "constant-state-space",
+    "child_count": 1,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.3.",
+    "title": "Constant State Space"
+  },
+  {
+    "anchor": "banked-constant-state-space-deprecated",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "constant-state-space",
+    "section_number": "5.1.3.1.",
+    "title": "Banked Constant State Space (deprecated)"
+  },
+  {
+    "anchor": "global-state-space",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.4.",
+    "title": "Global State Space"
+  },
+  {
+    "anchor": "local-state-space",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.5.",
+    "title": "Local State Space"
+  },
+  {
+    "anchor": "parameter-state-space",
+    "child_count": 4,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.6.",
+    "title": "Parameter State Space"
+  },
+  {
+    "anchor": "kernel-function-parameters",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "parameter-state-space",
+    "section_number": "5.1.6.1.",
+    "title": "Kernel Function Parameters"
+  },
+  {
+    "anchor": "kernel-function-parameter-attributes",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "parameter-state-space",
+    "section_number": "5.1.6.2.",
+    "title": "Kernel Function Parameter Attributes"
+  },
+  {
+    "anchor": "kernel-parameter-attribute-ptr",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "parameter-state-space",
+    "section_number": "5.1.6.3.",
+    "title": "Kernel Parameter Attribute: .ptr"
+  },
+  {
+    "anchor": "device-function-parameters",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "parameter-state-space",
+    "section_number": "5.1.6.4.",
+    "title": "Device Function Parameters"
+  },
+  {
+    "anchor": "shared-state-space",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.7.",
+    "title": "Shared State Space"
+  },
+  {
+    "anchor": "texture-state-space-deprecated",
+    "child_count": 0,
+    "kind": "state_space",
+    "parent_anchor": "state-spaces",
+    "section_number": "5.1.8.",
+    "title": "Texture State Space (deprecated)"
+  },
+  {
+    "anchor": "types",
+    "child_count": 5,
+    "kind": "other",
+    "parent_anchor": "state-spaces-types-and-variables",
+    "section_number": "5.2.",
+    "title": "Types"
+  },
+  {
+    "anchor": "fundamental-types",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "types",
+    "section_number": "5.2.1.",
+    "title": "Fundamental Types"
+  },
+  {
+    "anchor": "restricted-use-of-sub-word-sizes",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "types",
+    "section_number": "5.2.2.",
+    "title": "Restricted Use of Sub-Word Sizes"
+  },
+  {
+    "anchor": "alternate-floating-point-data-formats",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "types",
+    "section_number": "5.2.3.",
+    "title": "Alternate Floating-Point Data Formats"
+  },
+  {
+    "anchor": "fixed-point-data-formats",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "types",
+    "section_number": "5.2.4.",
+    "title": "Fixed-point Data format"
+  },
+  {
+    "anchor": "packed-data-types",
+    "child_count": 3,
+    "kind": "other",
+    "parent_anchor": "types",
+    "section_number": "5.2.5.",
+    "title": "Packed Data Types"
+  },
+  {
+    "anchor": "packed-floating-point-data-types",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "packed-data-types",
+    "section_number": "5.2.5.1.",
+    "title": "Packed Floating Point Data Types"
+  },
+  {
+    "anchor": "packed-integer-data-types",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "packed-data-types",
+    "section_number": "5.2.5.2.",
+    "title": "Packed Integer Data Types"
+  },
+  {
+    "anchor": "packed-fixed-point-data-types",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "packed-data-types",
+    "section_number": "5.2.5.3.",
+    "title": "Packed Fixed-Point Data Types"
+  },
+  {
+    "anchor": "texture-sampler-and-surface-types",
+    "child_count": 3,
+    "kind": "other",
+    "parent_anchor": "state-spaces-types-and-variables",
+    "section_number": "5.3.",
+    "title": "Texture Sampler and Surface Types"
+  },
+  {
+    "anchor": "texture-surface-properties",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "texture-sampler-and-surface-types",
+    "section_number": "5.3.1.",
+    "title": "Texture and Surface Properties"
+  },
+  {
+    "anchor": "sampler-properties",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "texture-sampler-and-surface-types",
+    "section_number": "5.3.2.",
+    "title": "Sampler Properties"
+  },
+  {
+    "anchor": "channel-data-type-and-channel-order-fields",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "texture-sampler-and-surface-types",
+    "section_number": "5.3.3.",
+    "title": "Channel Data Type and Channel Order Fields"
+  },
+  {
+    "anchor": "variables",
+    "child_count": 8,
+    "kind": "other",
+    "parent_anchor": "state-spaces-types-and-variables",
+    "section_number": "5.4.",
+    "title": "Variables"
+  },
+  {
+    "anchor": "variable-declarations",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.1.",
+    "title": "Variable Declarations"
+  },
+  {
+    "anchor": "vectors",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.2.",
+    "title": "Vectors"
+  },
+  {
+    "anchor": "array-declarations",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.3.",
+    "title": "Array Declarations"
+  },
+  {
+    "anchor": "initializers",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.4.",
+    "title": "Initializers"
+  },
+  {
+    "anchor": "alignment",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.5.",
+    "title": "Alignment"
+  },
+  {
+    "anchor": "parameterized-variable-names",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.6.",
+    "title": "Parameterized Variable Names"
+  },
+  {
+    "anchor": "variable-attributes",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.7.",
+    "title": "Variable Attributes"
+  },
+  {
+    "anchor": "variable-and-function-attribute-directive-attribute",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "variables",
+    "section_number": "5.4.8.",
+    "title": "Variable and Function Attribute Directive: .attribute"
+  },
+  {
+    "anchor": "tensors",
+    "child_count": 8,
+    "kind": "other",
+    "parent_anchor": "state-spaces-types-and-variables",
+    "section_number": "5.5.",
+    "title": "Tensors"
+  },
+  {
+    "anchor": "tensor-dimension-size-format",
+    "child_count": 1,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.1.",
+    "title": "Tensor Dimension, size and format"
+  },
+  {
+    "anchor": "tensor-dimension-size-format-sub-bytes",
+    "child_count": 1,
+    "kind": "other",
+    "parent_anchor": "tensor-dimension-size-format",
+    "section_number": "5.5.1.1.",
+    "title": "Sub-byte Types"
+  },
+  {
+    "anchor": "tensor-dimension-size-format-sub-bytes-padding-align",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-dimension-size-format-sub-bytes",
+    "section_number": "5.5.1.1.1.",
+    "title": "Padding and alignment of the sub-byte types"
+  },
+  {
+    "anchor": "tensor-access-modes",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.2.",
+    "title": "Tensor Access Modes"
+  },
+  {
+    "anchor": "tensor-tiled-mode",
+    "child_count": 4,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.3.",
+    "title": "Tiled Mode"
+  },
+  {
+    "anchor": "tensor-tiled-mode-bounding-box",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-tiled-mode",
+    "section_number": "5.5.3.1.",
+    "title": "Bounding Box"
+  },
+  {
+    "anchor": "tensor-tiled-mode-traversal-stride",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-tiled-mode",
+    "section_number": "5.5.3.2.",
+    "title": "Traversal-Stride"
+  },
+  {
+    "anchor": "tensor-tiled-mode-oob-access",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-tiled-mode",
+    "section_number": "5.5.3.3.",
+    "title": "Out of Boundary Access"
+  },
+  {
+    "anchor": "tensor-tiled-scatter4-gather4-modes",
+    "child_count": 1,
+    "kind": "other",
+    "parent_anchor": "tensor-tiled-mode",
+    "section_number": "5.5.3.4.",
+    "title": ".tile::scatter4 and .tile::gather4 modes"
+  },
+  {
+    "anchor": "tensor-tiled-scatter4-gather4-modes-bounding-box",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-tiled-scatter4-gather4-modes",
+    "section_number": "5.5.3.4.1.",
+    "title": "Bounding Box"
+  },
+  {
+    "anchor": "tensor-im2col-mode",
+    "child_count": 3,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.4.",
+    "title": "im2col mode"
+  },
+  {
+    "anchor": "tensor-im2col-mode-bounding-box",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-mode",
+    "section_number": "5.5.4.1.",
+    "title": "Bounding Box"
+  },
+  {
+    "anchor": "tensor-im2col-mode-traversal-stride",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-mode",
+    "section_number": "5.5.4.2.",
+    "title": "Traversal Stride"
+  },
+  {
+    "anchor": "tensor-im2col-mode-oob-access",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-mode",
+    "section_number": "5.5.4.3.",
+    "title": "Out of Boundary Access"
+  },
+  {
+    "anchor": "tensor-im2col-w-w128-modes",
+    "child_count": 4,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.5.",
+    "title": "im2col::w, im2col_no_offs::w and im2col::w::128 modes"
+  },
+  {
+    "anchor": "tensor-im2col-w-w128-modes-bounding-box",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-w-w128-modes",
+    "section_number": "5.5.5.1.",
+    "title": "Bounding Box"
+  },
+  {
+    "anchor": "tensor-im2col-w-w128-modes-traversal-stride",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-w-w128-modes",
+    "section_number": "5.5.5.2.",
+    "title": "Traversal Stride"
+  },
+  {
+    "anchor": "tensor-im2col-w-w128-modes-whalo",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-w-w128-modes",
+    "section_number": "5.5.5.3.",
+    "title": "wHalo"
+  },
+  {
+    "anchor": "tensor-im2col-w-w128-modes-woffset",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensor-im2col-w-w128-modes",
+    "section_number": "5.5.5.4.",
+    "title": "wOffset"
+  },
+  {
+    "anchor": "tensor-interleaved-layout",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.6.",
+    "title": "Interleave layout"
+  },
+  {
+    "anchor": "tensor-swizzling-modes",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.7.",
+    "title": "Swizzling Modes"
+  },
+  {
+    "anchor": "tensor-tensormap",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "tensors",
+    "section_number": "5.5.8.",
+    "title": "Tensor-map"
+  },
+  {
+    "anchor": "instruction-operands",
+    "child_count": 6,
+    "kind": "other",
+    "parent_anchor": null,
+    "section_number": "6.",
+    "title": "Instruction Operands"
+  },
+  {
+    "anchor": "operand-type-information",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "instruction-operands",
+    "section_number": "6.1.",
+    "title": "Operand Type Information"
+  },
+  {
+    "anchor": "source-operands",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "instruction-operands",
+    "section_number": "6.2.",
+    "title": "Source Operands"
+  },
+  {
+    "anchor": "destination-operands",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "instruction-operands",
+    "section_number": "6.3.",
+    "title": "Destination Operands"
+  },
+  {
+    "anchor": "using-addresses-arrays-and-vectors",
+    "child_count": 4,
+    "kind": "other",
+    "parent_anchor": "instruction-operands",
+    "section_number": "6.4.",
+    "title": "Using Addresses, Arrays, and Vectors"
+  },
+  {
+    "anchor": "addresses-as-operands",
+    "child_count": 1,
+    "kind": "other",
+    "parent_anchor": "using-addresses-arrays-and-vectors",
+    "section_number": "6.4.1.",
+    "title": "Addresses as Operands"
+  },
+  {
+    "anchor": "generic-addressing",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "addresses-as-operands",
+    "section_number": "6.4.1.1.",
+    "title": "Generic Addressing"
+  },
+  {
+    "anchor": "arrays-as-operands",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "using-addresses-arrays-and-vectors",
+    "section_number": "6.4.2.",
+    "title": "Arrays as Operands"
+  },
+  {
+    "anchor": "vectors-as-operands",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "using-addresses-arrays-and-vectors",
+    "section_number": "6.4.3.",
+    "title": "Vectors as Operands"
+  },
+  {
+    "anchor": "labels-and-function-names-as-operands",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "using-addresses-arrays-and-vectors",
+    "section_number": "6.4.4.",
+    "title": "Labels and Function Names as Operands"
+  },
+  {
+    "anchor": "type-conversion",
+    "child_count": 2,
+    "kind": "other",
+    "parent_anchor": "instruction-operands",
+    "section_number": "6.5.",
+    "title": "Type Conversion"
+  },
+  {
+    "anchor": "scalar-conversions",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "type-conversion",
+    "section_number": "6.5.1.",
+    "title": "Scalar Conversions"
+  },
+  {
+    "anchor": "rounding-modifiers",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "type-conversion",
+    "section_number": "6.5.2.",
+    "title": "Rounding Modifiers"
+  },
+  {
+    "anchor": "operand-costs",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "instruction-operands",
+    "section_number": "6.6.",
+    "title": "Operand Costs"
+  },
+  {
+    "anchor": "abstracting-abi",
+    "child_count": 3,
+    "kind": "other",
+    "parent_anchor": null,
+    "section_number": "7.",
+    "title": "Abstracting the ABI"
+  },
+  {
+    "anchor": "function-declarations-and-definitions",
+    "child_count": 1,
+    "kind": "other",
+    "parent_anchor": "abstracting-abi",
+    "section_number": "7.1.",
+    "title": "Function Declarations and Definitions"
+  },
+  {
+    "anchor": "changes-from-ptx-isa-version-1-x",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "function-declarations-and-definitions",
+    "section_number": "7.1.1.",
+    "title": "Changes from PTX ISA Version 1.x"
+  },
+  {
+    "anchor": "variadic-functions",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "abstracting-abi",
+    "section_number": "7.2.",
+    "title": "Variadic Functions"
+  },
+  {
+    "anchor": "alloca",
+    "child_count": 0,
+    "kind": "other",
+    "parent_anchor": "abstracting-abi",
+    "section_number": "7.3.",
+    "title": "Alloca"
+  },
+  {
+    "anchor": "memory-consistency-model",
+    "child_count": 11,
+    "kind": "execution_model",
+    "parent_anchor": null,
+    "section_number": "8.",
+    "title": "Memory Consistency Model"
+  },
+  {
+    "anchor": "scope-and-applicability",
+    "child_count": 1,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.1.",
+    "title": "Scope and applicability of the model"
+  },
+  {
+    "anchor": "limitations-system-scope-atomicity",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "scope-and-applicability",
+    "section_number": "8.1.1.",
+    "title": "Limitations on atomicity at system scope"
+  },
+  {
+    "anchor": "memory-operations",
+    "child_count": 6,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.2.",
+    "title": "Memory operations"
+  },
+  {
+    "anchor": "overlap",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-operations",
+    "section_number": "8.2.1.",
+    "title": "Overlap"
+  },
+  {
+    "anchor": "aliases",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-operations",
+    "section_number": "8.2.2.",
+    "title": "Aliases"
+  },
+  {
+    "anchor": "multimem-addresses",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-operations",
+    "section_number": "8.2.3.",
+    "title": "Multimem Addresses"
+  },
+  {
+    "anchor": "memory-operations-on-vector-data-types",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-operations",
+    "section_number": "8.2.4.",
+    "title": "Memory Operations on Vector Data Types"
+  },
+  {
+    "anchor": "memory-operations-on-packed-data-types",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-operations",
+    "section_number": "8.2.5.",
+    "title": "Memory Operations on Packed Data Types"
+  },
+  {
+    "anchor": "initialization",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-operations",
+    "section_number": "8.2.6.",
+    "title": "Initialization"
+  },
+  {
+    "anchor": "memory-consistency-state-spaces",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.3.",
+    "title": "State spaces"
+  },
+  {
+    "anchor": "operation-types",
+    "child_count": 2,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.4.",
+    "title": "Operation types"
+  },
+  {
+    "anchor": "mmio-operation",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "operation-types",
+    "section_number": "8.4.1.",
+    "title": "mmio Operation"
+  },
+  {
+    "anchor": "volatile-operation",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "operation-types",
+    "section_number": "8.4.2.",
+    "title": "volatile Operation"
+  },
+  {
+    "anchor": "scope",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.5.",
+    "title": "Scope"
+  },
+  {
+    "anchor": "proxies",
+    "child_count": 1,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.6.",
+    "title": "Proxies"
+  },
+  {
+    "anchor": "strong-proxy-accesses",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "proxies",
+    "section_number": "8.6.1.",
+    "title": "Strong Proxy Accesses"
+  },
+  {
+    "anchor": "morally-strong-operations",
+    "child_count": 2,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.7.",
+    "title": "Morally strong operations"
+  },
+  {
+    "anchor": "conflict-and-data-races",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "morally-strong-operations",
+    "section_number": "8.7.1.",
+    "title": "Conflict and Data-races"
+  },
+  {
+    "anchor": "mixed-size-limitations",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "morally-strong-operations",
+    "section_number": "8.7.2.",
+    "title": "Limitations on Mixed-size Data-races"
+  },
+  {
+    "anchor": "release-acquire-patterns",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.8.",
+    "title": "Release and Acquire Patterns"
+  },
+  {
+    "anchor": "ordering-memory-operations",
+    "child_count": 7,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.9.",
+    "title": "Ordering of memory operations"
+  },
+  {
+    "anchor": "program-order",
+    "child_count": 1,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.1.",
+    "title": "Program Order"
+  },
+  {
+    "anchor": "program-order-async-operations",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "program-order",
+    "section_number": "8.9.1.1.",
+    "title": "Asynchronous Operations"
+  },
+  {
+    "anchor": "observation-order",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.2.",
+    "title": "Observation Order"
+  },
+  {
+    "anchor": "fence-sc-order",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.3.",
+    "title": "Fence-SC Order"
+  },
+  {
+    "anchor": "memory-synchronization",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.4.",
+    "title": "Memory synchronization"
+  },
+  {
+    "anchor": "causality-order",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.5.",
+    "title": "Causality Order"
+  },
+  {
+    "anchor": "coherence-order",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.6.",
+    "title": "Coherence Order"
+  },
+  {
+    "anchor": "communication-order",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "ordering-memory-operations",
+    "section_number": "8.9.7.",
+    "title": "Communication Order"
+  },
+  {
+    "anchor": "axioms",
+    "child_count": 6,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.10.",
+    "title": "Axioms"
+  },
+  {
+    "anchor": "coherence-axiom",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "axioms",
+    "section_number": "8.10.1.",
+    "title": "Coherence"
+  },
+  {
+    "anchor": "fence-sc-axiom",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "axioms",
+    "section_number": "8.10.2.",
+    "title": "Fence-SC"
+  },
+  {
+    "anchor": "atomicity-axiom",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "axioms",
+    "section_number": "8.10.3.",
+    "title": "Atomicity"
+  },
+  {
+    "anchor": "no-thin-air-axiom",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "axioms",
+    "section_number": "8.10.4.",
+    "title": "No Thin Air"
+  },
+  {
+    "anchor": "sc-per-loc-axiom",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "axioms",
+    "section_number": "8.10.5.",
+    "title": "Sequential Consistency Per Location"
+  },
+  {
+    "anchor": "causality-axiom",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "axioms",
+    "section_number": "8.10.6.",
+    "title": "Causality"
+  },
+  {
+    "anchor": "special-cases",
+    "child_count": 1,
+    "kind": "execution_model",
+    "parent_anchor": "memory-consistency-model",
+    "section_number": "8.11.",
+    "title": "Special Cases"
+  },
+  {
+    "anchor": "red-read",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "special-cases",
+    "section_number": "8.11.1.",
+    "title": "Reductions do not form Acquire Patterns"
+  },
+  {
+    "anchor": "instruction-set",
+    "child_count": 7,
+    "kind": "execution_model",
+    "parent_anchor": null,
+    "section_number": "9.",
+    "title": "Instruction Set"
+  },
+  {
+    "anchor": "format-and-semantics-of-instruction-descriptions",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.1.",
+    "title": "Format and Semantics of Instruction Descriptions"
+  },
+  {
+    "anchor": "ptx-instructions",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.2.",
+    "title": "PTX Instructions"
+  },
+  {
+    "anchor": "predicated-execution",
+    "child_count": 2,
+    "kind": "execution_model",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.3.",
+    "title": "Predicated Execution"
+  },
+  {
+    "anchor": "comparisons",
+    "child_count": 2,
+    "kind": "execution_model",
+    "parent_anchor": "predicated-execution",
+    "section_number": "9.3.1.",
+    "title": "Comparisons"
+  },
+  {
+    "anchor": "integer-and-bit-size-comparisons",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "comparisons",
+    "section_number": "9.3.1.1.",
+    "title": "Integer and Bit-Size Comparisons"
+  },
+  {
+    "anchor": "floating-point-comparisons",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "comparisons",
+    "section_number": "9.3.1.2.",
+    "title": "Floating Point Comparisons"
+  },
+  {
+    "anchor": "manipulating-predicates",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "predicated-execution",
+    "section_number": "9.3.2.",
+    "title": "Manipulating Predicates"
+  },
+  {
+    "anchor": "type-information-for-instructions-and-operands",
+    "child_count": 1,
+    "kind": "execution_model",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.4.",
+    "title": "Type Information for Instructions and Operands"
+  },
+  {
+    "anchor": "operand-size-exceeding-instruction-type-size",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "type-information-for-instructions-and-operands",
+    "section_number": "9.4.1.",
+    "title": "Operand Size Exceeding Instruction-Type Size"
+  },
+  {
+    "anchor": "divergence-of-threads-in-control-constructs",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.5.",
+    "title": "Divergence of Threads in Control Constructs"
+  },
+  {
+    "anchor": "semantics",
+    "child_count": 1,
+    "kind": "execution_model",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.6.",
+    "title": "Semantics"
+  },
+  {
+    "anchor": "machine-specific-semantics-of-16-bit-code",
+    "child_count": 0,
+    "kind": "execution_model",
+    "parent_anchor": "semantics",
+    "section_number": "9.6.1.",
+    "title": "Machine-Specific Semantics of 16-bit Code"
+  },
+  {
+    "anchor": "instructions",
+    "child_count": 21,
+    "kind": "other",
+    "parent_anchor": "instruction-set",
+    "section_number": "9.7.",
+    "title": "Instructions"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions",
+    "child_count": 25,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.1.",
+    "title": "Integer Arithmetic Instructions"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-add",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.1.",
+    "title": "Integer Arithmetic Instructions: add"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-sub",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.2.",
+    "title": "Integer Arithmetic Instructions: sub"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-mul",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.3.",
+    "title": "Integer Arithmetic Instructions: mul"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-mad",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.4.",
+    "title": "Integer Arithmetic Instructions: mad"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-clmad",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.5.",
+    "title": "Integer Arithmetic Instructions: clmad"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-mul24",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.6.",
+    "title": "Integer Arithmetic Instructions: mul24"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-mad24",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.7.",
+    "title": "Integer Arithmetic Instructions: mad24"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-sad",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.8.",
+    "title": "Integer Arithmetic Instructions: sad"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-div",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.9.",
+    "title": "Integer Arithmetic Instructions: div"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-rem",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.10.",
+    "title": "Integer Arithmetic Instructions: rem"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-abs",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.11.",
+    "title": "Integer Arithmetic Instructions: abs"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-neg",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.12.",
+    "title": "Integer Arithmetic Instructions: neg"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-min",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.13.",
+    "title": "Integer Arithmetic Instructions: min"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-max",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.14.",
+    "title": "Integer Arithmetic Instructions: max"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-popc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.15.",
+    "title": "Integer Arithmetic Instructions: popc"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-clz",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.16.",
+    "title": "Integer Arithmetic Instructions: clz"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-bfind",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.17.",
+    "title": "Integer Arithmetic Instructions: bfind"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-fns",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.18.",
+    "title": "Integer Arithmetic Instructions: fns"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-brev",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.19.",
+    "title": "Integer Arithmetic Instructions: brev"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-bfe",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.20.",
+    "title": "Integer Arithmetic Instructions: bfe"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-bfi",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.21.",
+    "title": "Integer Arithmetic Instructions: bfi"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-szext",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.22.",
+    "title": "Integer Arithmetic Instructions: szext"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-bmsk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.23.",
+    "title": "Integer Arithmetic Instructions: bmsk"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-dp4a",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.24.",
+    "title": "Integer Arithmetic Instructions: dp4a"
+  },
+  {
+    "anchor": "integer-arithmetic-instructions-dp2a",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "integer-arithmetic-instructions",
+    "section_number": "9.7.1.25.",
+    "title": "Integer Arithmetic Instructions: dp2a"
+  },
+  {
+    "anchor": "extended-precision-integer-arithmetic-instructions",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.2.",
+    "title": "Extended-Precision Integer Arithmetic Instructions"
+  },
+  {
+    "anchor": "extended-precision-arithmetic-instructions-add-cc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "extended-precision-integer-arithmetic-instructions",
+    "section_number": "9.7.2.1.",
+    "title": "Extended-Precision Arithmetic Instructions: add.cc"
+  },
+  {
+    "anchor": "extended-precision-arithmetic-instructions-addc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "extended-precision-integer-arithmetic-instructions",
+    "section_number": "9.7.2.2.",
+    "title": "Extended-Precision Arithmetic Instructions: addc"
+  },
+  {
+    "anchor": "extended-precision-arithmetic-instructions-sub-cc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "extended-precision-integer-arithmetic-instructions",
+    "section_number": "9.7.2.3.",
+    "title": "Extended-Precision Arithmetic Instructions: sub.cc"
+  },
+  {
+    "anchor": "extended-precision-arithmetic-instructions-subc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "extended-precision-integer-arithmetic-instructions",
+    "section_number": "9.7.2.4.",
+    "title": "Extended-Precision Arithmetic Instructions: subc"
+  },
+  {
+    "anchor": "extended-precision-arithmetic-instructions-mad-cc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "extended-precision-integer-arithmetic-instructions",
+    "section_number": "9.7.2.5.",
+    "title": "Extended-Precision Arithmetic Instructions: mad.cc"
+  },
+  {
+    "anchor": "extended-precision-arithmetic-instructions-madc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "extended-precision-integer-arithmetic-instructions",
+    "section_number": "9.7.2.6.",
+    "title": "Extended-Precision Arithmetic Instructions: madc"
+  },
+  {
+    "anchor": "floating-point-instructions",
+    "child_count": 22,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.3.",
+    "title": "Floating-Point Instructions"
+  },
+  {
+    "anchor": "floating-point-instructions-testp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.1.",
+    "title": "Floating Point Instructions: testp"
+  },
+  {
+    "anchor": "floating-point-instructions-copysign",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.2.",
+    "title": "Floating Point Instructions: copysign"
+  },
+  {
+    "anchor": "floating-point-instructions-add",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.3.",
+    "title": "Floating Point Instructions: add"
+  },
+  {
+    "anchor": "floating-point-instructions-sub",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.4.",
+    "title": "Floating Point Instructions: sub"
+  },
+  {
+    "anchor": "floating-point-instructions-mul",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.5.",
+    "title": "Floating Point Instructions: mul"
+  },
+  {
+    "anchor": "floating-point-instructions-fma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.6.",
+    "title": "Floating Point Instructions: fma"
+  },
+  {
+    "anchor": "floating-point-instructions-mad",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.7.",
+    "title": "Floating Point Instructions: mad"
+  },
+  {
+    "anchor": "floating-point-instructions-div",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.8.",
+    "title": "Floating Point Instructions: div"
+  },
+  {
+    "anchor": "floating-point-instructions-abs",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.9.",
+    "title": "Floating Point Instructions: abs"
+  },
+  {
+    "anchor": "floating-point-instructions-neg",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.10.",
+    "title": "Floating Point Instructions: neg"
+  },
+  {
+    "anchor": "floating-point-instructions-min",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.11.",
+    "title": "Floating Point Instructions: min"
+  },
+  {
+    "anchor": "floating-point-instructions-max",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.12.",
+    "title": "Floating Point Instructions: max"
+  },
+  {
+    "anchor": "floating-point-instructions-rcp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.13.",
+    "title": "Floating Point Instructions: rcp"
+  },
+  {
+    "anchor": "floating-point-instructions-rcp-approx-ftz-f64",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.14.",
+    "title": "Floating Point Instructions: rcp.approx.ftz.f64"
+  },
+  {
+    "anchor": "floating-point-instructions-sqrt",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.15.",
+    "title": "Floating Point Instructions: sqrt"
+  },
+  {
+    "anchor": "floating-point-instructions-rsqrt",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.16.",
+    "title": "Floating Point Instructions: rsqrt"
+  },
+  {
+    "anchor": "floating-point-instructions-rsqrt-approx-ftz-f64",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.17.",
+    "title": "Floating Point Instructions: rsqrt.approx.ftz.f64"
+  },
+  {
+    "anchor": "floating-point-instructions-sin",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.18.",
+    "title": "Floating Point Instructions: sin"
+  },
+  {
+    "anchor": "floating-point-instructions-cos",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.19.",
+    "title": "Floating Point Instructions: cos"
+  },
+  {
+    "anchor": "floating-point-instructions-lg2",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.20.",
+    "title": "Floating Point Instructions: lg2"
+  },
+  {
+    "anchor": "floating-point-instructions-ex2",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.21.",
+    "title": "Floating Point Instructions: ex2"
+  },
+  {
+    "anchor": "floating-point-instructions-tanh",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "floating-point-instructions",
+    "section_number": "9.7.3.22.",
+    "title": "Floating Point Instructions: tanh"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions",
+    "child_count": 10,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.4.",
+    "title": "Half Precision Floating-Point Instructions"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-add",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.1.",
+    "title": "Half Precision Floating Point Instructions: add"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-sub",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.2.",
+    "title": "Half Precision Floating Point Instructions: sub"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-mul",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.3.",
+    "title": "Half Precision Floating Point Instructions: mul"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-fma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.4.",
+    "title": "Half Precision Floating Point Instructions: fma"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-neg",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.5.",
+    "title": "Half Precision Floating Point Instructions: neg"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-abs",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.6.",
+    "title": "Half Precision Floating Point Instructions: abs"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-min",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.7.",
+    "title": "Half Precision Floating Point Instructions: min"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-max",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.8.",
+    "title": "Half Precision Floating Point Instructions: max"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-tanh",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.9.",
+    "title": "Half Precision Floating Point Instructions: tanh"
+  },
+  {
+    "anchor": "half-precision-floating-point-instructions-ex2",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-floating-point-instructions",
+    "section_number": "9.7.4.10.",
+    "title": "Half Precision Floating Point Instructions: ex2"
+  },
+  {
+    "anchor": "mixed-precision-floating-point-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.5.",
+    "title": "Mixed Precision Floating-Point Instructions"
+  },
+  {
+    "anchor": "mixed-precision-floating-point-instructions-add",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "mixed-precision-floating-point-instructions",
+    "section_number": "9.7.5.1.",
+    "title": "Mixed Precision Floating Point Instructions: add"
+  },
+  {
+    "anchor": "mixed-precision-floating-point-instructions-sub",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "mixed-precision-floating-point-instructions",
+    "section_number": "9.7.5.2.",
+    "title": "Mixed Precision Floating Point Instructions: sub"
+  },
+  {
+    "anchor": "mixed-precision-floating-point-instructions-fma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "mixed-precision-floating-point-instructions",
+    "section_number": "9.7.5.3.",
+    "title": "Mixed Precision Floating Point Instructions: fma"
+  },
+  {
+    "anchor": "mixed-precision-floating-point-instructions-mul",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "mixed-precision-floating-point-instructions",
+    "section_number": "9.7.5.4.",
+    "title": "Mixed Precision Floating Point Instructions: mul"
+  },
+  {
+    "anchor": "alternate-floating-point-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.6.",
+    "title": "Alternate Floating-Point Instructions"
+  },
+  {
+    "anchor": "alternate-floating-point-instructions-add",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "alternate-floating-point-instructions",
+    "section_number": "9.7.6.1.",
+    "title": "Alternate Floating Point Instructions: add"
+  },
+  {
+    "anchor": "alternate-floating-point-instructions-sub",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "alternate-floating-point-instructions",
+    "section_number": "9.7.6.2.",
+    "title": "Alternate Floating Point Instructions: sub"
+  },
+  {
+    "anchor": "alternate-floating-point-instructions-mul",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "alternate-floating-point-instructions",
+    "section_number": "9.7.6.3.",
+    "title": "Alternate Floating Point Instructions: mul"
+  },
+  {
+    "anchor": "alternate-floating-point-instructions-fma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "alternate-floating-point-instructions",
+    "section_number": "9.7.6.4.",
+    "title": "Alternate Floating Point Instructions: fma"
+  },
+  {
+    "anchor": "comparison-and-selection-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.7.",
+    "title": "Comparison and Selection Instructions"
+  },
+  {
+    "anchor": "comparison-and-selection-instructions-set",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "comparison-and-selection-instructions",
+    "section_number": "9.7.7.1.",
+    "title": "Comparison and Selection Instructions: set"
+  },
+  {
+    "anchor": "comparison-and-selection-instructions-setp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "comparison-and-selection-instructions",
+    "section_number": "9.7.7.2.",
+    "title": "Comparison and Selection Instructions: setp"
+  },
+  {
+    "anchor": "comparison-and-selection-instructions-selp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "comparison-and-selection-instructions",
+    "section_number": "9.7.7.3.",
+    "title": "Comparison and Selection Instructions: selp"
+  },
+  {
+    "anchor": "comparison-and-selection-instructions-slct",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "comparison-and-selection-instructions",
+    "section_number": "9.7.7.4.",
+    "title": "Comparison and Selection Instructions: slct"
+  },
+  {
+    "anchor": "half-precision-comparison-instructions",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.8.",
+    "title": "Half Precision Comparison Instructions"
+  },
+  {
+    "anchor": "half-precision-comparison-instructions-set",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-comparison-instructions",
+    "section_number": "9.7.8.1.",
+    "title": "Half Precision Comparison Instructions: set"
+  },
+  {
+    "anchor": "half-precision-comparison-instructions-setp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "half-precision-comparison-instructions",
+    "section_number": "9.7.8.2.",
+    "title": "Half Precision Comparison Instructions: setp"
+  },
+  {
+    "anchor": "logic-and-shift-instructions",
+    "child_count": 9,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.9.",
+    "title": "Logic and Shift Instructions"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-and",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.1.",
+    "title": "Logic and Shift Instructions: and"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-or",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.2.",
+    "title": "Logic and Shift Instructions: or"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-xor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.3.",
+    "title": "Logic and Shift Instructions: xor"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-not",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.4.",
+    "title": "Logic and Shift Instructions: not"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-cnot",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.5.",
+    "title": "Logic and Shift Instructions: cnot"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-lop3",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.6.",
+    "title": "Logic and Shift Instructions: lop3"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-shf",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.7.",
+    "title": "Logic and Shift Instructions: shf"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-shl",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.8.",
+    "title": "Logic and Shift Instructions: shl"
+  },
+  {
+    "anchor": "logic-and-shift-instructions-shr",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "logic-and-shift-instructions",
+    "section_number": "9.7.9.9.",
+    "title": "Logic and Shift Instructions: shr"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions",
+    "child_count": 31,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.10.",
+    "title": "Data Movement and Conversion Instructions"
+  },
+  {
+    "anchor": "cache-operators",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.1.",
+    "title": "Cache Operators"
+  },
+  {
+    "anchor": "cache-eviction-priority-hints",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.2.",
+    "title": "Cache Eviction Priority Hints"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-mov",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.3.",
+    "title": "Data Movement and Conversion Instructions: mov"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-mov-2",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.4.",
+    "title": "Data Movement and Conversion Instructions: mov"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-shfl",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.5.",
+    "title": "Data Movement and Conversion Instructions: shfl (deprecated)"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-shfl-sync",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.6.",
+    "title": "Data Movement and Conversion Instructions: shfl.sync"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-prmt",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.7.",
+    "title": "Data Movement and Conversion Instructions: prmt"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-ld",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.8.",
+    "title": "Data Movement and Conversion Instructions: ld"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-ld-global-nc",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.9.",
+    "title": "Data Movement and Conversion Instructions: ld.global.nc"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-ldu",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.10.",
+    "title": "Data Movement and Conversion Instructions: ldu"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-st",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.11.",
+    "title": "Data Movement and Conversion Instructions: st"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-st-async",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.12.",
+    "title": "Data Movement and Conversion Instructions: st.async"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-multimem-st-async",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.13.",
+    "title": "Data Movement and Conversion Instructions: multimem.st.async"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-st-bulk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.14.",
+    "title": "Data Movement and Conversion Instructions: st.bulk"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-multimem",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.15.",
+    "title": "Data Movement and Conversion Instructions: multimem.ld_reduce, multimem.st, multimem.red"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-prefetch-prefetchu",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.16.",
+    "title": "Data Movement and Conversion Instructions: prefetch, prefetchu"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-applypriority",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.17.",
+    "title": "Data Movement and Conversion Instructions: applypriority"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-applypriority-async-bulk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.18.",
+    "title": "Data Movement and Conversion Instructions: applypriority.async.bulk"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-applypriority-async-bulk-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.19.",
+    "title": "Data Movement and Conversion Instructions: applypriority.async.bulk.tensor"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-discard",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.20.",
+    "title": "Data Movement and Conversion Instructions: discard"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-createpolicy",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.21.",
+    "title": "Data Movement and Conversion Instructions: createpolicy"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-isspacep",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.22.",
+    "title": "Data Movement and Conversion Instructions: isspacep"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cvta",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.23.",
+    "title": "Data Movement and Conversion Instructions: cvta"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cvt",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.24.",
+    "title": "Data Movement and Conversion Instructions: cvt"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cvt-pack",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.25.",
+    "title": "Data Movement and Conversion Instructions: cvt.pack"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-mapa",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.26.",
+    "title": "Data Movement and Conversion Instructions: mapa"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-getctarank",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.27.",
+    "title": "Data Movement and Conversion Instructions: getctarank"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.28.",
+    "title": "Data Movement and Conversion Instructions: Asynchronous copy"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "section_number": "9.7.10.28.1.",
+    "title": "Completion Mechanisms for Asynchronous Copy Operations"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms-async-group",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms",
+    "section_number": "9.7.10.28.1.1.",
+    "title": "Async-group mechanism"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms-mbarrier",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms",
+    "section_number": "9.7.10.28.1.2.",
+    "title": "Mbarrier-based mechanism"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-asynchronous-copy-report-mechanisms",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy-completion-mechanisms",
+    "section_number": "9.7.10.28.1.3.",
+    "title": "Report Mechanisms for Asynchronous Copy Operations"
+  },
+  {
+    "anchor": "async-proxy",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "section_number": "9.7.10.28.2.",
+    "title": "Async Proxy"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-non-bulk-copy",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "section_number": "9.7.10.28.3.",
+    "title": "Data Movement and Conversion Instructions: Non-bulk copy"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-non-bulk-copy",
+    "section_number": "9.7.10.28.3.1.",
+    "title": "Data Movement and Conversion Instructions: cp.async"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-commit-group",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-non-bulk-copy",
+    "section_number": "9.7.10.28.3.2.",
+    "title": "Data Movement and Conversion Instructions: cp.async.commit_group"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-wait-group",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-non-bulk-copy",
+    "section_number": "9.7.10.28.3.3.",
+    "title": "Data Movement and Conversion Instructions: cp.async.wait_group / cp.async.wait_all"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-bulk-copy",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "section_number": "9.7.10.28.4.",
+    "title": "Data Movement and Conversion Instructions: Bulk copy"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-bulk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-copy",
+    "section_number": "9.7.10.28.4.1.",
+    "title": "Data Movement and Conversion Instructions: cp.async.bulk"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-reduce-async-bulk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-copy",
+    "section_number": "9.7.10.28.4.2.",
+    "title": "Data Movement and Conversion Instructions: cp.reduce.async.bulk"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-bulk-prefetch",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-copy",
+    "section_number": "9.7.10.28.4.3.",
+    "title": "Data Movement and Conversion Instructions: cp.async.bulk.prefetch"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-multimem-cp-async-bulk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-copy",
+    "section_number": "9.7.10.28.4.4.",
+    "title": "Data Movement and Conversion Instructions: multimem.cp.async.bulk"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-multimem-cp-reduce-async-bulk",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-copy",
+    "section_number": "9.7.10.28.4.5.",
+    "title": "Data Movement and Conversion Instructions: multimem.cp.reduce.async.bulk"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-tensor-copy",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "section_number": "9.7.10.28.5.",
+    "title": "Data Movement and Conversion Instructions: Tensor copy"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-tensor-copy-restrictions",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-tensor-copy",
+    "section_number": "9.7.10.28.5.1.",
+    "title": "Restriction on Tensor Copy instructions"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-overriding-tensor-property-value",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-tensor-copy",
+    "section_number": "9.7.10.28.5.2.",
+    "title": "Overriding tensor property value"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-tensor-base-address-override",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-overriding-tensor-property-value",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-tensor-attribute-override",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-overriding-tensor-property-value",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-bulk-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-tensor-copy",
+    "section_number": "9.7.10.28.5.3.",
+    "title": "Data Movement and Conversion Instructions: cp.async.bulk.tensor"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-reduce-async-bulk-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-tensor-copy",
+    "section_number": "9.7.10.28.5.4.",
+    "title": "Data Movement and Conversion Instructions: cp.reduce.async.bulk.tensor"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-bulk-prefetch-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-tensor-copy",
+    "section_number": "9.7.10.28.5.5.",
+    "title": "Data Movement and Conversion Instructions: cp.async.bulk.prefetch.tensor"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-bulk-tensor-copy-completion",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "data-movement-and-conversion-instructions-asynchronous-copy",
+    "section_number": "9.7.10.28.6.",
+    "title": "Data Movement and Conversion Instructions: Bulk and Tensor copy completion instructions"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-bulk-commit-group",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-tensor-copy-completion",
+    "section_number": "9.7.10.28.6.1.",
+    "title": "Data Movement and Conversion Instructions: cp.async.bulk.commit_group"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-cp-async-bulk-wait-group",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions-bulk-tensor-copy-completion",
+    "section_number": "9.7.10.28.6.2.",
+    "title": "Data Movement and Conversion Instructions: cp.async.bulk.wait_group"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-tensormap-replace",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.29.",
+    "title": "Data Movement and Conversion Instructions: tensormap.replace"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-spcompress",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.30.",
+    "title": "Data Movement and Conversion Instructions: spcompress"
+  },
+  {
+    "anchor": "data-movement-and-conversion-instructions-spdecompress",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "data-movement-and-conversion-instructions",
+    "section_number": "9.7.10.31.",
+    "title": "Data Movement and Conversion Instructions: spdecompress"
+  },
+  {
+    "anchor": "fabric-instructions",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.11.",
+    "title": "Fabric Instructions"
+  },
+  {
+    "anchor": "cft-handles",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-instructions",
+    "section_number": "9.7.11.1.",
+    "title": "CFT Handles"
+  },
+  {
+    "anchor": "cft-handles-overview",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-instructions",
+    "section_number": "9.7.11.2.",
+    "title": "CFT Handles Overview"
+  },
+  {
+    "anchor": "fabric-proxy",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "cft-handles-overview",
+    "section_number": "9.7.11.2.1.",
+    "title": "Fabric Proxy"
+  },
+  {
+    "anchor": "fabric-operations-lifecycle",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-instructions",
+    "section_number": "9.7.11.3.",
+    "title": "Life of a Fabric Operation"
+  },
+  {
+    "anchor": "issue-fabric-operation",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-operations-lifecycle",
+    "section_number": "9.7.11.3.1.",
+    "title": "Issue a Fabric Operation"
+  },
+  {
+    "anchor": "fabric-submit-then-arrive-mbarrier",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-operations-lifecycle",
+    "section_number": "9.7.11.3.2.",
+    "title": "Submit and then arrive at mbarrier"
+  },
+  {
+    "anchor": "fabric-wait-for-completion",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-operations-lifecycle",
+    "section_number": "9.7.11.3.3.",
+    "title": "Wait for completion"
+  },
+  {
+    "anchor": "fabric-inspect-status-handle-errors",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-operations-lifecycle",
+    "section_number": "9.7.11.3.4.",
+    "title": "Inspect status and handle errors"
+  },
+  {
+    "anchor": "fabric-completion-mechanisms",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-instructions",
+    "section_number": "9.7.11.4.",
+    "title": "Completion mechanisms of fabric operations"
+  },
+  {
+    "anchor": "fabric-reporting-mechanism",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-completion-mechanisms",
+    "section_number": "9.7.11.4.1.",
+    "title": "Fabric Reporting Mechanism"
+  },
+  {
+    "anchor": "fabric-read-completion-mechanism",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-completion-mechanisms",
+    "section_number": "9.7.11.4.2.",
+    "title": "Fabric-read completion mechanism"
+  },
+  {
+    "anchor": "fabric-counted-completion-mechanism",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-completion-mechanisms",
+    "section_number": "9.7.11.4.3.",
+    "title": "Counted completion mechanism"
+  },
+  {
+    "anchor": "fabric-operations",
+    "child_count": 10,
+    "kind": "instruction_topic",
+    "parent_anchor": "fabric-instructions",
+    "section_number": "9.7.11.5.",
+    "title": "Fabric operations"
+  },
+  {
+    "anchor": "fabric-instructions-try-get",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.1.",
+    "title": "Fabric Instructions: fabric.try_get"
+  },
+  {
+    "anchor": "fabric-instructions-try-put",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.2.",
+    "title": "Fabric Instructions: fabric.try_put"
+  },
+  {
+    "anchor": "fabric-instructions-try-red",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.3.",
+    "title": "Fabric Instructions: fabric.try_red"
+  },
+  {
+    "anchor": "fabric-instructions-try-pullred",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.4.",
+    "title": "Fabric Instructions: fabric.try_pullred"
+  },
+  {
+    "anchor": "fabric-instructions-submit",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.5.",
+    "title": "Fabric Instructions: fabric.submit"
+  },
+  {
+    "anchor": "fabric-instructions-wait",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.6.",
+    "title": "Fabric Instructions: fabric.wait"
+  },
+  {
+    "anchor": "fabric-instructions-try-get-async-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.7.",
+    "title": "Fabric Instructions: fabric.try_get.async.tensor"
+  },
+  {
+    "anchor": "fabric-instructions-try-put-async-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.8.",
+    "title": "Fabric Instructions: fabric.try_put.async.tensor"
+  },
+  {
+    "anchor": "fabric-instructions-try-red-async-tensor",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.9.",
+    "title": "Fabric Instructions: fabric.try_red.async.tensor"
+  },
+  {
+    "anchor": "fabric-instructions-try-atom",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "fabric-operations",
+    "section_number": "9.7.11.5.10.",
+    "title": "Fabric Instructions: fabric.try_atom"
+  },
+  {
+    "anchor": "texture-instructions",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.12.",
+    "title": "Texture Instructions"
+  },
+  {
+    "anchor": "texturing-modes",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "texture-instructions",
+    "section_number": "9.7.12.1.",
+    "title": "Texturing Modes"
+  },
+  {
+    "anchor": "mipmaps",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "texture-instructions",
+    "section_number": "9.7.12.2.",
+    "title": "Mipmaps"
+  },
+  {
+    "anchor": "texture-instructions-tex",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "texture-instructions",
+    "section_number": "9.7.12.3.",
+    "title": "Texture Instructions: tex"
+  },
+  {
+    "anchor": "texture-instructions-tld4",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "texture-instructions",
+    "section_number": "9.7.12.4.",
+    "title": "Texture Instructions: tld4"
+  },
+  {
+    "anchor": "texture-instructions-txq",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "texture-instructions",
+    "section_number": "9.7.12.5.",
+    "title": "Texture Instructions: txq"
+  },
+  {
+    "anchor": "texture-instructions-istypep",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "texture-instructions",
+    "section_number": "9.7.12.6.",
+    "title": "Texture Instructions: istypep"
+  },
+  {
+    "anchor": "surface-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.13.",
+    "title": "Surface Instructions"
+  },
+  {
+    "anchor": "surface-instructions-suld",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "surface-instructions",
+    "section_number": "9.7.13.1.",
+    "title": "Surface Instructions: suld"
+  },
+  {
+    "anchor": "surface-instructions-sust",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "surface-instructions",
+    "section_number": "9.7.13.2.",
+    "title": "Surface Instructions: sust"
+  },
+  {
+    "anchor": "surface-instructions-sured",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "surface-instructions",
+    "section_number": "9.7.13.3.",
+    "title": "Surface Instructions: sured"
+  },
+  {
+    "anchor": "surface-instructions-suq",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "surface-instructions",
+    "section_number": "9.7.13.4.",
+    "title": "Surface Instructions: suq"
+  },
+  {
+    "anchor": "control-flow-instructions",
+    "child_count": 7,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.14.",
+    "title": "Control Flow Instructions"
+  },
+  {
+    "anchor": "control-flow-instructions-curly-braces",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.1.",
+    "title": "Control Flow Instructions: {}"
+  },
+  {
+    "anchor": "control-flow-instructions-at",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.2.",
+    "title": "Control Flow Instructions: @"
+  },
+  {
+    "anchor": "control-flow-instructions-bra",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.3.",
+    "title": "Control Flow Instructions: bra"
+  },
+  {
+    "anchor": "control-flow-instructions-brx-idx",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.4.",
+    "title": "Control Flow Instructions: brx.idx"
+  },
+  {
+    "anchor": "control-flow-instructions-call",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.5.",
+    "title": "Control Flow Instructions: call"
+  },
+  {
+    "anchor": "control-flow-instructions-ret",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.6.",
+    "title": "Control Flow Instructions: ret"
+  },
+  {
+    "anchor": "control-flow-instructions-exit",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "control-flow-instructions",
+    "section_number": "9.7.14.7.",
+    "title": "Control Flow Instructions: exit"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions",
+    "child_count": 19,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.15.",
+    "title": "Parallel Synchronization and Communication Instructions"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-bar",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.1.",
+    "title": "Parallel Synchronization and Communication Instructions: bar, barrier"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-bar-warp-sync",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.2.",
+    "title": "Parallel Synchronization and Communication Instructions: bar.warp.sync"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-barrier-cluster",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.3.",
+    "title": "Parallel Synchronization and Communication Instructions: barrier.cluster"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-membar",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.4.",
+    "title": "Parallel Synchronization and Communication Instructions: membar / fence"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-atom",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.5.",
+    "title": "Parallel Synchronization and Communication Instructions: atom"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-red",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.6.",
+    "title": "Parallel Synchronization and Communication Instructions: red"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-red-async",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.7.",
+    "title": "Parallel Synchronization and Communication Instructions: red.async"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-multimem-red-async",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.8.",
+    "title": "Parallel Synchronization and Communication Instructions: multimem.red.async"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-vote",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.9.",
+    "title": "Parallel Synchronization and Communication Instructions: vote (deprecated)"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-vote-sync",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.10.",
+    "title": "Parallel Synchronization and Communication Instructions: vote.sync"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-match-sync",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.11.",
+    "title": "Parallel Synchronization and Communication Instructions: match.sync"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-activemask",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.12.",
+    "title": "Parallel Synchronization and Communication Instructions: activemask"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-redux-sync",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.13.",
+    "title": "Parallel Synchronization and Communication Instructions: redux.sync"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-griddepcontrol",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.14.",
+    "title": "Parallel Synchronization and Communication Instructions: griddepcontrol"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-elect-sync",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.15.",
+    "title": "Parallel Synchronization and Communication Instructions: elect.sync"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "child_count": 21,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.16.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-size-alignment",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.1.",
+    "title": "Size and alignment of mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-object-layout",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.2.",
+    "title": "Layouts of the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-contents",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.3.",
+    "title": "Contents of the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-lifecycle",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.4.",
+    "title": "Lifecycle of the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-phase",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.5.",
+    "title": "Phases of the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-primary-phase",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier-phase",
+    "section_number": "9.7.15.16.5.1.",
+    "title": "Primary phase"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-conditional-phase",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier-phase",
+    "section_number": "9.7.15.16.5.2.",
+    "title": "Conditional phase"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-tracking-async-operations",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.6.",
+    "title": "Tracking asynchronous operations by the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-expect-tx-operation",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier-tracking-async-operations",
+    "section_number": "9.7.15.16.6.1.",
+    "title": "expect-tx operation"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-complete-tx-operation",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier-tracking-async-operations",
+    "section_number": "9.7.15.16.6.2.",
+    "title": "complete-tx operation"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-tracking",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.7.",
+    "title": "Tracking successful completion of an operation using the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-phase-completion",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.8.",
+    "title": "Phase Completion of the mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-arrive-on",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.9.",
+    "title": "Arrive-on operation on mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-report-on",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.10.",
+    "title": "Report-on operation on mbarrier object"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-smem",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.11.",
+    "title": "mbarrier support with shared memory"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-init",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.12.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.init"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-inval",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.13.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.inval"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-expect-tx",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.14.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.expect_tx"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-complete-tx",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.15.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.complete_tx"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-arrive",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.16.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.arrive"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-arrive-drop",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.17.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.arrive_drop"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-cp-async-mbarrier-arrive",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.18.",
+    "title": "Parallel Synchronization and Communication Instructions: cp.async.mbarrier.arrive"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-test-wait-try-wait",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.19.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.test_wait / mbarrier.try_wait"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-pending-count",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.20.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.pending_count"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-check-layout",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions-mbarrier",
+    "section_number": "9.7.15.16.21.",
+    "title": "Parallel Synchronization and Communication Instructions: mbarrier.check_layout"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-tensormap-cp-fenceproxy",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.17.",
+    "title": "Parallel Synchronization and Communication Instructions: tensormap.cp_fenceproxy"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-clusterlaunchcontrol-try-cancel",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.18.",
+    "title": "Parallel Synchronization and Communication Instructions: clusterlaunchcontrol.try_cancel"
+  },
+  {
+    "anchor": "parallel-synchronization-and-communication-instructions-clusterlaunchcontrol-query-cancel",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "parallel-synchronization-and-communication-instructions",
+    "section_number": "9.7.15.19.",
+    "title": "Parallel Synchronization and Communication Instructions: clusterlaunchcontrol.query_cancel"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.16.",
+    "title": "Warp Level Matrix Multiply-Accumulate Instructions"
+  },
+  {
+    "anchor": "warp-level-matrix-shape",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions",
+    "section_number": "9.7.16.1.",
+    "title": "Matrix Shape"
+  },
+  {
+    "anchor": "warp-level-matrix-data-types",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions",
+    "section_number": "9.7.16.2.",
+    "title": "Matrix Data-types"
+  },
+  {
+    "anchor": "warp-level-block-scaling",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions",
+    "section_number": "9.7.16.3.",
+    "title": "Block Scaling for mma.sync"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-wmma",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions",
+    "section_number": "9.7.16.4.",
+    "title": "Matrix multiply-accumulate operation using wmma instructions"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-wmma",
+    "section_number": "9.7.16.4.1.",
+    "title": "Matrix Fragments for WMMA"
+  },
+  {
+    "anchor": "warp-level-matrix-storage",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-wmma",
+    "section_number": "9.7.16.4.2.",
+    "title": "Matrix Storage for WMMA"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-wmma-ld",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-wmma",
+    "section_number": "9.7.16.4.3.",
+    "title": "Warp-level Matrix Load Instruction: wmma.load"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-wmma-st",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-wmma",
+    "section_number": "9.7.16.4.4.",
+    "title": "Warp-level Matrix Store Instruction: wmma.store"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-wmma-mma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-wmma",
+    "section_number": "9.7.16.4.5.",
+    "title": "Warp-level Matrix Multiply-and-Accumulate Instruction: wmma.mma"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-for-mma",
+    "child_count": 17,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions",
+    "section_number": "9.7.16.5.",
+    "title": ""
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-884-f16",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.1.",
+    "title": "Matrix Fragments for mma.m8n8k4 with .f16 floating point type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-884-f64",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.2.",
+    "title": "Matrix Fragments for mma.m8n8k4 with .f64 floating point type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-8816",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.3.",
+    "title": "Matrix Fragments for mma.m8n8k16"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-8832",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.4.",
+    "title": "Matrix Fragments for mma.m8n8k32"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-88128",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.5.",
+    "title": "Matrix Fragments for mma.m8n8k128"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-1684",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.6.",
+    "title": "Matrix Fragments for mma.m16n8k4"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-1688",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.7.",
+    "title": "Matrix Fragments for mma.m16n8k8"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-16816-float",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.8.",
+    "title": "Matrix Fragments for mma.m16n8k16 with floating point type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-16816-i8-f8",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.9.",
+    "title": "Matrix Fragments for mma.m16n8k16 with integer type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-16832",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.10.",
+    "title": "Matrix Fragments for mma.m16n8k32"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-16864",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.11.",
+    "title": "Matrix Fragments for mma.m16n8k64"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-168128",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.12.",
+    "title": "Matrix Fragments for mma.m16n8k128"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-mma-168256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.13.",
+    "title": "Matrix Fragments for mma.m16n8k256"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-mma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.14.",
+    "title": "Multiply-and-Accumulate Instruction: mma"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-ldmatrix",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.15.",
+    "title": "Warp-level matrix load instruction: ldmatrix"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-stmatrix",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.16.",
+    "title": "Warp-level matrix store instruction: stmatrix"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-movmatrix",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-for-mma",
+    "section_number": "9.7.16.5.17.",
+    "title": "Warp-level matrix transpose instruction: movmatrix"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-for-sparse-mma",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions",
+    "section_number": "9.7.16.6.",
+    "title": "Matrix multiply-accumulate operation using mma.sp instruction with sparse matrix A"
+  },
+  {
+    "anchor": "warp-level-sparse-matrix-storage",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-sparse-mma",
+    "section_number": "9.7.16.6.1.",
+    "title": "Sparse matrix storage"
+  },
+  {
+    "anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "child_count": 8,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-instructions-for-sparse-mma",
+    "section_number": "9.7.16.6.2.",
+    "title": "Matrix fragments for multiply-accumulate operation with sparse matrix A"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-16816-f16bf16",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.1.",
+    "title": "Matrix Fragments for sparse mma.m16n8k16 with .f16 and .bf16 types"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-16832-f16bf16",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.2.",
+    "title": "Matrix Fragments for sparse mma.m16n8k32 with .f16 and .bf16 types"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-16816-tf32",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.3.",
+    "title": "Matrix Fragments for sparse mma.m16n8k16 with .tf32 floating point type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-1688-tf32",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.4.",
+    "title": "Matrix Fragments for sparse mma.m16n8k8 with .tf32 floating point type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-16832-u8s8",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.5.",
+    "title": "Matrix Fragments for sparse mma.m16n8k32 with .u8 / .s8 integer type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-16864-u8s8-fp8",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.6.",
+    "title": "Matrix Fragments for sparse mma.m16n8k64 with .u8 / .s8 / .e4m3 / .e5m2 type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-16864-u4s4",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.7.",
+    "title": "Matrix Fragments for sparse mma.m16n8k64 with .u4 / .s4 integer type"
+  },
+  {
+    "anchor": "warp-level-matrix-fragment-sparse-mma-168128-u4s4",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "warp-level-matrix-fragments-for-sparse-mma",
+    "section_number": "9.7.16.6.2.8.",
+    "title": "Matrix Fragments for sparse mma.m16n8k128 with .u4 / .s4 integer type"
+  },
+  {
+    "anchor": "warp-level-matrix-instructions-sparse-mma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "warp-level-matrix-instructions-for-sparse-mma",
+    "section_number": "9.7.16.6.3.",
+    "title": "Multiply-and-Accumulate Instruction: mma.sp / mma.sp::ordered_metadata"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "child_count": 7,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.17.",
+    "title": "Asynchronous Warpgroup Level Matrix Multiply-Accumulate Instructions"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-warpgroup",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.1.",
+    "title": "Warpgroup"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-shape",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.2.",
+    "title": "Matrix Shape"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-data-types",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.3.",
+    "title": "Matrix Data-types"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-async-proxy",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.4.",
+    "title": "Async Proxy"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-operation-wgmma-mma-async",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.5.",
+    "title": "Asynchronous Warpgroup Level Matrix Multiply-Accumulate Operation using wgmma.mma_async instruction"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-fragment",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-operation-wgmma-mma-async",
+    "section_number": "9.7.17.5.1.",
+    "title": "Register Fragments and Shared Memory Matrix Layouts"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-register-fragment",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-fragment",
+    "section_number": "9.7.17.5.1.1.",
+    "title": "Register Fragments"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-register-fragment-wgmma-64n16",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-register-fragment",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-register-fragment-wgmma-64n8",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-register-fragment",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-register-fragment-wgmma-64n32",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-register-fragment",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-register-fragment-wgmma-64n256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-register-fragment",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-shared-memory-layout",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-fragment",
+    "section_number": "9.7.17.5.1.2.",
+    "title": "Shared Memory Matrix Layout"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-majorness-supported-by-strides",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-shared-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-leading-dimension-byte-offset",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-majorness-supported-by-strides",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-stride-dimension-byte-offset",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-majorness-supported-by-strides",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-canonical-layouts",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-majorness-supported-by-strides",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-shared-memory-layout-matrix-descriptor",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-shared-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-mma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-operation-wgmma-mma-async",
+    "section_number": "9.7.17.5.2.",
+    "title": "Asynchronous Multiply-and-Accumulate Instruction: wgmma.mma_async"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-for-sparse-wgmma",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.6.",
+    "title": "Asynchronous Warpgroup Level Multiply-and-Accumulate Operation using wgmma.mma_async.sp instruction"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-sparse-matrix-storage",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions-for-sparse-wgmma",
+    "section_number": "9.7.17.6.1.",
+    "title": "Sparse matrix storage"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-fragments-for-sparse-wgmma",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions-for-sparse-wgmma",
+    "section_number": "9.7.17.6.2.",
+    "title": "Matrix fragments for warpgroup-level multiply-accumulate operation with sparse matrix A"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-fragment-sparse-wgmma-64n32",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-fragments-for-sparse-wgmma",
+    "section_number": "9.7.17.6.2.1.",
+    "title": "Matrix Fragments for sparse wgmma.mma_async.m64nNk32"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-fragment-sparse-wgmma-64n16",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-fragments-for-sparse-wgmma",
+    "section_number": "9.7.17.6.2.2.",
+    "title": "Matrix Fragments for sparse wgmma.mma_async.m64nNk16"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-fragment-sparse-wgmma-64n64",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-fragments-for-sparse-wgmma",
+    "section_number": "9.7.17.6.2.3.",
+    "title": "Matrix Fragments for sparse wgmma.mma_async.m64nNk64"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-mma-sp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions-for-sparse-wgmma",
+    "section_number": "9.7.17.6.3.",
+    "title": "Asynchronous Multiply-and-Accumulate Instruction: wgmma.mma_async.sp"
+  },
+  {
+    "anchor": "asynchronous-wgmma-proxy-operations",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "asynchronous-warpgroup-level-matrix-instructions",
+    "section_number": "9.7.17.7.",
+    "title": "Asynchronous wgmma Proxy Operations"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-fence",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "asynchronous-wgmma-proxy-operations",
+    "section_number": "9.7.17.7.1.",
+    "title": "Asynchronous Multiply-and-Accumulate Instruction: wgmma.fence"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-commit-group",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "asynchronous-wgmma-proxy-operations",
+    "section_number": "9.7.17.7.2.",
+    "title": "Asynchronous Multiply-and-Accumulate Instruction: wgmma.commit_group"
+  },
+  {
+    "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-wait-group",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "asynchronous-wgmma-proxy-operations",
+    "section_number": "9.7.17.7.3.",
+    "title": "Asynchronous Multiply-and-Accumulate Instruction: wgmma.wait_group"
+  },
+  {
+    "anchor": "tensorcore-5th-generation-instructions",
+    "child_count": 12,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.18.",
+    "title": "TensorCore 5th Generation Family Instructions"
+  },
+  {
+    "anchor": "tensor-memory",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.1.",
+    "title": "Tensor Memory"
+  },
+  {
+    "anchor": "tensor-memory-addressing",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensor-memory",
+    "section_number": "9.7.18.1.1.",
+    "title": "Tensor Memory Addressing"
+  },
+  {
+    "anchor": "tensor-memory-allocation",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensor-memory",
+    "section_number": "9.7.18.1.2.",
+    "title": "Tensor Memory Allocation"
+  },
+  {
+    "anchor": "tcgen05-matrix-data-movement-shape",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.2.",
+    "title": "Matrix and Data Movement Shape"
+  },
+  {
+    "anchor": "tcgen05-matrix-shape",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-data-movement-shape",
+    "section_number": "9.7.18.2.1.",
+    "title": "Matrix Shape"
+  },
+  {
+    "anchor": "tcgen05-matrix-shape-target-isa-note",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-shape",
+    "section_number": "9.7.18.2.1.1.",
+    "title": "Target ISA Note"
+  },
+  {
+    "anchor": "tcgen05-specify-matrix-shape",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-data-movement-shape",
+    "section_number": "9.7.18.2.2.",
+    "title": "Specifying Matrix Shape"
+  },
+  {
+    "anchor": "tcgen05-data-movement-shape",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-data-movement-shape",
+    "section_number": "9.7.18.2.3.",
+    "title": "Data Movement Shape"
+  },
+  {
+    "anchor": "tcgen05-memory-layout",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-movement-shape",
+    "section_number": "9.7.18.2.3.1.",
+    "title": "Memory Layout"
+  },
+  {
+    "anchor": "tcgen05-matrix-fragments-shape-3232b",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-matrix-fragments-shape-6464b",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-matrix-fragments-shape-16128b",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-matrix-fragments-shape-16256b",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-matrix-fragments-shape-1632b2",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-layout",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-majorness-supported-by-strides",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.3.",
+    "title": "Major-ness supported by Strides"
+  },
+  {
+    "anchor": "tcgen05-leading-dimension-byte-offset",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-majorness-supported-by-strides",
+    "section_number": "9.7.18.3.1.",
+    "title": "Leading Dimension Stride: relative offset or absolute address"
+  },
+  {
+    "anchor": "tcgen05-leading-dimension-byte-offset-relative-offset",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-leading-dimension-byte-offset",
+    "section_number": "9.7.18.3.1.1.",
+    "title": "Relative offset mode"
+  },
+  {
+    "anchor": "tcgen05-leading-dimension-byte-offset-absolute-address",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-leading-dimension-byte-offset",
+    "section_number": "9.7.18.3.1.2.",
+    "title": "Absolute address mode for K dimension being 48B"
+  },
+  {
+    "anchor": "tcgen05-leading-dimension-byte-offset-absolute-address-restriction",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-leading-dimension-byte-offset-absolute-address",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-stride-dimension-byte-offset",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-majorness-supported-by-strides",
+    "section_number": "9.7.18.3.2.",
+    "title": "Stride Dimension Byte Offset"
+  },
+  {
+    "anchor": "tcgen05-canonical-layouts",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-majorness-supported-by-strides",
+    "section_number": "9.7.18.3.3.",
+    "title": "Canonical Layouts"
+  },
+  {
+    "anchor": "tcgen05-matrix-descriptors",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.4.",
+    "title": "Matrix Descriptors"
+  },
+  {
+    "anchor": "tcgen05-shared-memory-descriptor",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-descriptors",
+    "section_number": "9.7.18.4.1.",
+    "title": "Shared memory descriptor"
+  },
+  {
+    "anchor": "tcgen05-shared-memory-descriptor-target-isa-note",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-shared-memory-descriptor",
+    "section_number": "9.7.18.4.1.1.",
+    "title": "Target ISA Note"
+  },
+  {
+    "anchor": "tcgen05-instruction-descriptor",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-descriptors",
+    "section_number": "9.7.18.4.2.",
+    "title": "Instruction descriptor"
+  },
+  {
+    "anchor": "tcgen05-instruction-memory-descriptor-target-isa-note",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-instruction-descriptor",
+    "section_number": "9.7.18.4.2.1.",
+    "title": "Target ISA Note"
+  },
+  {
+    "anchor": "tcgen05-zero-column-mask-descriptor",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-matrix-descriptors",
+    "section_number": "9.7.18.4.3.",
+    "title": "Zero-Column Mask Descriptor"
+  },
+  {
+    "anchor": "tcgen05-issue-granularity",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.5.",
+    "title": "Issue Granularity"
+  },
+  {
+    "anchor": "tcgen05-cta-pair",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-issue-granularity",
+    "section_number": "9.7.18.5.1.",
+    "title": "CTA Pair"
+  },
+  {
+    "anchor": "tcgen05-peer-cta",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-issue-granularity",
+    "section_number": "9.7.18.5.2.",
+    "title": "Peer CTA"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.6.",
+    "title": "Memory Consistency Model for 5th generation of TensorCore operations"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-async-operations",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model",
+    "section_number": "9.7.18.6.1.",
+    "title": "Asynchronous Operations"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-pipelined-instructions",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model",
+    "section_number": "9.7.18.6.2.",
+    "title": "Pipelined tcgen05 Instructions"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-pipelined-instructions-implicit",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-pipelined-instructions",
+    "section_number": "9.7.18.6.2.1.",
+    "title": "Implicitly pipelined tcgen05 Instructions"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-mbarrier-completion",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-pipelined-instructions-implicit",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-wait-completion",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-pipelined-instructions-implicit",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-inter-thread-sync",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model",
+    "section_number": "9.7.18.6.3.",
+    "title": "Specialized Inter-thread Synchronization for tcgen05 instructions"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model",
+    "section_number": "9.7.18.6.4.",
+    "title": "Canonical synchronization patterns"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns-pipelined-same-thread",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns",
+    "section_number": "9.7.18.6.4.1.",
+    "title": "Pipelined instructions, same thread"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns-non-pipelined-same-thread",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns",
+    "section_number": "9.7.18.6.4.2.",
+    "title": "Non-pipelined instructions, same thread"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns-pipelined-diff-thread",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns",
+    "section_number": "9.7.18.6.4.3.",
+    "title": "Pipelined instructions, different threads in same warp"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns-non-pipelined-diff-thread",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns",
+    "section_number": "9.7.18.6.4.4.",
+    "title": "Non-pipelined instructions, different thread"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns-reg-dependency-same-thread",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model-canonical-sync-patterns",
+    "section_number": "9.7.18.6.4.5.",
+    "title": "Register dependencies, same thread"
+  },
+  {
+    "anchor": "tcgen05-memory-consistency-model-smem-access",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-memory-consistency-model",
+    "section_number": "9.7.18.6.5.",
+    "title": "Shared Memory Accesses"
+  },
+  {
+    "anchor": "tcgen05-memory-alloc-manage-instructions",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.7.",
+    "title": "Tensor Memory Allocation and Management Instructions"
+  },
+  {
+    "anchor": "tcgen05-instructions-tcgen05-alloc-dealloc-relinquish-alloc-permit",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-memory-alloc-manage-instructions",
+    "section_number": "9.7.18.7.1.",
+    "title": "Tensorcore 5th Generation Instructions: tcgen05.alloc, tcgen05.dealloc, tcgen05.relinquish_alloc_permit"
+  },
+  {
+    "anchor": "tcgen05-tensor-memory-ld-st",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.8.",
+    "title": "Tensor Memory and Register Load/Store Instructions"
+  },
+  {
+    "anchor": "tcgen05-tensor-memory-ld-st-access-restrictions",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-tensor-memory-ld-st",
+    "section_number": "9.7.18.8.1.",
+    "title": "Access restrictions"
+  },
+  {
+    "anchor": "tcgen05-tensor-memory-ld-st-packing-unpacking",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-tensor-memory-ld-st",
+    "section_number": "9.7.18.8.2.",
+    "title": "Packing and Unpacking"
+  },
+  {
+    "anchor": "tcgen05-instructions-tcgen05-ld",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-tensor-memory-ld-st",
+    "section_number": "9.7.18.8.3.",
+    "title": "Tensorcore 5th Generation Instructions: tcgen05.ld"
+  },
+  {
+    "anchor": "tcgen05-instructions-tcgen05-st",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-tensor-memory-ld-st",
+    "section_number": "9.7.18.8.4.",
+    "title": "Tensorcore 5th Generation Instructions: tcgen05.st"
+  },
+  {
+    "anchor": "tcgen05-instructions-tcgen05-wait",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-tensor-memory-ld-st",
+    "section_number": "9.7.18.8.5.",
+    "title": "Tensorcore 5th Generation Instructions: tcgen05.wait"
+  },
+  {
+    "anchor": "tcgen05-data-movement-instructions",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.9.",
+    "title": "Tensor Memory Data Movement Instructions"
+  },
+  {
+    "anchor": "tcgen05-optional-decompression",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-movement-instructions",
+    "section_number": "9.7.18.9.1.",
+    "title": "Optional Decompression"
+  },
+  {
+    "anchor": "tcgen05-optional-decompression-4bit-8bit",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-optional-decompression",
+    "section_number": "9.7.18.9.1.1.",
+    "title": "Decompression of 4-bit floating point to 8-bit type"
+  },
+  {
+    "anchor": "tcgen05-optional-decompression-6bit-8bit",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-optional-decompression",
+    "section_number": "9.7.18.9.1.2.",
+    "title": "Decompression of 6-bit floating point to 8-bit type"
+  },
+  {
+    "anchor": "tcgen05-instructions-tcgen05-cp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-data-movement-instructions",
+    "section_number": "9.7.18.9.2.",
+    "title": "Tensorcore 5th Generation Instructions: tcgen05.cp"
+  },
+  {
+    "anchor": "tcgen05-instructions-tcgen05-shift",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-data-movement-instructions",
+    "section_number": "9.7.18.9.3.",
+    "title": "Tensorcore 5th Generation Instructions: tcgen05.shift"
+  },
+  {
+    "anchor": "tcgen05-mma",
+    "child_count": 10,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.10.",
+    "title": "TensorCore 5th Generation Matrix Multiply and accumulate Operations"
+  },
+  {
+    "anchor": "tcgen05-transpose-and-negate-operations",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.1.",
+    "title": "Transpose and Negate operations"
+  },
+  {
+    "anchor": "tcgen05-matrix-layout-organization",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.2.",
+    "title": "Matrix Layout Organization"
+  },
+  {
+    "anchor": "tcgen05-matrix-layout-organization-valid-comb-type-size-majorness-swizzle",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.3.",
+    "title": "Valid Combinations of Type-Size, Major-ness and Swizzling"
+  },
+  {
+    "anchor": "tcgen05-packing-formats",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.4.",
+    "title": "Packing formats of elements in Tensor and Shared memory"
+  },
+  {
+    "anchor": "tcgen05-packing-formats-mat-d",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-packing-formats",
+    "section_number": "9.7.18.10.4.1.",
+    "title": "Packing format for matrix D in Tensor Memory"
+  },
+  {
+    "anchor": "tcgen05-packing-formats-mat-a-b",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-packing-formats",
+    "section_number": "9.7.18.10.4.2.",
+    "title": "Packing format for matrix A and B"
+  },
+  {
+    "anchor": "tcgen05-packing-formats-mxf8f6f4-tmem",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-packing-formats",
+    "section_number": "9.7.18.10.4.3.",
+    "title": "Packing format used for matrix A by .kind::mxf8f6f4 in Tensor Memory"
+  },
+  {
+    "anchor": "tcgen05-packing-formats-mxf8f6f4-smem",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-packing-formats",
+    "section_number": "9.7.18.10.4.4.",
+    "title": "Packing format used for matrix A and B by .kind::mxf8f6f4 in Shared Memory"
+  },
+  {
+    "anchor": "tcgen05-packing-formats-mxf4-tmem",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-packing-formats",
+    "section_number": "9.7.18.10.4.5.",
+    "title": "Packing format used for matrix A by .kind::mxf4 and .kind::mxf4nvf4 in Tensor Memory"
+  },
+  {
+    "anchor": "tcgen05-packing-formats-mxf4-smem",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-packing-formats",
+    "section_number": "9.7.18.10.4.6.",
+    "title": "Packing format used for matrix A and B by .kind::mxf4 and .kind::mxf4nvf4 in Shared Memory"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-organization",
+    "child_count": 7,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.5.",
+    "title": "Data Path Layout Organization"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-a",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.1.",
+    "title": "Layout A (M = 256)"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-b",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.2.",
+    "title": "Layout B (M = 128 + cta_group::2 + Dense A matrix)"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-c",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.3.",
+    "title": "Layout C (M = 128 + cta_group::2 + Sparse A matrix)"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-d",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.4.",
+    "title": "Layout D (M = 128 + cta_group::1)"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-e",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.5.",
+    "title": "Layout E (M = 64 + .ws mode)"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-f",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.6.",
+    "title": "Layout F (M = 64 + non .ws mode)"
+  },
+  {
+    "anchor": "tcgen05-data-path-layout-g",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-data-path-layout-organization",
+    "section_number": "9.7.18.10.5.7.",
+    "title": "Layout G (M = 32)"
+  },
+  {
+    "anchor": "tcgen05-shared-memory-layout-swizzling",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.6.",
+    "title": "Shared Memory Layout and Swizzling"
+  },
+  {
+    "anchor": "tcgen05-block-scaling",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.7.",
+    "title": "Block Scaling for tcgen05.mma"
+  },
+  {
+    "anchor": "tcgen05-mma-scale-valid-vec-size",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-block-scaling",
+    "section_number": "9.7.18.10.7.1.",
+    "title": "Valid combinations of scale_vectorsize with types and MMA-Kind"
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-block-scaling",
+    "section_number": "9.7.18.10.7.2.",
+    "title": "Scale Factor A ID"
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a-layout-1x",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-a",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a-layout-2x",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-a",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a-layout-4x",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-a",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a-layout-block32-k96",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-a",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a-layout-block16-k96",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-a",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-a-layout-block16-k128-256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-a",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-block-scaling",
+    "section_number": "9.7.18.10.7.3.",
+    "title": "Scale Factor B ID"
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b-layout-1x",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-b",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b-layout-2x",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-b",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b-layout-4x",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-b",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b-layout-block32-k96",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-b",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b-layout-block16-k96",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-b",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-mma-scale-factor-b-layout-block16-k128-256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma-scale-factor-b",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-decompress-inp-mat",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.8.",
+    "title": "Decompression of input matrices"
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.9.",
+    "title": "Sparse Matrices"
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-kind-tf32",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices",
+    "section_number": "9.7.18.10.9.1.",
+    "title": "Sparse tcgen05.mma.sp with .kind::tf32"
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-kind-f16-f8f8f4-mxf8f6f4",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices",
+    "section_number": "9.7.18.10.9.2.",
+    "title": "Sparse tcgen05.mma.sp with .kind::f16, .kind::f8f6f4, .kind::mxf8f6f4, .kind::i8, .kind::ti16"
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-kind-mxf4",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices",
+    "section_number": "9.7.18.10.9.3.",
+    "title": "Sparse tcgen05.mma.sp with .kind::mxf4 and .kind::mxf4nvf4"
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "child_count": 6,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices",
+    "section_number": "9.7.18.10.9.4.",
+    "title": "Sparsity selector"
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector-kind-f16-m64",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector-kind-f16-m128-256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector-kind-tf32-m64",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector-kind-tf32-m128-256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector-kind-f8f6f4-mxf8f6f4-m64",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-sparsity-selector-kind-f8f6f4-mxf8f6f4-m128-256",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices-sparsity-selector",
+    "section_number": "",
+    "title": ""
+  },
+  {
+    "anchor": "tcgen05-sparse-matrices-alignment-restriction",
+    "child_count": 0,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-sparse-matrices",
+    "section_number": "9.7.18.10.9.5.",
+    "title": "Alignment restriction"
+  },
+  {
+    "anchor": "tcgen05-mma-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "tcgen05-mma",
+    "section_number": "9.7.18.10.10.",
+    "title": "TensorCore 5th Generation of MMA Instructions"
+  },
+  {
+    "anchor": "tcgen05-mma-instructions-mma",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-mma-instructions",
+    "section_number": "9.7.18.10.10.1.",
+    "title": "TensorCore 5th Generation Instructions: tcgen05.mma"
+  },
+  {
+    "anchor": "tcgen05-mma-instructions-mma-sp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-mma-instructions",
+    "section_number": "9.7.18.10.10.2.",
+    "title": "TensorCore 5th Generation Instructions: tcgen05.mma.sp"
+  },
+  {
+    "anchor": "tcgen05-mma-instructions-mma-ws",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-mma-instructions",
+    "section_number": "9.7.18.10.10.3.",
+    "title": "TensorCore 5th Generation Instructions: tcgen05.mma.ws"
+  },
+  {
+    "anchor": "tcgen05-mma-instructions-mma-ws-sp",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-mma-instructions",
+    "section_number": "9.7.18.10.10.4.",
+    "title": "TensorCore 5th Generation Instructions: tcgen05.mma.ws.sp"
+  },
+  {
+    "anchor": "tcgen05-special-sync-operations",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.11.",
+    "title": "TensorCore 5th Generation Specialized Synchronization Operations"
+  },
+  {
+    "anchor": "tcgen05-special-sync-operations-fence",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen05-special-sync-operations",
+    "section_number": "9.7.18.11.1.",
+    "title": "TensorCore 5th Generation Instructions: tcgen05.fence"
+  },
+  {
+    "anchor": "tcgen-async-sync-operations",
+    "child_count": 1,
+    "kind": "instruction_topic",
+    "parent_anchor": "tensorcore-5th-generation-instructions",
+    "section_number": "9.7.18.12.",
+    "title": "TensorCore 5th Generation Async Synchronization Operations"
+  },
+  {
+    "anchor": "tcgen-async-sync-operations-commit",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "tcgen-async-sync-operations",
+    "section_number": "9.7.18.12.1.",
+    "title": "TensorCore 5th Generation Instructions: tcgen05.commit"
+  },
+  {
+    "anchor": "stack-manipulation-instructions",
+    "child_count": 3,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.19.",
+    "title": "Stack Manipulation Instructions"
+  },
+  {
+    "anchor": "stack-manipulation-instructions-stacksave",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "stack-manipulation-instructions",
+    "section_number": "9.7.19.1.",
+    "title": "Stack Manipulation Instructions: stacksave"
+  },
+  {
+    "anchor": "stack-manipulation-instructions-stackrestore",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "stack-manipulation-instructions",
+    "section_number": "9.7.19.2.",
+    "title": "Stack Manipulation Instructions: stackrestore"
+  },
+  {
+    "anchor": "stack-manipulation-instructions-alloca",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "stack-manipulation-instructions",
+    "section_number": "9.7.19.3.",
+    "title": "Stack Manipulation Instructions: alloca"
+  },
+  {
+    "anchor": "video-instructions",
+    "child_count": 2,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.20.",
+    "title": "Video Instructions"
+  },
+  {
+    "anchor": "scalar-video-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "video-instructions",
+    "section_number": "9.7.20.1.",
+    "title": "Scalar Video Instructions"
+  },
+  {
+    "anchor": "scalar-video-instructions-vadd-vsub-vabsdiff-vmin-vmax",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "scalar-video-instructions",
+    "section_number": "9.7.20.1.1.",
+    "title": "Scalar Video Instructions: vadd, vsub, vabsdiff, vmin, vmax"
+  },
+  {
+    "anchor": "scalar-video-instructions-vshl-vshr",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "scalar-video-instructions",
+    "section_number": "9.7.20.1.2.",
+    "title": "Scalar Video Instructions: vshl, vshr"
+  },
+  {
+    "anchor": "scalar-video-instructions-vmad",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "scalar-video-instructions",
+    "section_number": "9.7.20.1.3.",
+    "title": "Scalar Video Instructions: vmad"
+  },
+  {
+    "anchor": "scalar-video-instructions-vset",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "scalar-video-instructions",
+    "section_number": "9.7.20.1.4.",
+    "title": "Scalar Video Instructions: vset"
+  },
+  {
+    "anchor": "simd-video-instructions",
+    "child_count": 4,
+    "kind": "instruction_topic",
+    "parent_anchor": "video-instructions",
+    "section_number": "9.7.20.2.",
+    "title": "SIMD Video Instructions"
+  },
+  {
+    "anchor": "simd-video-instructions-vadd2-vsub2-vavrg2-vabsdiff2-vmin2-vmax2",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "simd-video-instructions",
+    "section_number": "9.7.20.2.1.",
+    "title": "SIMD Video Instructions: vadd2, vsub2, vavrg2, vabsdiff2, vmin2, vmax2"
+  },
+  {
+    "anchor": "simd-video-instructions-vset2",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "simd-video-instructions",
+    "section_number": "9.7.20.2.2.",
+    "title": "SIMD Video Instructions: vset2"
+  },
+  {
+    "anchor": "simd-video-instructions-vadd4-vsub4-vavrg4-vabsdiff4-vmin4-vmax4",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "simd-video-instructions",
+    "section_number": "9.7.20.2.3.",
+    "title": "SIMD Video Instructions: vadd4, vsub4, vavrg4, vabsdiff4, vmin4, vmax4"
+  },
+  {
+    "anchor": "simd-video-instructions-vset4",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "simd-video-instructions",
+    "section_number": "9.7.20.2.4.",
+    "title": "SIMD Video Instructions: vset4"
+  },
+  {
+    "anchor": "miscellaneous-instructions",
+    "child_count": 5,
+    "kind": "instruction_topic",
+    "parent_anchor": "instructions",
+    "section_number": "9.7.21.",
+    "title": "Miscellaneous Instructions"
+  },
+  {
+    "anchor": "miscellaneous-instructions-brkpt",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "miscellaneous-instructions",
+    "section_number": "9.7.21.1.",
+    "title": "Miscellaneous Instructions: brkpt"
+  },
+  {
+    "anchor": "miscellaneous-instructions-nanosleep",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "miscellaneous-instructions",
+    "section_number": "9.7.21.2.",
+    "title": "Miscellaneous Instructions: nanosleep"
+  },
+  {
+    "anchor": "miscellaneous-instructions-pmevent",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "miscellaneous-instructions",
+    "section_number": "9.7.21.3.",
+    "title": "Miscellaneous Instructions: pmevent"
+  },
+  {
+    "anchor": "miscellaneous-instructions-trap",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "miscellaneous-instructions",
+    "section_number": "9.7.21.4.",
+    "title": "Miscellaneous Instructions: trap"
+  },
+  {
+    "anchor": "miscellaneous-instructions-setmaxnreg",
+    "child_count": 0,
+    "kind": "instruction",
+    "parent_anchor": "miscellaneous-instructions",
+    "section_number": "9.7.21.5.",
+    "title": "Miscellaneous Instructions: setmaxnreg"
+  },
+  {
+    "anchor": "special-registers",
+    "child_count": 35,
+    "kind": "special_register_topic",
+    "parent_anchor": null,
+    "section_number": "10.",
+    "title": "Special Registers"
+  },
+  {
+    "anchor": "special-registers-tid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.1.",
+    "title": "Special Registers: %tid"
+  },
+  {
+    "anchor": "special-registers-ntid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.2.",
+    "title": "Special Registers: %ntid"
+  },
+  {
+    "anchor": "special-registers-laneid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.3.",
+    "title": "Special Registers: %laneid"
+  },
+  {
+    "anchor": "special-registers-warpid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.4.",
+    "title": "Special Registers: %warpid"
+  },
+  {
+    "anchor": "special-registers-nwarpid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.5.",
+    "title": "Special Registers: %nwarpid"
+  },
+  {
+    "anchor": "special-registers-ctaid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.6.",
+    "title": "Special Registers: %ctaid"
+  },
+  {
+    "anchor": "special-registers-nctaid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.7.",
+    "title": "Special Registers: %nctaid"
+  },
+  {
+    "anchor": "special-registers-smid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.8.",
+    "title": "Special Registers: %smid"
+  },
+  {
+    "anchor": "special-registers-nsmid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.9.",
+    "title": "Special Registers: %nsmid"
+  },
+  {
+    "anchor": "special-registers-gridid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.10.",
+    "title": "Special Registers: %gridid"
+  },
+  {
+    "anchor": "special-registers-is-explicit-cluster",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.11.",
+    "title": "Special Registers: %is_explicit_cluster"
+  },
+  {
+    "anchor": "special-registers-clusterid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.12.",
+    "title": "Special Registers: %clusterid"
+  },
+  {
+    "anchor": "special-registers-nclusterid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.13.",
+    "title": "Special Registers: %nclusterid"
+  },
+  {
+    "anchor": "special-registers-cluster-ctaid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.14.",
+    "title": "Special Registers: %cluster_ctaid"
+  },
+  {
+    "anchor": "special-registers-cluster-nctaid",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.15.",
+    "title": "Special Registers: %cluster_nctaid"
+  },
+  {
+    "anchor": "special-registers-cluster-ctarank",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.16.",
+    "title": "Special Registers: %cluster_ctarank"
+  },
+  {
+    "anchor": "special-registers-cluster-nctarank",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.17.",
+    "title": "Special Registers: %cluster_nctarank"
+  },
+  {
+    "anchor": "special-registers-lanemask-eq",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.18.",
+    "title": "Special Registers: %lanemask_eq"
+  },
+  {
+    "anchor": "special-registers-lanemask-le",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.19.",
+    "title": "Special Registers: %lanemask_le"
+  },
+  {
+    "anchor": "special-registers-lanemask-lt",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.20.",
+    "title": "Special Registers: %lanemask_lt"
+  },
+  {
+    "anchor": "special-registers-lanemask-ge",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.21.",
+    "title": "Special Registers: %lanemask_ge"
+  },
+  {
+    "anchor": "special-registers-lanemask-gt",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.22.",
+    "title": "Special Registers: %lanemask_gt"
+  },
+  {
+    "anchor": "special-registers-clock",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.23.",
+    "title": "Special Registers: %clock, %clock_hi"
+  },
+  {
+    "anchor": "special-registers-clock64",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.24.",
+    "title": "Special Registers: %clock64"
+  },
+  {
+    "anchor": "special-registers-pm0-pm7",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.25.",
+    "title": "Special Registers: %pm0 … %pm7"
+  },
+  {
+    "anchor": "special-registers-pm0-64-pm7-64",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.26.",
+    "title": "Special Registers: %pm0_64 … %pm7_64"
+  },
+  {
+    "anchor": "special-registers-envreg-32",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.27.",
+    "title": "Special Registers: %envreg<32>"
+  },
+  {
+    "anchor": "special-registers-globaltimer",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.28.",
+    "title": "Special Registers: %globaltimer, %globaltimer_lo, %globaltimer_hi"
+  },
+  {
+    "anchor": "special-registers-reserved-smem",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.29.",
+    "title": "Special Registers: %reserved_smem_offset_begin, %reserved_smem_offset_end, %reserved_smem_offset_cap, %reserved_smem_offset_<2>"
+  },
+  {
+    "anchor": "special-registers-total-smem-size",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.30.",
+    "title": "Special Registers: %total_smem_size"
+  },
+  {
+    "anchor": "special-registers-aggr-smem-size",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.31.",
+    "title": "Special Registers: %aggr_smem_size"
+  },
+  {
+    "anchor": "special-registers-dynamic-smem-size",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.32.",
+    "title": "Special Registers: %dynamic_smem_size"
+  },
+  {
+    "anchor": "special-registers-current-graph-exec",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.33.",
+    "title": "Special Registers: %current_graph_exec"
+  },
+  {
+    "anchor": "special-registers-perctamemoryoffset",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.34.",
+    "title": "Special Registers: %perctamemoryoffset"
+  },
+  {
+    "anchor": "special-registers-perctamemorysize",
+    "child_count": 0,
+    "kind": "special_register",
+    "parent_anchor": "special-registers",
+    "section_number": "10.35.",
+    "title": "Special Registers: %perctamemorysize"
+  },
+  {
+    "anchor": "directives",
+    "child_count": 8,
+    "kind": "directive_topic",
+    "parent_anchor": null,
+    "section_number": "11.",
+    "title": "Directives"
+  },
+  {
+    "anchor": "ptx-module-directives",
+    "child_count": 3,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.1.",
+    "title": "PTX Module Directives"
+  },
+  {
+    "anchor": "ptx-module-directives-version",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "ptx-module-directives",
+    "section_number": "11.1.1.",
+    "title": "PTX Module Directives: .version"
+  },
+  {
+    "anchor": "ptx-module-directives-target",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "ptx-module-directives",
+    "section_number": "11.1.2.",
+    "title": "PTX Module Directives: .target"
+  },
+  {
+    "anchor": "ptx-module-directives-address-size",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "ptx-module-directives",
+    "section_number": "11.1.3.",
+    "title": "PTX Module Directives: .address_size"
+  },
+  {
+    "anchor": "specifying-kernel-entry-points-and-functions",
+    "child_count": 3,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.2.",
+    "title": "Specifying Kernel Entry Points and Functions"
+  },
+  {
+    "anchor": "kernel-and-function-directives-entry",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "specifying-kernel-entry-points-and-functions",
+    "section_number": "11.2.1.",
+    "title": "Kernel and Function Directives: .entry"
+  },
+  {
+    "anchor": "kernel-and-function-directives-func",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "specifying-kernel-entry-points-and-functions",
+    "section_number": "11.2.2.",
+    "title": "Kernel and Function Directives: .func"
+  },
+  {
+    "anchor": "kernel-and-function-directives-alias",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "specifying-kernel-entry-points-and-functions",
+    "section_number": "11.2.3.",
+    "title": "Kernel and Function Directives: .alias"
+  },
+  {
+    "anchor": "control-flow-directives",
+    "child_count": 3,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.3.",
+    "title": "Control Flow Directives"
+  },
+  {
+    "anchor": "control-flow-directives-branchtargets",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "control-flow-directives",
+    "section_number": "11.3.1.",
+    "title": "Control Flow Directives: .branchtargets"
+  },
+  {
+    "anchor": "control-flow-directives-calltargets",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "control-flow-directives",
+    "section_number": "11.3.2.",
+    "title": "Control Flow Directives: .calltargets"
+  },
+  {
+    "anchor": "control-flow-directives-callprototype",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "control-flow-directives",
+    "section_number": "11.3.3.",
+    "title": "Control Flow Directives: .callprototype"
+  },
+  {
+    "anchor": "performance-tuning-directives",
+    "child_count": 10,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.4.",
+    "title": "Performance-Tuning Directives"
+  },
+  {
+    "anchor": "performance-tuning-directives-maxnreg",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.1.",
+    "title": "Performance-Tuning Directives: .maxnreg"
+  },
+  {
+    "anchor": "performance-tuning-directives-maxntid",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.2.",
+    "title": "Performance-Tuning Directives: .maxntid"
+  },
+  {
+    "anchor": "performance-tuning-directives-reqntid",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.3.",
+    "title": "Performance-Tuning Directives: .reqntid"
+  },
+  {
+    "anchor": "performance-tuning-directives-minnctapersm",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.4.",
+    "title": "Performance-Tuning Directives: .minnctapersm"
+  },
+  {
+    "anchor": "performance-tuning-directives-maxnctapersm",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.5.",
+    "title": "Performance-Tuning Directives: .maxnctapersm (deprecated)"
+  },
+  {
+    "anchor": "performance-tuning-directives-noreturn",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.6.",
+    "title": "Performance-Tuning Directives: .noreturn"
+  },
+  {
+    "anchor": "performance-tuning-directives-pragma",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.7.",
+    "title": "Performance-Tuning Directives: .pragma"
+  },
+  {
+    "anchor": "performance-tuning-directives-abi-preserve",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.8.",
+    "title": "Performance-Tuning Directives: .abi_preserve"
+  },
+  {
+    "anchor": "performance-tuning-directives-abi-preserve-control",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.9.",
+    "title": "Performance-Tuning Directives: .abi_preserve_control"
+  },
+  {
+    "anchor": "performance-tuning-directives-minperctamemory",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "performance-tuning-directives",
+    "section_number": "11.4.10.",
+    "title": "Performance-Tuning Directives: .minperctamemory"
+  },
+  {
+    "anchor": "debugging-directives",
+    "child_count": 6,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.5.",
+    "title": "Debugging Directives"
+  },
+  {
+    "anchor": "debugging-directives-atatdwarf",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "debugging-directives",
+    "section_number": "11.5.1.",
+    "title": "Debugging Directives: @@dwarf"
+  },
+  {
+    "anchor": "debugging-directives-section",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "debugging-directives",
+    "section_number": "11.5.2.",
+    "title": "Debugging Directives: .section"
+  },
+  {
+    "anchor": "debugging-directives-file",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "debugging-directives",
+    "section_number": "11.5.3.",
+    "title": "Debugging Directives: .file"
+  },
+  {
+    "anchor": "debugging-directives-loc",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "debugging-directives",
+    "section_number": "11.5.4.",
+    "title": "Debugging Directives: .loc"
+  },
+  {
+    "anchor": "debugging-directives-loc-intermediate",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "debugging-directives",
+    "section_number": "11.5.5.",
+    "title": "Debugging Directives: .loc_intermediate"
+  },
+  {
+    "anchor": "debugging-directives-nv-intermediate-source-section",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "debugging-directives",
+    "section_number": "11.5.6.",
+    "title": "Debugging Directives: .nv_intermediate_source_section"
+  },
+  {
+    "anchor": "linking-directives",
+    "child_count": 4,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.6.",
+    "title": "Linking Directives"
+  },
+  {
+    "anchor": "linking-directives-extern",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "linking-directives",
+    "section_number": "11.6.1.",
+    "title": "Linking Directives: .extern"
+  },
+  {
+    "anchor": "linking-directives-visible",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "linking-directives",
+    "section_number": "11.6.2.",
+    "title": "Linking Directives: .visible"
+  },
+  {
+    "anchor": "linking-directives-weak",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "linking-directives",
+    "section_number": "11.6.3.",
+    "title": "Linking Directives: .weak"
+  },
+  {
+    "anchor": "linking-directives-common",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "linking-directives",
+    "section_number": "11.6.4.",
+    "title": "Linking Directives: .common"
+  },
+  {
+    "anchor": "cluster-dimension-directives",
+    "child_count": 3,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.7.",
+    "title": "Cluster Dimension Directives"
+  },
+  {
+    "anchor": "cluster-dimension-directives-reqnctapercluster",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "cluster-dimension-directives",
+    "section_number": "11.7.1.",
+    "title": "Cluster Dimension Directives: .reqnctapercluster"
+  },
+  {
+    "anchor": "cluster-dimension-directives-explicitcluster",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "cluster-dimension-directives",
+    "section_number": "11.7.2.",
+    "title": "Cluster Dimension Directives: .explicitcluster"
+  },
+  {
+    "anchor": "cluster-dimension-directives-maxclusterrank",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "cluster-dimension-directives",
+    "section_number": "11.7.3.",
+    "title": "Cluster Dimension Directives: .maxclusterrank"
+  },
+  {
+    "anchor": "miscellaneous-directives",
+    "child_count": 2,
+    "kind": "directive_topic",
+    "parent_anchor": "directives",
+    "section_number": "11.8.",
+    "title": "Miscellaneous Directives"
+  },
+  {
+    "anchor": "miscellaneous-directives-blocksareclusters",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "miscellaneous-directives",
+    "section_number": "11.8.1.",
+    "title": "Miscellaneous Directives: .blocksareclusters"
+  },
+  {
+    "anchor": "miscellaneous-directives-language",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "miscellaneous-directives",
+    "section_number": "11.8.2.",
+    "title": "Miscellaneous Directives: .language"
+  },
+  {
+    "anchor": "descriptions-pragma-strings",
+    "child_count": 5,
+    "kind": "directive_topic",
+    "parent_anchor": null,
+    "section_number": "12.",
+    "title": "Descriptions of .pragma Strings"
+  },
+  {
+    "anchor": "pragma-strings-nounroll",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "descriptions-pragma-strings",
+    "section_number": "12.1.",
+    "title": "Pragma Strings: \"nounroll\""
+  },
+  {
+    "anchor": "pragma-strings-used-bytes-mask",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "descriptions-pragma-strings",
+    "section_number": "12.2.",
+    "title": "Pragma Strings: \"used_bytes_mask\""
+  },
+  {
+    "anchor": "pragma-strings-enable-smem-spilling",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "descriptions-pragma-strings",
+    "section_number": "12.3.",
+    "title": "Pragma Strings: \"enable_smem_spilling\""
+  },
+  {
+    "anchor": "pragma-strings-frequency",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "descriptions-pragma-strings",
+    "section_number": "12.4.",
+    "title": "Pragma Strings: \"frequency\""
+  },
+  {
+    "anchor": "pragma-strings-mma-throughput",
+    "child_count": 0,
+    "kind": "directive",
+    "parent_anchor": "descriptions-pragma-strings",
+    "section_number": "12.5.",
+    "title": "Pragma Strings: \"mma_throughput\""
+  },
+  {
+    "anchor": "release-notes",
+    "child_count": 41,
+    "kind": "release_note",
+    "parent_anchor": null,
+    "section_number": "13.",
+    "title": "Release Notes"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-9-4",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.1.",
+    "title": "Changes in PTX ISA Version 9.4"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-9-3",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.2.",
+    "title": "Changes in PTX ISA Version 9.3"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-9-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.3.",
+    "title": "Changes in PTX ISA Version 9.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-9-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.4.",
+    "title": "Changes in PTX ISA Version 9.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-9-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.5.",
+    "title": "Changes in PTX ISA Version 9.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-8",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.6.",
+    "title": "Changes in PTX ISA Version 8.8"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-7",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.7.",
+    "title": "Changes in PTX ISA Version 8.7"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-6",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.8.",
+    "title": "Changes in PTX ISA Version 8.6"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-5",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.9.",
+    "title": "Changes in PTX ISA Version 8.5"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-4",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.10.",
+    "title": "Changes in PTX ISA Version 8.4"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-3",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.11.",
+    "title": "Changes in PTX ISA Version 8.3"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.12.",
+    "title": "Changes in PTX ISA Version 8.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.13.",
+    "title": "Changes in PTX ISA Version 8.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-8-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.14.",
+    "title": "Changes in PTX ISA Version 8.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-8",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.15.",
+    "title": "Changes in PTX ISA Version 7.8"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-7",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.16.",
+    "title": "Changes in PTX ISA Version 7.7"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-6",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.17.",
+    "title": "Changes in PTX ISA Version 7.6"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-5",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.18.",
+    "title": "Changes in PTX ISA Version 7.5"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-4",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.19.",
+    "title": "Changes in PTX ISA Version 7.4"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-3",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.20.",
+    "title": "Changes in PTX ISA Version 7.3"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.21.",
+    "title": "Changes in PTX ISA Version 7.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.22.",
+    "title": "Changes in PTX ISA Version 7.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-7-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.23.",
+    "title": "Changes in PTX ISA Version 7.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-6-5",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.24.",
+    "title": "Changes in PTX ISA Version 6.5"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-6-4",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.25.",
+    "title": "Changes in PTX ISA Version 6.4"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-6-3",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.26.",
+    "title": "Changes in PTX ISA Version 6.3"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-6-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.27.",
+    "title": "Changes in PTX ISA Version 6.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-6-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.28.",
+    "title": "Changes in PTX ISA Version 6.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-6-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.29.",
+    "title": "Changes in PTX ISA Version 6.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-5-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.30.",
+    "title": "Changes in PTX ISA Version 5.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-4-3",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.31.",
+    "title": "Changes in PTX ISA Version 4.3"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-4-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.32.",
+    "title": "Changes in PTX ISA Version 4.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-4-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.33.",
+    "title": "Changes in PTX ISA Version 4.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-4-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.34.",
+    "title": "Changes in PTX ISA Version 4.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-3-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.35.",
+    "title": "Changes in PTX ISA Version 3.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-3-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.36.",
+    "title": "Changes in PTX ISA Version 3.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-3-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.37.",
+    "title": "Changes in PTX ISA Version 3.0"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-2-3",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.38.",
+    "title": "Changes in PTX ISA Version 2.3"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-2-2",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.39.",
+    "title": "Changes in PTX ISA Version 2.2"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-2-1",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.40.",
+    "title": "Changes in PTX ISA Version 2.1"
+  },
+  {
+    "anchor": "changes-in-ptx-isa-version-2-0",
+    "child_count": 0,
+    "kind": "release_note",
+    "parent_anchor": "release-notes",
+    "section_number": "13.41.",
+    "title": "Changes in PTX ISA Version 2.0"
+  },
+  {
+    "anchor": "notices",
+    "child_count": 3,
+    "kind": "notice",
+    "parent_anchor": null,
+    "section_number": "14.",
+    "title": ""
+  },
+  {
+    "anchor": "notice",
+    "child_count": 0,
+    "kind": "notice",
+    "parent_anchor": "notices",
+    "section_number": "14.1.",
+    "title": ""
+  },
+  {
+    "anchor": "opencl",
+    "child_count": 0,
+    "kind": "notice",
+    "parent_anchor": "notices",
+    "section_number": "14.2.",
+    "title": ""
+  },
+  {
+    "anchor": "trademarks",
+    "child_count": 0,
+    "kind": "notice",
+    "parent_anchor": "notices",
+    "section_number": "14.3.",
+    "title": ""
+  }
+]

@@ -1,0 +1,165 @@
+[
+  {
+    "body": "PTX 把一次 kernel 组织成 grid。grid 由 CTA 组成，也可以由若干 CTA 组成的 cluster 组成；CTA 对应 CUDA 的 thread block，cluster 对应 thread block cluster。一个 CTA 内的线程可以互相通信。手册写明 cluster 这一级只适用于 sm_90 及更高的目标，所以 sm_89 不能沿用 cluster 的同步和跨 CTA shared 通信。warp 在手册里是机器相关常数，通常为 32 个线程，这里不把它写成这张笔记本 GPU 的测量值。SM 用 SIMT 把线程映射到标量核。Volta 起的 Independent Thread Scheduling 给每个线程单独的程序计数器和调用栈，线程可以在比 warp 更细的粒度上分叉再汇合。控制流构造默认按分歧处理，除非指令带 .uni。这些都是手册对执行模型的陈述，不是 RTX 4080 Laptop 上的占用率或调度实验。",
+    "citations": [
+      {
+        "anchor": "thread-hierarchy",
+        "section": "2.2"
+      },
+      {
+        "anchor": "cooperative-thread-arrays",
+        "section": "2.2.1"
+      },
+      {
+        "anchor": "cluster-of-cooperative-thread-arrays",
+        "section": "2.2.2"
+      },
+      {
+        "anchor": "set-of-simt-multiprocessors",
+        "section": "3.1"
+      },
+      {
+        "anchor": "independent-thread-scheduling",
+        "section": "3.2"
+      },
+      {
+        "anchor": "divergence-of-threads-in-control-constructs",
+        "section": "9.5"
+      }
+    ],
+    "compile_verification": "unverified",
+    "depth": "selected",
+    "experiments": [],
+    "id": "note_execution_hierarchy",
+    "language": "zh",
+    "performance": "unverified",
+    "runtime_verification": "unverified",
+    "title": "执行层级",
+    "topic": "execution_hierarchy",
+    "unknowns": [
+      "官方 CUDA GPU 表没有名为 RTX 4080 Laptop 的行，本条不把笔记本 SKU 自动等同于表上的 GeForce RTX 4080。",
+      "warp 宽度是否在 sm_89 上恒为 32，手册只说通常如此，本索引没有设备测量。",
+      "Independent Thread Scheduling 的段落写的是 Volta 及之后，没有单独点名 sm_89。"
+    ]
+  },
+  {
+    "body": "手册用状态空间区分存储的地址可否取得、能否初始化、读写权限，以及在线程之间共享到哪一层。表里列出的名字是 .reg、.sreg、.const、.global、.local、.param、.shared 和已弃用的 .tex。寄存器没有完整地址，数量随平台变化，超出后会溢出到内存并改变性能；具体寄存器上限不在这一节给出。shared 指令不写子限定符时默认是 ::cta，也就是当前 CTA 的窗口；::cluster 才指向 cluster 里其他 CTA 的 shared 窗口。表 7 把 .shared 的共享写成 per-cluster，脚注说明拥有该内存的 CTA 以及 cluster 中其他仍活跃的 CTA 可以看见它。这是状态空间模型本身的句子。cluster 级是否可用，要另看执行层级那一节：只适用于 sm_90 及更高目标。因此不能从表上的 per-cluster 推出 sm_89 已经具备跨 CTA shared。静态分配的 shared 在这一节写明每 CTA 最多 48KB，放宽容量的目标列表是 sm_90a、sm_100a 等，其中没有 sm_89。",
+    "citations": [
+      {
+        "anchor": "state-spaces",
+        "section": "5.1"
+      },
+      {
+        "anchor": "register-state-space",
+        "section": "5.1.1"
+      },
+      {
+        "anchor": "shared-state-space",
+        "section": "5.1.7"
+      },
+      {
+        "anchor": "cluster-of-cooperative-thread-arrays",
+        "section": "2.2.2"
+      }
+    ],
+    "compile_verification": "unverified",
+    "depth": "selected",
+    "experiments": [],
+    "id": "note_state_spaces",
+    "language": "zh",
+    "performance": "unverified",
+    "runtime_verification": "unverified",
+    "title": "状态空间",
+    "topic": "state_spaces",
+    "unknowns": [
+      "sm_89 上如果写出 .shared::cluster，编译器会拒绝、忽略还是降级，本索引没有编译实验。",
+      "48KB 静态上限之外，驱动或 CUDA 运行时是否对 sm_89 另有 carveout，不属于这几节 PTX 正文，这里不补。"
+    ]
+  },
+  {
+    "body": "bar 和 barrier 在一个 CTA 内同步，每个 CTA 有编号 0 到 15 的 barrier。参与线程数必须是 warp size 的倍数；不写线程数时，sync 形式等待 CTA 内线程，arrive 形式则必须给出非零线程数。PTX ISA 7.8 给这些指令加了 .cta。bar.warp.sync 的目标说明是 sm_30 或更高，按计算能力数值比较可以覆盖 sm_89，这仍只是手册语句。barrier.cluster 的目标说明是 sm_90 或更高，不覆盖 sm_89。membar.cta 和 membar.gl 写成所有目标架构都支持，membar.sys 要求 sm_20 或更高，fence 要求 sm_70 或更高；.cluster、fence.proxy.async 以及若干 proxy 限定符要求 sm_90 或更高，fabric 方向的限定符要求 sm_100 或更高。同一条 membar/fence 因此不能整条标成 sm_89 全部可用。mbarrier.init 要求 sm_80 或更高，其中 .layout 要求 sm_90 或更高。第 8 章是内存一致性模型的位置，本索引只保留章节锚点，不改写其中的次序公理，也没有做可见性实验。",
+    "citations": [
+      {
+        "anchor": "parallel-synchronization-and-communication-instructions-bar",
+        "section": "9.7.15.1"
+      },
+      {
+        "anchor": "parallel-synchronization-and-communication-instructions-bar-warp-sync",
+        "section": "9.7.15.2"
+      },
+      {
+        "anchor": "parallel-synchronization-and-communication-instructions-barrier-cluster",
+        "section": "9.7.15.3"
+      },
+      {
+        "anchor": "parallel-synchronization-and-communication-instructions-membar",
+        "section": "9.7.15.4"
+      },
+      {
+        "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-init",
+        "section": "9.7.15.16.12"
+      },
+      {
+        "anchor": "memory-consistency-model",
+        "section": "8"
+      }
+    ],
+    "compile_verification": "unverified",
+    "depth": "selected",
+    "experiments": [],
+    "id": "note_synchronization",
+    "language": "zh",
+    "performance": "unverified",
+    "runtime_verification": "unverified",
+    "title": "同步与内存次序",
+    "topic": "synchronization",
+    "unknowns": [
+      "sm_30 or higher 这类句子没有在 sm_89 上用编译器核对过每一种 bar 形式。",
+      "fence 的限定符必须按 Target ISA Notes 里的句子分别判断，不能合成一个布尔值。",
+      "第 8 章的 scope 与第 9 章指令限定符如何逐条对应，本索引没有做人工对齐之外的证明。"
+    ]
+  },
+  {
+    "body": "手册收录一条指令，只说明 PTX ISA 9.4 描述了它，不说明 sm_89 可以实现它的每一种形式。mma 的基线是 sm_70 或更高，但形状和类型另有下限：一批形状要求 sm_75 或 sm_80，f64 的 m16n8k4、m16n8k8 和 m16n8k16 要求 sm_90 或更高，e4m3 与 e5m2 要求 sm_89 或更高。e3m2、e2m3、e2m1 以及 .kind、.block_scale、.scale_vec_size 要求 sm_120a，并在 PTX ISA 8.8 起的 sm_120f 同族上另有支持，其中没有 sm_89。wgmma 异步矩阵指令的目标说明是 sm_90a，不是 sm_89。tcgen05.mma 列出的是 sm_100a、sm_101a 和 sm_100f 这一族等目标，没有 sm_89。cvt 里针对 sm_89 的 FP8 形式在 PTX ISA Notes 中单独写了引入版本，不能从 cvt 这个名字推出全部浮点格式。ISA 9.4 的发布表仍然把 sm_89 列在可写目标里；同一版新加的 sm_107 与 tcgen05 扩展并不因此落到 sm_89。m8n8k4 有一条性能注释，说它为 sm_70 优化、在其他目标上可能明显变慢，这不是不支持声明。",
+    "citations": [
+      {
+        "anchor": "warp-level-matrix-instructions-mma",
+        "section": "9.7.16.5.14"
+      },
+      {
+        "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-mma",
+        "section": "9.7.17.5.2"
+      },
+      {
+        "anchor": "tcgen05-mma-instructions-mma",
+        "section": "9.7.18.10.10.1"
+      },
+      {
+        "anchor": "data-movement-and-conversion-instructions-cvt",
+        "section": "9.7.10.24"
+      },
+      {
+        "anchor": "ptx-isa-version-9-4",
+        "section": "1.3"
+      },
+      {
+        "anchor": "release-notes",
+        "section": "13"
+      }
+    ],
+    "compile_verification": "unverified",
+    "depth": "selected",
+    "experiments": [],
+    "id": "note_selected_instruction_constraints",
+    "language": "zh",
+    "performance": "unverified",
+    "runtime_verification": "unverified",
+    "title": "若干指令在 sm_89 上的边界",
+    "topic": "instruction_constraints",
+    "unknowns": [
+      "没有在 sm_89 上编译或运行 mma、wgmma、tcgen05 或 cvt 的各种形式。",
+      "wgmma 与 tcgen05 的锚点以抽取结果为准；若手册把某一变体拆到相邻小节，支持状态以该小节的 Target ISA Notes 为准。",
+      "性能注释没有给出 sm_89 的周期或吞吐量。"
+    ]
+  }
+]

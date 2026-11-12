@@ -1,0 +1,2519 @@
+[
+  {
+    "anchor": "special-registers-tid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 579,
+      "sha256": "cf4a00ece9b420db7f673c17f086387ce4b98af61d89703a322ada68dfb1f78c"
+    },
+    "entry_id": "ptx_86be1823e543bd2afcaac0c1",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%tid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": ".v4.u16",
+          "version": "1.0"
+        },
+        {
+          "kind": "redefined",
+          "subject": "type .v4.u32",
+          "version": "2.0"
+        },
+        {
+          "kind": "legacy_register_read",
+          "subject": "%tid",
+          "version": null,
+          "width": "16-bit"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%tid": 31,
+      "Description": 579,
+      "Examples": 0,
+      "PTX ISA Notes": 239,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%tid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.1.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "0fa628f6f2651bfff2340c41254f3fa04ac44f159275e9e39923089b55281146"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %tid"
+  },
+  {
+    "anchor": "special-registers-ntid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 553,
+      "sha256": "cba1342c438a6010688ceaaa68110e09ba18a2e2c312789da0a07a1913116142"
+    },
+    "entry_id": "ptx_ec61efc8892ed1b011f4b087",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%ntid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": ".v4.u16",
+          "version": "1.0"
+        },
+        {
+          "kind": "redefined",
+          "subject": "type .v4.u32",
+          "version": "2.0"
+        },
+        {
+          "kind": "legacy_register_read",
+          "subject": "%ntid",
+          "version": null,
+          "width": "16-bit"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%ntid": 29,
+      "Description": 553,
+      "Examples": 0,
+      "PTX ISA Notes": 240,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%ntid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.2.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "696d6c13395eddabb779eb7f3d16f6f3bd93d81572c18882542e887bd87422b1"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %ntid"
+  },
+  {
+    "anchor": "special-registers-laneid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 139,
+      "sha256": "1aee01a2b7806c3bc0aeac47b965c0235b00ee71bcc553ea3a8b31045b432638"
+    },
+    "entry_id": "ptx_7e71b6f9945a1382eb8ef781",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%laneid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%laneid": 16,
+      "Description": 139,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%laneid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.3.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "0b15ec7de89764794501db25e133dab15847d3d06795314297cdddcbc64c72a2"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %laneid"
+  },
+  {
+    "anchor": "special-registers-warpid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 703,
+      "sha256": "1f2504ada2b6b26c11f483011b346c13b80fb5e9952d21d7b69ac6d3eb4b71ba"
+    },
+    "entry_id": "ptx_e2b6512ef1d2de1100a838e3",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%warpid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%warpid": 16,
+      "Description": 703,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%warpid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.4.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "393a7d9dd223d3f8f5b180525c900deb7eae06c17da786a65df9b0b8f0f4d3fb"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %warpid"
+  },
+  {
+    "anchor": "special-registers-nwarpid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 93,
+      "sha256": "77ec5d0f3505b0b628e5f936ab2f7e79bc2f05ae6548ef796561c3aac569de4b"
+    },
+    "entry_id": "ptx_76a0e5f9b0a5f0a8758c803a",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%nwarpid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%nwarpid": 27,
+      "Description": 93,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 34
+    },
+    "rubrics": [
+      "%nwarpid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.5.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "c4cfd95a49397f9a6fb114d9e0ec4bed2ef284ce765c9ff1335691dd93b5f5df"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%nwarpid"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %nwarpid"
+  },
+  {
+    "anchor": "special-registers-ctaid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 284,
+      "sha256": "ffed8dab69ba6afa8e84cf42d3c46868e41a9d392f4d87cb8d1f4194dd156124"
+    },
+    "entry_id": "ptx_d9d5c4db3a3a5acedc3d1918",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%ctaid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": ".v4.u16",
+          "version": "1.0"
+        },
+        {
+          "kind": "redefined",
+          "subject": "type .v4.u32",
+          "version": "2.0"
+        },
+        {
+          "kind": "legacy_register_read",
+          "subject": "%ctaid",
+          "version": null,
+          "width": "16-bit"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%ctaid": 29,
+      "Description": 284,
+      "Examples": 0,
+      "PTX ISA Notes": 241,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%ctaid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.6.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "d5c85326ce1cc5d59a5fb29b68e0eb2b047cb2049377a1a98f3b6d2c470dadca"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %ctaid"
+  },
+  {
+    "anchor": "special-registers-nctaid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 490,
+      "sha256": "2cdbc1e4fba20126237fb7f40a2996525ee915349d1025e8878f5dd2a7880b26"
+    },
+    "entry_id": "ptx_5f5bfb79bff491c7df6c6be9",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%nctaid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": ".v4.u16",
+          "version": "1.0"
+        },
+        {
+          "kind": "redefined",
+          "subject": "type .v4.u32",
+          "version": "2.0"
+        },
+        {
+          "kind": "legacy_register_read",
+          "subject": "%nctaid",
+          "version": null,
+          "width": "16-bit"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%nctaid": 27,
+      "Description": 490,
+      "Examples": 0,
+      "PTX ISA Notes": 242,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%nctaid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.7.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "b1be5939bde3ac66e8c175987a2cae32983bf3e95d2836042272ede790fec130"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %nctaid"
+  },
+  {
+    "anchor": "special-registers-smid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 235,
+      "sha256": "8b32643770f48bb75c867892f9a01d6b7a2de4e55842f2a650b5328826dd3291"
+    },
+    "entry_id": "ptx_e1d84ffab85de03e79a91d75",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%smid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "1.3"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%smid": 14,
+      "Description": 235,
+      "Examples": 0,
+      "Notes": 319,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%smid",
+      "Syntax (predefined)",
+      "Description",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.8.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "66945947ee59f875440a7b8a0b9ffa26187c37813edb25f175380c786fc11639"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %smid"
+  },
+  {
+    "anchor": "special-registers-nsmid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 226,
+      "sha256": "680ce517bc608cacc801550692e1ab8cd9e171a2189b2feabd9a58a524291183"
+    },
+    "entry_id": "ptx_393d1656b861a0bcb4898421",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%nsmid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%nsmid": 25,
+      "Description": 226,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 32
+    },
+    "rubrics": [
+      "%nsmid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.9.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "344b45688a3bf74634c27814edccdc8c27d7ed7beda46b513b8b09a82d49e151"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%nsmid"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %nsmid"
+  },
+  {
+    "anchor": "special-registers-gridid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 526,
+      "sha256": "bb8a69b9a093dad0ffc5bd8a354778959ad2e546d15c38d0a3887afcfdde4708"
+    },
+    "entry_id": "ptx_d779d7a2ba31f26ddaaae4d2",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%gridid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": ".u16",
+          "version": "1.0"
+        },
+        {
+          "kind": "redefined",
+          "subject": "type .u32",
+          "version": "1.3"
+        },
+        {
+          "kind": "redefined",
+          "subject": "type .u64",
+          "version": "3.0"
+        },
+        {
+          "kind": "legacy_register_read",
+          "subject": "%gridid",
+          "version": null,
+          "width": "16-bit and 32-bit"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%gridid": 16,
+      "Description": 526,
+      "Examples": 0,
+      "PTX ISA Notes": 303,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%gridid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.10.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "e7c784270710a07dad29f56ca86b8ab3bbee52b237e1e53bcc344e2b58cf885b"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %gridid"
+  },
+  {
+    "anchor": "special-registers-is-explicit-cluster",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 140,
+      "sha256": "a32c49e044ff32156a5b6877ca81b3032444f2ca4cb40203ed785303367ed7a9"
+    },
+    "entry_id": "ptx_c97b71ac82e492231f97d70c",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%is_explicit_cluster"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%is_explicit_cluster": 55,
+      "Description": 140,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%is_explicit_cluster",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.11.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "e1c05b643a349d6b5265efc461eafc86c5d9641b975f9506180bace696216bda"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %is_explicit_cluster"
+  },
+  {
+    "anchor": "special-registers-clusterid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 349,
+      "sha256": "33c0f9009204240846ef3917752e3655deda3f10077e48989bc21b9a91c04cc1"
+    },
+    "entry_id": "ptx_1f750da1a41259c58d22f69b",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%clusterid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%clusterid": 33,
+      "Description": 349,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%clusterid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.12.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "c43ef3db5ff79f40fd778a7358810e4a81746a6ee6ff2da277b9568ff57537c6"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %clusterid"
+  },
+  {
+    "anchor": "special-registers-nclusterid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 370,
+      "sha256": "b9f1bd548ad2a22f2166c85e3b7283294895eb926880ef10fd66b5b79bcf3b47"
+    },
+    "entry_id": "ptx_5e23152e2579f68a5a4dac96",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%nclusterid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%nclusterid": 39,
+      "Description": 370,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%nclusterid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.13.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "0cdd252d295d4752d010472fbbe763df39f51c10fa519560f174fd740437aa9b"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %nclusterid"
+  },
+  {
+    "anchor": "special-registers-cluster-ctaid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 346,
+      "sha256": "dde93fdaa74616ff191c025b295d63361b7dc33c997a30aff7ec176a8d69ff42"
+    },
+    "entry_id": "ptx_3b11cbba6d0cc4455fbac5b5",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%cluster_ctaid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%cluster_ctaid": 32,
+      "Description": 346,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%cluster_ctaid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.14.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "588b2b3c54bf1e40e7a61558bf62d63813faa3e7747ee7dcc2ab160fd6d1bc0e"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %cluster_ctaid"
+  },
+  {
+    "anchor": "special-registers-cluster-nctaid",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 381,
+      "sha256": "4f5cd6ff36bb075d8a41337297d07ec6e2c43f719c453c58e15ed9a124f29b05"
+    },
+    "entry_id": "ptx_c7c569b1a27c89c949a6a8c3",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%cluster_nctaid"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%cluster_nctaid": 38,
+      "Description": 381,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%cluster_nctaid",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.15.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "ab213162cc0c7cdf8e3a337131942330db25251518178300b3f5086d6a137efe"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %cluster_nctaid"
+  },
+  {
+    "anchor": "special-registers-cluster-ctarank",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 133,
+      "sha256": "e2014c8d5e1a7cfc087c1d26bb4c8589095b859eb325a5aa9b9156cde94f5d23"
+    },
+    "entry_id": "ptx_8b5b5fa71f1662d9b304383d",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%cluster_ctarank"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%cluster_ctarank": 50,
+      "Description": 133,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%cluster_ctarank",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.16.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "e19c7348d1865d57bdc75fb26040d910df840f03b1050d31c5daded8c396fc26"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %cluster_ctarank"
+  },
+  {
+    "anchor": "special-registers-cluster-nctarank",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 116,
+      "sha256": "05eecae6adb329f2b4600fb72d90fbebb4d3d58c103ecc8d49e5e248218207a9"
+    },
+    "entry_id": "ptx_5eff14044c56408a82e20931",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%cluster_nctarank"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.8"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%cluster_nctarank": 61,
+      "Description": 116,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%cluster_nctarank",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.17.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "ac9396beef731ed8cc6b2772f5508804bb94e2012dfc7498d57975fa4b3e9bf0"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %cluster_nctarank"
+  },
+  {
+    "anchor": "special-registers-lanemask-eq",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 149,
+      "sha256": "b306a715c025ddd3a6a557f59dc450342fd2d3437f6899d0aff3dea84516115b"
+    },
+    "entry_id": "ptx_d73fbffb28fafb755c8c3035",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%lanemask_eq"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%lanemask_eq": 83,
+      "Description": 149,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%lanemask_eq",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.18.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "e8205c889b81cdc9b389b3edcc4ead3237f4e5f09f929912aa1765d8e22ee5fa"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%lanemask_eq"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %lanemask_eq"
+  },
+  {
+    "anchor": "special-registers-lanemask-le",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 158,
+      "sha256": "8f146d9acaec0545a53f46b92c1c75d9ed2f6076c6de52a9ac99cfca2c0143e3"
+    },
+    "entry_id": "ptx_ff9f0ea8bd2dac15c164e502",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%lanemask_le"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%lanemask_le": 98,
+      "Description": 158,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%lanemask_le",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.19.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "ac45fbc00591cd7c45ac27e387fbc25c89cd58d3783c2c07a7279d7e14ed9864"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%lanemask_le"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %lanemask_le"
+  },
+  {
+    "anchor": "special-registers-lanemask-lt",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 146,
+      "sha256": "7ad78d3c7c36a4ad3195e67bbacd7065be178615f18415d2428c06ff2decf5c3"
+    },
+    "entry_id": "ptx_83e2ded16efa12152687afe2",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%lanemask_lt"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%lanemask_lt": 86,
+      "Description": 146,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%lanemask_lt",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.20.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "2cb2fc5803b345cdeca22ded25d14adcf425481bc9dd293334a05dba1c811593"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%lanemask_lt"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %lanemask_lt"
+  },
+  {
+    "anchor": "special-registers-lanemask-ge",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 161,
+      "sha256": "4c09abcf4a5a47e18fd216ea2b843b1398fa64e6c8f14c99d575ca4856a97935"
+    },
+    "entry_id": "ptx_beada6bffc130a26400aeba7",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%lanemask_ge"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%lanemask_ge": 101,
+      "Description": 161,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%lanemask_ge",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.21.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "f9753ff3287c15a8f6819b59ffe7f93dcc5c2335cd4641e3f1732fd036e79451"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%lanemask_ge"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %lanemask_ge"
+  },
+  {
+    "anchor": "special-registers-lanemask-gt",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 149,
+      "sha256": "261e0b5c48acb6ebbe17acb3562ca1f4564815f2a8fc85138cf9c535f94cd39c"
+    },
+    "entry_id": "ptx_965516fcf4a570d198fc06cf",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%lanemask_gt"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%lanemask_gt": 89,
+      "Description": 149,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%lanemask_gt",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.22.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "59236da9c6af52c065343b8ad84e5a6c73edb5414959f613395f393d92d056d1"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%lanemask_gt"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %lanemask_gt"
+  },
+  {
+    "anchor": "special-registers-clock",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 102,
+      "sha256": "e7e6f7f1c9fb5d9a3bd5807702175885a6e6c31ed5b84a8efdaab93e9fdff236"
+    },
+    "entry_id": "ptx_9b74e997011a76e5dacc9409",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%clock",
+      "%clock_hi"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": "%clock",
+          "version": "1.0"
+        },
+        {
+          "kind": "introduced",
+          "subject": "%clock_hi",
+          "version": "5.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%clock, %clock_hi": 119,
+      "Description": 102,
+      "Examples": 0,
+      "PTX ISA Notes": 86,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 81
+    },
+    "rubrics": [
+      "%clock, %clock_hi",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.23.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "7a1bdfbef3f966bf67e228850f3c01bce64cf30cdf1d99ebeaf57a9983bdeb46"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": "%clock"
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%clock_hi"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %clock, %clock_hi"
+  },
+  {
+    "anchor": "special-registers-clock64",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 92,
+      "sha256": "5544b11a797eb3cdebb8ae2ba330a5956823376b281eac684aeaf73b9d39f510"
+    },
+    "entry_id": "ptx_3c81435dab40df5ebbc52b4c",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%clock64"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%clock64": 54,
+      "Description": 92,
+      "Examples": 0,
+      "Notes": 112,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 34
+    },
+    "rubrics": [
+      "%clock64",
+      "Syntax (predefined)",
+      "Description",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.24.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "dc03507a5741bd02801b97a6a89678e23bcac11a1329636d2ac23ad4c133039d"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%clock64"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %clock64"
+  },
+  {
+    "anchor": "special-registers-pm0-pm7",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 128,
+      "sha256": "bd4d0057ca929115bf65fc9ba41df59b8560166ba3c13d6d806a0f773447061b"
+    },
+    "entry_id": "ptx_2999b86447c063ea19351d47",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%pm0",
+      "%pm7"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": "%pm0 … %pm3",
+          "version": "1.3"
+        },
+        {
+          "kind": "introduced",
+          "subject": "%pm4 … %pm7",
+          "version": "3.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%pm0 … %pm7": 32,
+      "Description": 128,
+      "Examples": 0,
+      "PTX ISA Notes": 93,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 87
+    },
+    "rubrics": [
+      "%pm0 … %pm7",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.25.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "7f0e7df6aa068ce9de62de05b3f1a0730b308bdab73d55d0e22918233ac7c72c"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": "%pm0 … %pm3"
+        },
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": "%pm4 … %pm7"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %pm0 … %pm7"
+  },
+  {
+    "anchor": "special-registers-pm0-64-pm7-64",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 134,
+      "sha256": "303ffa30ee78589af63855a01ccf122b2740a7f1da9781ca7261977e7bc0dac9"
+    },
+    "entry_id": "ptx_705cbab2e8eb919a197a1d5a",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%pm0_64",
+      "%pm7_64"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": "%pm0_64 … %pm7_64",
+          "version": "4.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%pm0_64 … %pm7_64": 39,
+      "Description": 134,
+      "Examples": 0,
+      "Notes": 67,
+      "PTX ISA Notes": 52,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 42
+    },
+    "rubrics": [
+      "%pm0_64 … %pm7_64",
+      "Syntax (predefined)",
+      "Description",
+      "Notes",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.26.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 8,
+      "sha256": "946c2cde27a93ccdac808505c7436780257bae7aabc963ce5b253139c6ef037e"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_50",
+          "subject": "%pm0_64 … %pm7_64"
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %pm0_64 … %pm7_64"
+  },
+  {
+    "anchor": "special-registers-envreg-32",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 320,
+      "sha256": "aa3864d5b2732c0db420b88631ebf09eb241a42812c04b53f9ccf309d1d279b7"
+    },
+    "entry_id": "ptx_29bd9e81157b279c5b27d7f4",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%envreg<32>"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "2.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%envreg<32>": 35,
+      "Description": 320,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 38
+    },
+    "rubrics": [
+      "%envreg<32>",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.27.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "0795e3ee5b0a70442c6a4d57f6e92f59addc7a7534454b037f5c4956d1f575d3"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "all_architectures",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": null,
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %envreg<32>"
+  },
+  {
+    "anchor": "special-registers-globaltimer",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 209,
+      "sha256": "b14a779a1cde3c1b1da671ce9e785993958e15012481ab8bda276f0ac32f704d"
+    },
+    "entry_id": "ptx_736a4b67d3be968f6718c676",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%globaltimer",
+      "%globaltimer_lo",
+      "%globaltimer_hi"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "3.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%globaltimer, %globaltimer_lo, %globaltimer_hi": 160,
+      "Description": 209,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 32
+    },
+    "rubrics": [
+      "%globaltimer, %globaltimer_lo, %globaltimer_hi",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.28.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 2,
+      "sha256": "6f22e626bbfe155e0765474fe0fc0c7510adb4710051b8b5c6e41863c851a8e1"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_30",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %globaltimer, %globaltimer_lo, %globaltimer_hi"
+  },
+  {
+    "anchor": "special-registers-reserved-smem",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 330,
+      "sha256": "9a2095b38464988913063d2ad4c2ff2547b480a1d4c1df409cd3cfdb6bb19cd8"
+    },
+    "entry_id": "ptx_ca7a052834df819563f5b7df",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%reserved_smem_offset_begin",
+      "%reserved_smem_offset_end",
+      "%reserved_smem_offset_cap",
+      "%reserved_smem_offset_<2>"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "7.6"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%reserved_smem_offset_begin, %reserved_smem_offset_end, %reserved_smem_offset_cap, %reserved_smem_offset_<2>": 286,
+      "Description": 330,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 24
+    },
+    "rubrics": [
+      "%reserved_smem_offset_begin, %reserved_smem_offset_end, %reserved_smem_offset_cap, %reserved_smem_offset_<2>",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.29.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 4,
+      "sha256": "a4b0ce4696c2cfced332b892dc0145461cbed1c55bc66cef67df8b7bd29eaa24"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %reserved_smem_offset_begin, %reserved_smem_offset_end, %reserved_smem_offset_cap, %reserved_smem_offset_<2>"
+  },
+  {
+    "anchor": "special-registers-total-smem-size",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 533,
+      "sha256": "c9f0c824c4d9ad2445645a5afa9002b79b359a3f42721de06a8dccad7635c9f2"
+    },
+    "entry_id": "ptx_83edc881b7cd352642e684a2",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%total_smem_size"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "4.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%total_smem_size": 54,
+      "Description": 533,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%total_smem_size",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.30.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "5b70c30608e08d038ba3ddea0d1295dcadcb5ea2b886bd65b58e132324d942a3"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %total_smem_size"
+  },
+  {
+    "anchor": "special-registers-aggr-smem-size",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 286,
+      "sha256": "dc587fd12a420581a7f2dd0ba2fae9ef2cc5b12883c90d565a1cde83af5fea4a"
+    },
+    "entry_id": "ptx_e316db83d4cc33bc47df95c6",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%aggr_smem_size"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "8.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%aggr_smem_size": 54,
+      "Description": 286,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%aggr_smem_size",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.31.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_not_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "b0285c96649bfc9ad7e8e9a9ae59c9a74680d301745a1b8462d4a6d04e8955ea"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "no",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_90",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %aggr_smem_size"
+  },
+  {
+    "anchor": "special-registers-dynamic-smem-size",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 203,
+      "sha256": "1a0a1ecde3b2968486e2d1b3682c6937f55fda671d834724f4d30427b21f4df3"
+    },
+    "entry_id": "ptx_3a7728d8c346ce5928541a90",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%dynamic_smem_size"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "4.1"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%dynamic_smem_size": 61,
+      "Description": 203,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%dynamic_smem_size",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.32.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "194875bd8b91d90df9b3ad844586569f42293b7e1ebc9edf16574cf3319b16e3"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_20",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %dynamic_smem_size"
+  },
+  {
+    "anchor": "special-registers-current-graph-exec",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 288,
+      "sha256": "899f573b62ede22195385e92a9ff5248e26b863583b8fff2448a16c213584f14"
+    },
+    "entry_id": "ptx_6a2f7ebee12af0cd300caeed",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%current_graph_exec"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "8.0"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%current_graph_exec": 56,
+      "Description": 288,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%current_graph_exec",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.33.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "7fc9e84eb5125bca5fa587f3e8ba6d1432a3cd70e2e79be9d6d20d2a7305104f"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_50",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %current_graph_exec"
+  },
+  {
+    "anchor": "special-registers-perctamemoryoffset",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 262,
+      "sha256": "510320f171e08bda4fca596278720d23afaaa77014fe228ddad13f70a28e6790"
+    },
+    "entry_id": "ptx_a89cdeeff0f27fabb8942620",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%perctamemoryoffset"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.4"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%perctamemoryoffset": 54,
+      "Description": 262,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%perctamemoryoffset",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.34.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "56b797c140997a8339bf04a551e2f4701ba43d18a2998f92252674d99f9ca69a"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %perctamemoryoffset"
+  },
+  {
+    "anchor": "special-registers-perctamemorysize",
+    "compile_verification": "unverified",
+    "depth": "index",
+    "description": {
+      "chars": 616,
+      "sha256": "2736eadc7cfdf7e4307a8c1e75f216a7c37a00b07041d6c60f4536446e2e280c"
+    },
+    "entry_id": "ptx_9a7ac38cabd8dcef8c10426f",
+    "experiments": [],
+    "kind": "special_register",
+    "mnemonics": [
+      "%perctamemorysize"
+    ],
+    "parent_anchor": "special-registers",
+    "performance": "unverified",
+    "ptx_isa": {
+      "statements": [
+        {
+          "kind": "introduced",
+          "subject": null,
+          "version": "9.4"
+        }
+      ],
+      "unparsed": []
+    },
+    "rubric_chars": {
+      "%perctamemorysize": 49,
+      "Description": 616,
+      "Examples": 0,
+      "PTX ISA Notes": 34,
+      "Syntax (predefined)": 0,
+      "Target ISA Notes": 25
+    },
+    "rubrics": [
+      "%perctamemorysize",
+      "Syntax (predefined)",
+      "Description",
+      "PTX ISA Notes",
+      "Target ISA Notes",
+      "Examples"
+    ],
+    "runtime_verification": "unverified",
+    "section_number": "10.35.",
+    "sm_89": {
+      "deferred_detail": false,
+      "rule": "explicit_target_note_plus_numeric_cc_order",
+      "support": "documented_supported"
+    },
+    "syntax": {
+      "line_count": 1,
+      "sha256": "31d5e807902acf60cfbbbbec0c8b9fdbd8be4dc087c3eb8ffbc60e694582d2a3"
+    },
+    "target_isa": {
+      "statements": [
+        {
+          "aliases": [],
+          "applies": "yes",
+          "relation": "minimum_sm",
+          "same_family": false,
+          "since_ptx": null,
+          "sm": "sm_80",
+          "subject": null
+        }
+      ],
+      "unparsed": []
+    },
+    "title": "Special Registers: %perctamemorysize"
+  }
+]

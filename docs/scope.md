@@ -1,5 +1,9 @@
 # 扫描范围与数据约定
 
+ACKB 服务 AI as Compiler，分别建立 CCEC 和 PTX 的执行模型与指令知识库。CCEC 为主，主要目标 `Ascend950PR_9579`；PTX 面向 RTX 4080 Laptop / `sm_89`。本阶段先完成有界来源的全面索引和重点深度，跨后端映射暂缓。仓库负责知识与验证工具，不承载生成优化循环。
+
+PTX 来源与提取口径见 [PTX 索引](ptx-index.md)，统一查询与覆盖边界见 [知识索引](knowledge.md)。以下为 CCEC 的既有扫描范围。
+
 ## 输入边界
 
 目标包：`Ascend-cann-toolkit_9.3.0~weekly.20261104.01_linux-x86_64.run`。

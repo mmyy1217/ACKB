@@ -1,6 +1,6 @@
 # AI 使用入口
 
-本仓库用于检索 Huawei Ascend CCE 接口、来源与目标条件。先通过查询工具定位，再读取局部证据，不要整份载入大型 catalog。命令集中在 [AGENTS.md](../AGENTS.md)，字段含义见 [数据库规范](database.md)。
+本仓库 ACKB 用于检索 CCEC / PTX 的目标知识、来源与条件。双后端查询契约及边界见 [知识索引](knowledge.md)。默认 CCEC；PTX 显式选择 `--backend ptx`。先读 `topics`，再按 ID 读取 `get` 与 `evidence`。以下声明查询流程适用于 CCEC。先通过查询工具定位，再读取局部证据，不要整份载入大型 catalog。命令集中在 [AGENTS.md](../AGENTS.md)，字段含义见 [数据库规范](database.md)。
 
 ## 建议调用流程
 

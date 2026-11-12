@@ -8,6 +8,7 @@ import sys
 
 from catalog import ROOT, validate
 from database import Database, SCHEMA_VERSION
+from knowledge import Knowledge, PROTOCOL
 
 LIMITATIONS = ['Declaration conditions are not chip support.',
                'Core macro environments and compiler acceptance are unverified.',
@@ -22,6 +23,7 @@ class Parser(argparse.ArgumentParser):
 
 def parser():
     p = Parser(description=__doc__)
+    p.add_argument('--backend', choices=['ccec', 'ptx'], default='ccec')
     p.add_argument('--data', help='Versioned catalog path; defaults to the repository snapshot')
     p.add_argument('--limit', type=int, default=10)
     p.add_argument('--offset', type=int, default=0)
@@ -29,6 +31,9 @@ def parser():
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
     commands.add_parser('schema')
+    for operation in ('topics', 'builtins'):
+        topic = commands.add_parser(operation)
+        topic.add_argument('query', nargs='?', default='')
     targets = commands.add_parser('targets')
     targets.add_argument('--name', default='')
     for command in ('search', 'get', 'relations'):
@@ -40,7 +45,8 @@ def parser():
         sub.add_argument('--name')
         sub.add_argument('--builtin')
         sub.add_argument('--signature')
-        sub.add_argument('--kind', choices=['all', 'interface', 'type', 'macro', 'constant', 'helper'], default='interface' if command == 'search' else 'all')
+        sub.add_argument('--kind', choices=['all', 'interface', 'type', 'macro', 'constant', 'helper', 'instruction', 'instruction_topic', 'execution_model', 'state_space', 'directive', 'special_register'], default='interface' if command == 'search' else 'all')
+        sub.add_argument('--support', choices=['documented_supported', 'documented_not_supported', 'partial', 'unknown'])
         sub.add_argument('--chip')
         sub.add_argument('--architecture')
         sub.add_argument('--core')
@@ -72,11 +78,20 @@ def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
     if args.command == 'schema':
-        return json.loads((ROOT / 'schemas/query-v1.schema.json').read_text())
+        schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'query-v1.schema.json'
+        return json.loads((ROOT / 'schemas' / schema).read_text())
+    knowledge_identity = getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))
+    if args.backend == 'ptx' or args.command in ('topics', 'builtins') or knowledge_identity:
+        knowledge = Knowledge(args.backend, args.data)
+        return page(knowledge.dispatch(args), args, knowledge.context(args.command))
+    if getattr(args, 'support', None):
+        raise ValueError('--support is for PTX documentation assessments; CCEC uses --condition')
+    if getattr(args, 'kind', 'all') not in ('all', 'interface', 'type', 'macro', 'constant', 'helper'):
+        raise ValueError('This kind belongs to the PTX backend')
     db = Database(args.data)
     with contextlib.redirect_stdout(io.StringIO()):
         validate(db.data)
-    context = {'operation': args.command, 'version': db.data['version'], 'limitations': LIMITATIONS,
+    context = {'backend': 'ccec', 'operation': args.command, 'version': db.data['version'], 'limitations': LIMITATIONS,
                'provenance': {'catalog_sha256': db.snapshot_sha256, 'extractor_revision': db.data.get('extractor_revision'),
                               'compatibility_revision': db.data['compatibility']['revision'],
                               'analyzer_sha256': db.data['compatibility']['analyzer_sha256']}}
@@ -124,11 +139,13 @@ def run(args):
 
 
 def main():
+    args = None
     try:
-        result = run(parser().parse_args())
+        args = parser().parse_args()
+        result = run(args)
         print(json.dumps(result, ensure_ascii=False, separators=(',', ':')))
     except (ValueError, AssertionError, OSError, KeyError, TypeError) as exc:
-        print(json.dumps({'schema_version': SCHEMA_VERSION, 'error': {'code': 'invalid_request_or_data', 'message': str(exc)}}, ensure_ascii=False))
+        print(json.dumps({'schema_version': PROTOCOL if args and (args.backend == 'ptx' or args.command in ('topics', 'builtins') or getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))) else SCHEMA_VERSION, 'error': {'code': 'invalid_request_or_data', 'message': str(exc)}}, ensure_ascii=False))
         return 2
     return 0
 
