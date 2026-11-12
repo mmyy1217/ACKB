@@ -7,7 +7,8 @@
   <a href="docs/scope.md">扫描范围</a> ·
   <a href="docs/classification.md">分类依据</a> ·
   <a href="docs/roadmap.md">建设路线</a> ·
-  <a href="AGENTS.md">Agent 入口</a>
+  <a href="docs/ai-entry.md">AI 查询入口</a> ·
+  <a href="AGENTS.md">开发入口</a>
 </p>
 
 ---
@@ -57,3 +58,9 @@ AI 参与提取、分类、关联与解释；结构化数据和可重复执行�
 支持按芯片平台配置或架构宏场景核对声明条件，并筛选弃用及条件性弃用标记；重载、进度与导出随筛选同步。当前收录 74 个芯片配置、14 个 NpuArch 值。条件符合不代表编译或运行支持，核目标仅展示配置。详见 [兼容性证据与限制](docs/compatibility.md)。
 
 仅有一个 CANN 版本；已提供离线差异分析工具，尚无真实跨版本历史。
+
+### 供 AI 使用的接口数据库
+
+提供无运行依赖的 JSON 查询 CLI：按名称、签名、builtin、目标条件和弃用状态检索，分页读取具体声明、宏来源与关联证据。接口身份、词法签名变体与版本来源记录分层保存；网页和 CLI 复用同一加载与分析层。
+
+从 [AI 使用入口](docs/ai-entry.md) 开始；协议见 [数据库规范](docs/database.md) 与 [JSON Schema](schemas/query-v1.schema.json)。未验证的核支持和未评审的接口语义会明确返回未知，不生成实验结论。

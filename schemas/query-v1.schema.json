@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cce-ops:query:v1",
+  "title": "CCE OPS query response v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "error"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "cce-ops.query.v1"
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "version",
+        "limitations",
+        "total",
+        "offset",
+        "items",
+        "next_offset",
+        "truncated",
+        "operation"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "cce-ops.query.v1"
+        },
+        "version": {
+          "type": "string"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "items": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "object"
+          }
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "chip",
+            "core",
+            "profile",
+            "core_evaluation"
+          ]
+        },
+        "operation": {
+          "enum": [
+            "info",
+            "targets",
+            "search",
+            "get",
+            "relations",
+            "evidence"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "search",
+                  "get"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "items": {
+                "items": {
+                  "$ref": "#/$defs/record"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "version",
+        "file",
+        "line",
+        "end_line",
+        "resource_root",
+        "sha256",
+        "package_verified",
+        "level"
+      ],
+      "properties": {
+        "level": {
+          "const": "static_declaration"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "package_verified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "id",
+        "symbol_id",
+        "variant_id",
+        "signature",
+        "condition_result",
+        "deprecation",
+        "verification",
+        "evidence"
+      ],
+      "properties": {
+        "symbol_id": {
+          "type": "string",
+          "pattern": "^sym_[a-f0-9]{24}$"
+        },
+        "variant_id": {
+          "type": "string",
+          "pattern": "^var_[a-f0-9]{24}$"
+        },
+        "condition_result": {
+          "enum": [
+            "not_evaluated",
+            "matches",
+            "excluded",
+            "unknown"
+          ]
+        },
+        "deprecation": {
+          "enum": [
+            "marked",
+            "conditional",
+            "unmarked"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        },
+        "verification": {
+          "type": "object",
+          "required": [
+            "compile",
+            "runtime",
+            "performance"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -65,3 +65,19 @@ python scripts/targets.py --toolkit "$CCE_OPS_TOOLKIT" --version '9.3.0~weekly.2
 node tests/compatibility-browser.cjs
 python scripts/compare.py <before.json> <after.json> --output <diff.json>
 ```
+
+## AI 查询入口
+
+先读 [AI 使用入口](docs/ai-entry.md) 与 [数据库规范](docs/database.md)。无需读取整份 catalog；全局分页参数放子命令前。将下列 ID 占位符替换为查询返回值。
+
+```sh
+python scripts/query.py info
+python scripts/query.py --limit 5 targets --name 950PR_9579
+python scripts/query.py --limit 5 search --name copy_gm_to_cbuf --chip Ascend950PR_9579 --condition possible
+python scripts/query.py search --builtin __builtin_cce_abs_bf16x2
+python scripts/query.py get <symbol_or_variant_or_record_id>
+python scripts/query.py relations <symbol_or_variant_or_record_id>
+python scripts/query.py evidence <record_id>
+python scripts/query.py --offset 5 --limit 5 search --name copy_gm_to_cbuf
+python scripts/query.py schema
+```

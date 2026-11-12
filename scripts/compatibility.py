@@ -44,7 +44,7 @@ def evaluate(expression, macros):
     return visit(tree.body)
 
 
-def analyze(data, targets=()):
+def analyze(data, targets=(), evaluate_profiles=True):
     profiles = {}
     guards = {}
     for r in data['records']:
@@ -66,7 +66,7 @@ def analyze(data, targets=()):
     for record in data['records']:
         conditions = [c for c in record['conditions'] if c.strip() not in guards.get(record['source']['file'], set()) and not GUARD.fullmatch(c.strip())]
         outcomes = {}
-        for profile in profiles:
+        for profile in profiles if evaluate_profiles else ():
             values = [evaluate(c, profile['macros']) for c in conditions]
             outcomes[profile['id']] = 'excluded' if False in values else 'unknown' if None in values else 'matches'
         signature = record['signature']
