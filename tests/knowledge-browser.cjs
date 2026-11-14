@@ -1,0 +1,56 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const {pathToFileURL} = require('node:url');
+const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
+(async()=>{
+ const root=path.resolve(__dirname,'..'),review=path.join(root,'.impeccable/review');
+ await fs.mkdir(review,{recursive:true});
+ const browser=await chromium.launch({executablePath:process.env.CCE_OPS_CHROME,headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],network=[];
+ page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
+ const entry=pathToFileURL(path.join(root,'dist/index.html')).href;
+ await page.goto(entry);await page.waitForSelector('#rows .row-button');
+ assert.match(await page.title(),/ACKB/);
+ await page.selectOption('#backend','ptx');
+ assert.match(await page.locator('#result-count').innerText(),/221/);
+ assert.match(await page.locator('.interface-table th').nth(2).getAttribute('title'),/sm_89/);
+ await page.screenshot({path:path.join(review,'ackb-ptx-1440.png')});
+ await page.locator('#jump-end').click();await page.waitForTimeout(120);
+ assert.equal(await page.locator('#rows tr').count(),221);
+ assert.match(await page.locator('#viewport-range').innerText(),/221/);
+ await page.locator('#jump-start').click();
+ await page.selectOption('#ptx-support','documented_supported');
+ assert.match(await page.locator('#result-count').innerText(),/110/);
+ await page.selectOption('#ptx-support','partial');
+ assert.match(await page.locator('#result-count').innerText(),/40/);
+ await page.selectOption('#ptx-support','');await page.fill('#search','mma');
+ await page.locator('#rows .row-button').filter({hasText:/^mma$/}).click();
+ assert.match(await page.locator('#detail').innerText(),/部分形式/);
+ const deep=page.url();await page.reload();assert.equal(page.url(),deep);
+ assert.equal(await page.locator('#backend').inputValue(),'ptx');
+ const downloadEvent=page.waitForEvent('download');await page.locator('#download').click();
+ const download=await downloadEvent;const exported=JSON.parse(await fs.readFile(await download.path(),'utf8'));
+ assert.equal(exported.backend,'ptx');assert.ok(exported.records.some(r=>r.mnemonics.includes('mma')));
+ await page.locator('[data-view="all"]').click();assert.match(await page.locator('#result-count').innerText(),/743/);
+ await page.locator('[data-view="execution"]').click();assert.match(await page.locator('#result-count').innerText(),/77/);
+ await page.locator('[data-view="directives"]').click();assert.match(await page.locator('#result-count').innerText(),/39/);
+ await page.locator('[data-view="registers"]').click();assert.match(await page.locator('#result-count').innerText(),/35/);
+ await page.locator('[data-view="topics"]').click();assert.match(await page.locator('#result-count').innerText(),/4/);
+ await page.locator('#detail [data-knowledge-ref]').first().click();assert.match(await page.locator('#detail').innerText(),/官方原文/);
+ await page.locator('[data-view="report"]').click();assert.match(await page.locator('#report').innerText(),/未解析/);
+ await page.selectOption('#backend','ccec');await page.locator('[data-view="topics"]').click();assert.match(await page.locator('#result-count').innerText(),/8/);
+ await page.locator('#tab-experiments').click();assert.match(await page.locator('#detail').innerText(),/Huawei Ascend/);assert.doesNotMatch(await page.locator('#detail').innerText(),/RTX/);
+ await page.locator('#tab-definition').click();
+ await page.locator('#detail [data-knowledge-ref]').first().click();assert.ok(await page.locator('#overload').count());
+ await page.screenshot({path:path.join(review,'ackb-ccec-1440.png')});
+ for(const width of [1024,390,320]){
+  await page.setViewportSize({width,height:900});await page.selectOption('#backend','ptx');
+  await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(review,`ackb-ptx-${width}.png`)});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`overflow ${width}`);
+  if(width<800){await page.selectOption('#mobile-view','topics');await page.locator('#rows .row-button').first().click();await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.match(await page.locator('#viewport-range').innerText(),/详情/);await page.locator('#back-to-list').click();}
+  await page.fill('#search','no-such-instruction-zzzz');assert.equal(await page.locator('#empty').isVisible(),true);
+  await page.locator('#empty-reset').click();
+ }
+ assert.deepEqual(errors,[]);assert.deepEqual(network,[]);await browser.close();console.log('ACKB browser checks passed');
+})().catch(e=>{console.error(e);process.exit(1);});

@@ -1,0 +1,107 @@
+'use strict';
+const knowledgeData = JSON.parse(document.querySelector('#knowledge-data').textContent);
+const supportLabels = {documented_supported:'文档支持',documented_not_supported:'文档排除',partial:'部分形式',unknown:'待确认'};
+const ptxKinds = {instruction:'指令',instruction_topic:'指令章节',execution_model:'执行模型',state_space:'状态空间',directive:'伪指令',directive_topic:'伪指令章节',special_register:'特殊寄存器',special_register_topic:'寄存器章节',introduction:'概述',release_note:'版本历史',notice:'声明',other:'其他章节',note:'深度笔记'};
+const ptxSections = new Map(knowledgeData.ptx.records.map(r => [r.anchor,r]));
+const knowledgeRecords = [
+  ...knowledgeData.ptx.records.map(k => wrapKnowledge(k,'ptx')),
+  ...knowledgeData.ptx.notes.map(k => wrapKnowledge({...k,kind:'note'},'ptx')),
+  ...knowledgeData.ccec.topics.map(k => wrapKnowledge({...k,kind:'note'},'ccec'))
+];
+function wrapKnowledge(k,backend) {
+  const parent = ptxSections.get(k.parent_anchor)?.title || '';
+  const categories = {'Integer Arithmetic Instructions':'整数算术','Floating-Point Instructions':'浮点运算','Half Precision Floating-Point Instructions':'半精度浮点','Comparison and Selection Instructions':'比较与选择','Logic and Shift Instructions':'逻辑与移位','Data Movement and Conversion Instructions':'搬运与转换','Control Flow Instructions':'控制流','Parallel Synchronization and Communication Instructions':'同步与通信','Atomic and Reduction Instructions':'原子与归约'};
+  return {id:k.entry_id || k.id,backend,knowledge:k,kind:k.kind,
+    name:k.mnemonics?.join(' / ') || k.title,group:backend === 'ptx' ? ptxKinds[k.kind] || k.kind : '知识主题',
+    family:backend === 'ptx' ? (k.kind === 'instruction' ? categories[parent] || parent.replace(/ Instructions?$/, '') || '指令' : ptxKinds[k.kind] || k.kind) : '深度笔记',
+    signature:'',namespace:'',builtins:[],conditions:[],source:{file:backend === 'ptx' ? 'PTX ISA 9.4' : 'CANN 头文件'}};
+}
+function recordView(r) {
+  if (r.knowledge) {
+    if(r.kind === 'note') return 'topics';
+    if(r.kind === 'instruction') return 'interfaces';
+    if(['execution_model','state_space'].includes(r.kind)) return 'execution';
+    if(r.kind === 'directive') return 'directives';
+    if(r.kind === 'special_register') return 'registers';
+    return 'all';
+  }
+  return isInterface(r) ? 'interfaces' : 'definitions';
+}
+function viewLabels() {
+  return state.backend === 'ptx' ? {interfaces:'指令索引',execution:'执行与存储',directives:'伪指令',registers:'特殊寄存器',all:'全部章节',topics:'深度笔记',report:'来源与覆盖'} : {interfaces:'指令接口',definitions:'配套定义',topics:'知识主题',report:'扫描报告'};
+}
+function configureBackend() {
+  const ptx = state.backend === 'ptx';
+  records = ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : [...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
+  document.body.classList.toggle('ptx-mode',ptx);
+  const labels = viewLabels();
+  $('.views').innerHTML = Object.entries(labels).map(([key,label]) => {
+    const count = key === 'report' ? '' : fmt(makeGroups(records.filter(r => key === 'all' ? r.kind !== 'note' : recordView(r) === key)).length);
+    return `<button data-view="${key}" class="view">${esc(label)} <span id="nav-${key}">${count}</span></button>`;
+  }).join('');
+  $('#mobile-view').innerHTML = Object.entries(labels).map(([key,label]) => `<option value="${key}">${esc(label)}</option>`).join('');
+  const groups = ptx ? [] : families;
+  $('#families').innerHTML = [['','全部指令'],...groups.map(f => [f,f])].map(([key,label]) => `<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
+  $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + groups.map(f => `<option>${esc(f)}</option>`).join('');
+  $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(data.records.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
+  $('#file').innerHTML = '<option value="">全部源文件</option>' + data.files.map(f => `<option>${esc(f.path)}</option>`).join('');
+  $('#chip').innerHTML = '<option value="">未指定芯片</option>' + data.compatibility.chip_mappings.map(t => `<option>${esc(t.chip)}</option>`).join('');
+  $('#architecture').innerHTML = '<option value="">全部架构条件</option>' + data.compatibility.profiles.map(p => `<option value="${esc(p.id)}">${esc(p.label)}</option>`).join('');
+  $('#catalog-version').innerHTML = `<option>${esc(data.version)}</option>`;
+  $('#version').textContent = ptx ? 'PTX ISA 9.4' : data.version;
+  $('#footer-source').textContent = ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · 目标 sm_89' : `${data.files.length} 个源文件 · CANN ${data.version}`;
+  $('#search').placeholder = ptx ? '搜索指令、章节、目标条件…' : '搜索名称、类型、builtin、条件…';
+  $('#search').setAttribute('aria-label',ptx ? '搜索 PTX 指令与章节' : '搜索接口或配套定义');
+  for(const node of [$('#group').closest('label'),$('#file').closest('label'),$('.compatibility-menu')]) node.hidden=ptx;
+  document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);
+  $('.sidebar-note').innerHTML = ptx ? '官方文档索引<p>RTX 4080 Laptop · sm_89</p><p>编译与运行尚未验证</p>' : '头文件静态提取<p>编译与运行尚未验证</p>';
+}
+function knowledgeLink(r,label) {
+  return `<button class="related-link" data-knowledge-ref="${esc(r.id)}">${esc(label || r.name)}</button>`;
+}
+function sourceLinks(k,backend) {
+  if(backend === 'ccec') return (k.evidence || []).map(e => {
+    const r=byId.get(e.record_id);
+    return `<div class="evidence-entry">${r ? knowledgeLink(r,r.name) : ''}<p class="source-ref">${esc(e.file)}:${esc(e.line)}</p><p class="condition">SHA-256 ${esc(e.sha256)}</p></div>`;
+  }).join('');
+  const source=knowledgeData.ptx.source.isa.html;
+  const citations=k.citations || [{anchor:k.anchor,section:k.section_number}];
+  return citations.map(c => `<p><a href="${esc(source.url + '#' + c.anchor)}" target="_blank" rel="noopener">官方手册 § ${esc(c.section || c.anchor)}</a></p>`).join('') + `<p class="condition">HTML SHA-256 ${esc(source.sha256)}</p>`;
+}
+function ruleTable(statements,type) {
+  if(!statements?.length) return '<p>本章节没有结构化规则；待确认。</p>';
+  const relationLabels={all_architectures:'全部架构',minimum_sm:'最低目标',exact_sm:'指定目标',removed:'已移除',introduced:'引入',deprecated:'弃用'};
+  return `<div class="rule-list">${statements.map(s => `<div class="rule-entry"><code>${esc(s.subject || '条目基础形式')}</code><p>${esc(relationLabels[s.relation || s.kind] || s.relation || s.kind)} · ${esc(type === 'target' ? s.sm || '见规则' : 'PTX ' + (s.version || '待确认'))}${s.applies ? ' · sm_89：' + esc({yes:'符合',no:'排除',unknown:'待确认'}[s.applies] || s.applies) : ''}</p><details><summary>完整结构化规则</summary><pre><code>${esc(JSON.stringify(s,null,2))}</code></pre></details></div>`).join('')}</div>`;
+}
+function knowledgeBody(r) {
+  const k=r.knowledge;
+  if(k.kind === 'note') return `<h3>${r.backend === 'ccec' ? '头文件表面解释' : '文档解读'}</h3><p class="knowledge-prose">${esc(k.body)}</p><h3>尚待确认</h3><ul>${(k.unknowns || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul>${k.missing_seeds?.length ? `<p>未找到的种子：${esc(k.missing_seeds.join(', '))}</p>` : ''}<h3>引用与关联</h3>${r.backend === 'ptx' ? (k.citations || []).map(c => {const target=records.find(x=>x.knowledge?.anchor===c.anchor);return target ? knowledgeLink(target,`§ ${c.section} ${target.name}`) : '';}).join('') : (k.record_ids || []).map(id=>byId.get(id)).filter(Boolean).map(x=>knowledgeLink(x)).join('')}`;
+  const notes=records.filter(x=>x.kind === 'note' && x.knowledge.citations?.some(c=>c.anchor===k.anchor));
+  const children=records.filter(x=>x.knowledge?.parent_anchor === k.anchor);
+  const parent=records.find(x=>x.knowledge?.anchor === k.parent_anchor);
+  return `<dl class="detail-meta"><dt>章节</dt><dd>${esc(k.section_number)}</dd><dt>类别</dt><dd>${esc(ptxKinds[k.kind])}</dd><dt>sm_89 文档</dt><dd>${esc(supportLabels[k.sm_89?.support || 'unknown'])}</dd></dl><div class="callout">文档条件不等于编译或运行验证。部分形式需逐项核对目标规则。语法与手册正文未收录，原文可通过来源链接查看（需联网）。</div>${k.target_isa ? '<h3>目标架构条件</h3>' + ruleTable(k.target_isa.statements,'target') : ''}${k.ptx_isa ? '<h3>PTX 版本与生命周期</h3>' + ruleTable(k.ptx_isa.statements,'version') : ''}${notes.length ? '<h3>相关深度笔记</h3>' + notes.map(n=>knowledgeLink(n)).join('') : ''}${parent ? '<h3>上级章节</h3>' + knowledgeLink(parent) : ''}${children.length ? '<h3>下级章节</h3>' + children.map(c=>knowledgeLink(c)).join('') : ''}<h3>官方原文</h3>${sourceLinks(k,'ptx')}`;
+}
+function renderKnowledgeDetail(r) {
+  const pane=$('#detail'),k=r.knowledge;
+  const tabs=[['definition',k.kind==='note'?'主题解读':'条件与关联'],['source','来源证据'],['experiments','验证状态']];
+  const body=state.tab === 'source' ? `<h3>来源与身份</h3><p class="condition">${esc(r.id)}</p>${sourceLinks(k,r.backend)}<details><summary>完整索引记录</summary><pre><code>${esc(JSON.stringify(k,null,2))}</code></pre></details>` : state.tab === 'experiments' ? '<h3>尚未开展设备实验</h3><p>编译验证：未执行</p><p>运行验证：未执行</p><p>性能测量：未执行</p><p>现有依据仅为头文件或官方文档。</p>' + (r.backend === 'ptx' ? '<p>RTX 4080 Laptop 尚未进行设备核验。</p>' : '<p>Huawei Ascend 目标设备尚未进行编译或运行验证。</p>') : knowledgeBody(r);
+  pane.innerHTML=`<div class="detail-heading"><h2>${esc(r.name)}</h2><div class="detail-domain">${esc(r.backend.toUpperCase())} · ${esc(r.group)}</div>${k.title !== r.name ? `<p class="knowledge-title">${esc(k.title)}</p>` : ''}<div class="detail-actions"><button id="back-to-list" class="mobile-return text-button">返回列表</button><button id="copy-record" class="quiet-button">复制记录</button><button id="copy-link" class="quiet-button">复制链接</button></div></div><div class="detail-tabs" role="tablist" aria-label="详情内容">${tabs.map(([id,label])=>`<button id="tab-${id}" role="tab" data-tab="${id}" aria-controls="detail-content" tabindex="${state.tab===id?0:-1}" aria-selected="${state.tab===id}">${label}</button>`).join('')}</div><div id="detail-content" class="detail-body" role="tabpanel" aria-labelledby="tab-${state.tab}">${body}</div>`;
+  $('#copy-record').onclick=()=>copyText(JSON.stringify(k,null,2));$('#copy-link').onclick=()=>copyText(location.href);
+  $('#back-to-list').onclick=()=>{readingDetail=false;const b=$('#rows [aria-current="true"]');b?.scrollIntoView({block:'center'});b?.focus({preventScroll:true});queueMore();queueProgress();};
+  pane.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;renderDetail();$('#tab-'+state.tab).focus();});
+  pane.querySelector('[role="tablist"]').onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const ids=tabs.map(t=>t[0]);state.tab=ids[e.key==='Home'?0:e.key==='End'?2:(ids.indexOf(state.tab)+(e.key==='ArrowRight'?1:2))%3];renderDetail();$('#tab-'+state.tab).focus();};
+  pane.querySelectorAll('[data-knowledge-ref]').forEach(b=>b.onclick=()=>{
+    const target=byId.get(b.dataset.knowledgeRef);Object.assign(state,{view:recordView(target),selected:target.id,query:'',family:'',group:'',file:'',support:'',chip:'',architecture:'',availability:'',deprecation:'',tab:'definition'});render(!mobile.matches);
+    if(mobile.matches){readingDetail=true;pane.scrollIntoView({block:'start'});}pane.focus({preventScroll:true});
+  });
+}
+function renderKnowledgeReport() {
+  const p=knowledgeData.ptx;
+  $('#report').innerHTML=`<h2>PTX ISA 9.4 · 来源与覆盖</h2><p>CUDA 文档归档 13.4.3 · 目标 sm_89 · RTX 4080 Laptop（设备未核验）</p><table class="report-table"><thead><tr><th>内容</th><th>条目数</th></tr></thead><tbody>${Object.entries(p.scan.kinds).map(([kind,count])=>`<tr><td>${esc(ptxKinds[kind] || kind)}</td><td>${count}</td></tr>`).join('')}</tbody></table><h2>指令文档条件</h2><p>${Object.entries(p.scan.instruction_sm_89_support).map(([s,n])=>`${supportLabels[s]} ${n}`).join(' · ')}</p><p>目标条件未解析块：${p.scan.unparsed_target_blocks}；PTX 说明中仅保存指纹的句子：${p.scan.unparsed_ptx_isa_sentences}。实验记录：0。</p><h2>来源与边界</h2>${sourceLinks({anchor:'',section:'目录'},'ptx')}<p>全部章节可离线检索；手册语法、语义正文未入库。数据中保留原始结构化规则、指纹与官方锚点。</p><details><summary>完整来源清单与覆盖统计</summary><pre>${esc(JSON.stringify({source:p.source,scan:p.scan},null,2))}</pre></details>`;
+}
+function downloadKnowledge() {
+  const ptx=state.backend==='ptx';
+  const items=state.view==='report' ? records : filtered();
+  const payload={schema_version:'ackb.web-export.v1',backend:state.backend,version:ptx?'9.4':data.version,selection:{...state},source:ptx?knowledgeData.ptx.source:{catalog_sha256:knowledgeData.ccec.source_catalog_sha256},scan:ptx?knowledgeData.ptx.scan:knowledgeData.ccec.coverage,records:items.map(r=>r.knowledge || r),verification:{compile:'unverified',runtime:'unverified',performance:'unverified'}};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`ackb-${state.backend}-${state.view}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}

@@ -21,7 +21,7 @@ PTX 固定官方手册版本与哈希，面向用户的 RTX 4080 Laptop，以 `s
 
 ## 人与 AI 共用的入口
 
-原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。当前网页展示 **CCEC**；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
+原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。当前网页支持 **CCEC / PTX**；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
 
 统一 JSON CLI 提供 `--backend ccec|ptx`、分页搜索、主题、关联和证据查询。CCEC 原有声明协议保持兼容；新增知识查询带来源哈希、未知项和验证状态。先读 [AI 使用入口](docs/ai-entry.md)，无需将整份数据库塞入上下文。
 

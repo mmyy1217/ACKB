@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-11-11T09:28:37+00:00",
-  "title": "Design System: CCE OPS",
+  "title": "Design System: ACKB",
   "extensions": {
     "colorMeta": {
       "ink": {
@@ -350,7 +350,7 @@
   ],
   "narrative": {
     "northStar": "器件规格表",
-    "overview": "白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCE 接口、条件与来源的核对。\n\n本文件记录 `web/style.css`、`web/index.html` 和 `web/app.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。",
+    "overview": "白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCEC 声明与 PTX 文档条目、条件和来源的核对。\n\n本文件记录 `web/style.css`、`web/index.html`、`web/app.js` 和 `web/knowledge.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。",
     "keyCharacteristics": [
       "单行接口表与窄幅详情并置。",
       "系统中文字体与技术等宽字体并用。",

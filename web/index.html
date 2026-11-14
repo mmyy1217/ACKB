@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>CCE OPS · Huawei Ascend 指令接口</title>
+<title>ACKB · CCEC / PTX 目标知识库</title>
 <style>/*__STYLE__*/</style>
 </head>
 <body>
 <a class="skip-link" href="#main">跳到接口列表</a>
 <header class="topbar">
-  <a class="brand" href="#" aria-label="CCE OPS 首页">CCE OPS</a>
+  <a class="brand" href="#" aria-label="ACKB 首页">ACKB</a>
+  <label class="backend-switch"><span class="sr-only">目标后端</span><select id="backend" aria-label="目标后端"><option value="ccec">CCEC</option><option value="ptx">PTX</option></select></label>
   <h1 id="page-title">指令接口</h1>
   <div class="toolbar">
     <label class="filter" title="本项目按来源头文件划分的接口组，不代表设备支持范围">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
@@ -24,9 +25,10 @@
     <label>弃用标记<select id="deprecation" aria-label="弃用标记"><option value="">全部弃用状态</option><option value="marked">有弃用标记</option><option value="conditional">条件性弃用标记</option><option value="unmarked">未检出标记</option></select></label>
     <p>芯片选择使用平台配置的 NpuArch；核目标仅展示配置，不推断核支持。其他宏保持未知。条件符合不等于可编译。仅有本版本，尚不能判断首次弃用版本。</p>
   </div></details>
+    <label class="filter ptx-filter" hidden>架构<select aria-label="PTX 架构" disabled><option>sm_89</option></select></label><label class="filter ptx-filter" hidden>文档条件<select id="ptx-support" aria-label="PTX 文档支持"><option value="">全部状态</option><option value="documented_supported">文档支持</option><option value="partial">部分形式</option><option value="documented_not_supported">文档排除</option><option value="unknown">待确认</option></select></label>
     <label class="search"><input id="search" type="search" placeholder="搜索名称、类型、builtin、条件…" aria-label="搜索接口或配套定义" autocomplete="off"><kbd>/</kbd></label>
   </div>
-  <div class="top-meta"><span class="version" id="version"></span><a href="https://github.com/mmyy1217/CCE-OPS" target="_blank" rel="noopener">仓库</a></div>
+  <div class="top-meta"><span class="version" id="version"></span><a href="https://github.com/mmyy1217/ACKB" target="_blank" rel="noopener">仓库</a></div>
   <button id="download" class="quiet-button">导出 JSON</button>
 </header>
 <nav id="scroll-navigation" class="scroll-navigation" aria-label="结果进度与快速定位" hidden>
@@ -63,6 +65,7 @@
 </div>
 <div id="announcement" class="toast" role="status" aria-live="polite"></div>
 <noscript>本手册需要启用 JavaScript 才能搜索和浏览接口。结构化数据可在仓库 data 目录读取。</noscript>
+<script id="knowledge-data" type="application/json">/*__KNOWLEDGE__*/</script>
 <script id="catalog-data" type="application/json">/*__DATA__*/</script>
 <script>/*__SCRIPT__*/</script>
 </body>

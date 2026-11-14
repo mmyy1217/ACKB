@@ -234,3 +234,21 @@ body { overflow-anchor: none; }
   .toolbar .compatibility-menu { order: 1; }
   .toolbar .filter { flex: 1 1 36%; }
 }
+/* Backend navigation shares the compact technical workspace. */
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.backend-switch { flex:none; }
+.backend-switch select { height:26px; border:1px solid var(--input-line); border-radius:6px; background:var(--subtle); font-size:11px; font-weight:600; padding:0 5px; }
+.ptx-filter select { width:104px; }
+.ptx-filter select:disabled { opacity:1; color:var(--ink); cursor:default; }
+.ptx-mode .interface-table th:nth-child(2) { width:90px; }
+.ptx-mode .interface-table th:nth-child(3) { width:72px; }
+.ptx-mode .interface-table th:nth-child(4) { width:88px; }
+.ptx-mode .interface-table td.number { font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rule-entry,.evidence-entry { padding:6px 0; border-bottom:1px solid var(--row-line); overflow-wrap:anywhere; }
+.rule-entry p { margin:3px 0; }
+.knowledge-prose { line-height:1.85; white-space:pre-line; }
+.detail-body li { margin:4px 0; }
+@media(max-width:1100px) and (min-width:801px) { .topbar h1 { display:none; } .top-meta { display:none; } .toolbar #file { width:120px; } }
+@media(max-width:800px) { .ptx-mode .interface-table th:nth-child(2) { width:62px; } .ptx-mode .interface-table th:nth-child(3) { width:64px; } .ptx-mode .interface-table th:nth-child(4) { width:62px; } .ptx-filter select { width:96px; } }
+
+.knowledge-title { margin:4px 0; font-size:11px; overflow-wrap:anywhere; color:var(--muted); }
