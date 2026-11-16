@@ -1,7 +1,8 @@
 'use strict';
 const $ = selector => document.querySelector(selector);
 const data = JSON.parse($('#catalog-data').textContent);
-const allRecords = [...data.records, ...knowledgeRecords];
+const opRecords = createOpRecords(data);
+const allRecords = [...opRecords, ...data.records, ...knowledgeRecords];
 let records = data.records;
 const byId = new Map(allRecords.map(r => [r.id, r]));
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -16,7 +17,7 @@ const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
 const sourceLabel = s => `${s.file}:${s.line}${s.end_line > s.line ? '–' + s.end_line : ''}`;
-const searchTexts = new Map(allRecords.map(r => [r.id,[r.name,r.signature,r.group,r.family,r.namespace,...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : ''].join(' ').toLowerCase()]));
+const searchTexts = new Map(allRecords.map(r => [r.id,[r.name,r.signature,r.group,r.family,r.namespace,...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : ''].join(' ').toLowerCase()]));
 const fileMap = new Map(data.files.map(f => [f.path,f]));
 
 function saveHash(replace = true) {
@@ -45,7 +46,8 @@ function readHash() {
   if (!['','marked','conditional','unmarked'].includes(state.deprecation)) state.deprecation = '';
   if(!ccecStatic?.labels[state.proof] || !staticArch())state.proof='';
   state.selected = p.get('r') || '';
-  if (!p.has('view') && byId.has(state.selected)) state.view = recordView(byId.get(state.selected));
+  if ((!p.has('view') || state.view==='interfaces' && !byId.get(state.selected)?.op && !byId.get(state.selected)?.knowledge) && byId.has(state.selected)) state.view = recordView(byId.get(state.selected));
+  if(state.backend==='ccec' && state.view==='interfaces'){state.proof='';state.deprecation='';}
   state.limit = BATCH_SIZE;
 }
 function toast(message) {
@@ -65,28 +67,32 @@ async function copyText(value) {
 }
 function download() {
   if (state.backend === 'ptx' || state.view === 'topics') return downloadKnowledge();
-  const blob = new Blob([JSON.stringify({...data, records: filtered(), selection: {view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()), counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
+  const selected=filtered(), selectedIDs=new Set(selected.map(r=>r.id));
+  const selectedOps=selected.filter(r=>r.op).map(r=>r.op);
+  const sourceIDs=new Set(selectedOps.flatMap(o=>[...o.entry_records,...o.caller_records]));
+  const blob = new Blob([JSON.stringify({...data, records: selected, source_records:data.records.filter(r=>sourceIDs.has(r.id)), selection: {view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()),op_model:opModel?{schema_version:opModel.schema_version,limitations:opModel.limitations,ops:selectedOps,edges:opModel.edges.filter(e=>selectedIDs.has(e.target_op) || selectedIDs.has(e.source_record))}:null, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
   const url = URL.createObjectURL(blob), a = document.createElement('a');
   a.href = url; a.download = `ackb-ccec-${data.version}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
 }
-function baseRecords() { return records.filter(r => (state.view === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === state.view)); }
+function baseRecords() { return records.filter(r => (state.view==='records'?isInterface(r):state.view === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === state.view)); }
 function makeGroups(items) {
   const groups = new Map();
   for (const r of items) {
-    const key = r.knowledge ? r.id : [r.group,r.namespace || '',r.name,r.kind].join('|');
+    const key = r.knowledge || r.op ? r.id : [r.group,r.namespace || '',r.name,r.kind].join('|');
     if (!groups.has(key)) groups.set(key,{key,name:r.name,group:r.group,family:r.family,items:[]});
     groups.get(key).items.push(r);
   }
   return [...groups.values()];
 }
 function compatibilityMatches(r) {
+  if(r.op) return !state.architecture || !state.availability || (state.availability==='possible'?r.compatibility.profiles[state.architecture]!=='excluded':r.compatibility.profiles[state.architecture]===state.availability);
   if (r.knowledge) return !state.support || (r.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown') === state.support;
   return (!state.proof || staticState(r) === state.proof) && (!state.deprecation || r.deprecation.status === state.deprecation) &&
     (!state.architecture || !state.availability || (state.availability === 'possible' ? r.compatibility.profiles[state.architecture] !== 'excluded' : r.compatibility.profiles[state.architecture] === state.availability));
 }
 function filtered() {
   const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : r.family === state.family)) && (!state.group || r.group === state.group) && (!state.file || r.source.file === state.file) && terms.every(t => searchTexts.get(r.id).includes(t)));
+  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : r.family === state.family)) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
   $('#backend').value = state.backend;$('#ptx-support').value = state.support;
@@ -94,9 +100,10 @@ function syncControls() {
   $('#core-targets').textContent = target ? [...new Set(Object.values(target.cores))].join(' / ') : '先选择芯片';
   for (const key of ['chip','architecture','availability','deprecation','proof']) $('#' + key).value = state[key];
   $('#availability').disabled = !state.architecture;
-  $('#proof').disabled = !staticArch();
+  $('#proof').disabled = !staticArch() || state.view === 'interfaces';
+  $('#deprecation').disabled = state.backend==='ccec' && state.view==='interfaces';
   $('#compatibility-summary').textContent = state.chip ? state.chip.replace(/^Ascend/, '') : state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => isInterface(r) && compatibilityMatches(r) && (!family || r.family === family))).length);});
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.view==='records'?isInterface(r):r.op) && compatibilityMatches(r) && (!family || r.family === family))).length);});
   document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
@@ -112,13 +119,13 @@ function render(revealSelection = false) {
   window.scrollTo(0,0);
   const report = state.view === 'report';
   $('#catalog-view').hidden = report;$('#report').hidden = !report;
-  $('#family-section').hidden = state.view !== 'interfaces';$('#mobile-family-label').hidden = state.view !== 'interfaces';
+  $('#family-section').hidden = !['interfaces','records'].includes(state.view);$('#mobile-family-label').hidden = !['interfaces','records'].includes(state.view);
   $('#page-title').textContent = viewLabels()[state.view];
   $('.toolbar').hidden = report;
-  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : '接口 / 名称';
+  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : state.view==='interfaces'?'op / builtin':'声明 / 名称';
   document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : '域';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
-  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : '重载';
+  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : state.view==='interfaces'?'形式':'声明';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
   syncControls();syncPtxNavigation();
@@ -131,7 +138,7 @@ function render(revealSelection = false) {
     const score = g => g.name.toLowerCase() === query ? 0 : g.name.toLowerCase().startsWith(query) ? 1 : g.name.toLowerCase().includes(query) ? 2 : 3;
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
-  $('#result-count').textContent = `${fmt(visible.length)} 个名称 · ${fmt(matches.length)} 条记录`;
+  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : `${fmt(visible.length)} 个名称 · ${fmt(matches.length)} 条记录`;
   const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : state.family;
   $('#progress-scope').textContent = ptxScopeLabel || (state.query || state.group || state.file || state.architecture || state.deprecation || state.proof || state.support ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);
@@ -154,7 +161,7 @@ function rowHTML(groups) {
     const selected = g.items.some(r => r.id === state.selected);
     const classification = g.items[0].knowledge ? g.family : state.view === 'definitions' ? kinds[g.items[0].kind] : g.family;
     const qualified = [g.items[0].namespace,g.name].filter(Boolean).join('::');
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : shortGroup[g.group] || g.group)}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items.length}</td></tr>`;
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : shortGroup[g.group] || g.group)}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (g.items[0].op.forms.length || '—') : g.items.length}</td></tr>`;
   }).join('');
 }
 function updateLoadStatus() {
@@ -286,11 +293,12 @@ function visibleConditions(r) {
 function renderDetail() {
   const r = byId.get(state.selected), pane = $('#detail');
   if (!r) {pane.innerHTML = '<div class="empty detail-empty"><h2>选择条目，阅读详情</h2><p>调整左侧筛选后即可查看接口与来源。</p></div>';return;}
+  if (r.op) {renderOpDetail(r);return;}
   if (r.knowledge) {renderKnowledgeDetail(r);return;}
   const current = visible.find(g => g.items.some(x => x.id === r.id));
   const options = current?.items || [r];
-  const countLabel = isInterface(r) ? `${options.length} 条重载 / 声明` : `${options.length} 条定义`;
-  pane.innerHTML = `<div class="detail-heading"><h2>${esc(r.name)}</h2><div class="detail-domain"><span>${esc(r.group)}</span><span>${esc(r.family === '配套定义' ? kinds[r.kind] : r.family)}</span></div>${r.namespace ? `<div class="qualified">${esc(r.namespace)}::${esc(r.name)}</div>` : ''}<div class="detail-actions"><button id="back-to-list" class="mobile-return text-button">返回列表</button><button id="copy-signature" class="quiet-button">复制签名</button><button id="copy-link" class="quiet-button">复制链接</button><span class="detail-status">头文件声明</span></div></div><div class="detail-tabs" role="tablist" aria-label="详情内容">${[['definition','接口定义'],['source','来源证据'],['experiments','实验记录']].map(([id,title]) => `<button id="tab-${id}" role="tab" data-tab="${id}" aria-controls="detail-content" tabindex="${state.tab === id ? 0 : -1}" aria-selected="${state.tab === id}">${title}</button>`).join('')}</div><div class="detail-body" id="detail-content" role="tabpanel" aria-labelledby="tab-${state.tab}"><label class="overloads">${esc(countLabel)}<select id="overload" aria-label="选择重载或声明">${options.map((x,i) => `<option value="${x.id}" ${x.id === r.id ? 'selected' : ''}>${i + 1}. ${esc(x.return_type || kinds[x.kind])} · ${esc(x.parameters?.join(', ') || x.source.file)}</option>`).join('')}</select></label>${state.tab === 'source' ? sourceContent(r) : state.tab === 'experiments' ? experimentsContent() : definitionContent(r)}</div>`;
+  const countLabel = isInterface(r) ? `${options.length} 条声明记录` : `${options.length} 条定义`;
+  pane.innerHTML = `<div class="detail-heading"><h2>${esc(r.name)}</h2><div class="detail-domain"><span>${esc(r.group)}</span><span>${esc(r.family === '配套定义' ? kinds[r.kind] : r.family)}</span></div>${r.namespace ? `<div class="qualified">${esc(r.namespace)}::${esc(r.name)}</div>` : ''}<div class="detail-actions"><button id="back-to-list" class="mobile-return text-button">返回列表</button><button id="copy-signature" class="quiet-button">复制签名</button><button id="copy-link" class="quiet-button">复制链接</button><span class="detail-status">头文件声明</span></div></div><div class="detail-tabs" role="tablist" aria-label="详情内容">${[['definition','接口定义'],['source','来源证据'],['experiments','实验记录']].map(([id,title]) => `<button id="tab-${id}" role="tab" data-tab="${id}" aria-controls="detail-content" tabindex="${state.tab === id ? 0 : -1}" aria-selected="${state.tab === id}">${title}</button>`).join('')}</div><div class="detail-body" id="detail-content" role="tabpanel" aria-labelledby="tab-${state.tab}"><label class="overloads">${esc(countLabel)}<select id="overload" aria-label="选择来源声明">${options.map((x,i) => `<option value="${x.id}" ${x.id === r.id ? 'selected' : ''}>${i + 1}. ${esc(x.return_type || kinds[x.kind])} · ${esc(x.parameters?.join(', ') || x.source.file)}</option>`).join('')}</select></label>${state.tab === 'source' ? sourceContent(r) : state.tab === 'experiments' ? experimentsContent() : definitionContent(r)}</div>`;
   $('#back-to-list').onclick = () => {
     readingDetail = false;
     const button = $('#rows [aria-current="true"]');
@@ -307,6 +315,7 @@ function renderDetail() {
     if (mobile.matches) {readingDetail=true;$('#detail').scrollIntoView({block:'start'});}
     $('#detail').focus({preventScroll:true});
   });
+  wireOpLinks(pane);
   pane.querySelector('[role="tablist"]').onkeydown = e => {
     if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
     e.preventDefault();const tabs = ['definition','source','experiments'];let index = tabs.indexOf(state.tab);
@@ -325,7 +334,7 @@ function definitionContent(r) {
   const calls = (r.calls || []).map(name => records.find(x => x.name === name && x.namespace?.endsWith('__cce_scalar'))).filter(Boolean);
   const types = [...new Set((r.parameters || []).join(' ').match(/[A-Za-z_]\w*/g) || [])].map(name => records.find(x => x.kind === 'type' && x.name === name)).filter(Boolean).slice(0,12);
   const links = (items) => items.map(x => `<button class="related-link" data-ref="${x.id}"><code>${esc(x.namespace ? x.namespace + '::' + x.name : x.name)}</code></button>`).join('');
-  return `<h3>${r.kind === 'interface' ? '接口签名' : '声明内容'}</h3><pre class="signature"><code>${esc(formatSignature(r))}</code></pre><dl class="detail-meta"><dt>接口形式</dt><dd>${esc(kinds[r.kind])}${r.generated ? ' · 宏展开生成' : ''}</dd><dt>来源位置</dt><dd class="source-ref">${esc(sourceLabel(r.source))}</dd>${r.return_type ? `<dt>返回类型</dt><dd><code>${esc(r.return_type)}</code></dd>` : ''}</dl>${compatibilityContent(r)}${r.parameters?.length ? `<h3>参数声明</h3><table class="parameter-table"><thead><tr><th>序号</th><th>类型 / 名称 / 默认值</th></tr></thead><tbody>${r.parameters.map((p,i) => `<tr><td>${i + 1}</td><td><code>${esc(p)}</code></td></tr>`).join('')}</tbody></table>` : ''}<h3>可见条件</h3>${conds.length ? conds.map(c => `<div class="condition">${esc(c)}</div>`).join('') : '<p>声明处未发现额外条件。调用入口仍可能附加条件，不能据此推断全架构支持。</p>'}${types.length ? '<h3>相关类型</h3>' + links(types) : ''}${calls.length ? '<h3>下层接口调用</h3>' + links(calls) : ''}<h3>关联 builtin</h3>${r.builtins.length ? r.builtins.map(b => `<div class="condition">${esc(b)}</div>`).join('') : '<p>本条声明未提取到直接 builtin 引用。</p>'}<div class="callout">${r.parameters?.includes('...') ? '原始头文件以可变参数声明此接口，精确参数约束尚待核对。' : '参数单位、合法值和设备支持范围尚未逐项验证。'} 指令族按名称规则归类，仅用于导航。</div>`;
+  return `<h3>${r.kind === 'interface' ? '接口签名' : '声明内容'}</h3><pre class="signature"><code>${esc(formatSignature(r))}</code></pre><dl class="detail-meta"><dt>接口形式</dt><dd>${esc(kinds[r.kind])}${r.generated ? ' · 宏展开生成' : ''}</dd><dt>来源位置</dt><dd class="source-ref">${esc(sourceLabel(r.source))}</dd>${r.return_type ? `<dt>返回类型</dt><dd><code>${esc(r.return_type)}</code></dd>` : ''}</dl>${layerContent(r)}${compatibilityContent(r)}${r.parameters?.length ? `<h3>参数声明</h3><table class="parameter-table"><thead><tr><th>序号</th><th>类型 / 名称 / 默认值</th></tr></thead><tbody>${r.parameters.map((p,i) => `<tr><td>${i + 1}</td><td><code>${esc(p)}</code></td></tr>`).join('')}</tbody></table>` : ''}<h3>可见条件</h3>${conds.length ? conds.map(c => `<div class="condition">${esc(c)}</div>`).join('') : '<p>声明处未发现额外条件。调用入口仍可能附加条件，不能据此推断全架构支持。</p>'}${types.length ? '<h3>相关类型</h3>' + links(types) : ''}${calls.length ? '<h3>下层接口调用</h3>' + links(calls) : ''}<h3>关联 builtin</h3>${r.builtins.length ? r.builtins.map(b => `<div class="condition">${esc(b)}</div>`).join('') : '<p>本条声明未提取到直接 builtin 引用。</p>'}<div class="callout">${r.parameters?.includes('...') ? '原始头文件以可变参数声明此接口，精确参数约束尚待核对。' : '参数单位、合法值和设备支持范围尚未逐项验证。'} 指令族按名称规则归类，仅用于导航。</div>`;
 }
 function sourceContent(r) {
   const file = fileMap.get(r.source.file);
@@ -345,7 +354,8 @@ function renderReport() {
   const packageNote = verified ? '原包内 ' + data.files.length + ' 个扫描头文件与数据源完全一致' : '原始安装包未核对';
   const packageProof = verified ? `<h2>安装包校验</h2><p>直接读取原包及内层编译器归档，未执行安装脚本。校验范围为本次扫描的 ${data.files.length} 个头文件，不代表完整工具链或设备行为验证。</p><dl class="detail-meta"><dt>原包</dt><dd><code>${esc(data.source.package_name)}</code></dd><dt>SHA-256</dt><dd><code>${esc(data.source.package_sha256)}</code></dd><dt>编译器包</dt><dd><code>${esc(data.source.package_verification.compiler_package)}</code></dd><dt>SHA-256</dt><dd><code>${esc(data.source.package_verification.compiler_sha256)}</code></dd></dl>` : '';
   $('#report').innerHTML = `<div class="report-intro"><span><strong>${data.files.length}</strong>扫描文件</span><span><strong>${fmt(records.filter(isInterface).length)}</strong>接口声明记录</span><span><strong>${unresolved.length}</strong>待处理项</span><span><strong>0</strong>设备实验</span></div><div class="callout">已安装工具链 ${esc(data.version)} · ${packageNote}。当前为静态接口索引，不宣称硬件指令全集或设备支持。记录数包含重载、条件分支和重复声明。</div>${packageProof}<h2>扫描文件与来源校验</h2><div class="report-table-wrap"><table class="report-table"><thead><tr><th>文件</th><th>大小</th><th>SHA-256</th></tr></thead><tbody>${data.files.map(f => `<tr><td><code>${esc(f.path)}</code></td><td>${fmt(f.bytes)} B</td><td class="hash"><code>${f.sha256}</code></td></tr>`).join('')}</tbody></table></div><h2>待处理项 · ${unresolved.length}</h2><p>以下结构未被提取器可靠识别，保留位置和原文；不计为成功解析接口。</p>${unresolved.map(e => `<details><summary><code>${esc(e.file)}:${e.line}</code> · ${esc(e.reason)}</summary><pre>${esc(e.text)}</pre></details>`).join('') || '<p>本轮未报告未解析结构；这不等于完成硬件支持验证。</p>'}<h2>范围边界</h2><ul><li>条件表达式原样保存，未求值为设备支持矩阵。</li><li>函数宏支持参数替换、可变参数和 token paste；对象宏保持符号形式。</li><li>包含关系已盘点，外部标准库与运行时依赖未递归提取。</li><li>函数体内的条件分支仅保存文本，不代表实际执行路径。</li><li>${verified ? "原包与已扫描头文件一致性已核验；未校验整个 Toolkit 的所有文件。" : "原始 .run 包与安装目录一致性尚未核验。"}</li><li>编译、运行和性能验证尚未开展。</li></ul><h2>排除文件</h2>${data.report.excluded_files.map(f => `<p><code>${esc(f.path)}</code> · AI CPU NEON，位于 AI Core 范围之外。</p>`).join('')}${(data.report.excluded_records || []).map(r => `<p><code>${esc(r.name)}</code> · ${esc(sourceLabel(r.source))} · PTO 专用封装，排除出指令接口范围。</p>`).join('')}<h2>包含关系</h2><div class="report-table-wrap"><table class="report-table"><thead><tr><th>来源</th><th>包含文件</th><th>条件</th></tr></thead><tbody>${data.report.includes.map(i => `<tr><td><code>${esc(i.file)}:${i.line}</code></td><td><code>${esc(i.name)}</code></td><td><code>${esc(i.conditions.join(' && '))}</code></td></tr>`).join('')}</tbody></table></div><h2>尚未关联到接口的 builtin 名称</h2><p>原始文本发现 ${fmt(data.report.raw_builtin_names.length)} 个名称，其中 ${fmt(data.report.unlinked_builtin_names.length)} 个未直接关联到接口。包含宏拼接前缀及辅助函数引用，不能作为额外指令数量。</p><details><summary>展开名称列表</summary><pre>${esc(data.report.unlinked_builtin_names.join('\n'))}</pre></details>`;
-  $('#report').insertAdjacentHTML('afterbegin',staticReport());
+  $('#report').insertAdjacentHTML('afterbegin',opReport()+staticReport());
+  wireOpLinks($('#report'));
 }
 function initPanelResize() {
   const root = document.documentElement, storageKey = 'cce-ops.panel-widths.v1';

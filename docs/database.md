@@ -55,3 +55,7 @@ AI 查询不沿用网页的默认芯片。未明确选择目标时，条件结�
 ## 支持证据查询
 
 新增 `support` 操作，身份和 chip/core 参数沿用 `get`，返回声明条件、缺失宏、被忽略的声明保护宏、AscendC 名称引用、所在核保护块与入口包含边。引用只匹配名称，不完成重载解析；当前 support 固定为 unverified。信封保留 cce-ops.query.v1，新增 support_evidence_sha256。独立追踪工具支持引用分页及全部 74 个芯片配置的条件与源码证据矩阵；static-support.json 另保存全量架构判定、来源哈希与缺失宏审计，support-package.json 保存 1,608 个扫描源码文件的原包校验。命令见 AGENTS，边界见 [支持证据追踪](ccec-support.md)。
+
+## 唯一 op 层
+
+新增 `ops.json` 与 `ackb.ccec-ops.query.v1` 查询。op、入口声明、封装、待解析入口分别组织；原 catalog 和旧 ID 保持不变。完整身份、关系及保守架构汇总规则见 [op 模型](ccec-ops.md)。

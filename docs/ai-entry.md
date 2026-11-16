@@ -1,6 +1,6 @@
 # AI 使用入口
 
-本仓库 ACKB 用于检索 CCEC / PTX 的目标知识、来源与条件。双后端查询契约及边界见 [知识索引](knowledge.md)。默认 CCEC；PTX 显式选择 `--backend ptx`。先读 `topics`，再按 ID 读取 `get` 与 `evidence`。以下声明查询流程适用于 CCEC。先通过查询工具定位，再读取局部证据，不要整份载入大型 catalog。命令集中在 [AGENTS.md](../AGENTS.md)，字段含义见 [数据库规范](database.md)。
+本仓库 ACKB 用于检索 CCEC / PTX 的目标知识、来源与条件。双后端查询契约及边界见 [知识索引](knowledge.md)。默认 CCEC；PTX 显式选择 `--backend ptx`。CCEC 主目录先查 `ops`，再按 op ID 读取 `get / relations`，原始记录用 `evidence` 追溯。以下声明查询流程适用于 CCEC。先通过查询工具定位，再读取局部证据，不要整份载入大型 catalog。命令集中在 [AGENTS.md](../AGENTS.md)，字段含义见 [数据库规范](database.md)。
 
 ## 建议调用流程
 
@@ -31,3 +31,7 @@
 ## CCEC 支持判定的追踪
 
 遇到待确认，先对返回的记录 ID 查询 `support`，检查每个条件的 missing_macros，以及 AscendC 引用中的 core_guards 和 incoming_include_edges。目录提示只用于排序，名称引用不证明具体重载接受性；不得把 support=unverified 改写成支持。编译探针失败也必须先区分环境、探针与目标限制。详见 [支持证据追踪](ccec-support.md)。
+
+## CCEC 层级入口
+
+主目录以完整 builtin 身份唯一化；先查 `ops`，不要把兼容的声明层 `search` 结果当独立 op。封装调用多个 builtin 时保留一对多关系，源码条件和名称引用不提升为 op 支持。详情见 [op 模型](ccec-ops.md)。

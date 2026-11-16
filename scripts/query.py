@@ -31,11 +31,19 @@ def parser():
     p.add_argument('--max-chars', type=int, default=24000)
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
-    commands.add_parser('schema')
+    schema = commands.add_parser('schema')
+    schema.add_argument('--layer', choices=['declarations', 'ops'], default='declarations')
     for operation in ('topics', 'builtins', 'categories'):
         topic = commands.add_parser(operation)
         topic.add_argument('query', nargs='?', default='')
         topic.add_argument('--architecture')
+    ops = commands.add_parser('ops')
+    ops.add_argument('query', nargs='?', default='')
+    ops.add_argument('--name')
+    ops.add_argument('--chip')
+    ops.add_argument('--architecture')
+    ops.add_argument('--core')
+    ops.add_argument('--condition', choices=['matches', 'excluded', 'unknown', 'possible'])
     targets = commands.add_parser('targets')
     targets.add_argument('--name', default='')
     for command in ('search', 'get', 'relations', 'support'):
@@ -81,7 +89,7 @@ def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
     if args.command == 'schema':
-        schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'query-v1.schema.json'
+        schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
         return json.loads((ROOT / 'schemas' / schema).read_text())
     knowledge_identity = getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))
     if args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or knowledge_identity:
@@ -100,8 +108,29 @@ def run(args):
                'provenance': {'catalog_sha256': db.snapshot_sha256, 'extractor_revision': db.data.get('extractor_revision'),
                               'compatibility_revision': db.data['compatibility']['revision'],
                               'analyzer_sha256': db.data['compatibility']['analyzer_sha256']}}
+    if args.command == 'ops' or getattr(args, 'identity', '').startswith('ccec_op_'):
+        from ccec_ops import Ops, LIMITS
+        ops = Ops(db)
+        target = db.target(getattr(args, 'chip', None), getattr(args, 'architecture', None), getattr(args, 'core', None))
+        context.update(schema_version='ackb.ccec-ops.query.v1', limitations=LIMITS, target=target)
+        identity = getattr(args, 'identity', None)
+        if identity and identity not in ops.by_id:
+            raise ValueError('Unknown op identity')
+        if args.command == 'relations':
+            items = ops.relations(identity)
+        elif identity:
+            if args.command not in ('get', 'support'):
+                raise ValueError('Use get, support or relations for op IDs; original source evidence uses record IDs')
+            items = [ops.detail(ops.by_id[identity], target)]
+        else:
+            query = (args.name or args.query).lower()
+            items = [ops.summary(o, target) for o in ops.model['ops'] if query in (' '.join([o['name'], o['builtin'], *o['aliases']])).lower()]
+            if args.condition:
+                items = [o for o in items if o['assessment']['condition'] in (('matches', 'unknown') if args.condition == 'possible' else (args.condition,))]
+        return page(items, args, context)
     if args.command == 'info':
-        return page([{'records': len(db.records), 'symbols': len(db.by_symbol), 'signature_variants': len(db.by_variant),
+        from ccec_ops import Ops
+        return page([{'op_inventory': Ops(db).model['counts'], 'primary_query': 'ops', 'records': len(db.records), 'symbols': len(db.by_symbol), 'signature_variants': len(db.by_variant),
                       'counts': db.data['counts'], 'scanned_headers': len(db.files),
                       'unresolved': len(db.data['report']['unresolved']),
                       'header_builtin_names': len(db.data['report']['raw_builtin_names']),
@@ -134,11 +163,17 @@ def run(args):
         context['provenance']['support_evidence_sha256'] = hashlib.sha256(evidence.path.read_bytes()).hexdigest()
         items = [evidence.record(r, target) for r in selected]
     elif args.command == 'relations':
+        from ccec_ops import Ops
+        op_index = Ops(db)
         items = [{'source_record_id': r['id'], **edge} for r in selected for edge in db.relations(r)]
+        items += [edge for r in selected for edge in op_index.relations(r['id'])]
     else:
         items = [db.summary(r, target) for r in selected]
         if args.command == 'get':
+            from ccec_ops import Ops
+            op_index = Ops(db)
             for item, r in zip(items, selected):
+                item['op_layer'] = op_index.model['record_layers'].get(r['id'])
                 item.update({'conditions': r['conditions'], 'evaluated_conditions': r['compatibility']['conditions'],
                              'ignored_guards': r['compatibility']['ignored_guards'],
                              'parameters': r.get('parameters'), 'builtins': r['builtins'], 'macro_sources': db.macro_evidence(r),

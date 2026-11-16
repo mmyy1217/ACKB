@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CCEC unique builtin op query envelope",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "backend",
+    "operation",
+    "version",
+    "limitations",
+    "provenance",
+    "target",
+    "total",
+    "offset",
+    "items",
+    "next_offset",
+    "truncated"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ackb.ccec-ops.query.v1"
+    },
+    "backend": {
+      "const": "ccec"
+    },
+    "operation": {
+      "enum": [
+        "ops",
+        "get",
+        "support",
+        "relations"
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "target": {
+      "type": "object"
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "offset": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "next_offset": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "truncated": {
+      "type": "boolean"
+    }
+  }
+}

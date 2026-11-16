@@ -8,7 +8,7 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[],network=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
  const url=pathToFileURL(path.resolve('dist/index.html')).href;
- await page.goto(url);await page.waitForSelector('#rows .row-button');
+ await page.goto(url+'#view=records&chip=Ascend950PR_9579&availability=possible');await page.waitForSelector('#rows .row-button');
  await page.fill('#search','copy_gm_to_cbuf_align_v2');
  assert.match(await page.locator('.static-evidence').innerText(),/架构分支有引用/);
  await page.locator('.static-evidence details').first().locator('summary').click();

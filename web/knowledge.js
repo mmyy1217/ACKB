@@ -31,18 +31,20 @@ function recordView(r) {
     if(r.kind === 'special_register') return 'registers';
     return 'all';
   }
-  return isInterface(r) ? 'interfaces' : 'definitions';
+  if(r.op)return 'interfaces';
+  if(isInterface(r)){const layer=opModel?.record_layers[r.id]?.layer;return layer==='wrapper'?'wrappers':layer==='unresolved_entry'?'unresolved':'declarations';}
+  return 'definitions';
 }
 function viewLabels() {
-  return state.backend === 'ptx' ? {...Object.fromEntries(knowledgeData.ptx.learning.chapters.map(c=>[c.id,c.title])), interfaces:'指令速查', all:'官方手册目录', report:'来源与覆盖', instruction:'指令阅读', search:'搜索结果'} : {interfaces:'指令接口',definitions:'配套定义',topics:'知识主题',report:'扫描报告'};
+  return state.backend === 'ptx' ? {...Object.fromEntries(knowledgeData.ptx.learning.chapters.map(c=>[c.id,c.title])), interfaces:'指令速查', all:'官方手册目录', report:'来源与覆盖', instruction:'指令阅读', search:'搜索结果'} : {interfaces:'底层 op',declarations:'入口声明',wrappers:'上层封装',records:'原始记录',unresolved:'待解析入口',definitions:'配套定义',topics:'知识主题',report:'扫描报告'};
 }
 function configureBackend() {
   const ptx = state.backend === 'ptx';
-  records = ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : [...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
+  records = ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
   document.body.classList.toggle('ptx-mode',ptx);
   const labels = viewLabels();
   $('.views').innerHTML = Object.entries(labels).map(([key,label]) => {
-    const count = key === 'report' ? '' : fmt(makeGroups(records.filter(r => key === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === key)).length);
+    const count = key === 'report' ? '' : fmt(makeGroups(records.filter(r => key==='records'?isInterface(r):key === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === key)).length);
     return `<button data-view="${key}" class="view">${esc(label)} <span id="nav-${key}">${count}</span></button>`;
   }).join('');
   if(ptx) renderPtxNavigation();

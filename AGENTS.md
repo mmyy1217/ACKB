@@ -135,3 +135,16 @@ python scripts/build.py
 ```
 
 `ccec_probe.py run` 仅在已授权远程编译机运行，不能在本地执行；完整参数见 `--help`。不运行生成的 kernel。远端二进制、版本元数据和 23 个资源头文件哈希不匹配时拒绝执行，不自动升级远端环境。
+
+## CCEC 唯一 op 层
+
+主入口与分层规则见 [op 模型](docs/ccec-ops.md)。原 search 为声明查询，op 不继承封装支持。构建自动从原 catalog 派生同一模型。
+
+```sh
+python scripts/ccec_ops.py build
+python scripts/ccec_ops.py validate
+python scripts/query.py ops --name copy_gm_to_ubuf --chip Ascend950PR_9579
+python scripts/query.py get ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2
+python scripts/query.py relations ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2
+python scripts/query.py schema --layer ops
+```

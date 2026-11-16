@@ -21,6 +21,10 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
       await page.screenshot({path:`.impeccable/review/topbar-${width}.png`});
     }
     await page.setViewportSize({width:1440,height:1000});
+    await page.locator('[data-view="records"]').click();
+    await page.locator('.compatibility-menu summary').first().click();
+    await page.locator('#chip').selectOption('Ascend950PR_9579');
+    await page.locator('.compatibility-menu summary').first().click();
     await page.locator('.compatibility-menu summary').first().click();
     assert.equal(await page.locator('#chip').inputValue(),'Ascend950PR_9579');
     assert.match(await page.locator('#compatibility-summary').innerText(),/950PR_9579/);
