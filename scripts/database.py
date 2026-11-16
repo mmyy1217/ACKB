@@ -5,6 +5,7 @@ from pathlib import Path
 
 from catalog import ROOT, VERSION, tokens
 from compatibility import analyze, evaluate
+from ccec_transfer import transfer_for
 
 SCHEMA_VERSION = 'cce-ops.query.v1'
 
@@ -30,6 +31,7 @@ def load_catalog(source, enrich=True):
     data['compatibility']['analyzer_sha256'] = hashlib.sha256((ROOT / 'scripts/compatibility.py').read_bytes()).hexdigest()
     for record in data['records']:
         record['symbol_id'], record['variant_id'] = identities(record)
+        record['transfer'] = transfer_for(record['name']) if record['kind'].startswith('interface') else None
     data['query_schema_version'] = SCHEMA_VERSION
     return data
 

@@ -12,12 +12,12 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {backend:'ccec',ccecLayer:'wrappers',includeUnknown:false,ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {backend:'ccec',ccecLayer:'wrappers',includeUnknown:false,opForm:'',opCaller:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
 const sourceLabel = s => `${s.file}:${s.line}${s.end_line > s.line ? '–' + s.end_line : ''}`;
-const searchTexts = new Map(allRecords.map(r => [r.id,[r.name,r.signature,r.group,r.family,r.namespace,...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : ''].join(' ').toLowerCase()]));
+const searchTexts = new Map(allRecords.map(r => [r.id,[r.name,r.signature,r.group,r.family,r.namespace,r.transfer?.label || '',r.transfer?.search_alias || '',...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : ''].join(' ').toLowerCase()]));
 const fileMap = new Map(data.files.map(f => [f.path,f]));
 
 function saveHash(replace = true) {
@@ -27,6 +27,7 @@ function saveHash(replace = true) {
   if (state.support) p.set('support',state.support);
   if (state.view !== 'interfaces') p.set('view',state.view);
   for (const key of ['family','query','group','file','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
+  if(state.backend==='ccec' && byId.get(state.selected)?.op){if(state.opForm)p.set('form',state.opForm);if(state.opCaller)p.set('caller',state.opCaller);}
   const target = '#' + p.toString();
   if (location.hash !== target) history[replace ? 'replaceState' : 'pushState'](null,'',target);
 }
@@ -38,7 +39,7 @@ function readHash() {
   configureBackend();
   state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'ptx' ? 'overview' : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof']) state[key] = p.get(key) || '';
-  state.includeUnknown=p.get('unknown')==='1';
+  state.includeUnknown=p.get('unknown')==='1';state.opForm=p.get('form') || '';state.opCaller=p.get('caller') || '';
   state.ccecLayer=p.get('layer')==='intrinsics' || p.get('view')==='interfaces'?'interfaces':'wrappers';
   if(state.backend==='ccec' && !p.has('view'))state.view=state.ccecLayer;
   state.selected = p.get('r') || '';
@@ -90,13 +91,13 @@ function compatibilityMatches(r) {
 }
 function filtered() {
   const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : r.family === state.family)) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
+  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : ccecFamilyMatches(r,state.family))) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
   $('#backend').value = state.backend==='ptx'?'ptx':state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
   $('#include-unknown').checked=state.includeUnknown;
   $('#coverage').textContent=state.view==='report'?'返回指令':'说明 / 覆盖';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.ccecLayer==='wrappers'?opModel?.record_layers[r.id]?.layer==='wrapper':r.op) && compatibilityMatches(r) && (!family || r.family === family))).length);});
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.ccecLayer==='wrappers'?opModel?.record_layers[r.id]?.layer==='wrapper':r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
   document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
@@ -133,10 +134,11 @@ function render(revealSelection = false) {
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
   $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : `${fmt(visible.length)} 个${state.view==='wrappers'?'接口':'名称'} · ${fmt(matches.length)} 条记录`;
-  const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : state.family;
+  const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : ccecFamilyLabel(state.family);
   $('#progress-scope').textContent = ptxScopeLabel || (state.query || state.group || state.file || state.architecture || state.deprecation || state.proof || state.support ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);
   $('#empty').hidden = visible.length !== 0;
+  renderTransferEmpty();
   if (!matches.some(r => r.id === state.selected)) {
     state.selected = matches[0]?.id || '';
     state.tab = 'definition';
@@ -153,9 +155,9 @@ function render(revealSelection = false) {
 function rowHTML(groups) {
   return groups.map(g => {
     const selected = g.items.some(r => r.id === state.selected);
-    const classification = g.items[0].knowledge ? g.family : state.view === 'definitions' ? kinds[g.items[0].kind] : g.family;
+    const classification = g.items[0].knowledge ? g.family : state.view === 'definitions' ? kinds[g.items[0].kind] : g.items[0].transfer?.label || g.family;
     const qualified = [g.items[0].namespace,g.name].filter(Boolean).join('::');
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : a5GroupLabel(g.items))}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (g.items[0].op.forms.length || '—') : g.items.length}</td></tr>`;
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : a5GroupLabel(g.items))}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (scopedA5Op(g.items[0].op).forms.length || '—') : g.items.length}</td></tr>`;
   }).join('');
 }
 function updateLoadStatus() {

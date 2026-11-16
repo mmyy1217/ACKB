@@ -8,6 +8,7 @@ import re
 
 from catalog import ROOT, VERSION, clean, COMMENT
 from database import Database, stable_id
+from ccec_transfer import transfer_for
 
 OUTPUT = ROOT / 'data' / VERSION / 'ops.json'
 BUILTIN = r'__builtin_cce_[A-Za-z0-9_]+'
@@ -29,7 +30,7 @@ def build_model(db):
         if name not in ops:
             ops[name] = {'id': 'ccec_op_' + name, 'builtin': name, 'name': name.removeprefix('__builtin_cce_'),
                          'entry_records': [], 'caller_records': [], 'forms': [], 'aliases': [],
-                         'group': record['group'], 'family': record['family']}
+                         'group': record['group'], 'family': record['family'], 'transfer': transfer_for(name)}
         return ops[name]
 
     interfaces = [r for r in db.records if r['kind'].startswith('interface')]
@@ -135,6 +136,7 @@ class Ops:
 
     def summary(self, op, target):
         return {k: op[k] for k in ('id', 'name', 'builtin', 'aliases', 'group', 'family', 'identity_evidence', 'signature_status')} | {
+            'transfer': op['transfer'],
             'typed_declaration_forms': len(op['forms']), 'entry_declarations': len(op['entry_records']),
             'caller_declarations': len(op['caller_records']), 'assessment': assessment(op, self.db, target)}
 

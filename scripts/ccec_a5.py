@@ -2,6 +2,7 @@
 from collections import defaultdict
 from database import stable_id
 from ccec_ops import Ops
+from ccec_transfer import transfer_for
 
 CHIP = 'Ascend950PR_9579'
 
@@ -21,6 +22,7 @@ def interfaces(db):
         relevant = [r for r in records if conditions[r['id']] != 'excluded']
         items.append({'id': stable_id('ccec_interface_', [namespace, name]), 'name': name,
                       'namespace': namespace, 'chip': CHIP, 'npu_arch': 3510,
+                      'transfer': transfer_for(name),
                       'condition': condition, 'support': 'unverified',
                       'record_conditions': conditions,
                       'record_ids': [r['id'] for r in relevant],
