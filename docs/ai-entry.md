@@ -26,7 +26,7 @@
 
 ## PTX 的阅读顺序
 
-先用 `topics` 浏览 15 个学习主题，从 `learn_overview` 进入执行模型和存储，再读指令与完整程序。`get` 支持主题 ID 和官方章节锚点；指令包含官方语法及当前目标评估。默认 B300 / `sm_103a`，需要基础或 family 目标时显式选择。以 `target_assessment.target` 确认当前目标，不能借用原始文件中历史 `sm_89` 结论。原创解释和教学 kernel 全部未编译、未运行；它们帮助理解，不是可直接用于 codegen 的完备约束证明。
+先用 `topics` 浏览 22 篇深度专题，或用 `categories` 与 `search --category` 按 7 大能力域与 21 个官方 9.7.x 类别探索指令；从 `learn_overview` 进入执行模型、存储缓存、内存序与 TMA/tcgen05 流水，再结合 `get` 查阅完整指令语法、修饰符枚举及当前目标评估。默认 B300 / `sm_103a`，需要基础或 family 目标时显式选择。以 `target_assessment.target` 确认当前目标，不能借用原始文件中历史 `sm_89` 结论。原创解释和教学 kernel 全部未编译、未运行；它们帮助理解，不是可直接用于 codegen 的完备约束证明。
 
 ## CCEC 支持判定的追踪
 

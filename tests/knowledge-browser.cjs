@@ -26,10 +26,18 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  await page.locator('#resize-sidebar').focus();await page.keyboard.press('ArrowRight');
  await page.locator('#resize-detail').focus();await page.keyboard.press('ArrowLeft');
  await page.locator('[data-view="interfaces"]').click();assert.match(await page.locator('#result-count').innerText(),/221/);
+ assert.equal(await page.locator('#ptx-category-brief').isVisible(),true);
+ assert.equal(await page.locator('#family-section').isVisible(),true);
+ await page.locator('#families [data-family="9.7.18"]').click();assert.match(await page.locator('#result-count').innerText(),/12/);
+ assert.match(await page.locator('#ptx-category-brief').innerText(),/tcgen05/);
+ await page.locator('#ptx-category-brief [data-ptx-cat="9.7.18.mma"]').click();assert.match(await page.locator('#result-count').innerText(),/4/);
+ await page.locator('#families [data-family=""]').click();assert.match(await page.locator('#result-count').innerText(),/221/);
  await page.locator('#jump-end').click();await page.waitForTimeout(150);assert.equal(await page.locator('#rows tr').count(),221);
  await page.locator('#jump-start').click();
  await page.fill('#search','tcgen05.mma');await page.locator('#rows .row-button').filter({hasText:/^tcgen05.mma$/}).click();
  assert.match(await page.locator('#reader-content').innerText(),/官方语法/);
+ assert.match(await page.locator('#reader-content').innerText(),/修饰符与参数域/);
+ assert.match(await page.locator('#reader-content').innerText(),/协同与关联指令/);
  await page.locator('.reader-evidence').first().click();assert.match(await page.locator('#reader-content').innerText(),/sm_103a/);
  await page.selectOption('#ptx-target','sm_103');assert.match(await page.locator('.reader-evidence > summary').first().innerText(),/文档排除/);
  let exported=await downloadJSON();assert.equal(exported.target,'sm_103');assert.equal(exported.records[0].target_assessment.target,'sm_103');assert.equal('sm_89' in exported.records[0],false);
@@ -58,6 +66,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`program overflow ${width}`);
   await lookup.click();await page.locator('#open-full-entry').click();assert.match(await page.locator('#reader-content').innerText(),/官方语法/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`instruction overflow ${width}`);
+  if(width<800){await page.selectOption('#mobile-view','interfaces');await page.selectOption('#mobile-family','9.7.18');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`interfaces overflow ${width}`);}
   await page.selectOption('#backend','ccec');
  }
  assert.deepEqual(errors,[]);assert.deepEqual(network,[]);await browser.close();console.log('ACKB reading, lookup, targets, exports and offline browser checks passed');

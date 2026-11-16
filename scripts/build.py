@@ -19,7 +19,7 @@ def build(source, output):
     page = page.replace('/*__DATA__*/', payload)
     ptx = Knowledge('ptx')
     ccec = Knowledge('ccec')
-    knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning},
+    knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning, 'taxonomy': ptx.taxonomy},
                  'ccec': ccec.tree if source.resolve() == (ROOT / 'data' / VERSION / 'catalog.json').resolve() else {'topics': []}}
     if source.resolve() == (ROOT / 'data' / VERSION / 'catalog.json').resolve():
         from ccec_support import Support

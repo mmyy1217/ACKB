@@ -3,17 +3,22 @@ const knowledgeData = JSON.parse(document.querySelector('#knowledge-data').textC
 const supportLabels = {documented_supported:'文档支持',documented_not_supported:'文档排除',partial:'部分形式',unknown:'待确认'};
 const ptxKinds = {instruction:'指令',instruction_topic:'指令章节',execution_model:'执行模型',state_space:'状态空间',directive:'伪指令',directive_topic:'伪指令章节',special_register:'特殊寄存器',special_register_topic:'寄存器章节',introduction:'概述',release_note:'版本历史',notice:'声明',other:'其他章节',note:'深度笔记'};
 const ptxSections = new Map(knowledgeData.ptx.records.map(r => [r.anchor,r]));
+const ptxTaxonomy = knowledgeData.ptx.taxonomy || {domains:[],categories:[],instructions:{}};
+const ptxDomains = new Map(ptxTaxonomy.domains.map(d => [d.id,d]));
+const ptxCategories = new Map(ptxTaxonomy.categories.map(c => [c.id,c]));
+const ptxSubcategories = new Map(ptxTaxonomy.categories.flatMap(c => (c.subcategories || []).map(s => [s.id,{...s,category:c}])));
 const knowledgeRecords = [
   ...knowledgeData.ptx.records.map(k => wrapKnowledge(k,'ptx')),
   ...knowledgeData.ptx.notes.map(k => wrapKnowledge({...k,kind:'lesson'},'ptx')),
   ...knowledgeData.ccec.topics.map(k => wrapKnowledge({...k,kind:'note'},'ccec'))
 ];
 function wrapKnowledge(k,backend) {
-  const parent = ptxSections.get(k.parent_anchor)?.title || '';
-  const categories = {'Integer Arithmetic Instructions':'整数算术','Floating-Point Instructions':'浮点运算','Half Precision Floating-Point Instructions':'半精度浮点','Comparison and Selection Instructions':'比较与选择','Logic and Shift Instructions':'逻辑与移位','Data Movement and Conversion Instructions':'搬运与转换','Control Flow Instructions':'控制流','Parallel Synchronization and Communication Instructions':'同步与通信','Atomic and Reduction Instructions':'原子与归约'};
+  const tax = k.taxonomy;
+  const cat = tax && ptxCategories.get(tax.category);
+  const sub = tax && tax.subcategory && ptxSubcategories.get(tax.subcategory);
   return {id:k.entry_id || k.id,backend,knowledge:k,kind:k.kind,
     name:k.mnemonics?.join(' / ') || k.title,group:backend === 'ptx' ? ptxKinds[k.kind] || k.kind : '知识主题',
-    family:backend === 'ptx' ? (k.kind === 'instruction' ? categories[parent] || parent.replace(/ Instructions?$/, '') || '指令' : ptxKinds[k.kind] || k.kind) : '深度笔记',
+    family:backend === 'ptx' ? (k.kind === 'instruction' ? (sub?.title_zh || cat?.title_zh || '指令') : ptxKinds[k.kind] || k.kind) : '深度笔记',
     signature:'',namespace:'',builtins:[],conditions:[],source:{file:backend === 'ptx' ? 'PTX ISA 9.4' : 'CANN 头文件'}};
 }
 function recordView(r) {
@@ -42,9 +47,24 @@ function configureBackend() {
   }).join('');
   if(ptx) renderPtxNavigation();
   $('#mobile-view').innerHTML = Object.entries(labels).map(([key,label]) => `<option value="${key}">${esc(label)}</option>`).join('');
-  const groups = ptx ? [] : families;
-  $('#families').innerHTML = [['','全部指令'],...groups.map(f => [f,f])].map(([key,label]) => `<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
-  $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + groups.map(f => `<option>${esc(f)}</option>`).join('');
+  if (ptx) {
+    $('#family-section h2').textContent = '指令分类探索';
+    $('#family-section h2').title = '按能力域、PTX 9.7 类别及功能子类分层探索';
+    $('#families').innerHTML = `<button class="family" data-family="">全部指令<span></span></button>` + ptxTaxonomy.domains.map(d => {
+      const cats = d.categories.map(cid => ptxCategories.get(cid)).filter(Boolean);
+      const catsHTML = cats.map(c => {
+        const subs = (c.subcategories || []).map(s => `<button class="family family-sub" data-family="${esc(s.id)}" data-parent-cat="${esc(c.id)}" title="${esc(s.summary)}">${esc(s.title_zh)}<span></span></button>`).join('');
+        return `<button class="family family-cat" data-family="${esc(c.id)}" title="${esc(c.title_en)}">${esc(c.title_zh)}<span></span></button>${subs ? `<div class="family-subs" data-cat-subs="${esc(c.id)}">${subs}</div>` : ''}`;
+      }).join('');
+      return `<div class="family-domain"><button class="family family-dom" data-family="${esc(d.id)}" title="${esc(d.summary)}">${esc(d.title)}<span></span></button>${catsHTML}</div>`;
+    }).join('');
+    $('#mobile-family').innerHTML = '<option value="">全部指令 (221)</option>' + ptxTaxonomy.domains.map(d => `<optgroup label="${esc(d.title)}"><option value="${esc(d.id)}">${esc(d.title)}（全部）</option>${d.categories.map(cid => {const c=ptxCategories.get(cid);return c?`<option value="${esc(c.id)}">${esc(c.id)} ${esc(c.title_zh)}</option>`+(c.subcategories||[]).map(s=>`<option value="${esc(s.id)}">　└ ${esc(s.title_zh)}</option>`).join(''):'';}).join('')}</optgroup>`).join('');
+  } else {
+    $('#family-section h2').textContent = '指令族';
+    $('#family-section h2').title = '按接口名称关键词归类，仅用于导航';
+    $('#families').innerHTML = [['','全部指令'],...families.map(f => [f,f])].map(([key,label]) => `<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
+    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + families.map(f => `<option>${esc(f)}</option>`).join('');
+  }
   $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(data.records.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
   $('#file').innerHTML = '<option value="">全部源文件</option>' + data.files.map(f => `<option>${esc(f.path)}</option>`).join('');
   $('#chip').innerHTML = '<option value="">未指定芯片</option>' + data.compatibility.chip_mappings.map(t => `<option>${esc(t.chip)}</option>`).join('');

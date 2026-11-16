@@ -86,7 +86,7 @@ function compatibilityMatches(r) {
 }
 function filtered() {
   const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || r.family === state.family) && (!state.group || r.group === state.group) && (!state.file || r.source.file === state.file) && terms.every(t => searchTexts.get(r.id).includes(t)));
+  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : r.family === state.family)) && (!state.group || r.group === state.group) && (!state.file || r.source.file === state.file) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
   $('#backend').value = state.backend;$('#ptx-support').value = state.support;
@@ -96,7 +96,8 @@ function syncControls() {
   $('#availability').disabled = !state.architecture;
   $('#proof').disabled = !staticArch();
   $('#compatibility-summary').textContent = state.chip ? state.chip.replace(/^Ascend/, '') : state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(makeGroups(records.filter(r => isInterface(r) && compatibilityMatches(r) && (!family || r.family === family))).length);});
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => isInterface(r) && compatibilityMatches(r) && (!family || r.family === family))).length);});
+  document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
   document.querySelectorAll('[data-view]').forEach(b => {b.classList.toggle('active',b.dataset.view === state.view); if (b.dataset.view === state.view) b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
@@ -111,7 +112,7 @@ function render(revealSelection = false) {
   window.scrollTo(0,0);
   const report = state.view === 'report';
   $('#catalog-view').hidden = report;$('#report').hidden = !report;
-  $('#family-section').hidden = state.backend === 'ptx' || state.view !== 'interfaces';$('#mobile-family-label').hidden = state.backend === 'ptx' || state.view !== 'interfaces';
+  $('#family-section').hidden = state.view !== 'interfaces';$('#mobile-family-label').hidden = state.view !== 'interfaces';
   $('#page-title').textContent = viewLabels()[state.view];
   $('.toolbar').hidden = report;
   document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : '接口 / 名称';
@@ -121,7 +122,8 @@ function render(revealSelection = false) {
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
   syncControls();syncPtxNavigation();
-  if (report) {setProgressActive(false);renderReport();saveHash();return;}
+  if (report) {setProgressActive(false);if($('#ptx-category-brief'))$('#ptx-category-brief').hidden=true;renderReport();saveHash();return;}
+  renderPtxCategoryBrief();
   const matches = filtered();
   visible = makeGroups(matches);
   const query = state.query.trim().toLowerCase();
@@ -130,7 +132,8 @@ function render(revealSelection = false) {
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
   $('#result-count').textContent = `${fmt(visible.length)} 个名称 · ${fmt(matches.length)} 条记录`;
-  $('#progress-scope').textContent = state.family || (state.query || state.group || state.file || state.architecture || state.deprecation ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
+  const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : state.family;
+  $('#progress-scope').textContent = ptxScopeLabel || (state.query || state.group || state.file || state.architecture || state.deprecation || state.proof || state.support ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);
   $('#empty').hidden = visible.length !== 0;
   if (!matches.some(r => r.id === state.selected)) {
