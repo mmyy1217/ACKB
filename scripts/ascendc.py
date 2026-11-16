@@ -7,11 +7,18 @@ import json
 from pathlib import Path
 import re
 
-from catalog import ROOT, VERSION, clean, COMMENT
+from catalog import ROOT, VERSION, clean
 from ccec_ops import Ops
 from ccec_transfer import transfer_for
 from compatibility import evaluate
 from database import Database
+
+ASC_STRIP_RE = re.compile(
+    r'R"([A-Za-z0-9_]*)\([\s\S]*?\)\1"'
+    r'|"(?:\\\r?\n|\\.|[^"\\\r\n])*"'
+    r"|\'(?:\\.|[^\'\\\r\n])*\'"
+    r'|//[^\n]*|/\*[\s\S]*?\*/'
+)
 
 DEFAULT_TOOLKIT = Path('/home/zuomin/Ascend/cann-weekly-9.3.0-20261104.01/cann-9.3.0')
 OUTPUT = ROOT / 'data/ascendc/index.json'
@@ -94,7 +101,14 @@ def ascendc_transfer(low_name: str, low_file: str, sig: str = '') -> dict | None
 
 
 def strip_comments(text: str) -> str:
-    return COMMENT.sub(lambda m: re.sub(r'[^\n]', ' ', m[0]), text)
+    # Normalize string/char literals to empty literals on single lines while blanking comments,
+    # so unmatched quotes in CRLF line continuations cannot swallow following functions.
+    def _repl(m):
+        s = m[0]
+        if s.startswith(('"', "'", 'R"')):
+            return re.sub(r'[^\n]', ' ', s)
+        return re.sub(r'[^\n]', ' ', s)
+    return ASC_STRIP_RE.sub(_repl, text)
 
 
 def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[str]) -> list[dict]:
@@ -167,15 +181,24 @@ def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[st
         ret_type = re.sub(r'\b(__aicore__|__simd_callee__|__device__|__host__|inline|__inline__|static|constexpr|__inout_pipe__\([^)]*\)|__in_pipe__\([^)]*\)|__out_pipe__\([^)]*\))\b', '', ret_prefix).strip()
 
         callees = []
+        raw_calls = []
+        reg_refs = []
         core_guards = []
         if body_text:
             for cg in re.finditer(r'\b(ASC(?:END)?_IS_AI[CV])\b', body_text):
                 if cg.group(1) not in core_guards:
                     core_guards.append(cg.group(1))
-            for tok_m in re.finditer(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(', body_text):
+            for tok_m in re.finditer(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(|<)', body_text):
                 callee = tok_m.group(1)
-                if callee in known_ccec_names and callee != func_name and callee not in callees:
+                if callee == func_name:
+                    continue
+                if callee in known_ccec_names and callee not in callees:
                     callees.append(callee)
+                elif callee not in raw_calls and callee not in ('if', 'for', 'while', 'switch', 'return', 'static_assert', 'SupportType', 'SupportEnum', 'IsSameType', 'CheckRegTrait', 'GetDstType'):
+                    raw_calls.append(callee)
+            for m_reg in re.finditer(r'\bReg::([A-Za-z_][A-Za-z0-9_]*)\b', body_text):
+                if m_reg.group(1) not in reg_refs:
+                    reg_refs.append(m_reg.group(1))
 
         excerpt = '\n'.join(raw_lines[max(0, start_line - 1):min(len(raw_lines), end_line)])
         deprecated = 'ASC_DEPRECATED' in excerpt
@@ -188,6 +211,8 @@ def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[st
             'has_body': term == '{',
             'core_guards': core_guards,
             'callees': callees,
+            'raw_calls': raw_calls,
+            'reg_refs': reg_refs,
             'deprecated': deprecated,
             'conditions': line_conds.get(start_line, []),
             'source': {'file': rel_file, 'line': start_line, 'end_line': end_line},
@@ -226,7 +251,12 @@ def build_ccec_callee_index(db: Database, ops_model: dict) -> dict[str, dict]:
     for name, recs in by_name.items():
         active = [r for r in recs if db.condition(r, target) != 'excluded'] or recs
         lset = {layers[r['id']]['layer'] for r in active if r['id'] in layers}
-        op_ids = sorted({oid for r in active for oid in layers.get(r['id'], {}).get('op_ids', [])})
+        op_ids_raw = {oid for r in active for oid in layers.get(r['id'], {}).get('op_ids', [])}
+        def op_sort_key(oid: str):
+            short = oid.removeprefix('ccec_op___builtin_cce_')
+            exact = 0 if short == name else 1 if short.startswith(name + '_') else 2
+            return (exact, len(short), short)
+        op_ids = sorted(op_ids_raw, key=op_sort_key)
         wrapper_ids = [r['id'] for r in active if layers.get(r['id'], {}).get('layer') == 'wrapper']
         entry_ids = [r['id'] for r in active if layers.get(r['id'], {}).get('layer') == 'intrinsic_entry']
         if lset == {'intrinsic_entry'}:
@@ -240,7 +270,7 @@ def build_ccec_callee_index(db: Database, ops_model: dict) -> dict[str, dict]:
         index[name] = {
             'name': name,
             'call_kind': call_kind,
-            'op_ids': op_ids[:8],
+            'op_ids': op_ids[:16],
             'wrapper_record_ids': wrapper_ids[:6],
             'entry_record_ids': entry_ids[:6],
         }
@@ -386,22 +416,56 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
     # 1) Parse dav_3510 implementation files (impl/basic_api/dav_3510 + impl/basic_api/reg_compute/dav_3510 + impl/simt_api/cpp)
     impl_3510_by_stem = defaultdict(list)
     impl_3510_funcs = defaultdict(list)
+    helper_graph = {'reg': defaultdict(list), 'basic': defaultdict(list)}
     for impl_dir in (
         asc_root / 'impl/basic_api/dav_3510',
         asc_root / 'impl/basic_api/reg_compute/dav_3510',
         asc_root / 'impl/simt_api/cpp',
+        asc_root / 'include/basic_api/reg_compute',
     ):
         if not impl_dir.exists():
             continue
+        is_public_reg = 'include/basic_api/reg_compute' in impl_dir.as_posix()
         for fp in sorted(impl_dir.rglob('*.h')):
             rel = fp.relative_to(toolkit).as_posix()
-            files_meta[rel] = {'path': rel, 'sha256': sha256(fp)}
+            if not is_public_reg:
+                files_meta[rel] = {'path': rel, 'sha256': sha256(fp)}
             text = fp.read_text(errors='replace')
-            stem = fp.name.replace('_impl.h', '')
+            stem = fp.name.replace('_impl.h', '').replace('_intf.h', '')
+            is_reg_impl = '/reg_compute/' in rel
+            domain = 'reg' if is_reg_impl else 'basic'
             for fn in parse_functions_in_header(text, rel, known_ccec):
                 if fn['has_body']:
-                    impl_3510_by_stem[stem].append(fn)
-                    impl_3510_funcs[fn['name']].append(fn)
+                    if not is_public_reg:
+                        impl_3510_by_stem[stem].append(fn)
+                        impl_3510_funcs[fn['name']].append(fn)
+                    helper_graph[domain][fn['name']].append(fn)
+
+    def resolve_transitive_callees(seeds: list[dict], domain: str, max_depth: int = 4) -> set[str]:
+        found = set()
+        seen = set()
+        queue = [(domain, fn, 0) for fn in seeds]
+        while queue:
+            cur_dom, fn, depth = queue.pop(0)
+            key = (cur_dom, fn['source']['file'], fn['source']['line'])
+            if key in seen:
+                continue
+            seen.add(key)
+            found.update(fn['callees'])
+            if depth >= max_depth:
+                continue
+            for rname in fn.get('reg_refs', ()):
+                for target_fn in helper_graph['reg'].get(rname, ()):
+                    queue.append(('reg', target_fn, depth + 1))
+                for suffix in ('Impl', 'Operator', 'Cal'):
+                    for target_fn in helper_graph['reg'].get(rname + suffix, ()):
+                        queue.append(('reg', target_fn, depth + 1))
+            for cname in fn.get('raw_calls', ()):
+                if len(cname) < 4:
+                    continue
+                for target_fn in helper_graph[cur_dom].get(cname, ()):
+                    queue.append((cur_dom, target_fn, depth + 1))
+        return found
 
     # 2) Parse public interface files in include/basic_api and include/simt_api/cpp
     decl_by_qname = defaultdict(list)
@@ -431,12 +495,22 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
         rel_file = sample['source']['file']
         stem = Path(rel_file).name.replace('_intf.h', '')
 
-        # Match corresponding dav_3510 implementation functions (e.g. Add -> AddImpl, DataCopy -> CopyGmToUbufAlignV2 / DataCopyGm2UbImpl)
-        matched_impls = list(impl_3510_funcs.get(name, [])) + list(impl_3510_funcs.get(name + 'Impl', []))
+        # Match corresponding dav_3510 implementation functions (e.g. Add -> AddImpl, Mmad -> MmadCal, DataCopy -> CopyGmToUbufAlignV2 / DataCopyGM2L1Impl)
+        is_reg_ns = ns == 'AscendC::Reg'
+        def prefer_impl(fn_list):
+            if is_reg_ns:
+                return [x for x in fn_list if '/reg_compute/' in x['source']['file']]
+            return [x for x in fn_list if '/reg_compute/' not in x['source']['file']]
+
+        matched_impls = prefer_impl(list(impl_3510_funcs.get(name, [])) + list(impl_3510_funcs.get(name + 'Impl', [])) + list(impl_3510_funcs.get(name + 'Cal', [])))
         if not matched_impls:
-            for cand in impl_3510_by_stem.get(stem, []):
+            for cand in prefer_impl(impl_3510_by_stem.get(stem, [])):
                 if cand['name'].lower().startswith(name.lower()):
                     matched_impls.append(cand)
+        if not matched_impls and stem == 'kernel_operator_data_copy' and name.startswith('DataCopy'):
+            matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if any(k in cand['name'] for k in ('CopyGmTo', 'CopyUbufTo', 'CopyCbufTo', 'DataCopy'))][:12]
+        if not matched_impls and stem == 'kernel_operator_mm' and name.startswith('Mmad'):
+            matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if 'Mmad' in cand['name'] or 'Mad' in cand['name']][:12]
 
         cond_vals = [eval_3510(fn['conditions']) for _, fn in entries]
         if 'matches' in cond_vals or matched_impls:
@@ -453,7 +527,9 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
         )
         family, transfer = classify_ascendc_family(name, rel_file, sample['signature'])
 
-        callee_names = sorted({c for fn in (matched_impls + [f for _, f in entries]) for c in fn['callees']})
+        domain = 'reg' if is_reg_ns else 'basic'
+        callee_set = resolve_transitive_callees(matched_impls + [f for _, f in entries], domain)
+        callee_names = sorted(callee_set)
         callee_details = [ccec_index[c] for c in callee_names if c in ccec_index]
         ccec_op_ids = sorted({oid for cd in callee_details for oid in cd['op_ids']})
         core_guards = sorted({cg for fn in matched_impls for cg in fn['core_guards']})

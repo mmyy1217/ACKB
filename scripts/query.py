@@ -125,7 +125,9 @@ def dispatch_ascendc_or_dialect(args):
         pool = data['intrinsics'] if layer == 'intrinsics' else data['ops']
         q = (getattr(args, 'name', None) or getattr(args, 'query', '') or '').lower()
         items = [
-            {k: v for k, v in x.items() if k not in ('excerpt', 'spec')} | ({'has_spec_doc': bool(x.get('spec'))} if 'spec' in x else {})
+            {k: v for k, v in x.items() if k not in ('excerpt', 'spec', 'description', 'mappings', 'arguments', 'results')}
+            | ({'has_spec_doc': bool(x.get('spec'))} if 'spec' in x else {})
+            | ({'mapping_count': len(x['mappings'])} if 'mappings' in x else {})
             for x in pool
             if not q or q in json.dumps({k: x.get(k) for k in ('id', 'name', 'mnemonic', 'def_name', 'llvm_intrinsic', 'summary', 'family', 'group')}, ensure_ascii=False).lower()
         ]
@@ -172,7 +174,11 @@ def dispatch_ascendc_or_dialect(args):
                 continue
         if q and q not in json.dumps({k: x.get(k) for k in ('id', 'name', 'qualified_name', 'group', 'family', 'ccec_op_ids')}, ensure_ascii=False).lower():
             continue
-        items.append({k: v for k, v in x.items() if k != 'excerpt'})
+        items.append({
+            **{k: v for k, v in x.items() if k not in ('excerpt', 'forms', 'impl_3510_functions', 'ccec_callees')},
+            'ccec_callee_names': [c['name'] for c in x.get('ccec_callees', [])],
+            'sample_signature': (x.get('forms') or [{}])[0].get('signature', ''),
+        })
     return page(items, args, context)
 
 

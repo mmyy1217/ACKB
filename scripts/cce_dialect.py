@@ -448,7 +448,35 @@ def match_ccec_ops(llvm_intrinsic: str, ccec_ops_by_short: dict[str, list[str]])
         base = f'{m.group(1)}_{m.group(3)}'
         if base in ccec_ops_by_short:
             candidates.update(ccec_ops_by_short[base])
-    base0 = stem.split('_')[0]
+        if m.group(1) in ccec_ops_by_short:
+            candidates.update(ccec_ops_by_short[m.group(1)])
+    # Normalize HIVM DMA/Cube naming conventions to CCEC builtin naming conventions
+    norm = stem
+    for src_tok, dst_tok in (
+        ('mov_out_to_ub', 'copy_gm_to_ubuf'),
+        ('mov_ub_to_out', 'copy_ubuf_to_gm'),
+        ('mov_out_to_l1', 'copy_gm_to_cbuf'),
+        ('mov_l1_to_ub', 'copy_cbuf_to_ubuf'),
+        ('mov_ub_to_l1', 'copy_ubuf_to_cbuf'),
+        ('mov_ub_to_ub', 'copy_ubuf_to_ubuf'),
+        ('load_l1_to_l0a', 'load_cbuf_to_ca'),
+        ('load_l1_to_l0b', 'load_cbuf_to_cb'),
+        ('fix_l0c_to_out', 'copy_matrix_cc_to_gm'),
+        ('fix_l0c_to_l1', 'copy_matrix_cc_to_cbuf'),
+        ('fix_l0c_to_ub', 'copy_matrix_cc_to_ubuf'),
+        ('mmad_mx', 'mad_mx'),
+    ):
+        norm = norm.replace(src_tok, dst_tok)
+    norm_clean = re.sub(
+        r'(?:_(?:f322f16|f322bf16|f162f32|bf162f32|s322f16|f32|f16|bf16|s32|u32|s16|u16|s8|u8|s4|e4m3|e5m2|e2m1x2|e1m2x2|dv|v310|c310|l300|ext|cfg|no_dual|ori|h|v|x|z|m))+$',
+        '',
+        norm,
+    )
+    for probe in (norm, norm_clean):
+        if probe in ccec_ops_by_short:
+            candidates.update(ccec_ops_by_short[probe])
+    # Also handle exact base match for e.g. mad_bf162f32_c310 -> mad, pipe_barrier -> pipe_barrier
+    base0 = norm.split('_')[0]
     if not candidates and base0 in ccec_ops_by_short and len(ccec_ops_by_short[base0]) <= 4:
         candidates.update(ccec_ops_by_short[base0])
     return sorted(candidates)[:8]

@@ -101,7 +101,11 @@ function renderAscendcDetail(r) {
   const tabs = [['definition', isBasic ? '接口与调用链' : '底层原语与调用链'], ['source', '3510 实现与来源'], ['experiments', '验证状态']];
 
   const calleesHTML = (item.ccec_callees || []).length
-    ? `<table class="parameter-table"><thead><tr><th>调用的 CCEC 符号</th><th>调用层级性质</th><th>关联唯一 CCEC Intrinsics</th></tr></thead><tbody>${item.ccec_callees.map(c => `<tr><td><code>${esc(c.name)}</code></td><td>${esc(callKindLabels[c.call_kind] || c.call_kind)}</td><td>${(c.op_ids || []).map(oid => opLink(oid, oid.replace('ccec_op___builtin_cce_', '__builtin_cce_'))).join(' ') || '—'}</td></tr>`).join('')}</tbody></table>`
+    ? `<table class="parameter-table"><thead><tr><th>调用的 CCEC 符号</th><th>调用层级性质</th><th>关联唯一 CCEC Intrinsics</th></tr></thead><tbody>${item.ccec_callees.map(c => {
+      const calleeRefId = (c.wrapper_record_ids || []).find(id => byId.has(id)) || (c.entry_record_ids || []).find(id => byId.has(id));
+      const calleeCell = calleeRefId ? opLink(calleeRefId, c.name) : `<code>${esc(c.name)}</code>`;
+      return `<tr><td>${calleeCell}</td><td>${esc(callKindLabels[c.call_kind] || c.call_kind)}</td><td>${(c.op_ids || []).map(oid => opLink(oid, oid.replace('ccec_op___builtin_cce_', '__builtin_cce_'))).join(' ') || '—'}</td></tr>`;
+    }).join('')}</tbody></table>`
     : '<p>当前 3510 静态扫描未检出直接 CCEC 指令调用（可能为纯辅助或宏转发）。</p>';
 
   const implFuncsHTML = isBasic && (item.impl_3510_functions || []).length

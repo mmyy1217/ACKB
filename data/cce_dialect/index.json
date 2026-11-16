@@ -410,7 +410,9 @@
         "cce_dialect_intr_create_cbuf_matrix_f16_h",
         "cce_dialect_intr_create_cbuf_matrix_f32"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_create_cbuf_matrix"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 528,
@@ -461,7 +463,9 @@
         "cce_dialect_intr_fix_l0c_to_l1_f322f16_ext",
         "cce_dialect_intr_fix_l0c_to_l1_f32_ext"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_cbuf"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 1042,
@@ -514,7 +518,9 @@
         "cce_dialect_intr_fix_l0c_to_out_f322f16_ext",
         "cce_dialect_intr_fix_l0c_to_out_f32_ext"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_gm"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 1083,
@@ -565,7 +571,9 @@
         "cce_dialect_intr_fix_l0c_to_ub_f322f16_ext",
         "cce_dialect_intr_fix_l0c_to_ub_f32_ext"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_ubuf"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 1000,
@@ -1445,7 +1453,9 @@
         "cce_dialect_intr_mmad_mx_e5m2e4m3",
         "cce_dialect_intr_mmad_mx_e5m2e5m2"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 929,
@@ -1871,7 +1881,9 @@
       "intrinsic_ids": [
         "cce_dialect_intr_mov_l1_to_ub_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_cbuf_to_ubuf"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 590,
@@ -1931,7 +1943,9 @@
         "cce_dialect_intr_mov_out_to_l1_align_v2_u32_dv",
         "cce_dialect_intr_mov_out_to_l1_align_v2_u8_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 604,
@@ -1986,7 +2000,9 @@
         "cce_dialect_intr_mov_out_to_l1_multi_nd2nz_u16_v310",
         "cce_dialect_intr_mov_out_to_l1_multi_nd2nz_u8_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_multi_nd2nz"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 619,
@@ -2042,7 +2058,9 @@
         "cce_dialect_intr_mov_out_to_ub_align_v2_s32_dv",
         "cce_dialect_intr_mov_out_to_ub_align_v2_s8_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 1150,
@@ -2093,7 +2111,9 @@
       "intrinsic_ids": [
         "cce_dialect_intr_mov_ub_to_l1_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_ubuf_to_cbuf"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 551,
@@ -2145,7 +2165,9 @@
       "intrinsic_ids": [
         "cce_dialect_intr_mov_ub_to_out_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_ubuf_to_gm_align_v2"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 1124,
@@ -2195,7 +2217,9 @@
       "intrinsic_ids": [
         "cce_dialect_intr_mov_ub_to_ub_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_ubuf_to_ubuf"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCEOps.td",
         "line": 570,
@@ -5003,7 +5027,9 @@
       "intrinsic_ids": [
         "cce_dialect_intr_get_block_idx_x"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_get_block_idx"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCESIMTOps.td",
         "line": 60,
@@ -5063,7 +5089,9 @@
       "intrinsic_ids": [
         "cce_dialect_intr_get_block_idx_z"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_get_block_idx"
+      ],
       "source": {
         "file": "include/Dialect/CCE/IR/CCESIMTOps.td",
         "line": 62,
@@ -6521,6 +6549,7 @@
         "cce_dialect_intr_vaxpy_m_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vaxpy",
         "ccec_op___builtin_cce_vaxpy_v128f16_m",
         "ccec_op___builtin_cce_vaxpy_v64f32_m"
       ],
@@ -8173,6 +8202,7 @@
         "cce_dialect_intr_vexp_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vexp",
         "ccec_op___builtin_cce_vexp_v128f16_x",
         "ccec_op___builtin_cce_vexp_v64f32_x"
       ],
@@ -8710,6 +8740,7 @@
         "cce_dialect_intr_vln_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vln",
         "ccec_op___builtin_cce_vln_v128f16_x",
         "ccec_op___builtin_cce_vln_v64f32_x"
       ],
@@ -8758,6 +8789,7 @@
         "cce_dialect_intr_vlrelu_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vlrelu",
         "ccec_op___builtin_cce_vlrelu_v128f16_x",
         "ccec_op___builtin_cce_vlrelu_v64f32_x"
       ],
@@ -8807,6 +8839,7 @@
         "cce_dialect_intr_vmadd_m_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vmadd",
         "ccec_op___builtin_cce_vmadd_v128bf16_m",
         "ccec_op___builtin_cce_vmadd_v128f16_m",
         "ccec_op___builtin_cce_vmadd_v64f32_m"
@@ -9760,6 +9793,7 @@
         "cce_dialect_intr_vrec_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrec",
         "ccec_op___builtin_cce_vrec_v128f16_x",
         "ccec_op___builtin_cce_vrec_v64f32_x"
       ],
@@ -9808,6 +9842,7 @@
         "cce_dialect_intr_vrelu_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrelu",
         "ccec_op___builtin_cce_vrelu_v128f16_x",
         "ccec_op___builtin_cce_vrelu_v64f32_x"
       ],
@@ -9856,6 +9891,7 @@
         "cce_dialect_intr_vrsqrt_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrsqrt",
         "ccec_op___builtin_cce_vrsqrt_v128f16_x",
         "ccec_op___builtin_cce_vrsqrt_v64f32_x"
       ],
@@ -10385,6 +10421,7 @@
         "cce_dialect_intr_vsqrt_x_v64f32"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vsqrt",
         "ccec_op___builtin_cce_vsqrt_v128f16_x",
         "ccec_op___builtin_cce_vsqrt_v64f32_x"
       ],
@@ -11579,7 +11616,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_create_cbuf_matrix"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_create_cbuf_matrix"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1699,
@@ -11639,7 +11678,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_create_cbuf_matrix"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_create_cbuf_matrix"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1703,
@@ -11699,7 +11740,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_create_cbuf_matrix"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_create_cbuf_matrix"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1707,
@@ -11765,7 +11808,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_fix_l0c_to_l1"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_cbuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1748,
@@ -11831,7 +11876,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_fix_l0c_to_l1"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_cbuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1752,
@@ -11897,7 +11944,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_fix_l0c_to_out"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_gm"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1740,
@@ -11963,7 +12012,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_fix_l0c_to_out"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_gm"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1744,
@@ -12029,7 +12080,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_fix_l0c_to_ub"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_ubuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1756,
@@ -12095,7 +12148,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_fix_l0c_to_ub"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_matrix_cc_to_ubuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1760,
@@ -15590,7 +15645,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1633,
@@ -15650,7 +15707,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1636,
@@ -15710,7 +15769,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1639,
@@ -15770,7 +15831,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1630,
@@ -15830,7 +15893,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1622,
@@ -15890,7 +15955,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1624,
@@ -15950,7 +16017,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1626,
@@ -16010,7 +16079,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mad_mx"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_mad"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1628,
@@ -16076,7 +16147,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_l1_to_ub_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_cbuf_to_ubuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1578,
@@ -16142,7 +16215,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1587,
@@ -16208,7 +16283,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1608,
@@ -16274,7 +16351,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1611,
@@ -16340,7 +16419,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1584,
@@ -16406,7 +16487,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1581,
@@ -16472,7 +16555,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1596,
@@ -16538,7 +16623,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1590,
@@ -16604,7 +16691,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1602,
@@ -16670,7 +16759,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1599,
@@ -16736,7 +16827,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1593,
@@ -16802,7 +16895,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1605,
@@ -16868,7 +16963,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_multi_nd2nz"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_multi_nd2nz"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1687,
@@ -16934,7 +17031,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_multi_nd2nz"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_multi_nd2nz"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1683,
@@ -17000,7 +17099,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_multi_nd2nz"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_multi_nd2nz"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1691,
@@ -17066,7 +17167,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_l1_multi_nd2nz"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_cbuf_multi_nd2nz"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1695,
@@ -17132,7 +17235,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_ub_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1560,
@@ -17198,7 +17303,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_ub_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1557,
@@ -17264,7 +17371,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_ub_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1566,
@@ -17330,7 +17439,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_ub_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1563,
@@ -17396,7 +17507,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_out_to_ub_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1569,
@@ -17462,7 +17575,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_ub_to_l1_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_ubuf_to_cbuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1573,
@@ -17528,7 +17643,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_ub_to_out_align_v2_dv"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_ubuf_to_gm_align_v2"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1552,
@@ -17594,7 +17711,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_mov_ub_to_ub_v310"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_copy_ubuf_to_ubuf"
+      ],
       "source": {
         "file": "include/Target/CCE/CCEIntrinsicMap.td",
         "line": 1576,
@@ -19533,7 +19652,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_simt_block_idx_x"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_get_block_idx"
+      ],
       "source": {
         "file": "include/Target/CCE/CCESIMTIntrinsicMap.td",
         "line": 29,
@@ -19615,7 +19736,9 @@
       "upstream_op_ids": [
         "cce_dialect_op_simt_block_idx_z"
       ],
-      "ccec_op_ids": [],
+      "ccec_op_ids": [
+        "ccec_op___builtin_cce_get_block_idx"
+      ],
       "source": {
         "file": "include/Target/CCE/CCESIMTIntrinsicMap.td",
         "line": 33,
@@ -25815,6 +25938,7 @@
         "cce_dialect_op_vabs"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vabs",
         "ccec_op___builtin_cce_vabs_v128f16_x"
       ],
       "source": {
@@ -25956,6 +26080,7 @@
         "cce_dialect_op_vabs"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vabs",
         "ccec_op___builtin_cce_vabs_v64f32_x"
       ],
       "source": {
@@ -28498,6 +28623,7 @@
         "cce_dialect_op_vand"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vand",
         "ccec_op___builtin_cce_vand_v128bf16_m"
       ],
       "source": {
@@ -28545,6 +28671,7 @@
         "cce_dialect_op_vand"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vand",
         "ccec_op___builtin_cce_vand_v128f16_m"
       ],
       "source": {
@@ -28686,6 +28813,7 @@
         "cce_dialect_op_vand"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vand",
         "ccec_op___builtin_cce_vand_v64f32_m"
       ],
       "source": {
@@ -28780,6 +28908,7 @@
         "cce_dialect_op_vand"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vand",
         "ccec_op___builtin_cce_vand_v128bf16_x"
       ],
       "source": {
@@ -28827,6 +28956,7 @@
         "cce_dialect_op_vand"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vand",
         "ccec_op___builtin_cce_vand_v128f16_x"
       ],
       "source": {
@@ -28968,6 +29098,7 @@
         "cce_dialect_op_vand"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vand",
         "ccec_op___builtin_cce_vand_v64f32_x"
       ],
       "source": {
@@ -29344,6 +29475,7 @@
         "cce_dialect_op_vaxpy"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vaxpy",
         "ccec_op___builtin_cce_vaxpy_v128f16_m"
       ],
       "source": {
@@ -29391,6 +29523,7 @@
         "cce_dialect_op_vaxpy"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vaxpy",
         "ccec_op___builtin_cce_vaxpy_v64f32_m"
       ],
       "source": {
@@ -38619,6 +38752,7 @@
         "cce_dialect_op_vcpadd"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vcpadd",
         "ccec_op___builtin_cce_vcpadd_v128f16_x"
       ],
       "source": {
@@ -38730,6 +38864,7 @@
         "cce_dialect_op_vcpadd"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vcpadd",
         "ccec_op___builtin_cce_vcpadd_v64f32_x"
       ],
       "source": {
@@ -44002,6 +44137,7 @@
         "cce_dialect_op_vexp"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vexp",
         "ccec_op___builtin_cce_vexp_v128f16_x"
       ],
       "source": {
@@ -44049,6 +44185,7 @@
         "cce_dialect_op_vexp"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vexp",
         "ccec_op___builtin_cce_vexp_v64f32_x"
       ],
       "source": {
@@ -47712,6 +47849,7 @@
         "cce_dialect_op_vln"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vln",
         "ccec_op___builtin_cce_vln_v128f16_x"
       ],
       "source": {
@@ -47759,6 +47897,7 @@
         "cce_dialect_op_vln"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vln",
         "ccec_op___builtin_cce_vln_v64f32_x"
       ],
       "source": {
@@ -47806,6 +47945,7 @@
         "cce_dialect_op_vlrelu"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vlrelu",
         "ccec_op___builtin_cce_vlrelu_v128f16_x"
       ],
       "source": {
@@ -47853,6 +47993,7 @@
         "cce_dialect_op_vlrelu"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vlrelu",
         "ccec_op___builtin_cce_vlrelu_v64f32_x"
       ],
       "source": {
@@ -47900,6 +48041,7 @@
         "cce_dialect_op_vmadd"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vmadd",
         "ccec_op___builtin_cce_vmadd_v128bf16_m"
       ],
       "source": {
@@ -47947,6 +48089,7 @@
         "cce_dialect_op_vmadd"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vmadd",
         "ccec_op___builtin_cce_vmadd_v128f16_m"
       ],
       "source": {
@@ -47994,6 +48137,7 @@
         "cce_dialect_op_vmadd"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vmadd",
         "ccec_op___builtin_cce_vmadd_v64f32_m"
       ],
       "source": {
@@ -56714,6 +56858,7 @@
         "cce_dialect_op_vnot"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vnot",
         "ccec_op___builtin_cce_vnot_v128f16_x"
       ],
       "source": {
@@ -56808,6 +56953,7 @@
         "cce_dialect_op_vnot"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vnot",
         "ccec_op___builtin_cce_vnot_v128u16_x"
       ],
       "source": {
@@ -56902,6 +57048,7 @@
         "cce_dialect_op_vnot"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vnot",
         "ccec_op___builtin_cce_vnot_v64f32_x"
       ],
       "source": {
@@ -56996,6 +57143,7 @@
         "cce_dialect_op_vor"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vor",
         "ccec_op___builtin_cce_vor_v128bf16_m"
       ],
       "source": {
@@ -57043,6 +57191,7 @@
         "cce_dialect_op_vor"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vor",
         "ccec_op___builtin_cce_vor_v128f16_m"
       ],
       "source": {
@@ -57184,6 +57333,7 @@
         "cce_dialect_op_vor"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vor",
         "ccec_op___builtin_cce_vor_v64f32_m"
       ],
       "source": {
@@ -57278,6 +57428,7 @@
         "cce_dialect_op_vor"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vor",
         "ccec_op___builtin_cce_vor_v128bf16_x"
       ],
       "source": {
@@ -57325,6 +57476,7 @@
         "cce_dialect_op_vor"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vor",
         "ccec_op___builtin_cce_vor_v128f16_x"
       ],
       "source": {
@@ -57466,6 +57618,7 @@
         "cce_dialect_op_vor"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vor",
         "ccec_op___builtin_cce_vor_v64f32_x"
       ],
       "source": {
@@ -58345,6 +58498,7 @@
         "cce_dialect_op_vrec"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrec",
         "ccec_op___builtin_cce_vrec_v128f16_x"
       ],
       "source": {
@@ -58392,6 +58546,7 @@
         "cce_dialect_op_vrec"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrec",
         "ccec_op___builtin_cce_vrec_v64f32_x"
       ],
       "source": {
@@ -58439,6 +58594,7 @@
         "cce_dialect_op_vrelu"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrelu",
         "ccec_op___builtin_cce_vrelu_v128f16_x"
       ],
       "source": {
@@ -58486,6 +58642,7 @@
         "cce_dialect_op_vrelu"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrelu",
         "ccec_op___builtin_cce_vrelu_v64f32_x"
       ],
       "source": {
@@ -58533,6 +58690,7 @@
         "cce_dialect_op_vrsqrt"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrsqrt",
         "ccec_op___builtin_cce_vrsqrt_v128f16_x"
       ],
       "source": {
@@ -58580,6 +58738,7 @@
         "cce_dialect_op_vrsqrt"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vrsqrt",
         "ccec_op___builtin_cce_vrsqrt_v64f32_x"
       ],
       "source": {
@@ -61325,6 +61484,7 @@
         "cce_dialect_op_vsqrt"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vsqrt",
         "ccec_op___builtin_cce_vsqrt_v128f16_x"
       ],
       "source": {
@@ -61372,6 +61532,7 @@
         "cce_dialect_op_vsqrt"
       ],
       "ccec_op_ids": [
+        "ccec_op___builtin_cce_vsqrt",
         "ccec_op___builtin_cce_vsqrt_v64f32_x"
       ],
       "source": {

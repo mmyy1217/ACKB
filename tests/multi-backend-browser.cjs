@@ -22,17 +22,48 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.goto(url);
     await page.waitForSelector('#rows .row-button');
 
+    // 0. Verify no expanded DMA sub-items (transfer:*) in sidebar across backends, and CCEC round-trip direct link <-> intrinsic jump
+    for (const backendVal of ['ccec', 'ascendc', 'cce-dialect']) {
+      await page.selectOption('#backend', backendVal);
+      const transferCount = await page.locator('#families [data-family^="transfer:"]').count();
+      assert.equal(transferCount, 0, `unexpected transfer:* sidebar items in ${backendVal}`);
+    }
+    await page.selectOption('#backend', 'ccec');
+    await page.fill('#search', 'copy_gm_to_cbuf_align_v2');
+    await page.locator('#rows .row-button').filter({hasText: /copy_gm_to_cbuf_align_v2/}).first().click();
+    await page.locator('#detail [data-op-ref="ccec_op___builtin_cce_copy_gm_to_cbuf_align_v2"]').first().click();
+    assert.equal(await page.locator('#backend').inputValue(), 'ccec-intrinsics');
+    assert.match(await page.locator('#detail').innerText(), /__builtin_cce_copy_gm_to_cbuf_align_v2/);
+    assert.equal(await page.locator('#rows tr.selected').count(), 1);
+    const backDetails = page.locator('#detail details:has([data-op-ref]:not([data-op-ref^="ccec_op_"]))').first();
+    await backDetails.locator('summary').first().click();
+    await backDetails.locator('[data-op-ref]:not([data-op-ref^="ccec_op_"])').first().click();
+    assert.equal(await page.locator('#backend').inputValue(), 'ccec');
+
     // 1. Test AscendC upper layer (basic_api)
     await page.selectOption('#backend', 'ascendc');
     assert.match(await page.locator('#result-count').innerText(), /477 个 AscendC 接口/);
+    for (const [sym, expectRe] of [['DataCopy', /__builtin_cce_copy_gm_to_ubuf/], ['Add', /__builtin_cce_vadd/], ['Mmad', /__builtin_cce_mad/]]) {
+      await page.fill('#search', sym);
+      await page.locator('#rows .row-button').filter({hasText: new RegExp(`^${sym}$`)}).first().click();
+      assert.match(await page.locator('#detail').innerText(), /AscendC 接口 \(basic_api\)/);
+      assert.match(await page.locator('#detail').innerText(), expectRe);
+    }
     await page.fill('#search', 'DataCopy');
     await page.locator('#rows .row-button').filter({hasText: /^DataCopy$/}).first().click();
-    assert.match(await page.locator('#detail').innerText(), /AscendC 接口 \(basic_api\)/);
     await page.screenshot({path: path.join(review, 'ascendc-basic-1440.png'), fullPage: true});
 
     // 2. Test AscendC lower layer (c_api + simt_api) and jump to CCEC Intrinsics
     await page.selectOption('#backend', 'ascendc-capi');
     assert.match(await page.locator('#result-count').innerText(), /1,372 个 ASC 底层接口/);
+    await page.fill('#search', 'asc_copy_gm2ub');
+    await page.locator('#rows .row-button').filter({hasText: /^asc_copy_gm2ub$/}).first().click();
+    await page.locator('#detail [data-op-ref="ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"]').first().click();
+    assert.equal(await page.locator('#backend').inputValue(), 'ccec-intrinsics');
+    assert.match(await page.locator('#detail').innerText(), /__builtin_cce_copy_gm_to_ubuf_align_v2/);
+    assert.equal(await page.locator('#rows tr.selected').count(), 1);
+
+    await page.selectOption('#backend', 'ascendc-capi');
     await page.fill('#search', 'asc_mmad');
     await page.locator('#rows .row-button').filter({hasText: /^asc_mmad$/}).first().click();
     assert.match(await page.locator('#detail').innerText(), /AscendC 底层接口 \(c_api \/ simt_api\)/);
@@ -57,6 +88,14 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.equal(await page.locator('#backend').inputValue(), 'cce-dialect-intrinsics');
     assert.match(await page.locator('#detail').innerText(), /CCE Dialect Intrinsic/);
     await page.screenshot({path: path.join(review, 'cce-dialect-intrinsics-1440.png'), fullPage: true});
+
+    // Verify llvm.hivm.MOV.OUT.TO.UB.ALIGN.V2.f16.DV -> ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2
+    await page.fill('#search', 'llvm.hivm.MOV.OUT.TO.UB.ALIGN.V2.f16.DV');
+    await page.locator('#rows .row-button').filter({hasText: /^llvm\.hivm\.MOV\.OUT\.TO\.UB\.ALIGN\.V2\.f16\.DV$/}).first().click();
+    await page.locator('#detail [data-op-ref="ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"]').first().click();
+    assert.equal(await page.locator('#backend').inputValue(), 'ccec-intrinsics');
+    assert.match(await page.locator('#detail').innerText(), /__builtin_cce_copy_gm_to_ubuf_align_v2/);
+    assert.equal(await page.locator('#rows tr.selected').count(), 1);
 
     // Check responsive widths (1024, 390, 320) have zero horizontal overflow
     for (const width of [1024, 390, 320]) {
