@@ -12,8 +12,10 @@ from query import parser, run
 class A5Tests(unittest.TestCase):
     def test_interface_partition_and_uniqueness(self):
         items = interfaces(Database())
-        self.assertEqual(Counter(i['condition'] for i in items), {'matches':357,'unknown':191,'excluded':66})
-        self.assertEqual(len({i['id'] for i in items}),614)
+        self.assertEqual(Counter(i['condition'] for i in items), {'matches':368,'unknown':191,'excluded':66})
+        self.assertEqual(len({i['id'] for i in items}),625)
+        self.assertEqual(sum(i['entry_kind']=='direct_alias' for i in items),11)
+        self.assertEqual(sum(i['entry_kind']=='wrapper' and i['condition']=='matches' for i in items),357)
         copy = next(i for i in items if i['name']=='copy_gm_to_ubuf' and not i['namespace'])
         self.assertIn('41997fe279e39ece787b',copy['record_ids'])
         self.assertIn('ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2',copy['op_ids'])
@@ -21,10 +23,10 @@ class A5Tests(unittest.TestCase):
 
     def test_defaults_and_unknown_opt_in(self):
         response=run(parser().parse_args(['interfaces']))
-        self.assertEqual(response['total'],357)
+        self.assertEqual(response['total'],368)
         self.assertEqual(response['target']['chip'],'Ascend950PR_9579')
         self.assertTrue(all(i['condition']=='matches' for i in response['items']))
-        self.assertEqual(run(parser().parse_args(['interfaces','--include-unknown']))['total'],548)
+        self.assertEqual(run(parser().parse_args(['interfaces','--include-unknown']))['total'],559)
         item=response['items'][0]
         self.assertEqual(run(parser().parse_args(['get',item['id']]))['items'][0],item)
         with self.assertRaisesRegex(ValueError,'fixed to'):

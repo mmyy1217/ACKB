@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Observed A5 CCEC call query envelope",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "backend",
+    "operation",
+    "version",
+    "limitations",
+    "provenance",
+    "target",
+    "total",
+    "offset",
+    "items",
+    "next_offset",
+    "truncated"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ackb.ccec-calls.query.v1"
+    },
+    "backend": {
+      "const": "ccec"
+    },
+    "operation": {
+      "enum": [
+        "calls",
+        "get"
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "target": {
+      "type": "object"
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "offset": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "op_id",
+          "arguments",
+          "argument_count",
+          "source",
+          "source_evidence",
+          "formal_signature"
+        ]
+      }
+    },
+    "next_offset": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "truncated": {
+      "type": "boolean"
+    }
+  }
+}

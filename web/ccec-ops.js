@@ -18,7 +18,7 @@ function createOpRecords(data) {
 }
 function opNavigate(id) {
   const target=byId.get(id);if(!target)return;
-  if(target.op)state.ccecLayer='interfaces';else if(opModel?.record_layers[id]?.layer==='wrapper')state.ccecLayer='wrappers';
+  if(target.op)state.ccecLayer='interfaces';else if(ccecIsInterface(target))state.ccecLayer='wrappers';
   const status=target.compatibility?.profiles[A5_PROFILE];
   if(status==='unknown')state.includeUnknown=true;
   Object.assign(state,{view:status==='excluded'?'references':recordView(target),selected:id,query:'',family:'',group:'',file:'',availability:'',proof:'',deprecation:'',tab:'definition'});
@@ -35,7 +35,7 @@ function opRecordEvidence(id) {
 }
 function layerContent(r) {
   const layer=opModel?.record_layers[r.id];if(!layer)return '';
-  const labels={intrinsic_entry:'Intrinsic 入口声明',wrapper:'上层封装',unresolved_entry:'待解析入口'};
+  const labels={intrinsic_entry:'直连编译器入口（alias）',wrapper:'上层封装',unresolved_entry:'待解析入口'};
   const edges=opModel.edges.filter(e=>e.source_record===r.id);
   return `<h3>层级 · ${labels[layer.layer]}</h3>${edges.length?edges.map(e=>`<p>${e.kind==='builtin_alias'?'显式 alias →':'函数体引用 →'} ${opLink(e.target_op)}</p>`).join(''):'<p>未解析出可靠的 builtin 关联；保留原始记录。</p>'}<p>这里只展示显式 alias 或完整限定名 / builtin 引用；函数体分支与参数形式仍需分别核对。</p>`;
 }
@@ -51,7 +51,7 @@ function opParameterPanel(o) {
 function renderOpParameters(o) {
   const content=(ids,wrapper)=>{const r=byId.get(ids[0]);return `<p>${wrapper?'这是上层封装的参数，不是 builtin 的参数；关联依据为源码引用。':'来自显式 alias 入口；保留声明参数，未做 C++ 重载解析。'}</p><pre class="signature"><code>${esc(formatSignature(r))}</code></pre>${r.parameters?.length?`<table class="parameter-table"><thead><tr><th>序号</th><th>类型 / 名称 / 默认值</th></tr></thead><tbody>${r.parameters.map((p,i)=>`<tr><td>${i+1}</td><td><code>${esc(p)}</code></td></tr>`).join('')}</tbody></table>`:''}<p>${ids.map(id=>opLink(id,sourceLabel(byId.get(id).source))).join(' · ')}</p>`;};
   const form=o.forms.find(f=>f.id===state.opForm);
-  $('#op-form-content').innerHTML=form?content(form.record_ids,false):'<p>完整 builtin 参数尚未取得，不能用封装签名替代。</p>';
+  $('#op-form-content').innerHTML=form?content(form.record_ids,false):'<p>入口声明为 ...；源码调用形式见上方，正式参数规范未验证。</p>';
   if($('#op-caller-content'))$('#op-caller-content').innerHTML=content([state.opCaller],true);
   wireOpLinks($('#detail'));
 }
@@ -62,6 +62,7 @@ function renderOpDetail(r) {
   pane.innerHTML=`<div class="detail-heading"><h2>${esc(o.name)}</h2><p class="qualified">${esc(o.builtin)}</p><div class="detail-actions"><button id="back-to-list" class="mobile-return text-button">返回列表</button><button id="copy-link" class="quiet-button">复制链接</button></div></div><div class="detail-body">${opParameterPanel(o)}<h3>唯一 op · intrinsic / builtin 层</h3><p>${o.entry_records.length} 条入口声明 · ${o.forms.length?o.forms.length+' 种有类型声明形式':'参数形式待确定'} · ${o.caller_records.length} 条上层调用记录</p><p>${o.identity_evidence==='explicit_alias'?'身份来源：显式 clang_builtin_alias。':'身份来源：函数体内完整 builtin 调用标识符；尚未取得独立入口声明。'}</p><h3>架构条件 · ${A5_CHIP}</h3><p>${esc(labels[status])}。</p><p>仅汇总显式入口声明条件；不继承同名封装、名称引用或调用者的支持状态。编译及运行未验证。</p><h3>Intrinsic 入口与来源 · ${o.entry_records.length}</h3>${o.entry_records.map(opRecordEvidence).join('') || '<p>当前扫描范围没有独立 alias 入口。</p>'}<h3>上层调用者 · ${o.caller_records.length}</h3><p>每条关联保留自己的架构条件和实现；可查看源码中的分支与参数转换。</p>${o.caller_records.map(opRecordEvidence).join('') || '<p>未找到经过限定名关联的上层调用；同名不自动连线。</p>'}</div>`;
   if(o.caller_records.length<r.op.caller_records.length)pane.querySelector('.detail-body').insertAdjacentHTML('beforeend','<p>仅列出当前 950 条件筛选下的调用者；待确认项可通过顶部开关显示。</p>');
   renderOpParameters(o);
+  renderObservedCalls(r);
   $('#op-form').onchange=e=>{state.opForm=e.target.value;renderOpParameters(o);saveHash();};
   if($('#op-caller'))$('#op-caller').onchange=e=>{state.opCaller=e.target.value;renderOpParameters(o);saveHash();};
   $('#copy-link').onclick=()=>copyText(location.href);

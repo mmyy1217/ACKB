@@ -32,7 +32,7 @@ def parser():
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
     schema = commands.add_parser('schema')
-    schema.add_argument('--layer', choices=['declarations', 'ops'], default='declarations')
+    schema.add_argument('--layer', choices=['declarations', 'ops', 'calls'], default='declarations')
     for operation in ('topics', 'builtins', 'categories'):
         topic = commands.add_parser(operation)
         topic.add_argument('query', nargs='?', default='')
@@ -40,6 +40,8 @@ def parser():
     interface = commands.add_parser('interfaces')
     interface.add_argument('--name', default='')
     interface.add_argument('--include-unknown', action='store_true')
+    calls = commands.add_parser('calls')
+    calls.add_argument('identity', help='CCEC op ID, entry record ID or exact entry name')
     ops = commands.add_parser('ops')
     ops.add_argument('query', nargs='?', default='')
     ops.add_argument('--name')
@@ -92,7 +94,7 @@ def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
     if args.command == 'schema':
-        schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
+        schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
         return json.loads((ROOT / 'schemas' / schema).read_text())
     knowledge_identity = getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))
     if args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or knowledge_identity:
@@ -111,6 +113,19 @@ def run(args):
                'provenance': {'catalog_sha256': db.snapshot_sha256, 'extractor_revision': db.data.get('extractor_revision'),
                               'compatibility_revision': db.data['compatibility']['revision'],
                               'analyzer_sha256': db.data['compatibility']['analyzer_sha256']}}
+    if args.command == 'calls' or getattr(args, 'identity', '').startswith('ccec_call_'):
+        from ccec_calls import load_calls
+        if getattr(args, 'chip', None) not in (None, 'Ascend950PR_9579') or getattr(args, 'architecture', None) not in (None, '__NPU_ARCH__=3510'):
+            raise ValueError('Observed calls are fixed to Ascend950PR_9579')
+        evidence = load_calls(db)
+        identity = args.identity
+        items = [c for c in evidence['calls'] if identity in (c['id'], c['op_id'], c['name']) or identity in c['entry_record_ids']]
+        if not items:
+            raise ValueError('No observed A5 calls for this identity')
+        items = [{**c, 'source_evidence': evidence['files'][c['source']['file']]} for c in items]
+        context.update(schema_version='ackb.ccec-calls.query.v1', target=db.target(chip='Ascend950PR_9579'),
+                       limitations=evidence['limitations'])
+        return page(items, args, context)
     if args.command == 'interfaces' or getattr(args, 'identity', '').startswith('ccec_interface_'):
         from ccec_a5 import interfaces, CHIP
         if getattr(args, 'chip', None) not in (None, CHIP) or getattr(args, 'architecture', None) not in (None, '__NPU_ARCH__=3510'):
@@ -142,6 +157,10 @@ def run(args):
             if args.command not in ('get', 'support'):
                 raise ValueError('Use get, support or relations for op IDs; original source evidence uses record IDs')
             items = [ops.detail(ops.by_id[identity], target)]
+            from ccec_calls import load_calls
+            evidence = load_calls(db)
+            items[0]['observed_a5_call_ids'] = [c['id'] for c in evidence['calls'] if c['op_id'] == identity]
+            items[0]['observed_a5_calls_query'] = 'calls ' + identity
         else:
             query = (args.name or args.query).lower()
             items = [ops.summary(o, target) for o in ops.model['ops'] if query in (' '.join([o['name'], o['builtin'], *o['aliases']])).lower()]

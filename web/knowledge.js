@@ -32,6 +32,7 @@ function recordView(r) {
     return 'all';
   }
   if(r.op)return 'interfaces';
+  if(ccecIsInterface(r))return 'wrappers';
   if(isInterface(r)){const layer=opModel?.record_layers[r.id]?.layer;return layer==='wrapper'?'wrappers':layer==='unresolved_entry'?'unresolved':'declarations';}
   return 'definitions';
 }
@@ -66,10 +67,8 @@ function configureBackend() {
   } else {
     $('#family-section h2').textContent = '指令族';
     $('#family-section h2').title = '按接口名称关键词归类，仅用于导航';
-    const routes=ccecTransferRoutes();
-    const navigation=[['','全部指令'],...families.flatMap(f=>[[f,f],...(f==='搬运 / DMA'?routes.map(t=>[t.id,t.label]):[])])];
-    $('#families').innerHTML = navigation.map(([key,label])=>`<button class="family ${key.startsWith('transfer:')?'family-sub':''}" data-family="${esc(key)}" title="${key.startsWith('transfer:')?'按名称中的存储路径细分；cbuf=L1，ubuf=UB；不代表设备支持':''}">${esc(label)}<span></span></button>`).join('');
-    $('#mobile-family').innerHTML = navigation.map(([key,label])=>`<option value="${esc(key)}">${esc(label)}</option>`).join('');
+    $('#families').innerHTML = [['','全部指令'],...families.map(f=>[f,f])].map(([key,label])=>`<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
+    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + families.map(f=>`<option>${esc(f)}</option>`).join('');
   }
   $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(data.records.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
   $('#file').innerHTML = '<option value="">全部源文件</option>' + data.files.map(f => `<option>${esc(f.path)}</option>`).join('');

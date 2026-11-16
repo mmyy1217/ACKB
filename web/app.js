@@ -12,7 +12,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {backend:'ccec',ccecLayer:'wrappers',includeUnknown:false,opForm:'',opCaller:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {backend:'ccec',ccecLayer:'wrappers',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -28,6 +28,7 @@ function saveHash(replace = true) {
   if (state.view !== 'interfaces') p.set('view',state.view);
   for (const key of ['family','query','group','file','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
   if(state.backend==='ccec' && byId.get(state.selected)?.op){if(state.opForm)p.set('form',state.opForm);if(state.opCaller)p.set('caller',state.opCaller);}
+  if(state.backend==='ccec' && observedCalls(byId.get(state.selected) || {}).length && state.observedCall)p.set('call',state.observedCall);
   const target = '#' + p.toString();
   if (location.hash !== target) history[replace ? 'replaceState' : 'pushState'](null,'',target);
 }
@@ -39,12 +40,12 @@ function readHash() {
   configureBackend();
   state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'ptx' ? 'overview' : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof']) state[key] = p.get(key) || '';
-  state.includeUnknown=p.get('unknown')==='1';state.opForm=p.get('form') || '';state.opCaller=p.get('caller') || '';
+  state.includeUnknown=p.get('unknown')==='1';state.opForm=p.get('form') || '';state.opCaller=p.get('caller') || '';state.observedCall=p.get('call') || '';
   state.ccecLayer=p.get('layer')==='intrinsics' || p.get('view')==='interfaces'?'interfaces':'wrappers';
   if(state.backend==='ccec' && !p.has('view'))state.view=state.ccecLayer;
   state.selected = p.get('r') || '';
   if ((!p.has('view') || state.view==='interfaces' && !byId.get(state.selected)?.op && !byId.get(state.selected)?.knowledge) && byId.has(state.selected)) state.view = recordView(byId.get(state.selected));
-  if(state.backend==='ccec'){if(byId.get(state.selected)?.op || opModel?.record_layers[state.selected]?.layer==='intrinsic_entry')state.ccecLayer='interfaces';else if(opModel?.record_layers[state.selected]?.layer==='wrapper')state.ccecLayer='wrappers';fixedA5();const chosen=byId.get(state.selected),status=chosen?.compatibility?.profiles[A5_PROFILE];if(status==='unknown'){state.includeUnknown=true;fixedA5();}if(status==='excluded')state.view='references';}
+  if(state.backend==='ccec'){if(ccecIsInterface(byId.get(state.selected) || {}))state.ccecLayer='wrappers';else if(byId.get(state.selected)?.op || opModel?.record_layers[state.selected]?.layer==='intrinsic_entry')state.ccecLayer='interfaces';fixedA5();const chosen=byId.get(state.selected),status=chosen?.compatibility?.profiles[A5_PROFILE];if(status==='unknown'){state.includeUnknown=true;fixedA5();}if(status==='excluded')state.view='references';}
   state.limit = BATCH_SIZE;
 }
 function toast(message) {
@@ -68,7 +69,7 @@ function download() {
   const relatedOps=new Set(opModel.edges.filter(e=>selectedIDs.has(e.source_record)).map(e=>e.target_op));
   const selectedOps=opModel.ops.filter(o=>selectedIDs.has(o.id) || relatedOps.has(o.id)).map(scopedA5Op);
   const sourceIDs=new Set(selectedOps.flatMap(o=>[...o.entry_records,...o.caller_records]));
-  const blob = new Blob([JSON.stringify({...data, records: selected, source_records:data.records.filter(r=>sourceIDs.has(r.id)), selection: {layer:state.ccecLayer,include_unknown:state.includeUnknown,view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()),op_model:opModel?{schema_version:opModel.schema_version,limitations:opModel.limitations,ops:selectedOps,edges:opModel.edges.filter(e=>sourceIDs.has(e.source_record) && selectedOps.some(o=>o.id===e.target_op))}:null, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
+  const blob = new Blob([JSON.stringify({...data, records: selected, source_records:data.records.filter(r=>sourceIDs.has(r.id)), selection: {layer:state.ccecLayer,include_unknown:state.includeUnknown,view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()),observed_call_evidence:{coverage:callEvidence.coverage,limitations:callEvidence.limitations,files:callEvidence.files,calls:callEvidence.calls.filter(c=>selectedOps.some(o=>o.id===c.op_id))},op_model:opModel?{schema_version:opModel.schema_version,limitations:opModel.limitations,ops:selectedOps,edges:opModel.edges.filter(e=>sourceIDs.has(e.source_record) && selectedOps.some(o=>o.id===e.target_op))}:null, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
   const url = URL.createObjectURL(blob), a = document.createElement('a');
   a.href = url; a.download = `ackb-ccec-${data.version}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
 }
@@ -97,7 +98,7 @@ function syncControls() {
   $('#backend').value = state.backend==='ptx'?'ptx':state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
   $('#include-unknown').checked=state.includeUnknown;
   $('#coverage').textContent=state.view==='report'?'返回指令':'说明 / 覆盖';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.ccecLayer==='wrappers'?opModel?.record_layers[r.id]?.layer==='wrapper':r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.ccecLayer==='wrappers'?ccecIsInterface(r):r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
   document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
@@ -157,7 +158,7 @@ function rowHTML(groups) {
     const selected = g.items.some(r => r.id === state.selected);
     const classification = g.items[0].knowledge ? g.family : state.view === 'definitions' ? kinds[g.items[0].kind] : g.items[0].transfer?.label || g.family;
     const qualified = [g.items[0].namespace,g.name].filter(Boolean).join('::');
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : a5GroupLabel(g.items))}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (scopedA5Op(g.items[0].op).forms.length || '—') : g.items.length}</td></tr>`;
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}${directEntryIDs.has(g.items[0].id)?' · 直连':''}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : a5GroupLabel(g.items))}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (scopedA5Op(g.items[0].op).forms.length || '—') : g.items.length}</td></tr>`;
   }).join('');
 }
 function updateLoadStatus() {
@@ -312,6 +313,7 @@ function renderDetail() {
     $('#detail').focus({preventScroll:true});
   });
   wireOpLinks(pane);
+  if(state.tab==='definition')renderObservedCalls(r);
   pane.querySelector('[role="tablist"]').onkeydown = e => {
     if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
     e.preventDefault();const tabs = ['definition','source','experiments'];let index = tabs.indexOf(state.tab);

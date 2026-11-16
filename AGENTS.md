@@ -151,7 +151,7 @@ python scripts/query.py schema --layer ops
 
 ## 当前 950 / A5 双层入口
 
-页面固定 950PR_9579；封装接口为默认层，左栏只保留指令族。AI 同范围入口：
+页面固定 950PR_9579；调用接口（封装及已追踪的搬运直连入口）为默认层，左栏只保留指令族。AI 同范围入口：
 
 ```sh
 python scripts/query.py interfaces
@@ -161,3 +161,15 @@ python scripts/query.py ops --condition possible
 ```
 
 CCEC 浏览器回归已合并至 `tests/a5-browser.cjs`，替代旧多架构 / 原始导航测试；PTX 回归继续使用 `tests/knowledge-browser.cjs`。参数、来源和未知条件按 [双层规则](docs/ccec-ops.md) 保留。
+
+## 950 搬运入口与参数追踪
+
+来源范围、直连入口规则和观测参数边界见 [源码调用追踪](docs/ccec-a5-calls.md)。只读提取核对原包来源哈希；普通构建使用已提交快照，不依赖本地 CANN。
+
+```sh
+python scripts/ccec_calls.py extract --toolkit "$CCE_OPS_TOOLKIT"
+python scripts/ccec_calls.py validate
+python scripts/query.py --limit 3 calls copy_gm_to_cbuf_align_v2
+python scripts/query.py schema --layer calls
+python scripts/build.py
+```
