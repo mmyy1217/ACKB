@@ -24,7 +24,8 @@ class Parser(argparse.ArgumentParser):
 
 def parser():
     p = Parser(description=__doc__)
-    p.add_argument('--backend', choices=['ccec', 'ptx'], default='ccec')
+    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx'], default='ccec')
+    p.add_argument('--layer', choices=['declarations', 'ops', 'basic', 'capi', 'intrinsics'])
     p.add_argument('--data', help='Versioned catalog path; defaults to the repository snapshot')
     p.add_argument('--limit', type=int, default=10)
     p.add_argument('--offset', type=int, default=0)
@@ -32,7 +33,7 @@ def parser():
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
     schema = commands.add_parser('schema')
-    schema.add_argument('--layer', choices=['declarations', 'ops', 'calls'], default='declarations')
+    schema.add_argument('--layer', choices=['declarations', 'ops', 'calls', 'basic', 'capi', 'intrinsics'], default='declarations')
     for operation in ('topics', 'builtins', 'categories'):
         topic = commands.add_parser(operation)
         topic.add_argument('query', nargs='?', default='')
@@ -90,12 +91,99 @@ def page(items, args, context):
     return response
 
 
+def dispatch_ascendc_or_dialect(args):
+    if args.backend == 'cce-dialect' or getattr(args, 'identity', '').startswith(('cce_dialect_op_', 'cce_dialect_intr_')):
+        path = ROOT / 'data/cce_dialect/index.json'
+        data = json.loads(path.read_text())
+        context = {
+            'schema_version': data['schema_version'],
+            'backend': 'cce-dialect',
+            'operation': args.command,
+            'version': data['version'],
+            'target': data['target'],
+            'limitations': data['limitations'],
+            'provenance': {'index_sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'commit': data['source']['commit']},
+        }
+        if args.command == 'info':
+            return page([{'counts': data['counts'], 'target': data['target'], 'repository': data['source']['repository'], 'commit': data['source']['commit']}], args, context)
+        by_id = {x['id']: x for x in data['ops'] + data['intrinsics']}
+        identity = getattr(args, 'identity', None)
+        if identity:
+            if identity not in by_id:
+                raise ValueError(f'Unknown CCE Dialect identity: {identity}')
+            rec = by_id[identity]
+            if args.command == 'get':
+                return page([rec], args, context)
+            if args.command == 'relations':
+                rels = [{'relation': 'lowers_to_intrinsic', 'target_id': i} for i in rec.get('intrinsic_ids', [])]
+                rels += [{'relation': 'lowered_from_op', 'source_id': u} for u in rec.get('upstream_op_ids', [])]
+                rels += [{'relation': 'related_ccec_op', 'ccec_op_id': c} for c in rec.get('ccec_op_ids', [])]
+                return page(rels, args, context)
+            if args.command == 'evidence':
+                return page([{'source': rec['source'], 'excerpt': rec.get('excerpt', ''), 'spec_source': rec.get('spec', {}).get('source') if rec.get('spec') else None}], args, context)
+        layer = getattr(args, 'layer', None) or ('intrinsics' if args.command == 'ops' else 'ops')
+        pool = data['intrinsics'] if layer == 'intrinsics' else data['ops']
+        q = (getattr(args, 'name', None) or getattr(args, 'query', '') or '').lower()
+        items = [
+            {k: v for k, v in x.items() if k not in ('excerpt', 'spec')} | ({'has_spec_doc': bool(x.get('spec'))} if 'spec' in x else {})
+            for x in pool
+            if not q or q in json.dumps({k: x.get(k) for k in ('id', 'name', 'mnemonic', 'def_name', 'llvm_intrinsic', 'summary', 'family', 'group')}, ensure_ascii=False).lower()
+        ]
+        return page(items, args, context)
+
+    # --backend ascendc
+    path = ROOT / 'data/ascendc/index.json'
+    data = json.loads(path.read_text())
+    context = {
+        'schema_version': data['schema_version'],
+        'backend': 'ascendc',
+        'operation': args.command,
+        'version': data['version'],
+        'target': data['target'],
+        'limitations': data['limitations'],
+        'provenance': {'index_sha256': hashlib.sha256(path.read_bytes()).hexdigest()},
+    }
+    if args.command == 'info':
+        return page([{'counts': data['counts'], 'target': data['target']}], args, context)
+    by_id = {x['id']: x for x in data['basic_api'] + data['c_api']}
+    identity = getattr(args, 'identity', None)
+    if identity:
+        if identity not in by_id:
+            raise ValueError(f'Unknown AscendC identity: {identity}')
+        rec = by_id[identity]
+        if args.command == 'get':
+            return page([rec], args, context)
+        if args.command == 'relations':
+            rels = [{'relation': 'calls_ccec', **c} for c in rec.get('ccec_callees', [])]
+            return page(rels, args, context)
+        if args.command == 'evidence':
+            return page([{'source': rec['source'], 'impl_source': rec.get('impl_source'), 'excerpt': rec.get('excerpt', '')}], args, context)
+    layer = getattr(args, 'layer', None) or ('capi' if args.command == 'ops' else 'basic')
+    pool = data['c_api'] if layer == 'capi' else data['basic_api']
+    q = (getattr(args, 'name', None) or getattr(args, 'query', '') or '').lower()
+    cond = getattr(args, 'condition', None)
+    if args.command in ('interfaces', 'ops') and not cond:
+        cond = 'possible' if getattr(args, 'include_unknown', False) else 'matches'
+    items = []
+    for x in pool:
+        if cond:
+            allowed = ('matches', 'unknown') if cond == 'possible' else (cond,)
+            if x['condition_3510'] not in allowed:
+                continue
+        if q and q not in json.dumps({k: x.get(k) for k in ('id', 'name', 'qualified_name', 'group', 'family', 'ccec_op_ids')}, ensure_ascii=False).lower():
+            continue
+        items.append({k: v for k, v in x.items() if k != 'excerpt'})
+    return page(items, args, context)
+
+
 def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
     if args.command == 'schema':
-        schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
+        schema = 'knowledge-v1.schema.json' if args.backend in ('ptx', 'ascendc', 'cce-dialect') else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
         return json.loads((ROOT / 'schemas' / schema).read_text())
+    if args.backend in ('ascendc', 'cce-dialect') or getattr(args, 'identity', '').startswith(('ascendc_', 'cce_dialect_')):
+        return dispatch_ascendc_or_dialect(args)
     knowledge_identity = getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))
     if args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or knowledge_identity:
         knowledge = Knowledge(args.backend, args.data)

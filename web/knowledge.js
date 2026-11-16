@@ -22,6 +22,8 @@ function wrapKnowledge(k,backend) {
     signature:'',namespace:'',builtins:[],conditions:[],source:{file:backend === 'ptx' ? 'PTX ISA 9.4' : 'CANN 头文件'}};
 }
 function recordView(r) {
+  if (r.backend === 'ascendc') return r.ascendcLayer === 'capi' ? 'capi' : 'basic';
+  if (r.backend === 'cce-dialect') return r.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops';
   if (r.knowledge) {
     if(r.kind === 'lesson') return r.knowledge.chapter;
     if(r.kind === 'note') return 'topics';
@@ -37,12 +39,16 @@ function recordView(r) {
   return 'definitions';
 }
 function viewLabels() {
+  if (state.backend === 'ascendc') return {basic:'AscendC 接口',capi:'AscendC 底层接口',report:'说明 / 覆盖'};
+  if (state.backend === 'cce-dialect') return {dialect_ops:'CCE Dialect Ops',dialect_intrinsics:'CCE Dialect Intrinsics',report:'说明 / 覆盖'};
   return state.backend === 'ptx' ? {...Object.fromEntries(knowledgeData.ptx.learning.chapters.map(c=>[c.id,c.title])), interfaces:'指令速查', all:'官方手册目录', report:'来源与覆盖', instruction:'指令阅读', search:'搜索结果'} : {interfaces:'Intrinsics',declarations:'入口声明',wrappers:'封装接口',records:'原始记录',unresolved:'待解析入口',definitions:'配套定义',topics:'知识主题',report:'说明 / 覆盖',references:'来源详情'};
 }
 function configureBackend() {
   const ptx = state.backend === 'ptx';
+  const isAscendc = state.backend === 'ascendc';
+  const isDialect = state.backend === 'cce-dialect';
   $('#page-title').hidden=!ptx;
-  records = ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
+  records = ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : isAscendc ? ascendcRecords : isDialect ? dialectRecords : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
   document.body.classList.toggle('ptx-mode',ptx);
   const labels = viewLabels();
   $('.views').innerHTML = Object.entries(labels).map(([key,label]) => {
@@ -70,17 +76,19 @@ function configureBackend() {
     $('#families').innerHTML = [['','全部指令'],...families.map(f=>[f,f])].map(([key,label])=>`<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
     $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + families.map(f=>`<option>${esc(f)}</option>`).join('');
   }
-  $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(data.records.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
-  $('#file').innerHTML = '<option value="">全部源文件</option>' + data.files.map(f => `<option>${esc(f.path)}</option>`).join('');
-  $('#version').textContent = ptx ? 'PTX ISA 9.4' : data.version;
-  $('#footer-source').textContent = ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : `${data.files.length} 个源文件 · CANN ${data.version}`;
-  $('#search').placeholder = ptx ? '搜索指令、章节、目标条件…' : '搜索名称、类型、builtin、条件…';
+  const activePool = isAscendc || isDialect ? records : data.records;
+  const activeFiles = isAscendc ? Object.keys(ascendcData.files || {}).sort() : isDialect ? Object.keys(dialectData.source?.files || {}).sort() : data.files.map(f => f.path);
+  $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(activePool.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
+  $('#file').innerHTML = '<option value="">全部源文件</option>' + activeFiles.map(f => `<option>${esc(f)}</option>`).join('');
+  $('#version').textContent = ptx ? 'PTX ISA 9.4' : isDialect ? `CCEDialect ${dialectData.version || ''}` : data.version;
+  $('#footer-source').textContent = ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : isDialect ? `${activeFiles.length} 个 TableGen/文档源文件 · CCEDialect ${dialectData.version || ''} · dav-351x` : isAscendc ? `${activeFiles.length} 个 AscendC 头文件 · CANN ${data.version} · 950 / dav_3510` : `${data.files.length} 个源文件 · CANN ${data.version}`;
+  $('#search').placeholder = ptx ? '搜索指令、章节、目标条件…' : isDialect ? '搜索 cce.* Op、llvm.hivm.*、语法…' : '搜索名称、类型、builtin、条件…';
   $('#search').setAttribute('aria-label',ptx ? '搜索 PTX 指令与章节' : '搜索接口或配套定义');
   for(const node of [$('#group').closest('label'),$('#file').closest('label')]) node.hidden=ptx;
-  $('#fixed-chip').hidden=ptx;$('#unknown-filter').hidden=ptx;$('#coverage').hidden=ptx;
+  $('#fixed-chip').hidden=ptx;$('#unknown-filter').hidden=ptx || isDialect;$('#coverage').hidden=ptx;
   $('#mobile-view').closest('label').hidden=!ptx;
   document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);
-  $('.sidebar-note').innerHTML = ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
+  $('.sidebar-note').innerHTML = ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
 }
 function knowledgeLink(r,label) {
   return `<button class="related-link" data-knowledge-ref="${esc(r.id)}">${esc(label || r.name)}</button>`;

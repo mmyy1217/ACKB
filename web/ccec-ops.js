@@ -18,10 +18,17 @@ function createOpRecords(data) {
 }
 function opNavigate(id) {
   const target=byId.get(id);if(!target)return;
-  if(target.op)state.ccecLayer='interfaces';else if(ccecIsInterface(target))state.ccecLayer='wrappers';
-  const status=target.compatibility?.profiles[A5_PROFILE];
+  if(target.backend==='ascendc'){
+    state.backend='ascendc';state.ascendcLayer=target.ascendcLayer;configureBackend();
+  }else if(target.backend==='cce-dialect'){
+    state.backend='cce-dialect';state.dialectLayer=target.dialectLayer;configureBackend();
+  }else{
+    if(state.backend!=='ccec'){state.backend='ccec';configureBackend();}
+    if(target.op)state.ccecLayer='interfaces';else if(ccecIsInterface(target))state.ccecLayer='wrappers';
+  }
+  const status=target.compatibility?.profiles?.[A5_PROFILE];
   if(status==='unknown')state.includeUnknown=true;
-  Object.assign(state,{view:status==='excluded'?'references':recordView(target),selected:id,query:'',family:'',group:'',file:'',availability:'',proof:'',deprecation:'',tab:'definition'});
+  Object.assign(state,{view:status==='excluded' && state.backend==='ccec'?'references':recordView(target),selected:id,query:'',family:'',group:'',file:'',availability:'',proof:'',deprecation:'',tab:'definition'});
   render(!mobile.matches);
   if(mobile.matches){readingDetail=true;$('#detail').scrollIntoView({block:'start'});}
   $('#detail').focus({preventScroll:true});
