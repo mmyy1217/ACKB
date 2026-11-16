@@ -37,13 +37,16 @@ def parser():
         topic = commands.add_parser(operation)
         topic.add_argument('query', nargs='?', default='')
         topic.add_argument('--architecture')
+    interface = commands.add_parser('interfaces')
+    interface.add_argument('--name', default='')
+    interface.add_argument('--include-unknown', action='store_true')
     ops = commands.add_parser('ops')
     ops.add_argument('query', nargs='?', default='')
     ops.add_argument('--name')
     ops.add_argument('--chip')
     ops.add_argument('--architecture')
     ops.add_argument('--core')
-    ops.add_argument('--condition', choices=['matches', 'excluded', 'unknown', 'possible'])
+    ops.add_argument('--condition', choices=['matches', 'excluded', 'unknown', 'possible'], default='matches')
     targets = commands.add_parser('targets')
     targets.add_argument('--name', default='')
     for command in ('search', 'get', 'relations', 'support'):
@@ -108,10 +111,27 @@ def run(args):
                'provenance': {'catalog_sha256': db.snapshot_sha256, 'extractor_revision': db.data.get('extractor_revision'),
                               'compatibility_revision': db.data['compatibility']['revision'],
                               'analyzer_sha256': db.data['compatibility']['analyzer_sha256']}}
+    if args.command == 'interfaces' or getattr(args, 'identity', '').startswith('ccec_interface_'):
+        from ccec_a5 import interfaces, CHIP
+        if getattr(args, 'chip', None) not in (None, CHIP) or getattr(args, 'architecture', None) not in (None, '__NPU_ARCH__=3510'):
+            raise ValueError('Interface summaries are fixed to Ascend950PR_9579 / NpuArch 3510')
+        items = interfaces(db)
+        identity = getattr(args, 'identity', None)
+        if identity:
+            if args.command != 'get':
+                raise ValueError('Use get for interface IDs, then relations/evidence for returned record IDs')
+            items = [item for item in items if item['id'] == identity]
+            if not items:
+                raise ValueError('Unknown interface identity')
+        else:
+            allowed = ('matches', 'unknown') if args.include_unknown else ('matches',)
+            items = [item for item in items if item['condition'] in allowed and args.name.lower() in item['name'].lower()]
+        context.update(schema_version='ackb.ccec-ops.query.v1', target=db.target(chip=CHIP, core=getattr(args, 'core', None)))
+        return page(items, args, context)
     if args.command == 'ops' or getattr(args, 'identity', '').startswith('ccec_op_'):
         from ccec_ops import Ops, LIMITS
         ops = Ops(db)
-        target = db.target(getattr(args, 'chip', None), getattr(args, 'architecture', None), getattr(args, 'core', None))
+        target = db.target(getattr(args, 'chip', None) or (None if getattr(args, 'architecture', None) else 'Ascend950PR_9579'), getattr(args, 'architecture', None), getattr(args, 'core', None))
         context.update(schema_version='ackb.ccec-ops.query.v1', limitations=LIMITS, target=target)
         identity = getattr(args, 'identity', None)
         if identity and identity not in ops.by_id:
@@ -130,7 +150,7 @@ def run(args):
         return page(items, args, context)
     if args.command == 'info':
         from ccec_ops import Ops
-        return page([{'op_inventory': Ops(db).model['counts'], 'primary_query': 'ops', 'records': len(db.records), 'symbols': len(db.by_symbol), 'signature_variants': len(db.by_variant),
+        return page([{'op_inventory': Ops(db).model['counts'], 'primary_query': 'interfaces', 'default_chip': 'Ascend950PR_9579', 'records': len(db.records), 'symbols': len(db.by_symbol), 'signature_variants': len(db.by_variant),
                       'counts': db.data['counts'], 'scanned_headers': len(db.files),
                       'unresolved': len(db.data['report']['unresolved']),
                       'header_builtin_names': len(db.data['report']['raw_builtin_names']),

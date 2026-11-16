@@ -1,6 +1,6 @@
 # AI 使用入口
 
-本仓库 ACKB 用于检索 CCEC / PTX 的目标知识、来源与条件。双后端查询契约及边界见 [知识索引](knowledge.md)。默认 CCEC；PTX 显式选择 `--backend ptx`。CCEC 主目录先查 `ops`，再按 op ID 读取 `get / relations`，原始记录用 `evidence` 追溯。以下声明查询流程适用于 CCEC。先通过查询工具定位，再读取局部证据，不要整份载入大型 catalog。命令集中在 [AGENTS.md](../AGENTS.md)，字段含义见 [数据库规范](database.md)。
+本仓库 ACKB 用于检索 CCEC / PTX 的目标知识、来源与条件。双后端查询契约及边界见 [知识索引](knowledge.md)。默认 CCEC；PTX 显式选择 `--backend ptx`。CCEC 默认先查 `interfaces`（950 封装层），底层查 `ops`，再按 op ID 读取 `get / relations`，原始记录用 `evidence` 追溯。以下声明查询流程适用于 CCEC。先通过查询工具定位，再读取局部证据，不要整份载入大型 catalog。命令集中在 [AGENTS.md](../AGENTS.md)，字段含义见 [数据库规范](database.md)。
 
 ## 建议调用流程
 
@@ -34,4 +34,4 @@
 
 ## CCEC 层级入口
 
-主目录以完整 builtin 身份唯一化；先查 `ops`，不要把兼容的声明层 `search` 结果当独立 op。封装调用多个 builtin 时保留一对多关系，源码条件和名称引用不提升为 op 支持。详情见 [op 模型](ccec-ops.md)。
+CCEC 页面固定 950 / A5，默认 `interfaces` 返回 357 个条件符合的封装接口，`--include-unknown` 加入 191 个待确认接口。Intrinsics 层以完整 builtin 身份唯一化，使用 `ops`，不要把兼容的声明层 `search` 结果当独立 op。封装调用多个 builtin 时保留一对多关系，源码条件和名称引用不提升为 op 支持。详情见 [op 模型](ccec-ops.md)。

@@ -36,10 +36,11 @@ function recordView(r) {
   return 'definitions';
 }
 function viewLabels() {
-  return state.backend === 'ptx' ? {...Object.fromEntries(knowledgeData.ptx.learning.chapters.map(c=>[c.id,c.title])), interfaces:'指令速查', all:'官方手册目录', report:'来源与覆盖', instruction:'指令阅读', search:'搜索结果'} : {interfaces:'底层 op',declarations:'入口声明',wrappers:'上层封装',records:'原始记录',unresolved:'待解析入口',definitions:'配套定义',topics:'知识主题',report:'扫描报告'};
+  return state.backend === 'ptx' ? {...Object.fromEntries(knowledgeData.ptx.learning.chapters.map(c=>[c.id,c.title])), interfaces:'指令速查', all:'官方手册目录', report:'来源与覆盖', instruction:'指令阅读', search:'搜索结果'} : {interfaces:'Intrinsics',declarations:'入口声明',wrappers:'封装接口',records:'原始记录',unresolved:'待解析入口',definitions:'配套定义',topics:'知识主题',report:'说明 / 覆盖',references:'来源详情'};
 }
 function configureBackend() {
   const ptx = state.backend === 'ptx';
+  $('#page-title').hidden=!ptx;
   records = ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
   document.body.classList.toggle('ptx-mode',ptx);
   const labels = viewLabels();
@@ -47,6 +48,7 @@ function configureBackend() {
     const count = key === 'report' ? '' : fmt(makeGroups(records.filter(r => key==='records'?isInterface(r):key === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === key)).length);
     return `<button data-view="${key}" class="view">${esc(label)} <span id="nav-${key}">${count}</span></button>`;
   }).join('');
+  $('.views').hidden=!ptx;
   if(ptx) renderPtxNavigation();
   $('#mobile-view').innerHTML = Object.entries(labels).map(([key,label]) => `<option value="${key}">${esc(label)}</option>`).join('');
   if (ptx) {
@@ -69,17 +71,15 @@ function configureBackend() {
   }
   $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(data.records.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
   $('#file').innerHTML = '<option value="">全部源文件</option>' + data.files.map(f => `<option>${esc(f.path)}</option>`).join('');
-  $('#chip').innerHTML = '<option value="">未指定芯片</option>' + data.compatibility.chip_mappings.map(t => `<option>${esc(t.chip)}</option>`).join('');
-  $('#architecture').innerHTML = '<option value="">全部架构条件</option>' + data.compatibility.profiles.map(p => `<option value="${esc(p.id)}">${esc(p.label)}</option>`).join('');
-  $('#proof').innerHTML = '<option value="">全部源码证据</option>' + Object.entries(ccecStatic?.labels || {}).map(([value,label])=>`<option value="${esc(value)}">${esc(label)}</option>`).join('');
-  $('#catalog-version').innerHTML = `<option>${esc(data.version)}</option>`;
   $('#version').textContent = ptx ? 'PTX ISA 9.4' : data.version;
   $('#footer-source').textContent = ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : `${data.files.length} 个源文件 · CANN ${data.version}`;
   $('#search').placeholder = ptx ? '搜索指令、章节、目标条件…' : '搜索名称、类型、builtin、条件…';
   $('#search').setAttribute('aria-label',ptx ? '搜索 PTX 指令与章节' : '搜索接口或配套定义');
-  for(const node of [$('#group').closest('label'),$('#file').closest('label'),$('.compatibility-menu')]) node.hidden=ptx;
+  for(const node of [$('#group').closest('label'),$('#file').closest('label')]) node.hidden=ptx;
+  $('#fixed-chip').hidden=ptx;$('#unknown-filter').hidden=ptx;$('#coverage').hidden=ptx;
+  $('#mobile-view').closest('label').hidden=!ptx;
   document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);
-  $('.sidebar-note').innerHTML = ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : '头文件静态提取<p>编译与运行尚未验证</p>';
+  $('.sidebar-note').innerHTML = ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
 }
 function knowledgeLink(r,label) {
   return `<button class="related-link" data-knowledge-ref="${esc(r.id)}">${esc(label || r.name)}</button>`;
@@ -117,6 +117,7 @@ function renderKnowledgeDetail(r) {
   pane.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;renderDetail();$('#tab-'+state.tab).focus();});
   pane.querySelector('[role="tablist"]').onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const ids=tabs.map(t=>t[0]);state.tab=ids[e.key==='Home'?0:e.key==='End'?2:(ids.indexOf(state.tab)+(e.key==='ArrowRight'?1:2))%3];renderDetail();$('#tab-'+state.tab).focus();};
   pane.querySelectorAll('[data-knowledge-ref]').forEach(b=>b.onclick=()=>{
+    if(state.backend==='ccec'){opNavigate(b.dataset.knowledgeRef);return;}
     const target=byId.get(b.dataset.knowledgeRef);Object.assign(state,{view:recordView(target),selected:target.id,query:'',family:'',group:'',file:'',support:'',chip:'',architecture:'',availability:'',deprecation:'',tab:'definition'});render(!mobile.matches);
     if(mobile.matches){readingDetail=true;pane.scrollIntoView({block:'start'});}pane.focus({preventScroll:true});
   });

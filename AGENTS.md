@@ -62,7 +62,7 @@ git status --short
 
 ```sh
 python scripts/targets.py --toolkit "$CCE_OPS_TOOLKIT" --version '9.3.0~weekly.20261104.01' --output 'data/9.3.0~weekly.20261104.01/targets.json'
-node tests/compatibility-browser.cjs
+node tests/a5-browser.cjs
 python scripts/compare.py <before.json> <after.json> --output <diff.json>
 ```
 
@@ -148,3 +148,16 @@ python scripts/query.py get ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2
 python scripts/query.py relations ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2
 python scripts/query.py schema --layer ops
 ```
+
+## 当前 950 / A5 双层入口
+
+页面固定 950PR_9579；封装接口为默认层，左栏只保留指令族。AI 同范围入口：
+
+```sh
+python scripts/query.py interfaces
+python scripts/query.py interfaces --include-unknown --name copy_gm_to_ubuf
+python scripts/query.py ops --name copy_gm_to_ubuf
+python scripts/query.py ops --condition possible
+```
+
+CCEC 浏览器回归已合并至 `tests/a5-browser.cjs`，替代旧多架构 / 原始导航测试；PTX 回归继续使用 `tests/knowledge-browser.cjs`。参数、来源和未知条件按 [双层规则](docs/ccec-ops.md) 保留。

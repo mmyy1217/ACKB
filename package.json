@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test:browser": "node tests/browser.cjs && node tests/compatibility-browser.cjs && node tests/knowledge-browser.cjs && node tests/static-browser.cjs && node tests/ops-browser.cjs"
+    "test:browser": "node tests/a5-browser.cjs && node tests/knowledge-browser.cjs"
   },
   "devDependencies": {
     "playwright": "1.65.0"

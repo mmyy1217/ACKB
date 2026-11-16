@@ -12,7 +12,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {backend:'ccec',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {backend:'ccec',ccecLayer:'wrappers',includeUnknown:false,ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -23,9 +23,10 @@ const fileMap = new Map(data.files.map(f => [f.path,f]));
 function saveHash(replace = true) {
   const p = new URLSearchParams();
   if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
+  if(state.backend==='ccec'){p.set('layer',state.ccecLayer==='interfaces'?'intrinsics':'interfaces');if(state.includeUnknown)p.set('unknown','1');}
   if (state.support) p.set('support',state.support);
   if (state.view !== 'interfaces') p.set('view',state.view);
-  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
+  for (const key of ['family','query','group','file','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
   const target = '#' + p.toString();
   if (location.hash !== target) history[replace ? 'replaceState' : 'pushState'](null,'',target);
 }
@@ -37,17 +38,12 @@ function readHash() {
   configureBackend();
   state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'ptx' ? 'overview' : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof']) state[key] = p.get(key) || '';
-  if (state.backend === 'ccec' && !location.hash && data.compatibility.chip_mappings.some(t => t.chip === 'Ascend950PR_9579')) {state.chip = 'Ascend950PR_9579';state.availability = 'possible';}
-  const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
-  if (target) state.architecture = '__NPU_ARCH__=' + target.npu_arch;
-  else state.chip = '';
-  if (!data.compatibility.profiles.some(t => t.id === state.architecture)) state.architecture = '';
-  if (!['','possible','matches','excluded','unknown'].includes(state.availability)) state.availability = '';
-  if (!['','marked','conditional','unmarked'].includes(state.deprecation)) state.deprecation = '';
-  if(!ccecStatic?.labels[state.proof] || !staticArch())state.proof='';
+  state.includeUnknown=p.get('unknown')==='1';
+  state.ccecLayer=p.get('layer')==='intrinsics' || p.get('view')==='interfaces'?'interfaces':'wrappers';
+  if(state.backend==='ccec' && !p.has('view'))state.view=state.ccecLayer;
   state.selected = p.get('r') || '';
   if ((!p.has('view') || state.view==='interfaces' && !byId.get(state.selected)?.op && !byId.get(state.selected)?.knowledge) && byId.has(state.selected)) state.view = recordView(byId.get(state.selected));
-  if(state.backend==='ccec' && state.view==='interfaces'){state.proof='';state.deprecation='';}
+  if(state.backend==='ccec'){if(byId.get(state.selected)?.op || opModel?.record_layers[state.selected]?.layer==='intrinsic_entry')state.ccecLayer='interfaces';else if(opModel?.record_layers[state.selected]?.layer==='wrapper')state.ccecLayer='wrappers';fixedA5();const chosen=byId.get(state.selected),status=chosen?.compatibility?.profiles[A5_PROFILE];if(status==='unknown'){state.includeUnknown=true;fixedA5();}if(status==='excluded')state.view='references';}
   state.limit = BATCH_SIZE;
 }
 function toast(message) {
@@ -68,23 +64,25 @@ async function copyText(value) {
 function download() {
   if (state.backend === 'ptx' || state.view === 'topics') return downloadKnowledge();
   const selected=filtered(), selectedIDs=new Set(selected.map(r=>r.id));
-  const selectedOps=selected.filter(r=>r.op).map(r=>r.op);
+  const relatedOps=new Set(opModel.edges.filter(e=>selectedIDs.has(e.source_record)).map(e=>e.target_op));
+  const selectedOps=opModel.ops.filter(o=>selectedIDs.has(o.id) || relatedOps.has(o.id)).map(scopedA5Op);
   const sourceIDs=new Set(selectedOps.flatMap(o=>[...o.entry_records,...o.caller_records]));
-  const blob = new Blob([JSON.stringify({...data, records: selected, source_records:data.records.filter(r=>sourceIDs.has(r.id)), selection: {view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()),op_model:opModel?{schema_version:opModel.schema_version,limitations:opModel.limitations,ops:selectedOps,edges:opModel.edges.filter(e=>selectedIDs.has(e.target_op) || selectedIDs.has(e.source_record))}:null, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
+  const blob = new Blob([JSON.stringify({...data, records: selected, source_records:data.records.filter(r=>sourceIDs.has(r.id)), selection: {layer:state.ccecLayer,include_unknown:state.includeUnknown,view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()),op_model:opModel?{schema_version:opModel.schema_version,limitations:opModel.limitations,ops:selectedOps,edges:opModel.edges.filter(e=>sourceIDs.has(e.source_record) && selectedOps.some(o=>o.id===e.target_op))}:null, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
   const url = URL.createObjectURL(blob), a = document.createElement('a');
   a.href = url; a.download = `ackb-ccec-${data.version}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
 }
-function baseRecords() { return records.filter(r => (state.view==='records'?isInterface(r):state.view === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === state.view)); }
+function baseRecords() { if(state.backend==='ccec' && !['wrappers','interfaces','report'].includes(state.view))return [byId.get(state.selected)].filter(Boolean);return records.filter(r => (state.view==='records'?isInterface(r):state.view === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === state.view)); }
 function makeGroups(items) {
   const groups = new Map();
   for (const r of items) {
-    const key = r.knowledge || r.op ? r.id : [r.group,r.namespace || '',r.name,r.kind].join('|');
+    const key = r.knowledge || r.op ? r.id : state.view==='wrappers' ? [r.namespace || '',r.name].join('|') : [r.group,r.namespace || '',r.name,r.kind].join('|');
     if (!groups.has(key)) groups.set(key,{key,name:r.name,group:r.group,family:r.family,items:[]});
     groups.get(key).items.push(r);
   }
   return [...groups.values()];
 }
 function compatibilityMatches(r) {
+  if(state.backend==='ccec' && !['wrappers','interfaces'].includes(state.view))return true;
   if(r.op) return !state.architecture || !state.availability || (state.availability==='possible'?r.compatibility.profiles[state.architecture]!=='excluded':r.compatibility.profiles[state.architecture]===state.availability);
   if (r.knowledge) return !state.support || (r.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown') === state.support;
   return (!state.proof || staticState(r) === state.proof) && (!state.deprecation || r.deprecation.status === state.deprecation) &&
@@ -95,15 +93,10 @@ function filtered() {
   return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : r.family === state.family)) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
-  $('#backend').value = state.backend;$('#ptx-support').value = state.support;
-  const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
-  $('#core-targets').textContent = target ? [...new Set(Object.values(target.cores))].join(' / ') : '先选择芯片';
-  for (const key of ['chip','architecture','availability','deprecation','proof']) $('#' + key).value = state[key];
-  $('#availability').disabled = !state.architecture;
-  $('#proof').disabled = !staticArch() || state.view === 'interfaces';
-  $('#deprecation').disabled = state.backend==='ccec' && state.view==='interfaces';
-  $('#compatibility-summary').textContent = state.chip ? state.chip.replace(/^Ascend/, '') : state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.view==='records'?isInterface(r):r.op) && compatibilityMatches(r) && (!family || r.family === family))).length);});
+  $('#backend').value = state.backend==='ptx'?'ptx':state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
+  $('#include-unknown').checked=state.includeUnknown;
+  $('#coverage').textContent=state.view==='report'?'返回指令':'说明 / 覆盖';
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.ccecLayer==='wrappers'?opModel?.record_layers[r.id]?.layer==='wrapper':r.op) && compatibilityMatches(r) && (!family || r.family === family))).length);});
   document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
@@ -111,6 +104,7 @@ function syncControls() {
   document.querySelectorAll('[data-family]').forEach(b => {b.classList.toggle('active',b.dataset.family === state.family);b.setAttribute('aria-pressed',String(b.dataset.family === state.family));});
 }
 function render(revealSelection = false) {
+  if(state.backend==='ccec')fixedA5();
   document.body.classList.toggle('reading-ptx',isPtxReading());
   $('#reader-content').hidden = !isPtxReading();
   for(const el of document.querySelectorAll('.list-pane > .list-summary,.list-pane > .table-scroll,.list-pane > #load-status')) el.hidden=isPtxReading();
@@ -119,11 +113,11 @@ function render(revealSelection = false) {
   window.scrollTo(0,0);
   const report = state.view === 'report';
   $('#catalog-view').hidden = report;$('#report').hidden = !report;
-  $('#family-section').hidden = !['interfaces','records'].includes(state.view);$('#mobile-family-label').hidden = !['interfaces','records'].includes(state.view);
-  $('#page-title').textContent = viewLabels()[state.view];
+  $('#family-section').hidden = state.backend==='ptx'?state.view!=='interfaces':false;$('#mobile-family-label').hidden = state.backend==='ptx'?state.view!=='interfaces':false;
+  $('#page-title').textContent = viewLabels()[state.view] || '来源详情';
   $('.toolbar').hidden = report;
   document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : state.view==='interfaces'?'op / builtin':'声明 / 名称';
-  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : '域';
+  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : '950 条件';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
   document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : state.view==='interfaces'?'形式':'声明';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
@@ -138,7 +132,7 @@ function render(revealSelection = false) {
     const score = g => g.name.toLowerCase() === query ? 0 : g.name.toLowerCase().startsWith(query) ? 1 : g.name.toLowerCase().includes(query) ? 2 : 3;
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
-  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : `${fmt(visible.length)} 个名称 · ${fmt(matches.length)} 条记录`;
+  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : `${fmt(visible.length)} 个${state.view==='wrappers'?'接口':'名称'} · ${fmt(matches.length)} 条记录`;
   const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : state.family;
   $('#progress-scope').textContent = ptxScopeLabel || (state.query || state.group || state.file || state.architecture || state.deprecation || state.proof || state.support ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);
@@ -161,7 +155,7 @@ function rowHTML(groups) {
     const selected = g.items.some(r => r.id === state.selected);
     const classification = g.items[0].knowledge ? g.family : state.view === 'definitions' ? kinds[g.items[0].kind] : g.family;
     const qualified = [g.items[0].namespace,g.name].filter(Boolean).join('::');
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : shortGroup[g.group] || g.group)}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (g.items[0].op.forms.length || '—') : g.items.length}</td></tr>`;
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : a5GroupLabel(g.items))}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items[0].op ? (g.items[0].op.forms.length || '—') : g.items.length}</td></tr>`;
   }).join('');
 }
 function updateLoadStatus() {
@@ -347,16 +341,7 @@ function sourceContent(r) {
 function experimentsContent() {
   return `<h3>尚未开展设备实验</h3><p>当前依据来自头文件静态提取。本条接口尚无编译、运行正确性或性能记录。</p><dl class="detail-meta"><dt>静态声明</dt><dd>已提取，来源可追溯</dd><dt>编译验证</dt><dd>未执行</dd><dt>运行验证</dt><dd>未执行</dd><dt>性能测量</dt><dd>未执行</dd></dl><div class="callout">后续实验将附目标设备、完整工具链版本、样例、执行命令与原始结果。</div>`;
 }
-function renderReport() {
-  if (state.backend === 'ptx') {renderKnowledgeReport();return;}
-  const unresolved = data.report.unresolved;
-  const verified = data.source.package_verified;
-  const packageNote = verified ? '原包内 ' + data.files.length + ' 个扫描头文件与数据源完全一致' : '原始安装包未核对';
-  const packageProof = verified ? `<h2>安装包校验</h2><p>直接读取原包及内层编译器归档，未执行安装脚本。校验范围为本次扫描的 ${data.files.length} 个头文件，不代表完整工具链或设备行为验证。</p><dl class="detail-meta"><dt>原包</dt><dd><code>${esc(data.source.package_name)}</code></dd><dt>SHA-256</dt><dd><code>${esc(data.source.package_sha256)}</code></dd><dt>编译器包</dt><dd><code>${esc(data.source.package_verification.compiler_package)}</code></dd><dt>SHA-256</dt><dd><code>${esc(data.source.package_verification.compiler_sha256)}</code></dd></dl>` : '';
-  $('#report').innerHTML = `<div class="report-intro"><span><strong>${data.files.length}</strong>扫描文件</span><span><strong>${fmt(records.filter(isInterface).length)}</strong>接口声明记录</span><span><strong>${unresolved.length}</strong>待处理项</span><span><strong>0</strong>设备实验</span></div><div class="callout">已安装工具链 ${esc(data.version)} · ${packageNote}。当前为静态接口索引，不宣称硬件指令全集或设备支持。记录数包含重载、条件分支和重复声明。</div>${packageProof}<h2>扫描文件与来源校验</h2><div class="report-table-wrap"><table class="report-table"><thead><tr><th>文件</th><th>大小</th><th>SHA-256</th></tr></thead><tbody>${data.files.map(f => `<tr><td><code>${esc(f.path)}</code></td><td>${fmt(f.bytes)} B</td><td class="hash"><code>${f.sha256}</code></td></tr>`).join('')}</tbody></table></div><h2>待处理项 · ${unresolved.length}</h2><p>以下结构未被提取器可靠识别，保留位置和原文；不计为成功解析接口。</p>${unresolved.map(e => `<details><summary><code>${esc(e.file)}:${e.line}</code> · ${esc(e.reason)}</summary><pre>${esc(e.text)}</pre></details>`).join('') || '<p>本轮未报告未解析结构；这不等于完成硬件支持验证。</p>'}<h2>范围边界</h2><ul><li>条件表达式原样保存，未求值为设备支持矩阵。</li><li>函数宏支持参数替换、可变参数和 token paste；对象宏保持符号形式。</li><li>包含关系已盘点，外部标准库与运行时依赖未递归提取。</li><li>函数体内的条件分支仅保存文本，不代表实际执行路径。</li><li>${verified ? "原包与已扫描头文件一致性已核验；未校验整个 Toolkit 的所有文件。" : "原始 .run 包与安装目录一致性尚未核验。"}</li><li>编译、运行和性能验证尚未开展。</li></ul><h2>排除文件</h2>${data.report.excluded_files.map(f => `<p><code>${esc(f.path)}</code> · AI CPU NEON，位于 AI Core 范围之外。</p>`).join('')}${(data.report.excluded_records || []).map(r => `<p><code>${esc(r.name)}</code> · ${esc(sourceLabel(r.source))} · PTO 专用封装，排除出指令接口范围。</p>`).join('')}<h2>包含关系</h2><div class="report-table-wrap"><table class="report-table"><thead><tr><th>来源</th><th>包含文件</th><th>条件</th></tr></thead><tbody>${data.report.includes.map(i => `<tr><td><code>${esc(i.file)}:${i.line}</code></td><td><code>${esc(i.name)}</code></td><td><code>${esc(i.conditions.join(' && '))}</code></td></tr>`).join('')}</tbody></table></div><h2>尚未关联到接口的 builtin 名称</h2><p>原始文本发现 ${fmt(data.report.raw_builtin_names.length)} 个名称，其中 ${fmt(data.report.unlinked_builtin_names.length)} 个未直接关联到接口。包含宏拼接前缀及辅助函数引用，不能作为额外指令数量。</p><details><summary>展开名称列表</summary><pre>${esc(data.report.unlinked_builtin_names.join('\n'))}</pre></details>`;
-  $('#report').insertAdjacentHTML('afterbegin',opReport()+staticReport());
-  wireOpLinks($('#report'));
-}
+function renderReport() {if(state.backend==='ccec')renderA5Report();else renderKnowledgeReport();}
 function initPanelResize() {
   const root = document.documentElement, storageKey = 'cce-ops.panel-widths.v1';
   const preferences = {sidebar:null,detail:null};
@@ -417,21 +402,23 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function reset() {if(state.backend==='ccec')state.view=state.ccecLayer;state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
 $('#download').onclick = download;
-$('#backend').onchange = e => {state.backend=e.target.value;configureBackend();state.view=state.backend==='ptx'?'overview':'interfaces';state.ptxTarget='sm_103a';reset();if(state.backend === 'ccec'){state.chip='Ascend950PR_9579';state.architecture='__NPU_ARCH__=3510';state.availability='possible';render();}};
+$('#backend').onchange=e=>{state.backend=e.target.value==='ptx'?'ptx':'ccec';state.ccecLayer=e.target.value==='ccec-intrinsics'?'interfaces':'wrappers';state.includeUnknown=false;configureBackend();state.view=state.backend==='ptx'?'overview':state.ccecLayer;state.ptxTarget='sm_103a';reset();};
+$('#include-unknown').onchange=e=>{state.includeUnknown=e.target.checked;state.selected='';render();};
+$('#coverage').onclick=()=>switchView(state.view==='report'?state.ccecLayer:'report');
 $('#ptx-target').onchange=e=>{state.ptxTarget=e.target.value;render();};
 $('#ptx-support').onchange = e => {state.support=e.target.value;state.selected='';render();};
-$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
-for (const key of ['group','file','chip','architecture','availability','deprecation','proof']) $('#' + key).onchange = e => {state[key]=e.target.value;if(key === 'proof')state.availability='';if (key === 'chip') {state.proof='';const t = data.compatibility.chip_mappings.find(t => t.chip === state.chip);state.architecture = t ? '__NPU_ARCH__=' + t.npu_arch : '';state.availability = t ? 'possible' : '';}if (key === 'architecture') {state.proof='';state.availability = state.architecture ? 'possible' : '';state.chip = '';}state.selected='';render();};
+$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(state.backend==='ccec')state.view=state.ccecLayer;if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
+for(const key of ['group','file'])$('#'+key).onchange=e=>{state[key]=e.target.value;state.selected='';render();};
 $('#reset').onclick = reset;$('#empty-reset').onclick = reset;
 $('#mobile-view').onchange = e => switchView(e.target.value);
-$('#mobile-family').onchange = e => {state.family=e.target.value;state.selected='';render();};
+$('#mobile-family').onchange = e => {if(state.backend==='ccec')state.view=state.ccecLayer;state.family=e.target.value;state.selected='';render();};
 $('.views').onclick = e => {const b=e.target.closest('[data-view]');if(b) switchView(b.dataset.view);};
-$('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){state.family=b.dataset.family;state.selected='';render();}};
+$('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){if(state.backend==='ccec')state.view=state.ccecLayer;state.family=b.dataset.family;state.selected='';render();}};
 $('#rows').addEventListener('click',e => {
   const button = e.target.closest('[data-id]');if (!button) return;
   if(state.backend==='ptx'){openPtxEntry(button.dataset.id);return;}
@@ -440,9 +427,7 @@ $('#rows').addEventListener('click',e => {
   if (mobile.matches) {readingDetail=true;$('#detail').scrollIntoView({block:'start'});$('#detail').focus({preventScroll:true});}
   else $('#detail').focus({preventScroll:true});
 });
-document.addEventListener('click',e => {if (!e.target.closest('.compatibility-menu')) $('.compatibility-menu').open = false;});
 document.addEventListener('keydown',e => {
-  if (e.key === 'Escape' && $('.compatibility-menu').open) {$('.compatibility-menu').open = false;$('#compatibility-summary').focus();return;}
   if (e.key === '/' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName) && state.view !== 'report') {e.preventDefault();$('#search').focus();}
   if (e.key === 'Escape' && document.activeElement === $('#search')) {reset();$('#search').focus();}
 });

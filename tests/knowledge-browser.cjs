@@ -49,7 +49,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  await page.fill('#search','');
  await page.locator('[data-view="all"]').click();assert.match(await page.locator('#result-count').innerText(),/743/);
  await page.locator('[data-view="report"]').click();assert.match(await page.locator('#report').innerText(),/221 \/ 221/);
- await page.selectOption('#backend','ccec');await page.locator('[data-view="topics"]').click();assert.match(await page.locator('#result-count').innerText(),/8/);
+ await page.selectOption('#backend','ccec');await page.locator('#coverage').click();await page.locator('#report summary').filter({hasText:'相关知识说明'}).click();await page.locator('#report [data-op-ref]').first().click();
  await page.locator('#tab-experiments').click();assert.match(await page.locator('#detail').innerText(),/Huawei Ascend/);
  await page.locator('#tab-definition').click();await page.locator('#detail [data-knowledge-ref]').first().click();assert.ok(await page.locator('#overload').count());
  await shot('ackb-ccec-1440.png');

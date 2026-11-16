@@ -38,7 +38,7 @@ def build(source, output):
         knowledge['ccec']['static_support'] = web_payload(static, support)
     encoded = json.dumps(knowledge, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     page = page.replace('/*__KNOWLEDGE__*/', encoded)
-    page = page.replace('/*__SCRIPT__*/', (ROOT / 'web/knowledge.js').read_text() + '\n' + (ROOT / 'web/ptx-reader.js').read_text() + '\n' + (ROOT / 'web/ccec-static.js').read_text() + '\n' + (ROOT / 'web/ccec-ops.js').read_text() + '\n' + (ROOT / 'web/app.js').read_text())
+    page = page.replace('/*__SCRIPT__*/', (ROOT / 'web/knowledge.js').read_text() + '\n' + (ROOT / 'web/ptx-reader.js').read_text() + '\n' + (ROOT / 'web/ccec-static.js').read_text() + '\n' + (ROOT / 'web/ccec-ops.js').read_text() + '\n' + (ROOT / 'web/ccec-a5.js').read_text() + '\n' + (ROOT / 'web/app.js').read_text())
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(page)
     print(f'Built {output} ({output.stat().st_size:,} bytes). Open directly in a browser.')

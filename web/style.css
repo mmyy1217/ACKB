@@ -217,21 +217,11 @@ noscript { display: block; padding: 12px; }
   * { scroll-behavior: auto !important; }
 }
 
-.compatibility-menu { position: relative; flex-shrink: 0; font-size: 11px; }
-.compatibility-menu > summary { cursor: pointer; padding: 3px 5px; border: 1px solid var(--input-line); border-radius: var(--radius); }
-.compatibility-panel { position: absolute; right: 0; top: 30px; width: 320px; max-width: calc(100vw - 20px); padding: 8px; background: var(--surface); border: 1px solid var(--line); }
-.compatibility-panel label { display: grid; grid-template-columns: 64px minmax(0,1fr); align-items: center; gap: 6px; margin-bottom: 4px; }
-.compatibility-panel select { width: 100%; min-width: 0; height: 26px; background: var(--surface); border: 1px solid var(--input-line); font-size: 11px; }
-.compatibility-panel p { margin: 6px 0 0; color: var(--muted); font-size: 10px; }
-@media (max-width:800px) { .compatibility-panel { position: fixed; top: 38px; right: 8px; } }
 body { overflow-anchor: none; }
 
-.topbar .search, .topbar select, .topbar .quiet-button, .compatibility-menu > summary { border-radius: 6px; }
-.compatibility-panel { border-radius: 8px; }
-@media (min-width:801px) { .compatibility-panel { left: 0; right: auto; } }
+.topbar .search, .topbar select, .topbar .quiet-button { border-radius: 6px; }
 @media (max-width:800px) {
   .toolbar .search { order: 2; }
-  .toolbar .compatibility-menu { order: 1; }
   .toolbar .filter { flex: 1 1 36%; }
 }
 /* Backend navigation shares the compact technical workspace. */
@@ -338,3 +328,5 @@ body { overflow-anchor: none; }
  .category-brief { padding:8px 9px; }
  .qualifier-table td:first-child { width:auto; }
 }
+
+#include-unknown { accent-color: var(--ink); }
