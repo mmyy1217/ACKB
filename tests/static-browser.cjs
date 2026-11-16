@@ -1,0 +1,40 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs/promises');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
+(async()=>{
+ const browser=await chromium.launch({executablePath:process.env.CCE_OPS_CHROME,headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[],network=[];
+ page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
+ const url=pathToFileURL(path.resolve('dist/index.html')).href;
+ await page.goto(url);await page.waitForSelector('#rows .row-button');
+ await page.fill('#search','copy_gm_to_cbuf_align_v2');
+ assert.match(await page.locator('.static-evidence').innerText(),/架构分支有引用/);
+ await page.locator('.static-evidence details').first().locator('summary').click();
+ assert.match(await page.locator('.static-evidence').innerText(),/ASCEND_IS_AIC/);
+ assert.match(await page.locator('.static-evidence').innerText(),/kernel_operator_data_copy_base_impl/);
+ assert.match(await page.locator('.static-evidence').innerText(),/SHA-256/);
+ for(const width of [1440,1024,390,320]){
+  await page.setViewportSize({width,height:950});await page.evaluate(()=>scrollTo(0,0));
+  await page.screenshot({path:`.impeccable/review/ccec-static-${width}.png`,fullPage:true});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`overflow ${width}`);
+ }
+ await page.setViewportSize({width:1440,height:950});await page.fill('#search','');
+ await page.locator('#compatibility-summary').click();await page.selectOption('#proof','source_conflict');
+ assert.equal(await page.locator('#availability').inputValue(),'');
+ assert.ok(await page.locator('#rows .row-button').count()>0);
+ assert.match(await page.locator('.static-evidence').innerText(),/声明排除但同名形式有引用/);
+ const deep=page.url();await page.reload();assert.equal(page.url(),deep);assert.equal(await page.locator('#proof').inputValue(),'source_conflict');
+ const event=page.waitForEvent('download');await page.locator('#download').click();
+ const payload=JSON.parse(await fs.readFile(await (await event).path(),'utf8'));
+ assert.equal(payload.selection.proof,'source_conflict');assert.equal(payload.static_evidence.architecture,'3510');
+ assert.equal(payload.static_evidence.records.length,446);
+ assert.ok(payload.static_evidence.records.every(r=>r.state==='source_conflict'));
+ await page.locator('#compatibility-summary').click();await page.selectOption('#architecture','__CCE_AICORE__=220');
+ assert.equal(await page.locator('#proof').isDisabled(),true);assert.equal(await page.locator('#proof').inputValue(),'');
+ await page.locator('#compatibility-summary').click();await page.locator('[data-view="report"]').click();
+ assert.match(await page.locator('#report').innerText(),/CCEC 源码架构审计/);
+ assert.deepEqual(errors,[]);assert.deepEqual(network,[]);
+ await browser.close();console.log('PASS: static architecture proofs, conflict filter, deep links, exports, evidence traces and responsive offline views');
+})().catch(e=>{console.error(e);process.exit(1);});

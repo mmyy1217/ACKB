@@ -27,3 +27,7 @@
 ## PTX 的阅读顺序
 
 先用 `topics` 浏览 15 个学习主题，从 `learn_overview` 进入执行模型和存储，再读指令与完整程序。`get` 支持主题 ID 和官方章节锚点；指令包含官方语法及当前目标评估。默认 B300 / `sm_103a`，需要基础或 family 目标时显式选择。以 `target_assessment.target` 确认当前目标，不能借用原始文件中历史 `sm_89` 结论。原创解释和教学 kernel 全部未编译、未运行；它们帮助理解，不是可直接用于 codegen 的完备约束证明。
+
+## CCEC 支持判定的追踪
+
+遇到待确认，先对返回的记录 ID 查询 `support`，检查每个条件的 missing_macros，以及 AscendC 引用中的 core_guards 和 incoming_include_edges。目录提示只用于排序，名称引用不证明具体重载接受性；不得把 support=unverified 改写成支持。编译探针失败也必须先区分环境、探针与目标限制。详见 [支持证据追踪](ccec-support.md)。

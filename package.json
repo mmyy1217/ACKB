@@ -2,6 +2,10 @@
   "name": "ackb",
   "version": "0.1.0",
   "private": true,
-  "scripts": { "test:browser": "node tests/browser.cjs && node tests/compatibility-browser.cjs && node tests/knowledge-browser.cjs" },
-  "devDependencies": { "playwright": "1.65.0" }
+  "scripts": {
+    "test:browser": "node tests/browser.cjs && node tests/compatibility-browser.cjs && node tests/knowledge-browser.cjs && node tests/static-browser.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.65.0"
+  }
 }

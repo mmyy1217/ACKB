@@ -9,6 +9,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from verify_package import archive_stream, verify
+from verify_static_package import compare_archive
 
 
 def makeself(entries):
@@ -50,6 +51,16 @@ class PackageVerificationTests(unittest.TestCase):
             self.assertFalse(json.loads(dataset.read_text())['source']['package_verified'])
             report = json.loads((root / 'artifacts/verification.json').read_text())
             self.assertEqual(report['mismatched'], ['sample.h'])
+
+    def test_ascendc_nested_hashes_preserve_paths_and_missing_files(self):
+        with TemporaryDirectory() as directory:
+            nested = Path(directory) / 'sources.run'
+            nested.write_bytes(makeself({'./x86_64-linux/asc/impl/a.h': b'header',
+                                        './unrelated/a.h': b'other'}))
+            expected = {'x86_64-linux/asc/impl/a.h': 'expected', 'missing.h': 'expected'}
+            actual = compare_archive(nested, expected)
+            self.assertEqual(actual, {'x86_64-linux/asc/impl/a.h': hashlib.sha256(b'header').hexdigest()})
+            self.assertEqual(set(expected) - actual.keys(), {'missing.h'})
 
     def test_non_makeself_input_is_rejected(self):
         with TemporaryDirectory() as directory:

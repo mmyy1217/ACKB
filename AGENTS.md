@@ -112,3 +112,21 @@ python scripts/query.py --backend ptx get tcgen05-mma-instructions-mma --archite
 ```
 
 GitHub Pages 通过 main 上的 `.github/workflows/pages.yml` 构建 `dist/` 并部署；无需提交 dist。线上入口 https://mmyy1217.github.io/ACKB/ 。推送和发布仍须遵循本次用户授权边界；不得把自动部署流程视为未来发布授权。
+
+## CCEC 架构支持追踪
+
+静态判定口径与可选编译边界见 [支持证据追踪](docs/ccec-support.md)。只读提取、引用分页与矩阵：
+
+```sh
+python scripts/ccec_support.py extract --toolkit "$CCE_OPS_TOOLKIT"
+python scripts/ccec_static.py build
+python scripts/ccec_static.py validate
+python scripts/ccec_support.py report --chip Ascend950PR_9579
+python scripts/query.py support 960c673e040dc702bc0a --chip Ascend950PR_9579 --core dav-c310-cube
+python scripts/ccec_support.py get 960c673e040dc702bc0a --offset 5 --limit 5
+python scripts/ccec_support.py matrix 960c673e040dc702bc0a
+python scripts/verify_static_package.py --package "$CCE_OPS_PACKAGE" --work-dir ../work/experiments/ackb/static-package-verification
+python scripts/build.py
+```
+
+`ccec_probe.py run` 仅在已授权远程编译机运行，不能在本地执行；完整参数见 `--help`。不运行生成的 kernel。远端二进制、版本元数据和 23 个资源头文件哈希不匹配时拒绝执行，不自动升级远端环境。

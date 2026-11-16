@@ -51,3 +51,7 @@ AI 查询不沿用网页的默认芯片。未明确选择目标时，条件结�
 ## ACKB 后端扩展
 
 本文件描述的 CCEC 声明协议及稳定 ID 保持兼容。新增 PTX 和 CCEC 主题/builtin 索引使用独立的 `ackb.knowledge-query.v1` 信封，范围与字段见 [知识索引](knowledge.md)。两种协议不能混用支持状态或假定 ID 可互换。
+
+## 支持证据查询
+
+新增 `support` 操作，身份和 chip/core 参数沿用 `get`，返回声明条件、缺失宏、被忽略的声明保护宏、AscendC 名称引用、所在核保护块与入口包含边。引用只匹配名称，不完成重载解析；当前 support 固定为 unverified。信封保留 cce-ops.query.v1，新增 support_evidence_sha256。独立追踪工具支持引用分页及全部 74 个芯片配置的条件与源码证据矩阵；static-support.json 另保存全量架构判定、来源哈希与缺失宏审计，support-package.json 保存 1,608 个扫描源码文件的原包校验。命令见 AGENTS，边界见 [支持证据追踪](ccec-support.md)。

@@ -11,7 +11,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {backend:'ccec',ptxTarget:'sm_103a',support:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {backend:'ccec',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -24,7 +24,7 @@ function saveHash(replace = true) {
   if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
   if (state.support) p.set('support',state.support);
   if (state.view !== 'interfaces') p.set('view',state.view);
-  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
+  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
   const target = '#' + p.toString();
   if (location.hash !== target) history[replace ? 'replaceState' : 'pushState'](null,'',target);
 }
@@ -35,7 +35,7 @@ function readHash() {
   state.support = Object.hasOwn(supportLabels,p.get('support')) ? p.get('support') : '';
   configureBackend();
   state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'ptx' ? 'overview' : 'interfaces';
-  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation']) state[key] = p.get(key) || '';
+  for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof']) state[key] = p.get(key) || '';
   if (state.backend === 'ccec' && !location.hash && data.compatibility.chip_mappings.some(t => t.chip === 'Ascend950PR_9579')) {state.chip = 'Ascend950PR_9579';state.availability = 'possible';}
   const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
   if (target) state.architecture = '__NPU_ARCH__=' + target.npu_arch;
@@ -43,6 +43,7 @@ function readHash() {
   if (!data.compatibility.profiles.some(t => t.id === state.architecture)) state.architecture = '';
   if (!['','possible','matches','excluded','unknown'].includes(state.availability)) state.availability = '';
   if (!['','marked','conditional','unmarked'].includes(state.deprecation)) state.deprecation = '';
+  if(!ccecStatic?.labels[state.proof] || !staticArch())state.proof='';
   state.selected = p.get('r') || '';
   if (!p.has('view') && byId.has(state.selected)) state.view = recordView(byId.get(state.selected));
   state.limit = BATCH_SIZE;
@@ -64,7 +65,7 @@ async function copyText(value) {
 }
 function download() {
   if (state.backend === 'ptx' || state.view === 'topics') return downloadKnowledge();
-  const blob = new Blob([JSON.stringify({...data, records: filtered(), selection: {view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation}, counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
+  const blob = new Blob([JSON.stringify({...data, records: filtered(), selection: {view:state.view,family:state.family,query:state.query,group:state.group,file:state.file,chip:state.chip,architecture:state.architecture,availability:state.availability,deprecation:state.deprecation,proof:state.proof},static_evidence:staticExport(filtered()), counts: filtered().reduce((a,r) => (a[r.kind]=(a[r.kind] || 0)+1,a),{})},null,2)],{type:'application/json;charset=utf-8'});
   const url = URL.createObjectURL(blob), a = document.createElement('a');
   a.href = url; a.download = `ackb-ccec-${data.version}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
 }
@@ -80,7 +81,7 @@ function makeGroups(items) {
 }
 function compatibilityMatches(r) {
   if (r.knowledge) return !state.support || (r.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown') === state.support;
-  return (!state.deprecation || r.deprecation.status === state.deprecation) &&
+  return (!state.proof || staticState(r) === state.proof) && (!state.deprecation || r.deprecation.status === state.deprecation) &&
     (!state.architecture || !state.availability || (state.availability === 'possible' ? r.compatibility.profiles[state.architecture] !== 'excluded' : r.compatibility.profiles[state.architecture] === state.availability));
 }
 function filtered() {
@@ -91,8 +92,9 @@ function syncControls() {
   $('#backend').value = state.backend;$('#ptx-support').value = state.support;
   const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
   $('#core-targets').textContent = target ? [...new Set(Object.values(target.cores))].join(' / ') : '先选择芯片';
-  for (const key of ['chip','architecture','availability','deprecation']) $('#' + key).value = state[key];
+  for (const key of ['chip','architecture','availability','deprecation','proof']) $('#' + key).value = state[key];
   $('#availability').disabled = !state.architecture;
+  $('#proof').disabled = !staticArch();
   $('#compatibility-summary').textContent = state.chip ? state.chip.replace(/^Ascend/, '') : state.architecture || state.deprecation ? '架构 / 弃用 · 已选' : '架构 / 弃用';
   document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(makeGroups(records.filter(r => isInterface(r) && compatibilityMatches(r) && (!family || r.family === family))).length);});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
@@ -313,7 +315,7 @@ function compatibilityContent(r) {
   const labels = {matches:'条件符合',excluded:'条件排除',unknown:'待确认'};
   const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
   const result = state.architecture ? `${state.architecture}：${labels[r.compatibility.profiles[state.architecture]] || '待确认'}` : '未选择架构条件';
-  return `<h3>架构与弃用</h3>${target ? `<p>${esc(target.chip)} · ${esc(target.aic_version)} · ${esc([...new Set(Object.values(target.cores))].join(' / '))}</p><details><summary>芯片映射来源（安装目录，未核验原包）</summary><p class="condition">${esc(target.source.file)} [version]</p><p class="condition">SHA-256 ${esc(target.source.sha256)}</p></details>` : ''}<p class="condition">${esc(result)}</p><p>${r.deprecation.status === 'conditional' ? '条件性弃用标记（需核对宏分支）' : r.deprecation.status === 'marked' ? '有弃用标记（本版本）' : '未检出弃用标记（不代表未弃用）'} · 编译未验证 · 运行未验证</p>${r.deprecation.evidence ? `<details><summary>弃用证据</summary><pre><code>${esc(r.deprecation.evidence)}</code></pre>${r.deprecation.macro_definitions.map(m => `<p>${esc(sourceLabel(m.source))}</p><pre><code>${esc(m.signature)}</code></pre>${m.conditions.map(c => `<div class="condition">${esc(c)}</div>`).join('')}`).join('')}</details>` : ''}<p>仅核对声明条件；包含路径与核目标的宏环境尚未验证。首次弃用版本及替代接口待确认。</p>`;
+  return `${staticContent(r)}<h3>架构与弃用</h3>${target ? `<p>${esc(target.chip)} · ${esc(target.aic_version)} · ${esc([...new Set(Object.values(target.cores))].join(' / '))}</p><details><summary>芯片映射来源（安装目录，未核验原包）</summary><p class="condition">${esc(target.source.file)} [version]</p><p class="condition">SHA-256 ${esc(target.source.sha256)}</p></details>` : ''}<p class="condition">${esc(result)}</p><p>${r.deprecation.status === 'conditional' ? '条件性弃用标记（需核对宏分支）' : r.deprecation.status === 'marked' ? '有弃用标记（本版本）' : '未检出弃用标记（不代表未弃用）'} · 编译未验证 · 运行未验证</p>${r.deprecation.evidence ? `<details><summary>弃用证据</summary><pre><code>${esc(r.deprecation.evidence)}</code></pre>${r.deprecation.macro_definitions.map(m => `<p>${esc(sourceLabel(m.source))}</p><pre><code>${esc(m.signature)}</code></pre>${m.conditions.map(c => `<div class="condition">${esc(c)}</div>`).join('')}`).join('')}</details>` : ''}<p>仅核对声明条件；包含路径与核目标的宏环境尚未验证。首次弃用版本及替代接口待确认。</p>`;
 }
 function definitionContent(r) {
   const conds = visibleConditions(r);
@@ -340,6 +342,7 @@ function renderReport() {
   const packageNote = verified ? '原包内 ' + data.files.length + ' 个扫描头文件与数据源完全一致' : '原始安装包未核对';
   const packageProof = verified ? `<h2>安装包校验</h2><p>直接读取原包及内层编译器归档，未执行安装脚本。校验范围为本次扫描的 ${data.files.length} 个头文件，不代表完整工具链或设备行为验证。</p><dl class="detail-meta"><dt>原包</dt><dd><code>${esc(data.source.package_name)}</code></dd><dt>SHA-256</dt><dd><code>${esc(data.source.package_sha256)}</code></dd><dt>编译器包</dt><dd><code>${esc(data.source.package_verification.compiler_package)}</code></dd><dt>SHA-256</dt><dd><code>${esc(data.source.package_verification.compiler_sha256)}</code></dd></dl>` : '';
   $('#report').innerHTML = `<div class="report-intro"><span><strong>${data.files.length}</strong>扫描文件</span><span><strong>${fmt(records.filter(isInterface).length)}</strong>接口声明记录</span><span><strong>${unresolved.length}</strong>待处理项</span><span><strong>0</strong>设备实验</span></div><div class="callout">已安装工具链 ${esc(data.version)} · ${packageNote}。当前为静态接口索引，不宣称硬件指令全集或设备支持。记录数包含重载、条件分支和重复声明。</div>${packageProof}<h2>扫描文件与来源校验</h2><div class="report-table-wrap"><table class="report-table"><thead><tr><th>文件</th><th>大小</th><th>SHA-256</th></tr></thead><tbody>${data.files.map(f => `<tr><td><code>${esc(f.path)}</code></td><td>${fmt(f.bytes)} B</td><td class="hash"><code>${f.sha256}</code></td></tr>`).join('')}</tbody></table></div><h2>待处理项 · ${unresolved.length}</h2><p>以下结构未被提取器可靠识别，保留位置和原文；不计为成功解析接口。</p>${unresolved.map(e => `<details><summary><code>${esc(e.file)}:${e.line}</code> · ${esc(e.reason)}</summary><pre>${esc(e.text)}</pre></details>`).join('') || '<p>本轮未报告未解析结构；这不等于完成硬件支持验证。</p>'}<h2>范围边界</h2><ul><li>条件表达式原样保存，未求值为设备支持矩阵。</li><li>函数宏支持参数替换、可变参数和 token paste；对象宏保持符号形式。</li><li>包含关系已盘点，外部标准库与运行时依赖未递归提取。</li><li>函数体内的条件分支仅保存文本，不代表实际执行路径。</li><li>${verified ? "原包与已扫描头文件一致性已核验；未校验整个 Toolkit 的所有文件。" : "原始 .run 包与安装目录一致性尚未核验。"}</li><li>编译、运行和性能验证尚未开展。</li></ul><h2>排除文件</h2>${data.report.excluded_files.map(f => `<p><code>${esc(f.path)}</code> · AI CPU NEON，位于 AI Core 范围之外。</p>`).join('')}${(data.report.excluded_records || []).map(r => `<p><code>${esc(r.name)}</code> · ${esc(sourceLabel(r.source))} · PTO 专用封装，排除出指令接口范围。</p>`).join('')}<h2>包含关系</h2><div class="report-table-wrap"><table class="report-table"><thead><tr><th>来源</th><th>包含文件</th><th>条件</th></tr></thead><tbody>${data.report.includes.map(i => `<tr><td><code>${esc(i.file)}:${i.line}</code></td><td><code>${esc(i.name)}</code></td><td><code>${esc(i.conditions.join(' && '))}</code></td></tr>`).join('')}</tbody></table></div><h2>尚未关联到接口的 builtin 名称</h2><p>原始文本发现 ${fmt(data.report.raw_builtin_names.length)} 个名称，其中 ${fmt(data.report.unlinked_builtin_names.length)} 个未直接关联到接口。包含宏拼接前缀及辅助函数引用，不能作为额外指令数量。</p><details><summary>展开名称列表</summary><pre>${esc(data.report.unlinked_builtin_names.join('\n'))}</pre></details>`;
+  $('#report').insertAdjacentHTML('afterbegin',staticReport());
 }
 function initPanelResize() {
   const root = document.documentElement, storageKey = 'cce-ops.panel-widths.v1';
@@ -401,8 +404,8 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {Object.assign(state,{support:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
-function switchView(view) {Object.assign(state,{support:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function reset() {Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
 $('#download').onclick = download;
@@ -410,7 +413,7 @@ $('#backend').onchange = e => {state.backend=e.target.value;configureBackend();s
 $('#ptx-target').onchange=e=>{state.ptxTarget=e.target.value;render();};
 $('#ptx-support').onchange = e => {state.support=e.target.value;state.selected='';render();};
 $('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
-for (const key of ['group','file','chip','architecture','availability','deprecation']) $('#' + key).onchange = e => {state[key]=e.target.value;if (key === 'chip') {const t = data.compatibility.chip_mappings.find(t => t.chip === state.chip);state.architecture = t ? '__NPU_ARCH__=' + t.npu_arch : '';state.availability = t ? 'possible' : '';}if (key === 'architecture') {state.availability = state.architecture ? 'possible' : '';state.chip = '';}state.selected='';render();};
+for (const key of ['group','file','chip','architecture','availability','deprecation','proof']) $('#' + key).onchange = e => {state[key]=e.target.value;if(key === 'proof')state.availability='';if (key === 'chip') {state.proof='';const t = data.compatibility.chip_mappings.find(t => t.chip === state.chip);state.architecture = t ? '__NPU_ARCH__=' + t.npu_arch : '';state.availability = t ? 'possible' : '';}if (key === 'architecture') {state.proof='';state.availability = state.architecture ? 'possible' : '';state.chip = '';}state.selected='';render();};
 $('#reset').onclick = reset;$('#empty-reset').onclick = reset;
 $('#mobile-view').onchange = e => switchView(e.target.value);
 $('#mobile-family').onchange = e => {state.family=e.target.value;state.selected='';render();};

@@ -48,7 +48,7 @@ def analyze(data, targets=(), evaluate_profiles=True):
     profiles = {}
     guards = {}
     for r in data['records']:
-        if r['kind'] == 'macro' and r['signature'].strip() == '#define ' + r['name'] and r['source']['line'] <= 30:
+        if r['kind'] == 'macro' and r['signature'].strip() == '#define ' + r['name'] and (r['source']['line'] <= 30 or (r['name'] == 'CCE_AICORE_INTRINSICS_ALIAS' and r['source']['file'] == 'cce_aicore_intrinsics.h' and '!defined(CCE_AICORE_INTRINSICS_ALIAS)' in r['conditions'])):
             guards.setdefault(r['source']['file'], set()).add('!defined(' + r['name'] + ')')
     for record in data['records']:
         for condition in record['conditions']:
@@ -72,10 +72,10 @@ def analyze(data, targets=(), evaluate_profiles=True):
         signature = record['signature']
         conditional = bool(re.search(r'\bDEPRECATED_AFTER_\w+\b', signature))
         marked = bool(re.search(r'\bDEPRECATED\b|__attribute__\s*\(\(\s*deprecated\b|\[\[\s*deprecated\b', signature))
-        record['compatibility'] = {'conditions': conditions, 'profiles': outcomes, 'compile': 'unverified', 'runtime': 'unverified'}
+        record['compatibility'] = {'conditions': conditions, 'ignored_guards': [c for c in record['conditions'] if c not in conditions], 'profiles': outcomes, 'compile': 'unverified', 'runtime': 'unverified'}
         definitions = [r for r in deprecated_macros if re.search(r'\b' + re.escape(r['name']) + r'\b', signature) and r['source']['file'] == record['source']['file']]
         record['deprecation'] = {'status': 'conditional' if conditional else 'marked' if marked else 'unmarked', 'evidence': signature if marked or conditional else None, 'since': None, 'replacement': None, 'macro_definitions': [{'signature': r['signature'], 'conditions': r['conditions'], 'source': r['source']} for r in definitions]}
-    data['compatibility'] = {'revision': 1, 'profiles': profiles, 'scope': 'declaration_conditions_only',
+    data['compatibility'] = {'revision': 2, 'profiles': profiles, 'scope': 'declaration_conditions_only',
                              'chip_mappings': list(targets), 'versions': [data['version']],
                              'limitations': ['Single-macro scenarios are not chip profiles.', 'Unknown macros stay unknown; unspecified macros are not assumed undefined.', 'Include reachability, body branches and compiler acceptance are not evaluated.', 'Unmarked does not mean not deprecated; first deprecated version is unknown.']}
     return data

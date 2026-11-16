@@ -68,3 +68,26 @@ class TargetMetadataTests(unittest.TestCase):
             entry.write_text('[version]\nSoC_version=Example\n')
             with self.assertRaisesRegex(ValueError, 'NpuArch'):
                 extract(root)
+
+class GuardRegressionTests(unittest.TestCase):
+    def test_late_alias_guard_is_not_a_chip_feature(self):
+        guard = '!defined(CCE_AICORE_INTRINSICS_ALIAS)'
+        define = {'kind': 'macro', 'name': 'CCE_AICORE_INTRINSICS_ALIAS',
+                  'signature': '#define CCE_AICORE_INTRINSICS_ALIAS', 'conditions': [guard],
+                  'source': {'file': 'cce_aicore_intrinsics.h', 'line': 489}}
+        alias = {'kind': 'interface', 'name': 'op', 'signature': 'void op(...)',
+                 'conditions': [guard, '__NPU_ARCH__ == 3510'],
+                 'source': {'file': 'cce_aicore_intrinsics.h', 'line': 500}}
+        analyze({'version': 'test', 'records': [define, alias]})
+        self.assertEqual(alias['compatibility']['profiles']['__NPU_ARCH__=3510'], 'matches')
+        self.assertEqual(alias['conditions'], [guard, '__NPU_ARCH__ == 3510'])
+        self.assertEqual(alias['compatibility']['ignored_guards'], [guard])
+
+    def test_guard_requires_matching_definition_and_source(self):
+        guard = '!defined(CCE_AICORE_INTRINSICS_ALIAS)'
+        alias = {'kind': 'interface', 'name': 'op', 'signature': 'void op(...)',
+                 'conditions': [guard, '__NPU_ARCH__ == 3510'],
+                 'source': {'file': 'other.h', 'line': 500}}
+        analyze({'version': 'test', 'records': [alias]})
+        self.assertEqual(alias['compatibility']['profiles']['__NPU_ARCH__=3510'], 'unknown')
+        self.assertEqual(alias['compatibility']['ignored_guards'], [])

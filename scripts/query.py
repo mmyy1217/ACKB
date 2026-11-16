@@ -3,6 +3,7 @@
 import argparse
 import contextlib
 import io
+import hashlib
 import json
 import sys
 
@@ -36,7 +37,7 @@ def parser():
         topic.add_argument('query', nargs='?', default='')
     targets = commands.add_parser('targets')
     targets.add_argument('--name', default='')
-    for command in ('search', 'get', 'relations'):
+    for command in ('search', 'get', 'relations', 'support'):
         sub = commands.add_parser(command)
         if command != 'search':
             sub.add_argument('identity')
@@ -123,13 +124,19 @@ def run(args):
     selected = db.select(query=getattr(args, 'query', ''), name=args.name, identity=getattr(args, 'identity', None),
                          builtin=args.builtin, kind=args.kind, signature=args.signature,
                          deprecation=args.deprecation, condition=args.condition, target=target)
-    if args.command == 'relations':
+    if args.command == 'support':
+        from ccec_support import Support
+        evidence = Support(db=db)
+        context['provenance']['support_evidence_sha256'] = hashlib.sha256(evidence.path.read_bytes()).hexdigest()
+        items = [evidence.record(r, target) for r in selected]
+    elif args.command == 'relations':
         items = [{'source_record_id': r['id'], **edge} for r in selected for edge in db.relations(r)]
     else:
         items = [db.summary(r, target) for r in selected]
         if args.command == 'get':
             for item, r in zip(items, selected):
                 item.update({'conditions': r['conditions'], 'evaluated_conditions': r['compatibility']['conditions'],
+                             'ignored_guards': r['compatibility']['ignored_guards'],
                              'parameters': r.get('parameters'), 'builtins': r['builtins'], 'macro_sources': db.macro_evidence(r),
                              'deprecation_evidence': r['deprecation'],
                              'semantics': {'status': 'unreviewed', 'parameter_meanings': None, 'alignment': None,

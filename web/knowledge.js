@@ -49,6 +49,7 @@ function configureBackend() {
   $('#file').innerHTML = '<option value="">全部源文件</option>' + data.files.map(f => `<option>${esc(f.path)}</option>`).join('');
   $('#chip').innerHTML = '<option value="">未指定芯片</option>' + data.compatibility.chip_mappings.map(t => `<option>${esc(t.chip)}</option>`).join('');
   $('#architecture').innerHTML = '<option value="">全部架构条件</option>' + data.compatibility.profiles.map(p => `<option value="${esc(p.id)}">${esc(p.label)}</option>`).join('');
+  $('#proof').innerHTML = '<option value="">全部源码证据</option>' + Object.entries(ccecStatic?.labels || {}).map(([value,label])=>`<option value="${esc(value)}">${esc(label)}</option>`).join('');
   $('#catalog-version').innerHTML = `<option>${esc(data.version)}</option>`;
   $('#version').textContent = ptx ? 'PTX ISA 9.4' : data.version;
   $('#footer-source').textContent = ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : `${data.files.length} 个源文件 · CANN ${data.version}`;

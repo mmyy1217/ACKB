@@ -208,7 +208,7 @@ const { chromium } = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.locator('#mobile-view').selectOption('interfaces');
     assert.equal(await page.locator('#resize-sidebar').isVisible(), false);
     const mobileCount = await page.locator('#rows tr').count();
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await page.locator('#load-status').scrollIntoViewIfNeeded();
     await page.waitForFunction(count => document.querySelectorAll('#rows tr').length > count, mobileCount);
     const beforeDetail = await page.locator('#rows tr').count();
     await page.locator('#rows .row-button').first().click();

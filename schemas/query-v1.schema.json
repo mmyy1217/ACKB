@@ -97,7 +97,8 @@
             "search",
             "get",
             "relations",
-            "evidence"
+            "evidence",
+            "support"
           ]
         }
       },

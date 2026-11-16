@@ -189,7 +189,7 @@ components:
 
 白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCEC 声明与 PTX 文档条目、条件和来源的核对。
 
-本文件记录 `web/style.css`、`web/index.html`、`web/app.js`、`web/knowledge.js` 和 `web/ptx-reader.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。
+本文件记录 `web/style.css`、`web/index.html`、`web/app.js`、`web/knowledge.js`、`web/ptx-reader.js` 和 `web/ccec-static.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。
 
 **Key Characteristics:**
 
@@ -269,6 +269,8 @@ PTX 条件为“全部状态 / 文档支持 / 部分形式 / 文档排除 / 待�
 统一顶栏使用原生 `details` / `summary` 折叠入口，默认关闭；入口为（11px）文字、内边距（3px 5px），沿用控件边框，圆角使用 `topbar-control`。展开面板继承白底、灰色细线边界与紧凑字号，圆角使用 `topbar-panel`，无投影；内边距由 `compatibility-panel` 定义。字段每行采用（64px）标签列与弹性控件列，列间距（6px）、行下间距（4px）；选择器高（26px）、字号（11px）。底部边界说明为（10px）灰色文字，顶部间距（6px）。
 
 首次打开且 URL 无 hash、数据中存在目标时，默认选择 `Ascend950PR_9579` 和“符合或待确认”，入口显示 `950PR_9579`；已有深链接保持其目标设置。入口在选中其他芯片时同样省略 `Ascend` 前缀。
+
+源码证据选择器沿用面板内的原生控件；未指定 NpuArch 时禁用。详情以文字说明静态状态，引用、声明宏与全部架构矩阵采用原生折叠块，路径、条件和哈希沿用现有等宽文字与浅灰底。报告沿用现有段落与告警折叠块；不增加颜色、图标或新的视觉令牌。
 
 核目标参考以只读 `output` 呈现，不制作可选筛选器。按 Escape 关闭并将焦点归还入口，点击面板外关闭；其余展开交互保留原生语义。条件、弃用和未验证边界使用文字说明，继承既有灰阶证据表达。
 
