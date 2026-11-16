@@ -69,3 +69,7 @@ CCEC 网页固定 950PR_9579，移除架构选择和冗余侧栏入口，默认�
 ## AscendC / CCE Dialect 合入修正
 
 加入两套双层索引与离线界面。修正函数体覆盖架构条件、参数形式截断、名称候选关系冒充确定映射、合成 LLVM 名称混计和查询 Schema 不匹配。保留所有声明形式及来源，新增分页 forms / unresolved 和对应回归；来源与限制见 [扩展索引](ascendc-dialect.md)。
+
+## LLVM IR 核心与统一首页
+
+已建立 CANN ELF 注册元数据、九个 Bitcode 模块声明、外部 Dialect lowering 引用的版本快照，接入分页查询、类型形式、来源矩阵、候选与缺口查询。首页含文字层级图和八个数据库链接。12 个 CANN 来源核对原包一致；厂商未知类型与未验证实验单独保留。后续补充正式 builtin lowering、函数体调用和逐目标编译验证，详见 [LLVM 核心](llvm-core.md)。

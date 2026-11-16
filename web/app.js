@@ -2,7 +2,7 @@
 const $ = selector => document.querySelector(selector);
 const data = JSON.parse($('#catalog-data').textContent);
 const opRecords = createOpRecords(data);
-const allRecords = [...opRecords, ...data.records, ...knowledgeRecords, ...ascendcRecords, ...dialectRecords];
+const allRecords = [...opRecords, ...data.records, ...knowledgeRecords, ...ascendcRecords, ...dialectRecords, ...llvmRecords];
 let records = data.records;
 const byId = new Map(allRecords.map(r => [r.id, r]));
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -12,7 +12,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {backend:'ccec',ccecLayer:'wrappers',ascendcLayer:'basic',dialectLayer:'ops',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {home:false,llvmScope:'a5-sources',llvmEvidence:'',backend:'ccec',ccecLayer:'wrappers',ascendcLayer:'basic',dialectLayer:'ops',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -21,7 +21,9 @@ const searchTexts = new Map(allRecords.map(r => [r.id,[r.name,r.signature,r.grou
 const fileMap = new Map(data.files.map(f => [f.path,f]));
 
 function saveHash(replace = true) {
+  if(state.home)return;
   const p = new URLSearchParams();
+  if(state.backend==='llvm'){p.set('backend','llvm');p.set('scope',state.llvmScope);if(state.llvmEvidence)p.set('evidence',state.llvmEvidence);if(state.includeUnknown)p.set('unknown','1');if(state.opForm)p.set('form',state.opForm);if(state.view==='report')p.set('view','report');}
   if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
   if(state.backend==='ccec'){p.set('layer',state.ccecLayer==='interfaces'?'intrinsics':'interfaces');if(state.includeUnknown)p.set('unknown','1');}
   if(state.backend==='ascendc'){p.set('backend','ascendc');p.set('layer',state.ascendcLayer);if(state.includeUnknown)p.set('unknown','1');}
@@ -37,14 +39,16 @@ function saveHash(replace = true) {
 }
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
+  state.home=!location.hash || location.hash==='#home';
+  state.llvmScope=p.get('scope')==='all'?'all':'a5-sources';state.llvmEvidence=p.get('evidence') || '';
   const rawBackend = p.get('backend');
-  state.backend = ['ptx','ascendc','cce-dialect'].includes(rawBackend) ? rawBackend : 'ccec';
+  state.backend = ['ptx','ascendc','cce-dialect','llvm'].includes(rawBackend) ? rawBackend : 'ccec';
   state.ptxTarget = ['sm_103','sm_103f','sm_103a'].includes(p.get('target')) ? p.get('target') : 'sm_103a';
   state.support = Object.hasOwn(supportLabels,p.get('support')) ? p.get('support') : '';
   state.ascendcLayer = p.get('layer') === 'capi' ? 'capi' : 'basic';
   state.dialectLayer = p.get('layer') === 'intrinsics' ? 'intrinsics' : 'ops';
   configureBackend();
-  state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'ptx' ? 'overview' : state.backend === 'ascendc' ? state.ascendcLayer : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops') : 'interfaces';
+  state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'llvm' ? 'llvm' : state.backend === 'ptx' ? 'overview' : state.backend === 'ascendc' ? state.ascendcLayer : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops') : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof']) state[key] = p.get(key) || '';
   state.includeUnknown=p.get('unknown')==='1';state.opForm=p.get('form') || '';state.opCaller=p.get('caller') || '';state.observedCall=p.get('call') || '';
   state.ccecLayer=p.get('layer')==='intrinsics' || p.get('view')==='interfaces'?'interfaces':'wrappers';
@@ -52,7 +56,8 @@ function readHash() {
   state.selected = p.get('r') || '';
   if (state.selected && byId.has(state.selected)) {
     const sel = byId.get(state.selected);
-    if (sel.backend === 'ascendc') {state.backend = 'ascendc'; state.ascendcLayer = sel.ascendcLayer; configureBackend(); state.view = recordView(sel);}
+    if (sel.backend === 'llvm') {state.backend='llvm';state.home=false;state.view=p.get('view')==='report'?'report':'llvm';if(sel.llvm.identity_status==='candidate_only')state.includeUnknown=true;if(!sel.llvm.a5_source_lead && sel.llvm.domain!=='ordinary_ir')state.llvmScope='all';configureBackend();}
+    else if (sel.backend === 'ascendc') {state.backend = 'ascendc'; state.ascendcLayer = sel.ascendcLayer; configureBackend(); state.view = recordView(sel);}
     else if (sel.backend === 'cce-dialect') {state.backend = 'cce-dialect'; state.dialectLayer = sel.dialectLayer; configureBackend(); state.view = recordView(sel);}
     else if (!p.has('view') || state.view==='interfaces' && !sel.op && !sel.knowledge) state.view = recordView(sel);
   }
@@ -76,11 +81,13 @@ async function copyText(value) {
   toast('已复制');
 }
 function activeLayerView() {
+  if(state.backend==='llvm')return 'llvm';
   if (state.backend === 'ascendc') return state.ascendcLayer === 'capi' ? 'capi' : 'basic';
   if (state.backend === 'cce-dialect') return state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops';
   return state.ccecLayer;
 }
 function download() {
+  if(state.backend==='llvm')return downloadLLVM();
   if (state.backend === 'ptx' || state.view === 'topics') return downloadKnowledge();
   if (state.backend === 'ascendc' || state.backend === 'cce-dialect') {
     const items = filtered().map(r => r.ascendc || r.dialectOp || r.dialectIntr || r);
@@ -102,13 +109,14 @@ function baseRecords() { if(state.backend==='ccec' && !['wrappers','interfaces',
 function makeGroups(items) {
   const groups = new Map();
   for (const r of items) {
-    const key = r.knowledge || r.op || r.ascendc || r.dialectOp || r.dialectIntr ? r.id : state.view==='wrappers' ? [r.namespace || '',r.name].join('|') : [r.group,r.namespace || '',r.name,r.kind].join('|');
+    const key = r.llvm || r.knowledge || r.op || r.ascendc || r.dialectOp || r.dialectIntr ? r.id : state.view==='wrappers' ? [r.namespace || '',r.name].join('|') : [r.group,r.namespace || '',r.name,r.kind].join('|');
     if (!groups.has(key)) groups.set(key,{key,name:r.name,group:r.group,family:r.family,items:[]});
     groups.get(key).items.push(r);
   }
   return [...groups.values()];
 }
 function compatibilityMatches(r) {
+  if(state.backend==='llvm')return llvmMatches(r);
   if(state.backend==='cce-dialect')return true;
   if(state.backend==='ascendc'){const st=r.compatibility?.profiles?.[A5_PROFILE] || 'matches';return state.includeUnknown ? st!=='excluded' : st==='matches';}
   if(state.backend==='ccec' && !['wrappers','interfaces'].includes(state.view))return true;
@@ -122,10 +130,11 @@ function filtered(ignoreCompatibility = false) {
   return baseRecords().filter(r => (ignoreCompatibility || compatibilityMatches(r)) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : ccecFamilyMatches(r,state.family))) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
-  $('#backend').value = state.backend==='ptx'?'ptx':state.backend==='ascendc'?(state.ascendcLayer==='capi'?'ascendc-capi':'ascendc'):state.backend==='cce-dialect'?(state.dialectLayer==='intrinsics'?'cce-dialect-intrinsics':'cce-dialect'):state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
+  $('#backend').value = state.backend==='llvm'?'llvm':state.backend==='ptx'?'ptx':state.backend==='ascendc'?(state.ascendcLayer==='capi'?'ascendc-capi':'ascendc'):state.backend==='cce-dialect'?(state.dialectLayer==='intrinsics'?'cce-dialect-intrinsics':'cce-dialect'):state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
   $('#include-unknown').checked=state.includeUnknown;
+  $('#llvm-scope').value=state.llvmScope;$('#llvm-evidence').value=state.llvmEvidence;
   $('#coverage').textContent=state.view==='report'?'返回指令':'说明 / 覆盖';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.backend==='ascendc'?recordView(r)===activeLayerView():state.backend==='cce-dialect'?recordView(r)===activeLayerView():state.ccecLayer==='wrappers'?ccecIsInterface(r):r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.backend==='llvm'?true:state.backend==='ascendc'?recordView(r)===activeLayerView():state.backend==='cce-dialect'?recordView(r)===activeLayerView():state.ccecLayer==='wrappers'?ccecIsInterface(r):r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
   document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
@@ -133,6 +142,7 @@ function syncControls() {
   document.querySelectorAll('[data-family]').forEach(b => {b.classList.toggle('active',b.dataset.family === state.family);b.setAttribute('aria-pressed',String(b.dataset.family === state.family));});
 }
 function render(revealSelection = false) {
+  if(syncHome())return;
   if(state.backend==='ccec' || state.backend==='ascendc')fixedA5();
   document.body.classList.toggle('reading-ptx',isPtxReading());
   $('#reader-content').hidden = !isPtxReading();
@@ -145,10 +155,10 @@ function render(revealSelection = false) {
   $('#family-section').hidden = state.backend==='ptx'?state.view!=='interfaces':false;$('#mobile-family-label').hidden = state.backend==='ptx'?state.view!=='interfaces':false;
   $('#page-title').textContent = viewLabels()[state.view] || '来源详情';
   $('.toolbar').hidden = report;
-  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
-  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
+  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'llvm' ? 'LLVM 名称 / IR 模型' : state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
+  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'llvm' ? '身份依据' : state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
-  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
+  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'llvm' ? '形式' : state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
   syncControls();syncPtxNavigation();
@@ -186,8 +196,8 @@ function rowHTML(groups) {
     const selected = g.items.some(r => r.id === state.selected);
     const classification = r0.knowledge ? g.family : state.view === 'definitions' ? kinds[r0.kind] : r0.transfer?.label || g.family;
     const qualified = [r0.namespace,g.name].filter(Boolean).join('::');
-    const col3 = state.backend === 'ptx' ? supportLabels[r0.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : state.backend === 'cce-dialect' ? (r0.dialectOp ? (loweringModeLabels[r0.dialectOp.lowering_mode] || r0.group) : r0.group) : a5GroupLabel(g.items);
-    const col4 = state.backend === 'ptx' ? esc(r0.knowledge.section_number || '—') : r0.dialectOp ? (r0.dialectOp.intrinsic_ids?.length || '—') : r0.dialectIntr ? (r0.dialectIntr.mappings?.length || 1) : r0.ascendc ? (r0.ascendc.overload_count || 1) : r0.op ? (scopedA5Op(r0.op).forms.length || '—') : g.items.length;
+    const col3 = r0.llvm ? llvmIdentities[r0.llvm.identity_status] : state.backend === 'ptx' ? supportLabels[r0.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : state.backend === 'cce-dialect' ? (r0.dialectOp ? (loweringModeLabels[r0.dialectOp.lowering_mode] || r0.group) : r0.group) : a5GroupLabel(g.items);
+    const col4 = r0.llvm ? (r0.llvm.form_ids.length || '—') : state.backend === 'ptx' ? esc(r0.knowledge.section_number || '—') : r0.dialectOp ? (r0.dialectOp.intrinsic_ids?.length || '—') : r0.dialectIntr ? (r0.dialectIntr.mappings?.length || 1) : r0.ascendc ? (r0.ascendc.overload_count || 1) : r0.op ? (scopedA5Op(r0.op).forms.length || '—') : g.items.length;
     return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${r0.id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}${directEntryIDs.has(r0.id)?' · 直连':''}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(col3)}</td><td class="number">${col4}</td></tr>`;
   }).join('');
 }
@@ -320,6 +330,7 @@ function visibleConditions(r) {
 function renderDetail() {
   const r = byId.get(state.selected), pane = $('#detail');
   if (!r) {pane.innerHTML = '<div class="empty detail-empty"><h2>选择条目，阅读详情</h2><p>调整左侧筛选后即可查看接口与来源。</p></div>';return;}
+  if (r.llvm) {renderLLVMDetail(r);return;}
   if (r.ascendc) {renderAscendcDetail(r);return;}
   if (r.dialectOp || r.dialectIntr) {renderDialectDetail(r);return;}
   if (r.op) {renderOpDetail(r);return;}
@@ -377,7 +388,7 @@ function sourceContent(r) {
 function experimentsContent() {
   return `<h3>尚未开展设备实验</h3><p>当前依据来自头文件静态提取。本条接口尚无编译、运行正确性或性能记录。</p><dl class="detail-meta"><dt>静态声明</dt><dd>已提取，来源可追溯</dd><dt>编译验证</dt><dd>未执行</dd><dt>运行验证</dt><dd>未执行</dd><dt>性能测量</dt><dd>未执行</dd></dl><div class="callout">后续实验将附目标设备、完整工具链版本、样例、执行命令与原始结果。</div>`;
 }
-function renderReport() {if(state.backend==='ccec')renderA5Report();else if(state.backend==='ascendc')renderAscendcReport();else if(state.backend==='cce-dialect')renderDialectReport();else renderKnowledgeReport();}
+function renderReport() {if(state.backend==='llvm')renderLLVMReport();else if(state.backend==='ccec')renderA5Report();else if(state.backend==='ascendc')renderAscendcReport();else if(state.backend==='cce-dialect')renderDialectReport();else renderKnowledgeReport();}
 function initPanelResize() {
   const root = document.documentElement, storageKey = 'cce-ops.panel-widths.v1';
   const preferences = {sidebar:null,detail:null};
@@ -438,30 +449,34 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {if(['ccec','ascendc','cce-dialect'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function reset() {state.llvmScope='a5-sources';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
+$('.skip-link').onclick=e=>{e.preventDefault();const target=state.home?$('#home-content'):$('#main');target.focus();target.scrollIntoView({block:'start'});};
 $('#download').onclick = download;
 $('#backend').onchange=e=>{
-  const val=e.target.value;
-  if(val==='ptx'){state.backend='ptx';}
+  state.home=false;const val=e.target.value;
+  if(val==='llvm'){state.backend='llvm';}
+  else if(val==='ptx'){state.backend='ptx';}
   else if(val==='ascendc' || val==='ascendc-capi'){state.backend='ascendc';state.ascendcLayer=val==='ascendc-capi'?'capi':'basic';}
   else if(val==='cce-dialect' || val==='cce-dialect-intrinsics'){state.backend='cce-dialect';state.dialectLayer=val==='cce-dialect-intrinsics'?'intrinsics':'ops';}
   else{state.backend='ccec';state.ccecLayer=val==='ccec-intrinsics'?'interfaces':'wrappers';}
   state.includeUnknown=false;configureBackend();state.view=state.backend==='ptx'?'overview':activeLayerView();state.ptxTarget='sm_103a';reset();
 };
+$('#llvm-scope').onchange=e=>{state.llvmScope=e.target.value;state.selected='';render();};
+$('#llvm-evidence').onchange=e=>{state.llvmEvidence=e.target.value;state.selected='';render();};
 $('#include-unknown').onchange=e=>{state.includeUnknown=e.target.checked;state.selected='';render();};
 $('#coverage').onclick=()=>switchView(state.view==='report'?activeLayerView():'report');
 $('#ptx-target').onchange=e=>{state.ptxTarget=e.target.value;render();};
 $('#ptx-support').onchange = e => {state.support=e.target.value;state.selected='';render();};
-$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(['ccec','ascendc','cce-dialect'].includes(state.backend))state.view=activeLayerView();if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
+$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(['ccec','ascendc','cce-dialect','llvm'].includes(state.backend))state.view=activeLayerView();if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
 for(const key of ['group','file'])$('#'+key).onchange=e=>{state[key]=e.target.value;state.selected='';render();};
 $('#reset').onclick = reset;$('#empty-reset').onclick = reset;
 $('#mobile-view').onchange = e => switchView(e.target.value);
-$('#mobile-family').onchange = e => {if(['ccec','ascendc','cce-dialect'].includes(state.backend))state.view=activeLayerView();state.family=e.target.value;state.selected='';render();};
+$('#mobile-family').onchange = e => {if(['ccec','ascendc','cce-dialect','llvm'].includes(state.backend))state.view=activeLayerView();state.family=e.target.value;state.selected='';render();};
 $('.views').onclick = e => {const b=e.target.closest('[data-view]');if(b) switchView(b.dataset.view);};
-$('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){if(['ccec','ascendc','cce-dialect'].includes(state.backend))state.view=activeLayerView();state.family=b.dataset.family;state.selected='';render();}};
+$('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){if(['ccec','ascendc','cce-dialect','llvm'].includes(state.backend))state.view=activeLayerView();state.family=b.dataset.family;state.selected='';render();}};
 $('#rows').addEventListener('click',e => {
   const button = e.target.closest('[data-id]');if (!button) return;
   if(state.backend==='ptx'){openPtxEntry(button.dataset.id);return;}
@@ -471,7 +486,7 @@ $('#rows').addEventListener('click',e => {
   else $('#detail').focus({preventScroll:true});
 });
 document.addEventListener('keydown',e => {
-  if (e.key === '/' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName) && state.view !== 'report') {e.preventDefault();$('#search').focus();}
+  if (!state.home && e.key === '/' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName) && state.view !== 'report') {e.preventDefault();$('#search').focus();}
   if (e.key === 'Escape' && document.activeElement === $('#search')) {reset();$('#search').focus();}
 });
 window.addEventListener('hashchange',() => {readHash();render(true);});

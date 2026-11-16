@@ -19,11 +19,11 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     page.on('pageerror', e => errors.push(e.message));
     page.on('request', r => { if (/^https?:/.test(r.url())) network.push(r.url()); });
     const url = pathToFileURL(path.join(root, 'dist/index.html')).href;
-    await page.goto(url);
+    await page.goto(url+'#layer=interfaces');
     await page.waitForSelector('#rows .row-button');
 
     assert.deepEqual(await page.locator('#backend option').allTextContents(), [
-      'CCEC 编程接口', 'CCEC Builtins', 'AscendC 高层 API', 'AscendC C / SIMT API',
+      'LLVM IR 目标核心', 'CCEC 编程接口', 'CCEC Builtins', 'AscendC 高层 API', 'AscendC C / SIMT API',
       'CCE Dialect 语义 Op', 'CCE Dialect → LLVM Intrinsics', 'PTX 虚拟指令集',
     ]);
     await page.selectOption('#backend', 'ccec-intrinsics');

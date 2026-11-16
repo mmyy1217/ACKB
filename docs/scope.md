@@ -52,3 +52,7 @@ AI CPU NEON、主机 x86 指令、运行时启动与调试辅助函数不计入 
 ## AscendC 与 CCE Dialect 扩展
 
 本轮经用户授权加入两个独立来源体系。索引不代表高层 API 全集；新后端的局部条件、完整形式、候选关系、未解析项与 AI 查询契约见 [扩展索引](ascendc-dialect.md)。CCEC 原有 builtin 身份和 PTX 数据保持不变。
+
+## LLVM IR 核心扩展
+
+用户已授权将 LLVM IR 目标能力层纳入核心范围：只读提取 CANN 编译器的注册元数据、Bitcode 模块声明与外部 lowering 线索；不做硬件 ISA 逆向。此前将 LLVM IR 仅作为后续附件的范围限制由本段扩展。完整边界见 [LLVM 核心](llvm-core.md)。

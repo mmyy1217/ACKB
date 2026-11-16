@@ -39,3 +39,7 @@ CCEC 页面固定 950 / A5，默认 `interfaces` 返回 368 个条件符合的�
 ## AscendC 与 CCE Dialect 扩展
 
 本轮经用户授权加入两个独立来源体系。索引不代表高层 API 全集；新后端的局部条件、完整形式、候选关系、未解析项与 AI 查询契约见 [扩展索引](ascendc-dialect.md)。CCEC 原有 builtin 身份和 PTX 数据保持不变。
+
+## LLVM IR 核心
+
+用 `--backend llvm` 查询 CANN 注册表、具体模块类型、上游关系与索引缺口。先读 [LLVM 核心](llvm-core.md)；不要把 `registered`、`c310_module_declaration` 或默认 A5 来源视图解释成设备支持。`forms` 和 `evidence` 独立分页。

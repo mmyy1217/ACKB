@@ -6,12 +6,13 @@
 
 ---
 
-AI 直接生成底层代码，需要知道目标的执行模型、地址空间、接口、架构条件与约束。ACKB 为这个过程提供可查询、有来源的知识和验证入口。以 Huawei Ascend CCEC 为主，PTX 为辅；先分别建立知识库，再研究两者的设计逻辑与差异。
+AI 直接生成底层代码，需要知道目标的执行模型、地址空间、接口、架构条件与约束。ACKB 为这个过程提供可查询、有来源的知识和验证入口。以 Huawei Ascend LLVM IR 目标层为核心，向上追踪 CCEC / AscendC / CCE Dialect，并独立建立 PTX；先分别建立知识库，再研究两者的设计逻辑与差异。
 
 ## 当前覆盖
 
 | 后端 | 索引范围 | 深度补充 |
 | --- | --- | --- |
+| LLVM IR 核心 | 12,363 个包内注册名称；535 种 Bitcode 声明类型；12 个来源文件已核对原包 | A5 来源视图、类型选择、工具链差异、跨层关联与显式未知项 |
 | CCEC | CANN 9.3.0 weekly：23 个头文件、5,714 条接口记录、4,353 个唯一 builtin 身份 | 8 个主题：执行、存储、搬运、同步、类型、计算、生命周期、控制 |
 | AscendC | 395 个头文件：617 个 basic 分组、1,876 个底层接口分组 | 全部声明形式、局部架构条件、候选 CCEC 关联 |
 | CCE Dialect | 247 个语义 Op、1,069 个具体 LLVM intrinsic | TableGen 映射、规格说明；5 个未建立静态映射的条目单列 |
@@ -23,9 +24,11 @@ PTX 固定官方手册版本与哈希，当前主目标为 NVIDIA B300（CC 10.3
 
 ## 人与 AI 共用的入口
 
-原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。当前网页支持 **CCEC / AscendC / CCE Dialect / PTX**，可直接[在线阅读](https://mmyy1217.github.io/ACKB/)。PTX 以正文为中心，术语与代码旁的指令可在侧栏随手查；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
+原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。首页提供文字层级图和数据库入口。当前网页支持 **LLVM IR / CCEC / AscendC / CCE Dialect / PTX**，可直接[在线阅读](https://mmyy1217.github.io/ACKB/)。PTX 以正文为中心，术语与代码旁的指令可在侧栏随手查；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
 
-统一 JSON CLI 提供 `--backend ccec|ascendc|cce-dialect|ptx`、分页搜索、主题、关联和证据查询。CCEC 原有声明协议保持兼容；新增知识查询带来源哈希、未知项和验证状态。先读 [AI 使用入口](docs/ai-entry.md)，无需将整份数据库塞入上下文。
+统一 JSON CLI 提供 `--backend llvm|ccec|ascendc|cce-dialect|ptx`、分页搜索、主题、关联和证据查询。CCEC 原有声明协议保持兼容；新增知识查询带来源哈希、未知项和验证状态。先读 [AI 使用入口](docs/ai-entry.md)，无需将整份数据库塞入上下文。
+
+LLVM 核心默认聚焦 A5 来源，注册范围与 950 支持严格分开。120 项厂商类型编码未解析，16 种模块签名含未知类型；完整边界见 [LLVM 核心](docs/llvm-core.md)。
 
 ## 证据边界
 

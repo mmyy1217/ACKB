@@ -1,0 +1,70 @@
+# LLVM IR 目标核心
+
+ACKB 以 Huawei Ascend 的 LLVM IR 目标能力层为核心，向上关联 CCEC Builtins 与外部 CCE Dialect。它是 CANN 可观测的编译器表示层，不是硬件机器指令全集。当前来源固定为 `9.3.0~weekly.20261104.01`，主关注目标为 950 / A5。
+
+## 这次取得了什么
+
+| 范围 | 实测结果 | 能证明什么 |
+| --- | ---: | --- |
+| `libbisheng-llc.so` 的 `IntrinsicNameTable` | 23,447 个全目标注册项，其中 12,363 个 `llvm.hivm.*` | 此构建注册了这些名称；不证明 950 接受每一项 |
+| `hivmc-a5` 名称扫描 | 918 个精确拼写 | A5 工具中出现过名称；不是注册、类型或支持证明 |
+| `ccec` + `libbisheng-llc.so` 名称扫描 | 12,376 个 | 与 A5 工具交集 757；仅 A5 161；仅 CCEC / LLC 11,619 |
+| 8 个 `meta_op.*.c310.{O0,O2}.bc` + `malloc.bc` | 535 种去重具体声明类型；487 个目标名称有 c310 声明 | 这些模块内存在函数声明或定义的类型；不证明实际调用、运行或全目标适用 |
+| 外部 CCEDialect | 1,069 个具体 LLVM 符号映射，并扫描已固定哈希的 C++ lowering 文件 | 外部工程的映射意图；不代替 CANN 的编译器实现 |
+| 普通 LLVM IR | 6 个阅读模型 | 解释算术、访存、控制、原子、地址空间；独立于 target intrinsic 数量 |
+
+完整快照包括 13,400 个目标名称、36 个标准 LLVM intrinsic 名称、6 个普通 IR 阅读模型。默认 A5 来源视图有 1,892 条，其中包含标准 intrinsic 和阅读模型；**这个数字不是 950 支持的指令数**。默认隐藏 158 个仅字符串候选；全部范围可查看其他跨架构注册项。页面、CLI 的筛选口径相同。
+
+12 个实际读取的 CANN 文件（三个编译器文件、九个 Bitcode）已通过流式读取外层与内层 Makeself / tar 归档核对 SHA-256，不执行安装脚本。每个来源保留包成员路径、内层包哈希、外层包哈希。外部 Dialect 来源独立标注 Git commit 与文件哈希。
+
+## 取得方式与边界
+
+`scripts/llvm_sources.py` 只读解析 ELF64 little-endian 节、符号与相对重定位，取得名称表、IIT 类型表、长编码表及重载位表。完整名称原样作为身份；注册序号仅用于这个构建的证据定位，不作稳定 ID。名称表、类型表长度与哨兵均核验。没有反汇编机器码，也没有恢复硬件 ISA。
+
+IIT 按 [LLVM 15.0.5 的 Intrinsic 类型编码](https://github.com/llvm/llvm-project/blob/llvmorg-15.0.5/llvm/lib/IR/Function.cpp)解释，保留原始整数、字节数组、ELF 偏移和文件哈希。`T(arg_info=N)` 保留 LLVM 的重载约束编码，不是 C/C++ 形参名；`ptr(as=N, element=...)` 是编码约束。具体签名要优先看 Bitcode 的类型形式。120 个厂商描述符无法按此格式解释，显式保留 `unparsed_vendor_encoding`；不会补造完整签名或参数数量。
+
+普通 LLVM 15 / 18 / 20 读取器不能直接读取这些厂商 Bitcode（曾报告 `Invalid value`）。现采用标准库位流容器解析：校验块长、缩略码、VBR、字符串表、模块函数记录和类型表。只读取模块级函数类型，不读取函数体、调用或 debug 参数名。16 种签名包含未解释的厂商类型码，以 `UNRESOLVED_TYPE_*` 保留，标记 `partial_vendor_types`；原类型码与操作数保存于来源元数据。其余具体类型没有因此丢弃。
+
+本轮没有执行本地 CCEC / hivmc 编译器、没有 LLVM JIT，也没有设备实验。未来合法 lowering 样例只能作为新增独立证据；MLIR LLVM dialect 输出不能直接标作 LLVM IR 验证。
+
+## 数据模型
+
+数据位置：`data/llvm/9.3.0~weekly.20261104.01/index.json`。日常 build / query 只消费已提交快照，不依赖 CANN 安装。
+
+- `sources`：按来源 ID 唯一保存相对路径、哈希、原包核对或外部 Git 来源。
+- `ops`：按精确名称 + domain 生成稳定 ID。目标 intrinsic、标准 intrinsic、普通 IR 分域；不擅自剥离类型后缀，也不把不同模式强并为一个 op。
+- `forms`：独立、完整的类型形式。`registry_constraints` 是注册约束；`observed_signature` 是具体模块类型，后者仍可能含未解析厂商类型。不能把约束数当成已验证重载数。
+- `relations`：双向可查询的有向边。`exact_llvm_symbol` 表示同一 LLVM 拼写；`dialect_mapping` 保留原映射中间节点；`naming_candidate` 只表示 CCEC 名称候选；`overload_name_candidate` 连接候选基名，绝不用于身份归并。
+- `scans` / `coverage`：扫描方法、成功 / 失败、覆盖与集合差。失败不删除，不当成空扫描。
+
+身份、签名、目标与实验分别记录。`identity_status=registered` 不推出 `target_status`；`c310_module_declaration` 也不是“950 已验证支持”。所有编译、运行、性能状态仍为 `unverified`。
+
+`presence` 的三态为 `observed`、`scanned_absent`、`not_scanned`。例如工具名称正则只扫描 `llvm.hivm.*` / `llvm.cce.*`，不能把未扫描的标准 LLVM intrinsic 记成不存在。没有上游映射只能叫索引缺口，不能叫“没有公开 API 的隐藏硬件能力”。
+
+地址空间表来自外部 `include/Utils/AddressSpaces.td`：GM=1、L1=2、L0A=3、L0B=4、L0C=5、UB=6、PRIVATE=9。Bitcode 的具体 `ptr addrspace(N)` 单独保留；没有把外部工程的命名自动提升为所有 CANN 模块的正式映射。
+
+## AI 查询契约
+
+命令入口见 [AGENTS.md](../AGENTS.md)。`--backend llvm` 返回 `ackb.llvm.query.v1`，使用既有 `--offset` / `--limit` / `--max-chars` 分页边界；`schema` 返回 [Schema](../schemas/llvm-ir-v1.schema.json)，其中也定义查询 envelope。
+
+| 操作 | 返回内容 |
+| --- | --- |
+| `info` | 来源、覆盖、扫描状态、原包核对与限制 |
+| `search` | 简要身份、形式 ID、目标证据；默认 `a5-sources` 且不含字符串候选 |
+| `get` | 单条身份及 forms / relations / evidence 查询入口 |
+| `forms` | 分页完整类型形式，含来源哈希与偏移 |
+| `evidence` | 分页来源证据，不丢原始位置 |
+| `relations` | 入边和出边，候选性质及中间节点完整保留 |
+| `gaps` | 无 CCEC 映射、无可读类型、无 c310 声明、仅 A5 名称；均为知识缺口 |
+
+搜索支持 `--scope a5-sources|all`、`--include-candidates`、`--domain`、`--source`、`--evidence-kind`。来源 ID 可从 `info` 取得；不将旧 CCEC 的宏条件筛选错误套在 LLVM 证据上。既有后端 ID、原查询协议和深链接不变。
+
+## 网页与离线交付
+
+无 fragment 或 `#home` 打开首页，显示文字拓扑和八个数据库链接。`#backend=llvm` 打开 LLVM 核心，旧 `#layer=interfaces` / `#layer=intrinsics` 等链接仍有效。左侧保持大类；顶栏提供域、文件、范围、证据和候选筛选，右侧选择具体类型形式、查看来源矩阵与跨层关联。来源证据不依赖联网。
+
+离线构建将 LLVM 表按列无损压紧，在浏览器恢复普通对象；不删除证据，也不需要 CDN、解压库或网络。导出的 JSON 恢复完整字段、当前记录相关的形式和来源闭包。首页和索引都沿用黑白高密度样式；桌面两栏可调，结果连续加载并显示全结果进度。
+
+## 后续独立证据
+
+仍可继续补充厂商类型描述符解释、函数体真实调用关系、正式 builtin → LLVM lowering、逐目标接受性与运行测试。现阶段不能保证每一项的 950 支持、参数语义、内存效果或弃用历史已经确定。以上未知项不会阻断已取得的正式注册身份和具体模块类型查询。

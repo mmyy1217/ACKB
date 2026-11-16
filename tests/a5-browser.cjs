@@ -9,7 +9,7 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[],network=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
  const url=pathToFileURL(path.resolve('dist/index.html')).href;
- await page.goto(url);await page.waitForSelector('#rows .row-button');
+ await page.goto(url+'#layer=interfaces');await page.waitForSelector('#rows .row-button');
  assert.equal(await page.locator('#backend').inputValue(),'ccec');
  assert.equal(await page.locator('#chip,#architecture,.compatibility-menu').count(),0);
  assert.equal(await page.locator('.views').isVisible(),false);

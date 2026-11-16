@@ -160,6 +160,7 @@ function renderAscendcDetail(r) {
     renderAscendcDetail(r);
     $('#tab-' + state.tab).focus();
   });
+  appendLLVMRelations(pane,r.id);
   wireOpLinks(pane);
 }
 
@@ -229,6 +230,7 @@ function renderDialectDetail(r) {
     renderDialectDetail(r);
     $('#tab-' + state.tab).focus();
   });
+  appendLLVMRelations(pane,r.id);
   wireOpLinks(pane);
 }
 

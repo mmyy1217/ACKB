@@ -193,3 +193,23 @@ python scripts/query.py --backend ascendc schema
 ```
 
 浏览器入口 `npm run test:browser` 同时运行 A5、PTX 和新增四个层级的回归。只读生成后须重新构建，不提交 dist。
+
+## LLVM IR 核心与首页
+
+数据口径、类型缺口及跨层边界见 [LLVM 核心](docs/llvm-core.md)。首页为 `#home`，LLVM 数据库入口为 `#backend=llvm`；无 fragment 默认首页。提取只读 ELF 注册元数据和 Bitcode 模块声明，不运行编译器或 kernel。复用原包核对仅限版本、路径和 SHA-256 全部相同的来源。
+
+```sh
+python scripts/llvm_ir.py extract --toolkit "$CCE_OPS_TOOLKIT" --repo /home/zuomin/Projects/Compiler/CCEDialect
+python scripts/llvm_ir.py verify-package --package "$CCE_OPS_PACKAGE" --work-dir ../work/experiments/ackb/llvm-core/package
+python scripts/llvm_ir.py validate
+python scripts/query.py --backend llvm info
+python scripts/query.py --backend llvm search --name BARRIER
+python scripts/query.py --backend llvm search --scope all --include-candidates --source hivmc_a5
+python scripts/query.py --backend llvm forms llvm_ir_798ffe42fc5d9815c1e9
+python scripts/query.py --backend llvm relations llvm_ir_798ffe42fc5d9815c1e9
+python scripts/query.py --backend llvm gaps --gap no_readable_signature
+python scripts/query.py --backend llvm schema
+python scripts/build.py
+```
+
+完整浏览器入口包含 `tests/llvm-browser.cjs`。离线分发使用构建得到的单文件 HTML；打包不改变已校验页面内容。

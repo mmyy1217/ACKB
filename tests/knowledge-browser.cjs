@@ -12,7 +12,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  const entry=pathToFileURL(path.join(root,'dist/index.html')).href;
  const shot=async name=>{await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(review,name),fullPage:true});};
  const downloadJSON=async()=>{const event=page.waitForEvent('download');await page.locator('#download').click();return JSON.parse(await fs.readFile(await (await event).path(),'utf8'));};
- await page.goto(entry);await page.waitForSelector('#rows .row-button');
+ await page.goto(entry+'#layer=interfaces');await page.waitForSelector('#rows .row-button');
  assert.match(await page.title(),/ACKB/);await page.selectOption('#backend','ptx');
  assert.equal(await page.locator('#ptx-target').inputValue(),'sm_103a');
  assert.match(await page.locator('#reader-content h1').innerText(),/先看懂 PTX/);

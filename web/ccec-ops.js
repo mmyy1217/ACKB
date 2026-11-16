@@ -18,7 +18,9 @@ function createOpRecords(data) {
 }
 function opNavigate(id) {
   const target=byId.get(id);if(!target)return;
-  if(target.backend==='ascendc'){
+  state.home=false;
+  if(target.backend==='llvm'){state.backend='llvm';state.llvmScope=target.llvm.a5_source_lead?'a5-sources':'all';state.includeUnknown=target.llvm.identity_status==='candidate_only';state.llvmEvidence='';configureBackend();}
+  else if(target.backend==='ascendc'){
     state.backend='ascendc';state.ascendcLayer=target.ascendcLayer;configureBackend();
   }else if(target.backend==='cce-dialect'){
     state.backend='cce-dialect';state.dialectLayer=target.dialectLayer;configureBackend();
@@ -60,6 +62,7 @@ function renderOpParameters(o) {
   const form=o.forms.find(f=>f.id===state.opForm);
   $('#op-form-content').innerHTML=form?content(form.record_ids,false):'<p>入口声明为 ...；源码调用形式见上方，正式参数规范未验证。</p>';
   if($('#op-caller-content'))$('#op-caller-content').innerHTML=content([state.opCaller],true);
+  appendLLVMRelations($('#detail'),o.id);
   wireOpLinks($('#detail'));
 }
 function renderOpDetail(r) {

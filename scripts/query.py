@@ -24,7 +24,7 @@ class Parser(argparse.ArgumentParser):
 
 def parser():
     p = Parser(description=__doc__)
-    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx'], default='ccec')
+    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx', 'llvm'], default='ccec')
     p.add_argument('--layer', choices=['declarations', 'ops', 'basic', 'capi', 'intrinsics'])
     p.add_argument('--data', help='Versioned catalog path; defaults to the repository snapshot')
     p.add_argument('--limit', type=int, default=10)
@@ -32,6 +32,8 @@ def parser():
     p.add_argument('--max-chars', type=int, default=24000)
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
+    gaps = commands.add_parser('gaps')
+    gaps.add_argument('--gap', choices=['no_ccec_mapping_in_index','no_readable_signature','no_c310_declaration_evidence','hivmc_a5_only_name'])
     forms = commands.add_parser('forms')
     forms.add_argument('identity')
     commands.add_parser('unresolved')
@@ -62,6 +64,11 @@ def parser():
         else:
             sub.add_argument('query', nargs='?', default='')
         sub.add_argument('--name')
+        sub.add_argument('--scope', choices=['a5-sources','all'], default='a5-sources')
+        sub.add_argument('--include-candidates', action='store_true')
+        sub.add_argument('--domain', choices=['target_intrinsic','standard_intrinsic','ordinary_ir'])
+        sub.add_argument('--source')
+        sub.add_argument('--evidence-kind', choices=['registry','bitcode_declaration','lowering_source','binary_string'])
         sub.add_argument('--builtin')
         sub.add_argument('--signature')
         sub.add_argument('--kind', choices=['all', 'interface', 'type', 'macro', 'constant', 'helper', 'instruction', 'instruction_topic', 'execution_model', 'state_space', 'directive', 'special_register'], default='interface' if command == 'search' else 'all')
@@ -202,6 +209,11 @@ def dispatch_ascendc_or_dialect(args):
 def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
+    if args.backend == 'llvm' or getattr(args, 'identity', '').startswith('llvm_ir_'):
+        from llvm_query import dispatch
+        return dispatch(args, page)
+    if any(getattr(args, field, None) for field in ('domain','source','evidence_kind','include_candidates')) or getattr(args,'scope','a5-sources')!='a5-sources':
+        raise ValueError('LLVM evidence filters require --backend llvm')
     if args.command == 'schema':
         schema = 'multi-backend-query-v1.schema.json' if args.backend in ('ascendc', 'cce-dialect') else 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
         return json.loads((ROOT / 'schemas' / schema).read_text())
@@ -343,7 +355,7 @@ def main():
         result = run(args)
         print(json.dumps(result, ensure_ascii=False, separators=(',', ':')))
     except (ValueError, AssertionError, OSError, KeyError, TypeError) as exc:
-        print(json.dumps({'schema_version': 'ackb.multi-backend.query.v1' if args and (args.backend in ('ascendc', 'cce-dialect') or getattr(args, 'identity', '').startswith(('ascendc_', 'cce_dialect_'))) else PROTOCOL if args and (args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))) else SCHEMA_VERSION, 'error': {'code': 'invalid_request_or_data', 'message': str(exc)}}, ensure_ascii=False))
+        print(json.dumps({'schema_version': 'ackb.llvm.query.v1' if args and (args.backend == 'llvm' or getattr(args,'identity','').startswith('llvm_ir_')) else 'ackb.multi-backend.query.v1' if args and (args.backend in ('ascendc', 'cce-dialect') or getattr(args, 'identity', '').startswith(('ascendc_', 'cce_dialect_'))) else PROTOCOL if args and (args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))) else SCHEMA_VERSION, 'error': {'code': 'invalid_request_or_data', 'message': str(exc)}}, ensure_ascii=False))
         return 2
     return 0
 

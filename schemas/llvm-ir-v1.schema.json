@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mmyy1217.github.io/ACKB/schemas/llvm-ir-v1.schema.json",
+  "title": "ACKB LLVM IR versioned index",
+  "type": "object",
+  "required": ["schema_version", "version", "target", "sources", "ops", "forms", "relations", "scans", "coverage", "limitations"],
+  "properties": {
+    "schema_version": {"const": "ackb.llvm.index.v1"},
+    "version": {"type": "string"},
+    "target": {"const": "Ascend950PR_9579"},
+    "sources": {"type": "object", "additionalProperties": {"$ref": "#/$defs/source"}},
+    "ops": {"type": "array", "items": {"$ref": "#/$defs/op"}},
+    "forms": {"type": "array", "items": {"$ref": "#/$defs/form"}},
+    "relations": {"type": "array", "items": {"type": "object", "required": ["from", "to", "kind"], "properties": {"kind": {"enum": ["exact_llvm_symbol", "dialect_mapping", "naming_candidate", "overload_name_candidate"]}}}},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "source": {"type": "object", "required": ["id", "origin", "path", "sha256", "package_status"], "properties": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "origin": {"enum": ["cann", "cce_dialect"]}, "package_status": {"enum": ["verified", "not_verified", "not_applicable"]}}},
+    "evidence": {"type": "object", "required": ["source_id"], "properties": {"source_id": {"type": "string"}, "kind": {"enum": ["registry", "binary_string", "bitcode_declaration", "lowering_source", "external_model"]}, "byte_offset": {"type": "integer", "minimum": 0}, "bit_offset": {"type": "integer", "minimum": 0}}},
+    "op": {
+      "type": "object",
+      "required": ["id", "name", "domain", "identity_status", "target_status", "presence", "form_ids", "evidence", "verification", "a5_source_lead"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^llvm_ir_[0-9a-f]{20}$"},
+        "name": {"type": "string"},
+        "domain": {"enum": ["target_intrinsic", "standard_intrinsic", "ordinary_ir"]},
+        "identity_status": {"enum": ["registered", "declaration_observed", "lowering_reference", "candidate_only", "reference_model"]},
+        "target_status": {"enum": ["unknown", "c310_module_declaration"]},
+        "presence": {"type": "object", "additionalProperties": {"enum": ["observed", "scanned_absent", "not_scanned"]}},
+        "form_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+        "verification": {"type": "object", "required": ["compile", "runtime", "performance"], "additionalProperties": {"const": "unverified"}}
+      },
+      "allOf": [{"if": {"properties": {"identity_status": {"const": "candidate_only"}}}, "then": {"properties": {"form_ids": {"maxItems": 0}, "target_status": {"const": "unknown"}}}}]
+    },
+    "form": {"type": "object", "required": ["id", "op_id", "kind", "evidence"], "properties": {"kind": {"enum": ["registry_constraints", "observed_signature"]}, "status": {"enum": ["decoded_llvm15_constraints", "unparsed_vendor_encoding"]}, "signature_status": {"enum": ["parsed", "partial_vendor_types"]}, "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}}}, "allOf": [{"if": {"required": ["status"], "properties": {"status": {"const": "unparsed_vendor_encoding"}}}, "then": {"not": {"required": ["signature"]}}}]},
+    "query_envelope": {"type": "object", "required": ["schema_version", "backend", "operation", "total", "offset", "items", "next_offset", "truncated"], "properties": {"schema_version": {"const": "ackb.llvm.query.v1"}, "backend": {"const": "llvm"}, "items": {"type": "array"}, "total": {"type": "integer", "minimum": 0}, "offset": {"type": "integer", "minimum": 0}}}
+  }
+}
