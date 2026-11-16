@@ -11,7 +11,7 @@
 - AI 解释须有依据；静态声明、编译验证、运行验证、性能测量分别记录。本地只做静态提取与网页验证，设备实验遵循上层工作区远程规则。
 - 生成页面必须离线可用，真实数据驱动；改数据或网页后重新构建。页面先检查 PRODUCT / DESIGN，再按 impeccable 验证桌面、窄屏与交互。
 - 文档和交流中文；代码、代码注释及 commit message 英文。说明文字使用 Huawei Ascend 全称，技术标识符保留原拼写。
-- 阶段完成后检查并本地提交，无 AI 作者 trailer；不向 upstream push。不提交原始包、完整 Toolkit、设备库和大型实验产物。
+- 阶段完成后检查并提交，无 AI 作者 trailer；按照下方持续授权推送 origin/main，不向 upstream push。不提交原始包、完整 Toolkit、设备库和大型实验产物。
 - 未获用户针对本次操作、指定仓库和具体 PR 的直接明确允许，不得新建、重新打开或发布 PR（含 draft / mark ready），不得通过工具或委派绕过。默认仅准备本地可审阅材料。`tile-ai/tilelang#3651` 不得重新打开。
 
 ## 构建与验证
@@ -116,7 +116,7 @@ python scripts/query.py --backend ptx get learn_tcgen05_pipeline
 python scripts/query.py --backend ptx get tcgen05-mma-instructions-mma --architecture sm_103a
 ```
 
-GitHub Pages 通过 main 上的 `.github/workflows/pages.yml` 构建 `dist/` 并部署；无需提交 dist。线上入口 https://mmyy1217.github.io/ACKB/ 。推送和发布仍须遵循本次用户授权边界；不得把自动部署流程视为未来发布授权。
+GitHub Pages 通过 main 上的 `.github/workflows/pages.yml` 构建 `dist/` 并部署；无需提交 dist。线上入口 https://mmyy1217.github.io/ACKB/ 。用户于 2026-11-16 明确持续授权：本仓库后续任务完成并通过适用验证后，自动提交、推送 `origin/main`（`mmyy1217/ACKB`）并确认 GitHub Pages 部署成功，无需逐次确认。该授权仅限本仓库的推送和 Pages 部署，不涵盖 PR、其他仓库或强制推送；上方 PR 授权边界保持不变。
 
 ## CCEC 架构支持追踪
 
