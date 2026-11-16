@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-11T09:28:37+00:00",
+  "generatedAt": "2026-11-16T07:16:19.178666+00:00",
   "title": "Design System: ACKB",
   "extensions": {
     "colorMeta": {
@@ -219,6 +219,18 @@
       "code": {
         "displayName": "签名与源码",
         "purpose": "11px 等宽代码，长行在块内滚动。"
+      },
+      "reader-title": {
+        "displayName": "reader-title",
+        "purpose": "PTX 主阅读区标题；窄屏收至 20px。"
+      },
+      "reader-body": {
+        "displayName": "reader-body",
+        "purpose": "PTX 连续解释，至多 74ch；窄屏收至 13px。"
+      },
+      "reader-code": {
+        "displayName": "reader-code",
+        "purpose": "PTX 官方语法与教学代码，长行块内滚动。"
       }
     },
     "shadows": [],
@@ -346,13 +358,21 @@
       "description": "原生折叠入口的紧凑局部预览，入口与选择器圆角 6px、面板圆角 8px；正式页面桌面相对入口左对齐，窄屏固定于顶部 38px、右侧 8px。无 hash 默认选择 Ascend950PR_9579，已有深链接不覆盖；核目标只读，Escape 归还入口焦点，点击外部关闭。",
       "html": "<details class=\"ds-compatibility\" open><summary>950PR_9579</summary><div class=\"ds-compatibility-panel\"><label>芯片型号<select aria-label=\"芯片型号\"><option>Ascend950PR_9579</option></select></label><label>核目标参考<output>配置参考（只读）</output></label><label>条件结果<select aria-label=\"条件结果\"><option>符合或待确认</option><option>待确认</option></select></label><p>核目标仅展示配置，不推断核支持。条件符合不等于可编译。</p></div></details>",
       "css": ".ds-compatibility{color:var(--ink,#171717);font:11px/1.5 var(--sans,-apple-system,BlinkMacSystemFont,\"Segoe UI\",\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif)}.ds-compatibility>summary{width:max-content;cursor:pointer;padding:3px 5px;border:1px solid var(--input-line,#bdbdbd);border-radius:6px}.ds-compatibility-panel{border-radius:8px;width:320px;max-width:calc(100vw - 20px);box-sizing:border-box;margin-top:4px;padding:8px;background:var(--surface,#fff);border:1px solid var(--line,#d4d4d4)}.ds-compatibility-panel label{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:6px;margin-bottom:4px}.ds-compatibility-panel select{width:100%;min-width:0;height:26px;background:var(--surface,#fff);color:var(--ink,#171717);border:1px solid var(--input-line,#bdbdbd);border-radius:6px;font:inherit}.ds-compatibility-panel p{margin:6px 0 0;color:var(--muted,#626262);font-size:10px}.ds-compatibility summary:focus-visible,.ds-compatibility select:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
+    },
+    {
+      "name": "PTX 随手查入口",
+      "kind": "button",
+      "refersTo": "term-button",
+      "description": "正文术语更新右侧查阅内容并保持正文位置；返回正文恢复入口焦点。",
+      "html": "<button class=\"ds-term-button\">warp</button>",
+      "css": ".ds-term-button{background:var(--subtle,#f5f5f5);color:var(--ink,#171717);border:1px solid var(--line,#d4d4d4);border-radius:4px;padding:3px 6px;font:12px var(--sans,sans-serif);cursor:pointer}.ds-term-button:hover{background:var(--hover,#efefef);border-color:var(--muted,#626262)}.ds-term-button:focus-visible{outline:2px solid var(--focus,#171717);outline-offset:1px}"
     }
   ],
   "narrative": {
     "northStar": "器件规格表",
-    "overview": "白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCEC 声明与 PTX 文档条目、条件和来源的核对。\n\n本文件记录 `web/style.css`、`web/index.html`、`web/app.js` 和 `web/knowledge.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。",
+    "overview": "白色内容面、浅灰导航与黑色文字构成高密度的技术阅读界面。细线、字号与对齐区分信息层级，接口标识符和签名采用等宽字体。视觉服务于 Huawei Ascend CCEC 声明与 PTX 文档条目、条件和来源的核对。\n\n本文件记录 `web/style.css`、`web/index.html`、`web/app.js`、`web/knowledge.js` 和 `web/ptx-reader.js` 的实际系统，并与生成的 `dist/index.html` 及桌面、平板、窄屏截图核对；令牌以前置 YAML 为准。页面构成与检索策略见 `.impeccable/surface-catalog.md`，产品边界见 `PRODUCT.md`。",
     "keyCharacteristics": [
-      "单行接口表与窄幅详情并置。",
+      "索引采用单行接口表与窄幅详情；PTX 阅读采用正文与随手查并置。",
       "系统中文字体与技术等宽字体并用。",
       "黑白灰、细线分区、文字说明状态。",
       "原生控件、可见键盘焦点、离线自包含。"
@@ -366,7 +386,7 @@
     ],
     "dos": [
       "**Do** 复用前置令牌和原生控件，保持离线可用。",
-      "**Do** 保持桌面统一顶栏、单行接口表与窄幅详情，并检查窄屏顺序阅读。",
+      "**Do** 保持桌面统一顶栏、索引单行表与 PTX 正文 / 随手查分工，并检查窄屏顺序阅读。",
       "**Do** 保留文字状态、可见焦点、选中反馈及完整可复制来源。",
       "**Do** 使用细线、灰阶浅底、字重与对齐组织紧凑信息。"
     ],

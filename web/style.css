@@ -252,3 +252,57 @@ body { overflow-anchor: none; }
 @media(max-width:800px) { .ptx-mode .interface-table th:nth-child(2) { width:62px; } .ptx-mode .interface-table th:nth-child(3) { width:64px; } .ptx-mode .interface-table th:nth-child(4) { width:62px; } .ptx-filter select { width:96px; } }
 
 .knowledge-title { margin:4px 0; font-size:11px; overflow-wrap:anywhere; color:var(--muted); }
+/* PTX reading follows concepts; the compact index remains a secondary tool. */
+.ptx-mode { --sidebar-width:210px; }
+.chapter-nav { border-bottom:1px solid var(--row-line); padding:3px 0; }
+.chapter-nav summary { padding:5px; font-size:12px; font-weight:600; cursor:pointer; }
+.chapter-nav .lesson-link { padding-left:13px; line-height:1.5; white-space:normal; text-align:left; }
+.reference-nav { margin-top:12px; padding-top:8px; border-top:1px solid var(--line); }
+#reader-content { padding:16px 24px 32px; max-width:100%; outline-offset:-2px; }
+#reader-content h1 { font:650 23px/1.35 var(--sans); margin:10px 0; overflow-wrap:anywhere; }
+#reader-content h2 { font-size:16px; margin:26px 0 8px; }
+#reader-content h3 { font-size:13px; margin:18px 0 6px; }
+#reader-content p { font-size:14px; line-height:1.85; max-width:74ch; overflow-wrap:anywhere; }
+#reader-content pre { font-size:12px; line-height:1.75; max-width:100%; overflow-x:auto; }
+#reader-content section { scroll-margin-top:calc(var(--header-height) + 14px); }
+.reader-intro { color:var(--muted); }
+.reader-actions { display:flex; align-items:center; flex-wrap:wrap; gap:14px; font-size:11px; color:var(--muted); }
+.term-strip { display:flex; flex-wrap:wrap; gap:5px; align-items:center; margin:14px 0; }
+.term-button { background:var(--subtle); border:1px solid var(--line); border-radius:4px; padding:3px 6px; font-size:12px; }
+.ptx-map { margin:20px 0; border-block:1px solid var(--line); padding:14px 0; }
+.map-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.model-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:16px; gap:12px; }
+#reader-content .model-map p { font-size:12px; margin:4px 0; }
+.ptx-map figcaption { font-size:11px; color:var(--muted); margin-top:12px; }
+.reader-evidence { margin:20px 0; border-block:1px solid var(--line); padding:10px 0; }
+.reader-evidence summary { cursor:pointer; font-size:12px; font-weight:600; }
+.source-list { padding-left:20px; overflow-wrap:anywhere; }
+.source-list li { margin:6px 0; }
+.next-lesson { display:block; margin-top:24px; padding:9px 12px; border:1px solid var(--input-line); border-radius:6px; background:var(--surface); }
+.code-heading { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; font-size:11px; color:var(--muted); }
+.code-line { display:block; min-height:21px; }
+.program-code code { white-space:pre; }
+.code-lookup { margin-left:14px; border:0; background:transparent; color:var(--muted); font:10px var(--sans); text-decoration:underline; }
+.reader-results button { display:flex; width:100%; gap:14px; text-align:left; justify-content:space-between; padding:9px 0; border:0; border-bottom:1px solid var(--line); background:var(--surface); }
+.reader-results button span { color:var(--muted); font-size:11px; flex:none; }
+.reader-results button strong { overflow-wrap:anywhere; }
+.lookup-heading { display:flex; align-items:start; justify-content:space-between; gap:8px; }
+.toc-link { display:block; padding:4px 0; }
+.reading-ptx .support-filter { display:none; }
+.ptx-mode #ptx-target { width:138px; }
+.reading-ptx .list-pane { container-type:normal; }
+.reading-ptx.lookup-collapsed .catalog-layout { grid-template-columns:minmax(0,1fr) 0 0; }
+.reading-ptx.lookup-collapsed #detail,.reading-ptx.lookup-collapsed #resize-detail { display:none; }
+.reading-ptx.lookup-collapsed #expand-lookup { display:block !important; position:fixed; right:10px; bottom:12px; z-index:7; }
+@media(min-width:801px) { .ptx-mode .sidebar { min-width:0; } }
+@media(max-width:800px) {
+ #reader-content { padding:12px 10px 24px; }
+ #reader-content h1 { font-size:20px; }
+ #reader-content p { font-size:13px; }
+ .model-map { grid-template-columns:1fr; gap:8px; }
+ .model-map > div { display:flex; align-items:baseline; gap:10px; }
+ .reading-ptx .catalog-layout { display:block; }
+ .reading-ptx .detail-pane { margin-top:12px; }
+ .reader-results button { display:block; }
+ .reader-results button span { display:block; margin-top:3px; }
+}

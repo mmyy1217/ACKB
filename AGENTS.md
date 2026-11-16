@@ -95,8 +95,20 @@ python scripts/query.py builtins __builtin_cce_abs
 python scripts/query.py get ccec_topic_synchronization
 python scripts/query.py --backend ptx info
 python scripts/query.py --backend ptx topics
-python scripts/query.py --backend ptx search --name mma --architecture sm_89
+python scripts/query.py --backend ptx search --name mma --architecture sm_103a
 python scripts/query.py --backend ptx search --kind all
 python scripts/query.py --backend ptx get warp-level-matrix-instructions-mma
 python scripts/query.py --backend ptx schema
 ```
+
+## PTX 阅读层与部署
+
+数据规则见 [PTX 阅读层](docs/ptx-learning.md)。`learning.json` 为原创解释；`syntax.json` 只从固定哈希手册重建，不重新抓取未固定的 latest。设备信息见 `device.json`。
+
+```sh
+python scripts/ptx_learning.py --html /home/zuomin/Projects/Compiler/work/experiments/ackb/ptx-index/source/ptx-isa-13.4.3-index.html
+python scripts/query.py --backend ptx get learn_vector_add
+python scripts/query.py --backend ptx get tcgen05-mma-instructions-mma --architecture sm_103a
+```
+
+GitHub Pages 通过 main 上的 `.github/workflows/pages.yml` 构建 `dist/` 并部署；无需提交 dist。线上入口 https://mmyy1217.github.io/ACKB/ 。推送和发布仍须遵循本次用户授权边界；不得把自动部署流程视为未来发布授权。

@@ -2,7 +2,7 @@
 
 <p align="center"><strong>AI Compiler Knowledge Base</strong></p>
 <p align="center">面向 AI as Compiler 的底层目标知识库 · CCEC / PTX</p>
-<p align="center"><a href="docs/knowledge.md">知识索引</a> · <a href="docs/ai-entry.md">AI 入口</a> · <a href="docs/scope.md">范围与证据</a> · <a href="docs/roadmap.md">路线</a> · <a href="AGENTS.md">开发入口</a></p>
+<p align="center"><a href="https://mmyy1217.github.io/ACKB/">在线阅读</a> · <a href="docs/knowledge.md">知识索引</a> · <a href="docs/ai-entry.md">AI 入口</a> · <a href="docs/scope.md">范围与证据</a> · <a href="docs/roadmap.md">路线</a> · <a href="AGENTS.md">开发入口</a></p>
 
 ---
 
@@ -13,15 +13,15 @@ AI 直接生成底层代码，需要知道目标的执行模型、地址空间�
 | 后端 | 索引范围 | 深度补充 |
 | --- | --- | --- |
 | CCEC | CANN 9.3.0 weekly：23 个头文件、5,714 条接口记录、2,222 个 builtin 名称引用 | 8 个主题：执行、存储、搬运、同步、类型、计算、生命周期、控制 |
-| PTX | ISA 9.4：743 个章节、221 个指令条目、39 个伪指令、35 个特殊寄存器 | 4 篇笔记：执行层次、状态空间、同步、重点指令限制 |
+| PTX | ISA 9.4：743 个章节、221 个指令条目、39 个伪指令、35 个特殊寄存器 | 7 个学习层次、15 篇中文主题、3 份教学 kernel；221 条指令的官方语法 |
 
 CCEC 保留完整签名、重载、原始条件、宏来源与 29 个待处理项；23 个扫描头文件已与原包逐字节匹配。主要目标为 `Ascend950PR_9579`，同时保留 74 个芯片配置的条件证据。
 
-PTX 固定官方手册版本与哈希，面向用户的 RTX 4080 Laptop，以 `sm_89` 整理文档条件。221 个指令条目中，文档规则归类为支持 110、排除 71、部分形式支持 40。条目不是全部语法变体的数量，文档支持不等于设备验证。
+PTX 固定官方手册版本与哈希，当前主目标为 NVIDIA B300（CC 10.3），分别核对 `sm_103`、`sm_103f`、`sm_103a`，默认 `sm_103a`。从执行模型、存储、基本指令、协作、矩阵到完整程序建立理解；历史 `sm_89` 快照保留用于追溯。条目不是全部语法变体的数量，文档支持不等于设备验证。
 
 ## 人与 AI 共用的入口
 
-原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。当前网页支持 **CCEC / PTX**；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
+原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。当前网页支持 **CCEC / PTX**，可直接[在线阅读](https://mmyy1217.github.io/ACKB/)。PTX 以正文为中心，术语与代码旁的指令可在侧栏随手查；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
 
 统一 JSON CLI 提供 `--backend ccec|ptx`、分页搜索、主题、关联和证据查询。CCEC 原有声明协议保持兼容；新增知识查询带来源哈希、未知项和验证状态。先读 [AI 使用入口](docs/ai-entry.md)，无需将整份数据库塞入上下文。
 

@@ -11,7 +11,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {backend:'ccec',support:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {backend:'ccec',ptxTarget:'sm_103a',support:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -21,7 +21,7 @@ const fileMap = new Map(data.files.map(f => [f.path,f]));
 
 function saveHash(replace = true) {
   const p = new URLSearchParams();
-  if (state.backend === 'ptx') p.set('backend','ptx');
+  if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
   if (state.support) p.set('support',state.support);
   if (state.view !== 'interfaces') p.set('view',state.view);
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
@@ -31,9 +31,10 @@ function saveHash(replace = true) {
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   state.backend = p.get('backend') === 'ptx' ? 'ptx' : 'ccec';
+  state.ptxTarget = ['sm_103','sm_103f','sm_103a'].includes(p.get('target')) ? p.get('target') : 'sm_103a';
   state.support = Object.hasOwn(supportLabels,p.get('support')) ? p.get('support') : '';
   configureBackend();
-  state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : 'interfaces';
+  state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'ptx' ? 'overview' : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation']) state[key] = p.get(key) || '';
   if (state.backend === 'ccec' && !location.hash && data.compatibility.chip_mappings.some(t => t.chip === 'Ascend950PR_9579')) {state.chip = 'Ascend950PR_9579';state.availability = 'possible';}
   const target = data.compatibility.chip_mappings.find(t => t.chip === state.chip);
@@ -67,7 +68,7 @@ function download() {
   const url = URL.createObjectURL(blob), a = document.createElement('a');
   a.href = url; a.download = `ackb-ccec-${data.version}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
 }
-function baseRecords() { return records.filter(r => (state.view === 'all' ? r.kind !== 'note' : recordView(r) === state.view)); }
+function baseRecords() { return records.filter(r => (state.view === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === state.view)); }
 function makeGroups(items) {
   const groups = new Map();
   for (const r of items) {
@@ -78,7 +79,7 @@ function makeGroups(items) {
   return [...groups.values()];
 }
 function compatibilityMatches(r) {
-  if (r.knowledge) return !state.support || (r.knowledge.sm_89?.support || 'unknown') === state.support;
+  if (r.knowledge) return !state.support || (r.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown') === state.support;
   return (!state.deprecation || r.deprecation.status === state.deprecation) &&
     (!state.architecture || !state.availability || (state.availability === 'possible' ? r.compatibility.profiles[state.architecture] !== 'excluded' : r.compatibility.profiles[state.architecture] === state.availability));
 }
@@ -100,6 +101,10 @@ function syncControls() {
   document.querySelectorAll('[data-family]').forEach(b => {b.classList.toggle('active',b.dataset.family === state.family);b.setAttribute('aria-pressed',String(b.dataset.family === state.family));});
 }
 function render(revealSelection = false) {
+  document.body.classList.toggle('reading-ptx',isPtxReading());
+  $('#reader-content').hidden = !isPtxReading();
+  for(const el of document.querySelectorAll('.list-pane > .list-summary,.list-pane > .table-scroll,.list-pane > #load-status')) el.hidden=isPtxReading();
+  if(isPtxReading()) {renderPtxReader();return;}
   readingDetail = false;
   window.scrollTo(0,0);
   const report = state.view === 'report';
@@ -109,11 +114,11 @@ function render(revealSelection = false) {
   $('.toolbar').hidden = report;
   document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : '接口 / 名称';
   document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : '域';
-  document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 sm_89 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
+  document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
   document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : '重载';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
-  syncControls();
+  syncControls();syncPtxNavigation();
   if (report) {setProgressActive(false);renderReport();saveHash();return;}
   const matches = filtered();
   visible = makeGroups(matches);
@@ -144,7 +149,7 @@ function rowHTML(groups) {
     const selected = g.items.some(r => r.id === state.selected);
     const classification = g.items[0].knowledge ? g.family : state.view === 'definitions' ? kinds[g.items[0].kind] : g.family;
     const qualified = [g.items[0].namespace,g.name].filter(Boolean).join('::');
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.sm_89?.support || 'unknown'] : shortGroup[g.group] || g.group)}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items.length}</td></tr>`;
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${g.items[0].id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(state.backend === 'ptx' ? supportLabels[g.items[0].knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : shortGroup[g.group] || g.group)}</td><td class="number">${state.backend === 'ptx' ? esc(g.items[0].knowledge.section_number || '—') : g.items.length}</td></tr>`;
   }).join('');
 }
 function updateLoadStatus() {
@@ -175,7 +180,7 @@ function queueMore() {
   loadScheduled = true;
   requestAnimationFrame(() => {
     loadScheduled = false;
-    if (state.view === 'report' || readingDetail || state.limit >= visible.length) return;
+    if (isPtxReading() || state.view === 'report' || readingDetail || state.limit >= visible.length) return;
     const bounds = $('#load-status').getBoundingClientRect();
     if (bounds.top > innerHeight + 300 || bounds.bottom < 0) return;
     appendThrough(state.limit + BATCH_SIZE);
@@ -196,7 +201,7 @@ function rowMetrics() {
   return {rowTop:bounds.top,rowHeight:bounds.height,top,capacity,maxOffset:Math.max(0,visible.length - capacity)};
 }
 function updateProgress() {
-  if (state.view === 'report') return;
+  if (isPtxReading() || state.view === 'report') return;
   const m = rowMetrics(), total = visible.length;
   if (!m || !total) {$('#viewport-range').textContent = '0–0 / 0';return;}
   const clampIndex = index => Math.max(0,Math.min(state.limit - 1,index));
@@ -229,7 +234,7 @@ function queueProgress() {
 }
 function jumpToOffset(offset) {
   const m = rowMetrics();
-  if (!m || state.view === 'report') return;
+  if (!m || isPtxReading() || state.view === 'report') return;
   readingDetail = false;
   const index = Math.max(0,Math.min(m.maxOffset,Math.round(offset)));
   appendThrough(Math.ceil((index + m.capacity + 1) / BATCH_SIZE) * BATCH_SIZE);
@@ -355,7 +360,7 @@ function initPanelResize() {
     if (mobile.matches) return;
     readingDetail = false;
     const width = $('.workspace').getBoundingClientRect().width;
-    const sidebar = clamp(preferences.sidebar ?? 136,128,Math.min(360,width - 26 - 260 - 300));
+    const sidebar = clamp(preferences.sidebar ?? (state.backend === 'ptx' ? 210 : 136),128,Math.min(360,width - 26 - 260 - 300));
     const detail = clamp(preferences.detail ?? (innerWidth <= 1220 ? 300 : 330),260,Math.min(720,width - 26 - sidebar - 300));
     root.style.setProperty('--sidebar-width',sidebar + 'px');
     root.style.setProperty('--detail-width',detail + 'px');
@@ -399,10 +404,12 @@ function initPanelResize() {
 function reset() {Object.assign(state,{support:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 function switchView(view) {Object.assign(state,{support:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
+$('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
 $('#download').onclick = download;
-$('#backend').onchange = e => {state.backend=e.target.value;configureBackend();state.view='interfaces';reset();if(state.backend === 'ccec'){state.chip='Ascend950PR_9579';state.architecture='__NPU_ARCH__=3510';state.availability='possible';render();}};
+$('#backend').onchange = e => {state.backend=e.target.value;configureBackend();state.view=state.backend==='ptx'?'overview':'interfaces';state.ptxTarget='sm_103a';reset();if(state.backend === 'ccec'){state.chip='Ascend950PR_9579';state.architecture='__NPU_ARCH__=3510';state.availability='possible';render();}};
+$('#ptx-target').onchange=e=>{state.ptxTarget=e.target.value;render();};
 $('#ptx-support').onchange = e => {state.support=e.target.value;state.selected='';render();};
-$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';render();});
+$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
 for (const key of ['group','file','chip','architecture','availability','deprecation']) $('#' + key).onchange = e => {state[key]=e.target.value;if (key === 'chip') {const t = data.compatibility.chip_mappings.find(t => t.chip === state.chip);state.architecture = t ? '__NPU_ARCH__=' + t.npu_arch : '';state.availability = t ? 'possible' : '';}if (key === 'architecture') {state.availability = state.architecture ? 'possible' : '';state.chip = '';}state.selected='';render();};
 $('#reset').onclick = reset;$('#empty-reset').onclick = reset;
 $('#mobile-view').onchange = e => switchView(e.target.value);
@@ -411,6 +418,7 @@ $('.views').onclick = e => {const b=e.target.closest('[data-view]');if(b) switch
 $('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){state.family=b.dataset.family;state.selected='';render();}};
 $('#rows').addEventListener('click',e => {
   const button = e.target.closest('[data-id]');if (!button) return;
+  if(state.backend==='ptx'){openPtxEntry(button.dataset.id);return;}
   state.selected=button.dataset.id;state.tab='definition';saveHash(false);markSelectedRow();renderDetail();
   $('#detail').scrollTop=0;
   if (mobile.matches) {readingDetail=true;$('#detail').scrollIntoView({block:'start'});$('#detail').focus({preventScroll:true});}

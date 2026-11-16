@@ -1,9 +1,11 @@
 """Backend-aware access to indexed target knowledge and selected-depth notes."""
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
 from catalog import ROOT
 from ptx_index import entry_id, load_tree, validate_tree
+from ptx_targets import assess, DEFAULT_TARGET, TARGETS
 
 PROTOCOL = 'ackb.knowledge-query.v1'
 
@@ -31,8 +33,18 @@ class Knowledge:
                 record.setdefault('entry_id', entry_id(record['anchor'], record['section_number']))
                 record.setdefault('depth', 'index')
                 self.records.append(record)
-            self.notes = tree['notes']
-            self.limits = tree['source']['limits'] + ['The documentation archive is not the installed CUDA toolkit.']
+            self.device = json.loads((self.root / 'device.json').read_text())
+            self.learning = json.loads((self.root / 'learning.json').read_text())
+            self.syntax = json.loads((self.root / 'syntax.json').read_text())
+            if self.syntax['source_sha256'] != self.source['sha256']:
+                raise ValueError('PTX syntax source hash mismatch')
+            for record in self.records:
+                record['target_assessments'] = {target: assess(record, target) for target in TARGETS}
+                record['target_assessment'] = record['target_assessments'][DEFAULT_TARGET]
+                record['syntax_detail'] = self.syntax['entries'].get(record['anchor'])
+                record['guide'] = next((self.learning['instruction_guides'][m] for m in record.get('mnemonics', []) if m in self.learning['instruction_guides'] and self.learning['instruction_guides'][m]['anchor'] == record['anchor']), None)
+            self.notes = [{**n, 'kind': 'lesson', 'citations': [{'anchor': a} for a in n['anchors']]} for n in self.learning['lessons']]
+            self.limits = self.learning['limitations'] + ['The documentation archive is not the installed CUDA toolkit.']
         else:
             if source:
                 raise ValueError('CCEC knowledge uses the pinned repository snapshot; --data is supported by declaration queries only')
@@ -47,7 +59,7 @@ class Knowledge:
             self.limits = self.tree['limitations']
 
     def context(self, operation):
-        return {'schema_version': PROTOCOL, 'backend': self.backend, 'operation': operation,
+        return {'target': getattr(self, 'active_target', DEFAULT_TARGET) if self.backend == 'ptx' else None, 'schema_version': PROTOCOL, 'backend': self.backend, 'operation': operation,
                 'version': self.version, 'limitations': self.limits,
                 'provenance': {p.name: checksum(p) for p in sorted(self.root.glob('*.json'))},
                 'verification': {'compile': 'unverified', 'runtime': 'unverified', 'performance': 'unverified'}}
@@ -69,11 +81,18 @@ class Knowledge:
     def item(self, record, full=False):
         if full:
             result = dict(record)
+            if self.backend == 'ptx':
+                result.pop('target_assessments', None)
+                result.pop('sm_89', None)
+                if 'target_isa' in result:
+                    result['target_isa'] = {**result['target_isa'], 'statements': record['target_assessment']['statements']}
             if self.backend == 'ccec':
                 result.pop('evidence', None)
         else:
-            keys = ('entry_id', 'id', 'title', 'name', 'kind', 'anchor', 'section_number', 'mnemonics', 'depth', 'sm_89', 'status')
+            keys = ('entry_id', 'id', 'title', 'name', 'kind', 'anchor', 'section_number', 'mnemonics', 'depth', 'status')
             result = {k: record[k] for k in keys if k in record}
+        if self.backend == 'ptx' and 'target_assessment' in record:
+            result['target_assessment'] = record['target_assessment'] if full else {k: v for k, v in record['target_assessment'].items() if k != 'statements'}
         refs = self.evidence(record)
         result.update({'backend': self.backend, 'evidence': refs[:3], 'evidence_total': len(refs),
                        'evidence_truncated': len(refs) > 3})
@@ -101,16 +120,21 @@ class Knowledge:
             for option in ('builtin', 'signature', 'core', 'condition', 'deprecation'):
                 if getattr(args, option, None):
                     raise ValueError(f'--{option} is not supported for PTX index queries; inspect get and use --support')
-            if getattr(args, 'architecture', None) not in (None, 'sm_89'):
-                raise ValueError('The PTX documentation assessment is currently scoped to sm_89')
-            if getattr(args, 'chip', None) not in (None, 'RTX 4080 Laptop', 'GeForce RTX 4080 Laptop GPU'):
-                raise ValueError('The PTX target is RTX 4080 Laptop / sm_89; device verification is pending')
+            if getattr(args, 'architecture', None) not in (None, *TARGETS):
+                raise ValueError('Unsupported PTX target; use sm_103, sm_103f, sm_103a or sm_89')
+            if getattr(args, 'chip', None) not in (None, 'B300', 'NVIDIA B300'):
+                raise ValueError('The primary PTX device is NVIDIA B300; device verification is pending')
+        if self.backend == 'ptx':
+            target = getattr(args, 'architecture', None) or DEFAULT_TARGET
+            self.active_target = target
+            for record in self.records:
+                record['target_assessment'] = record['target_assessments'][target]
         if command == 'info':
             if self.backend == 'ptx':
-                return [{'coverage': self.tree['scan'], 'source': self.tree['source'], 'notes': len(self.notes)}]
+                return [{'coverage': {'sections': len(self.records), 'instructions': sum(r['kind'] == 'instruction' for r in self.records), 'lessons': len(self.notes), 'syntax_blocks': len(self.syntax['entries']), 'target_support': dict(Counter(r['target_assessment']['support'] for r in self.records if r['kind'] == 'instruction'))}, 'source': self.source, 'legacy_snapshot': {'target': 'sm_89', 'source_file': 'source.json', 'scan_file': 'scan.json'}, 'default_target': DEFAULT_TARGET, 'device': self.device}]
             return [{'coverage': self.tree['coverage'], 'target': self.tree['target']}]
         if command == 'targets':
-            target = self.tree['source']['query_target'] if self.backend == 'ptx' else {'chip': self.tree['target']}
+            target = {'device': 'NVIDIA B300', 'compute_capability': '10.3', 'default': DEFAULT_TARGET, 'profiles': list(TARGETS), 'source': self.learning['sources']['device']} if self.backend == 'ptx' else {'chip': self.tree['target']}
             return [target] if args.name.lower() in json.dumps(target).lower() else []
         if command == 'topics':
             terms = args.query.lower().split()
@@ -139,7 +163,7 @@ class Knowledge:
                         continue
                     if args.name and args.name not in record.get('mnemonics', []) and args.name != record.get('name'):
                         continue
-                    if args.support and record.get('sm_89', {}).get('support', 'unknown') != args.support:
+                    if args.support and record.get('target_assessment', {}).get('support', 'unknown') != args.support:
                         continue
                 haystack = json.dumps({k: record.get(k) for k in ('title', 'name', 'anchor', 'mnemonics', 'section_number')}, ensure_ascii=False).lower()
                 if all(t in haystack for t in terms):

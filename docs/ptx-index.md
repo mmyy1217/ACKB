@@ -1,10 +1,10 @@
 # PTX ISA 9.4 索引
 
-这份索引覆盖 PTX，现已接入统一 `scripts/query.py --backend ptx` 入口；原有 CCEC 声明数据与页面行为保持兼容。PTX ISA 版本与查询目标不是同一个编号：手册是 PTX ISA 9.4，查询目标是 `sm_89`。
+这份索引覆盖 PTX，现已接入统一 `scripts/query.py --backend ptx` 入口；原有 CCEC 声明数据与页面行为保持兼容。PTX ISA 版本与查询目标不是同一个编号：手册是 PTX ISA 9.4，当前默认查询目标是 B300 / `sm_103a`。本文下列 sm_89 计数和规则描述历史原始快照；当前阅读层与目标评估见 [PTX 阅读层](ptx-learning.md)。
 
 ## 钉住的来源
 
-全文快照在仓库外：`/home/zuomin/Projects/Compiler/work/experiments/ackb/ptx-index/source/`。仓库里只留锚点、短标题、助记符、结构化目标和哈希。
+全文快照在仓库外：`/home/zuomin/Projects/Compiler/work/experiments/ackb/ptx-index/source/`。原始索引保留锚点、短标题、助记符、结构化目标和哈希；新增 `syntax.json` 提取功能性语法，`learning.json` 保存原创解释，完整手册正文仍在仓库外。
 
 | 文件 | 作用 | URL | 字节 | SHA-256 |
 | --- | --- | --- | --- | --- |
@@ -106,7 +106,7 @@ cluster 只写明适用于 sm_90 或更高。第 8 章只作锚点，不改写�
 
 统一入口使用 `ackb.knowledge-query.v1`；字段、分页和身份规则见 [知识索引](knowledge.md)，执行命令见 [AGENTS.md](../AGENTS.md)。支持 info、targets、search、topics、get、relations、evidence 和 schema。
 
-`get` 返回结构化目标规则与笔记关联，不返回手册正文；`evidence` 返回官方锚点和来源哈希。支持状态仅表示文档规则对 `sm_89` 的归类。
+`get` 返回当前目标规则、官方语法、学习解释与主题关联，不返回手册全文描述；`evidence` 返回官方锚点和来源哈希。支持状态仅表示文档规则对本次所选目标的归类；原始文件里的 `sm_89` 是历史评估。
 
 ## 限制
 

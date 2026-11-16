@@ -1,0 +1,895 @@
+{
+  "schema_version": "ackb.ptx-learning.v1",
+  "default_target": "sm_103a",
+  "device": "NVIDIA B300",
+  "chapters": [
+    {
+      "id": "overview",
+      "title": "PTX 全景"
+    },
+    {
+      "id": "execution",
+      "title": "执行模型"
+    },
+    {
+      "id": "memory",
+      "title": "存储与数据"
+    },
+    {
+      "id": "basics",
+      "title": "基本指令"
+    },
+    {
+      "id": "cooperation",
+      "title": "协作与异步"
+    },
+    {
+      "id": "matrix",
+      "title": "矩阵计算"
+    },
+    {
+      "id": "programs",
+      "title": "完整程序"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "learn_overview",
+      "chapter": "overview",
+      "title": "先看懂 PTX 在做什么",
+      "intro": "PTX 描述并行线程执行的程序。先弄清谁在执行、值放在哪里，再看一条指令怎样改变这些值。",
+      "sections": [
+        {
+          "title": "从程序到 GPU",
+          "text": "CUDA 等语言可以编译为 PTX；PTX 再由工具链生成设备机器代码。PTX 寄存器是虚拟寄存器，不能把文本中的名字直接当作硬件寄存器编号。"
+        },
+        {
+          "title": "三个相互连接的问题",
+          "text": "执行：哪个线程负责哪个元素？存储：输入、临时值、共享结果分别在哪里？指令：线程怎样读取、计算、写回，以及与其他线程配合？"
+        },
+        {
+          "title": "先读一条真正的指令",
+          "text": "下面是一条 32 位有符号整数加法。%r1 和 %r2 是输入，%r3 是结果；.s32 指定整数解释。假设输入为 7 和 5，结果为 12。",
+          "code": "add.s32 %r3, %r1, %r2;"
+        },
+        {
+          "title": "推荐阅读顺序",
+          "text": "先看执行模型与存储，再读基本指令，最后逐行阅读向量加法。归约引入线程协作，矩阵计算再引入布局与专用执行机制。"
+        }
+      ],
+      "anchors": [
+        "programming-model",
+        "ptx-machine-model",
+        "integer-arithmetic-instructions-add"
+      ],
+      "terms": [
+        "thread",
+        "register",
+        "ptx"
+      ],
+      "comparison": "先分别理解两边。CCEC 是源码接口层，PTX 是虚拟 ISA；接口外形相似不意味着执行粒度相同。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_b300",
+      "chapter": "overview",
+      "title": "B300 与 PTX 版本是两件事",
+      "intro": "本页以 B300 为设备目标，计算能力 10.3；手册保持已固定的 PTX ISA 9.4。",
+      "sections": [
+        {
+          "title": "目标开关的含义",
+          "text": "sm_103 是基础目标；sm_103f 表达对应 family-specific 功能；sm_103a 启用架构特定功能。默认选择 sm_103a 用来核对 B300 的文档规则，并不宣称任意 Blackwell 指令都可使用。"
+        },
+        {
+          "title": "先看具体形式，再看支持状态",
+          "text": "同一助记符可能包含不同类型、矩阵形状和限定符。部分形式表示这些规则有差异；阅读具体规则，不能只看一枚支持标签。"
+        },
+        {
+          "title": "验证边界",
+          "text": "本库按文档重新计算目标条件，尚未在 B300 上编译或运行。本机工具链与固定手册版本也可能不同。设备、PTX 版本、工具链版本和验证结果分开记录。"
+        }
+      ],
+      "anchors": [
+        "ptx-module-directives-target"
+      ],
+      "terms": [
+        "target",
+        "ptx"
+      ],
+      "comparison": "先固定各自芯片与工具链版本，再讨论设计差异；不同代际的功能不能直接外推。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_threads",
+      "chapter": "execution",
+      "title": "线程怎样分工",
+      "intro": "一个 kernel 可以启动许多线程。每个线程执行自己的指令流，使用自己的索引和寄存器值。",
+      "sections": [
+        {
+          "title": "grid、CTA 与线程",
+          "text": "grid 由线程块 CTA 组成，CTA 内包含线程。线程块是编程分组，SM 是硬件执行资源；不要把一个 CTA 与一个 SM 永久一一对应。"
+        },
+        {
+          "title": "把线程映射到数组元素",
+          "text": "一维启动中，i = blockIdx.x × blockDim.x + threadIdx.x。下面从特殊寄存器取出三个量，再计算 i。",
+          "code": "mov.u32 %r0, %tid.x;\nmov.u32 %r1, %ctaid.x;\nmov.u32 %r2, %ntid.x;\nmad.lo.u32 %r3, %r1, %r2, %r0;"
+        },
+        {
+          "title": "编号不是分配内存",
+          "text": "得到 i 只是确定工作。访问 A[i] 还需要 A 的基地址和元素字节大小；数组越界必须由程序检查。"
+        }
+      ],
+      "anchors": [
+        "thread-hierarchy",
+        "special-registers-tid",
+        "special-registers-ctaid",
+        "special-registers-ntid"
+      ],
+      "terms": [
+        "thread",
+        "cta",
+        "grid",
+        "sm"
+      ],
+      "comparison": "不要把 PTX 的一个线程直接对应为一个 AI Core；先比较双方实际的工作划分单位。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_warp",
+      "chapter": "execution",
+      "title": "warp 与分支",
+      "intro": "warp 组织一组线程的执行。阅读普通 PTX 时，寄存器值仍属于各自线程。",
+      "sections": [
+        {
+          "title": "线程模型与硬件执行分开看",
+          "text": "对本轮 NVIDIA 目标，warp 以 32 个 lane 理解。普通 add 是每个参与线程计算自己的值，而不是把一个线程的结果自动广播给所有线程。"
+        },
+        {
+          "title": "分支与谓词",
+          "text": "setp 产生谓词，@%p0 控制后面的指令是否执行。不同线程可以得到不同谓词；共同参与的同步指令必须满足各自的参与规则。",
+          "code": "setp.ge.u32 %p0, %r3, %r4;\n@%p0 bra DONE;\n// Work for in-range threads.\nDONE:\nret;"
+        },
+        {
+          "title": "不要依靠隐含锁步",
+          "text": "不能仅因为两个线程属于一个 warp，就假定一个线程写入的数据已对另一个可见。按通信、同步和内存顺序规则构造程序。"
+        }
+      ],
+      "anchors": [
+        "set-of-simt-multiprocessors",
+        "independent-thread-scheduling",
+        "control-flow-instructions-bra",
+        "comparison-and-selection-instructions-setp"
+      ],
+      "terms": [
+        "warp",
+        "predicate"
+      ],
+      "comparison": "传统向量批量操作与 SIMT 线程执行的表达不同；Huawei Ascend 也存在 SIMT 路径，需绑定具体路径比较。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_registers",
+      "chapter": "memory",
+      "title": "寄存器与类型",
+      "intro": "寄存器保存当前线程的临时值；类型后缀告诉指令如何解释这些位。",
+      "sections": [
+        {
+          "title": "声明并使用",
+          "text": "% 是寄存器标识符的一部分；<4> 表示一组编号寄存器。下面声明整数和浮点寄存器；整数值不能仅靠改名字就变成相应浮点数。",
+          "code": ".reg .u32 %r<4>;\n.reg .f32 %f<4>;\nmov.u32 %r0, 7;\ncvt.rn.f32.u32 %f0, %r0;"
+        },
+        {
+          "title": "位搬运与数值转换不同",
+          "text": "mov 用于移动值或位表示，cvt 才表达数值类型转换。舍入、饱和、符号和精度都要看指令限定符。"
+        },
+        {
+          "title": "寄存器不是免费且无限的硬件",
+          "text": "PTX 可以声明虚拟寄存器；最终工具链负责实际分配。资源压力可能导致 spill，影响性能，不能通过声明数量直接推出实际占用率。"
+        }
+      ],
+      "anchors": [
+        "register-state-space",
+        "fundamental-types",
+        "data-movement-and-conversion-instructions-cvt"
+      ],
+      "terms": [
+        "register",
+        "type"
+      ],
+      "comparison": "CCEC 的向量类型、地址空间限定符与 PTX 标量寄存器各有含义，不应按名字或宽度直接配对。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_spaces",
+      "chapter": "memory",
+      "title": "global、shared、local 分别是什么",
+      "intro": "内存空间描述数据的作用域和访问方式。local 的“局部”表示线程私有，不等于一定在高速片上存储。",
+      "sections": [
+        {
+          "title": "global：输入输出的常见位置",
+          "text": "多个线程可访问 global 中的数组。是否发生数据竞争取决于地址、读写行为和同步，而不是指针名字。"
+        },
+        {
+          "title": "shared：线程块内交换数据",
+          "text": "CTA 内的线程可以通过 shared 协作。每个线程写不同位置，再通过适当屏障确保消费者读到已经生产的数据。cluster 机制另有作用域与约束。"
+        },
+        {
+          "title": "local 与 param",
+          "text": "local 表达每线程私有的内存空间；param 用于参数传递。入口参数中的指针需按地址空间规则使用，不能把参数存储本身当作数组内容。"
+        },
+        {
+          "title": "地址与值",
+          "text": "[%rd0] 表示通过地址读取。若一个元素是 f32，相邻元素地址相差 4 字节；向量访问还需满足其总访问宽度的对齐。",
+          "code": "ld.global.f32 %f0, [%rd0];\nst.global.f32 [%rd1], %f0;"
+        }
+      ],
+      "anchors": [
+        "state-spaces",
+        "global-state-space",
+        "shared-state-space",
+        "local-state-space",
+        "parameter-state-space"
+      ],
+      "terms": [
+        "global",
+        "shared",
+        "local",
+        "alignment"
+      ],
+      "comparison": "可以比较存储的可见范围和数据流；不能把 shared 简单重命名为 UB，两者的访问主体与协作方式不同。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_loads",
+      "chapter": "basics",
+      "title": "先学读取、计算、写回",
+      "intro": "一条 load 将内存中的值读进寄存器，计算使用寄存器值，store 再把结果写到内存。",
+      "sections": [
+        {
+          "title": "三个步骤",
+          "text": "假设地址已计算好，下面由当前线程读两个 f32，相加后写回。它只描述当前线程的一份工作。",
+          "code": "ld.global.f32 %f0, [%rd0];\nld.global.f32 %f1, [%rd1];\nadd.f32 %f2, %f0, %f1;\nst.global.f32 [%rd2], %f2;"
+        },
+        {
+          "title": "每个标记都在提供信息",
+          "text": "ld/st 是动作；global 是空间；f32 是数据格式；方括号表示地址；%f 是寄存器。不要把 ld 的目标操作数和 st 的目标地址顺序搞反。"
+        },
+        {
+          "title": "这不是完整 kernel",
+          "text": "片段没有参数声明、线程索引与边界检查。完整程序页会把这些部分连接起来。"
+        }
+      ],
+      "anchors": [
+        "data-movement-and-conversion-instructions-ld",
+        "floating-point-instructions-add",
+        "data-movement-and-conversion-instructions-st"
+      ],
+      "terms": [
+        "register",
+        "global",
+        "thread"
+      ],
+      "comparison": "GPU 线程直接发出的 load/store 与块级 DMA 搬运不是同一种接口粒度。理解完这条路径再比较。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_arithmetic",
+      "chapter": "basics",
+      "title": "算术、比较与控制流",
+      "intro": "助记符描述动作，后缀描述类型和变体，谓词控制执行。",
+      "sections": [
+        {
+          "title": "整数与浮点分开读",
+          "text": "add.s32 和 add.f32 的输入解释不同；浮点数还涉及舍入、非正规数及融合等语义。不要用整数直觉解释所有浮点边界。"
+        },
+        {
+          "title": "乘加并不总是同一种乘加",
+          "text": "mad.lo.u32 可用于索引运算。fma.rn.f32 表达浮点融合乘加，其舍入行为不能随意替换为分开的乘法和加法。",
+          "code": "mad.lo.u32 %r3, %r1, %r2, %r0;\nfma.rn.f32 %f3, %f0, %f1, %f2;"
+        },
+        {
+          "title": "比较先产生条件",
+          "text": "setp 写谓词寄存器；bra 改变控制流；@%p0 是条件执行。理解这三个角色，就能读懂常见的越界处理和循环。"
+        }
+      ],
+      "anchors": [
+        "integer-arithmetic-instructions-mad",
+        "floating-point-instructions-fma",
+        "comparison-and-selection-instructions-setp",
+        "control-flow-instructions-bra"
+      ],
+      "terms": [
+        "predicate",
+        "type"
+      ],
+      "comparison": "用运算的语义、执行粒度和舍入规则比较两端，不能只比较指令名称。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_sync",
+      "chapter": "cooperation",
+      "title": "交换数据之前，先明确谁在等待谁",
+      "intro": "线程通信同时涉及参与者、存储位置和执行顺序，单独一条“同步”无法回答所有问题。",
+      "sections": [
+        {
+          "title": "CTA 屏障",
+          "text": "bar.sync 0 常用于 CTA 协作：本例要求线程块内全部参与线程都到达同一屏障。不要让一部分线程提前 return，而其余线程仍等待完整 CTA。",
+          "code": "st.shared.u32 [%r0], %r1;\nbar.sync 0;\nld.shared.u32 %r2, [%r3];"
+        },
+        {
+          "title": "warp 内交换寄存器值",
+          "text": "shfl.sync 通过指定的 lane 模式交换寄存器值，参与掩码与执行路径必须一致。它不是任意内存写入的完成等待。"
+        },
+        {
+          "title": "原子操作与内存顺序",
+          "text": "atom 表达对某个位置的原子读改写；fence 表达内存顺序约束。原子性、可见性、线程会合是三个问题，不能用一个概念替代另两个。"
+        }
+      ],
+      "anchors": [
+        "parallel-synchronization-and-communication-instructions-bar",
+        "data-movement-and-conversion-instructions-shfl-sync",
+        "memory-consistency-model"
+      ],
+      "terms": [
+        "barrier",
+        "warp",
+        "shared"
+      ],
+      "comparison": "CCEC 的流水事件通常表达执行单元之间的依赖；PTX 这里先表达线程协作。比较时先写清参与主体。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_async",
+      "chapter": "cooperation",
+      "title": "异步：发出操作不等于结果已可用",
+      "intro": "异步操作让发出者继续做别的工作，因此必须另外表达何时可以消费结果、何时可以复用资源。",
+      "sections": [
+        {
+          "title": "先从数据依赖读起",
+          "text": "发起搬运后，计算必须在数据可用后读取；下一次搬运也不能覆盖仍在被计算使用的缓冲区。双缓冲只是安排资源的一种方法，不会自动建立同步。"
+        },
+        {
+          "title": "不同机制有不同完成协议",
+          "text": "cp.async 的分组等待、bulk/tensor 搬运的完成机制、mbarrier 的 phase/transaction 以及 tcgen05 完成协议不能互换。每个操作按对应指令族的规则阅读。"
+        },
+        {
+          "title": "B300 阅读重点",
+          "text": "先读清 source/destination 空间、参与线程、完成信号和缓冲区生命周期，再看布局或吞吐优化。本页不提供未经验证的通用同步模板。"
+        }
+      ],
+      "anchors": [
+        "memory-consistency-model",
+        "tcgen05-memory-consistency-model",
+        "tcgen05-memory-consistency-model-mbarrier-completion"
+      ],
+      "terms": [
+        "async",
+        "barrier",
+        "shared"
+      ],
+      "comparison": "两端都需要管理数据依赖，但对应的发起者、信号机制与可见性规则要独立解释。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_matrix",
+      "chapter": "matrix",
+      "title": "矩阵乘为什么需要协作",
+      "intro": "矩阵乘 C = A × B 会重复使用输入。性能优化同时涉及数据复用、线程协作、布局与专用计算机制。",
+      "sections": [
+        {
+          "title": "先看普通线程实现",
+          "text": "一个线程计算 C 的一个元素，沿 K 维循环累加。这种写法帮助理解公式，但没有自动使用高效矩阵指令。完整程序页给出这种教学 kernel。"
+        },
+        {
+          "title": "再看 warp 级矩阵指令",
+          "text": "mma.sync 的矩阵操作数被分布在线程的寄存器中。单个线程看到的寄存器只是片段；矩阵形状、类型和布局共同决定映射。不能让一个线程随意拿整块矩阵去调用。"
+        },
+        {
+          "title": "B300 的 tcgen05 路径",
+          "text": "第五代 Tensor Core 指令族引入其自身的操作数描述、Tensor Memory 及同步规则。它不是把 mma.sync 换个名字；需要整体理解数据流与资源生命周期。"
+        }
+      ],
+      "anchors": [
+        "warp-level-matrix-instructions-mma",
+        "tcgen05-mma",
+        "tensor-memory"
+      ],
+      "terms": [
+        "matrix",
+        "warp",
+        "tmem"
+      ],
+      "comparison": "Cube 与 Tensor Core 都与矩阵计算相关，但编程参与者、操作数布局和完成协议不同，不建立一条指令的一对一映射。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_tmem",
+      "chapter": "matrix",
+      "title": "Tensor Memory 与矩阵操作的生命周期",
+      "intro": "Tensor Memory 是 tcgen05 模型中的专用存储，需要按该模型的分配、访问与同步规则使用。",
+      "sections": [
+        {
+          "title": "先建立流程，而不是背参数",
+          "text": "分配所需资源，准备操作数与描述符，发起矩阵计算，按照对应协议确认完成，再读取或继续使用结果，最后释放资源。不同形式有不同细节。"
+        },
+        {
+          "title": "不要与 shared 混用",
+          "text": "Tensor Memory 的地址和访问指令有自己的约定。普通 ld.shared 不能被当作读取任意 Tensor Memory 的通用方法。"
+        },
+        {
+          "title": "按形式核对 B300",
+          "text": "tcgen05 的形状、数据类型、CTA 分组和限定符分别受目标条件约束。默认 sm_103a 仍需逐项查表，尤其不要从 sm_100a 的支持推断全部可用于 sm_103a。"
+        }
+      ],
+      "anchors": [
+        "tensor-memory",
+        "tensor-memory-allocation",
+        "tcgen05-tensor-memory-ld-st",
+        "tcgen05-mma-instructions-mma"
+      ],
+      "terms": [
+        "tmem",
+        "async",
+        "matrix"
+      ],
+      "comparison": "这里应与 CCEC 的矩阵操作数、累加结果与资源管理整体比较，不能只按存储名称配对。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_vector_add",
+      "chapter": "programs",
+      "title": "完整例子：向量加法",
+      "intro": "目标是 C[i] = A[i] + B[i]。每个线程负责一个元素，三个数组互不重叠。",
+      "sections": [
+        {
+          "title": "启动与输入约定",
+          "text": "这是完整设备端 PTX kernel，不含主机加载器。输入为 N 个 f32，N 为正数；一维 block 为 256 线程，grid 为 ceil(N/256)，N ≤ 2^31。分配足够大小且至少 4 字节对齐的设备数组，由主机传入指针与 N。示例未经编译/运行验证。"
+        },
+        {
+          "title": "设备程序",
+          "text": "目标使用基础 sm_103，因为这个教学程序不需要架构特定矩阵功能。它与页面默认 sm_103a 的文档查询是不同用途。",
+          "code": ".version 8.8\n.target sm_103\n.address_size 64\n.visible .entry vector_add(\n .param .u64 pa, .param .u64 pb, .param .u64 pc, .param .u32 pn\n) {\n .reg .pred %p;\n .reg .u32 %r<5>;\n .reg .u64 %rd<8>;\n .reg .f32 %f<3>;\n ld.param.u64 %rd0, [pa];\n ld.param.u64 %rd1, [pb];\n ld.param.u64 %rd2, [pc];\n ld.param.u32 %r4, [pn];\n cvta.to.global.u64 %rd0, %rd0;\n cvta.to.global.u64 %rd1, %rd1;\n cvta.to.global.u64 %rd2, %rd2;\n mov.u32 %r0, %tid.x;\n mov.u32 %r1, %ctaid.x;\n mov.u32 %r2, %ntid.x;\n mad.lo.u32 %r3, %r1, %r2, %r0;\n setp.ge.u32 %p, %r3, %r4;\n @%p bra DONE;\n mul.wide.u32 %rd3, %r3, 4;\n add.u64 %rd4, %rd0, %rd3;\n add.u64 %rd5, %rd1, %rd3;\n add.u64 %rd6, %rd2, %rd3;\n ld.global.f32 %f0, [%rd4];\n ld.global.f32 %f1, [%rd5];\n add.f32 %f2, %f0, %f1;\n st.global.f32 [%rd6], %f2;\nDONE:\n ret;\n}"
+        },
+        {
+          "title": "读参数与定位",
+          "text": "ld.param 获取参数值；cvta.to.global 把传入的通用地址转换为 global 地址。三个 mov 与 mad 计算当前线程的 i。"
+        },
+        {
+          "title": "处理尾部",
+          "text": "setp 检查 i ≥ N，越界线程跳到 DONE。这里没有块内屏障，所以提前退出不会留下其他线程等待完整 CTA。"
+        },
+        {
+          "title": "按字节寻址",
+          "text": "mul.wide 把元素索引变成 64 位字节偏移。两条 load 读输入，一条 add 计算，一条 store 写输出。若 A=[1,2]、B=[10,20]，预期 C=[11,22]；这是推导结果，不是设备测试输出。"
+        }
+      ],
+      "anchors": [
+        "ptx-module-directives-target",
+        "data-movement-and-conversion-instructions-ld",
+        "data-movement-and-conversion-instructions-cvta",
+        "floating-point-instructions-add",
+        "data-movement-and-conversion-instructions-st"
+      ],
+      "terms": [
+        "thread",
+        "global",
+        "register",
+        "predicate"
+      ],
+      "comparison": "看清这个程序中每线程的读取与运算，再与 CCEC 按核分块、缓冲和向量运算的路径比较。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_reduction",
+      "chapter": "programs",
+      "title": "完整例子：256 个数求和",
+      "intro": "把向量加法中的独立工作，改成线程通过 shared 合作归约。",
+      "sections": [
+        {
+          "title": "严格的启动约定",
+          "text": "仅启动一个一维 CTA，恰好 256 个线程；输入恰好 256 个 f32，输出一个 f32，数组不重叠、地址对齐。不要把此例直接用于任意 N 或多个 CTA。未经编译/运行验证。"
+        },
+        {
+          "title": "设备程序",
+          "text": "每轮将活跃计算线程数减半，但所有 256 个线程仍经过屏障。",
+          "code": ".version 8.8\n.target sm_103\n.address_size 64\n.visible .entry reduce256(.param .u64 pa, .param .u64 pout) {\n .reg .pred %p;\n .reg .u32 %r<6>;\n .reg .u64 %rd<4>;\n .reg .f32 %f<2>;\n .shared .align 4 .b8 scratch[1024];\n ld.param.u64 %rd0, [pa];\n ld.param.u64 %rd1, [pout];\n cvta.to.global.u64 %rd0, %rd0;\n cvta.to.global.u64 %rd1, %rd1;\n mov.u32 %r0, %tid.x;\n mul.wide.u32 %rd2, %r0, 4;\n add.u64 %rd3, %rd0, %rd2;\n ld.global.f32 %f0, [%rd3];\n mov.u32 %r1, scratch;\n shl.b32 %r2, %r0, 2;\n add.u32 %r2, %r1, %r2;\n st.shared.f32 [%r2], %f0;\n bar.sync 0;\n mov.u32 %r3, 128;\nLOOP:\n setp.ge.u32 %p, %r0, %r3;\n @%p bra WAIT;\n shl.b32 %r4, %r3, 2;\n add.u32 %r5, %r2, %r4;\n ld.shared.f32 %f1, [%r5];\n add.f32 %f0, %f0, %f1;\n st.shared.f32 [%r2], %f0;\nWAIT:\n bar.sync 0;\n shr.u32 %r3, %r3, 1;\n setp.ne.u32 %p, %r3, 0;\n @%p bra LOOP;\n setp.ne.u32 %p, %r0, 0;\n @%p bra DONE;\n st.global.f32 [%rd1], %f0;\nDONE:\n ret;\n}"
+        },
+        {
+          "title": "为什么 WAIT 在分支外",
+          "text": "一部分线程本轮不计算，但仍必须执行 bar.sync 0。若把它们直接 return，剩下线程可能等待无法满足的参与者。"
+        },
+        {
+          "title": "结果与数值顺序",
+          "text": "全 1 输入的数学结果为 256。一般浮点输入的加法顺序与串行求和不同，因此不能假定逐位相同。此教学实现展示依赖，不是性能最优归约。"
+        }
+      ],
+      "anchors": [
+        "shared-state-space",
+        "parallel-synchronization-and-communication-instructions-bar",
+        "floating-point-instructions-add"
+      ],
+      "terms": [
+        "cta",
+        "barrier",
+        "shared"
+      ],
+      "comparison": "比较归约时先看数据交换和依赖图，再分别研究双方最合适的指令，不要求代码结构一致。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_matmul",
+      "chapter": "programs",
+      "title": "完整例子：先用普通线程理解矩阵乘",
+      "intro": "计算两个 16×16 行主序 f32 矩阵相乘。这个例子不使用 Tensor Core，用来建立索引与累加的直觉。",
+      "sections": [
+        {
+          "title": "严格的启动约定",
+          "text": "一个一维 CTA，恰好 256 个线程。A、B、C 各有 256 个 f32，地址对齐且互不重叠；线程 t 负责 C[t/16, t%16]。未经编译/运行验证。"
+        },
+        {
+          "title": "设备程序",
+          "text": "每个线程沿 K 维循环 16 次，读取 A 的一行与 B 的一列并累加。",
+          "code": ".version 8.8\n.target sm_103\n.address_size 64\n.visible .entry matmul16(.param .u64 pa, .param .u64 pb, .param .u64 pc) {\n .reg .pred %p;\n .reg .u32 %r<9>;\n .reg .u64 %rd<8>;\n .reg .f32 %f<3>;\n ld.param.u64 %rd0, [pa];\n ld.param.u64 %rd1, [pb];\n ld.param.u64 %rd2, [pc];\n cvta.to.global.u64 %rd0, %rd0;\n cvta.to.global.u64 %rd1, %rd1;\n cvta.to.global.u64 %rd2, %rd2;\n mov.u32 %r0, %tid.x;\n shr.u32 %r1, %r0, 4;\n and.b32 %r2, %r0, 15;\n mov.u32 %r3, 0;\n mov.f32 %f2, 0f00000000;\nLOOP:\n mad.lo.u32 %r4, %r1, 16, %r3;\n mad.lo.u32 %r5, %r3, 16, %r2;\n mul.wide.u32 %rd3, %r4, 4;\n mul.wide.u32 %rd4, %r5, 4;\n add.u64 %rd5, %rd0, %rd3;\n add.u64 %rd6, %rd1, %rd4;\n ld.global.f32 %f0, [%rd5];\n ld.global.f32 %f1, [%rd6];\n fma.rn.f32 %f2, %f0, %f1, %f2;\n add.u32 %r3, %r3, 1;\n setp.lt.u32 %p, %r3, 16;\n @%p bra LOOP;\n mul.wide.u32 %rd3, %r0, 4;\n add.u64 %rd7, %rd2, %rd3;\n st.global.f32 [%rd7], %f2;\n ret;\n}"
+        },
+        {
+          "title": "怎样检查自己的理解",
+          "text": "若 A 和 B 全为 1，则每个输出在数学上为 16。若 B 是单位矩阵，数学结果为 A；浮点特殊值与舍入仍需按实际语义核对。"
+        },
+        {
+          "title": "下一步才是专用矩阵路径",
+          "text": "这份程序会重复读取输入，未做 shared 分块与专用矩阵协作。理解它之后，再学习 mma 或 tcgen05 的布局和同步，不把本例宣传为 B300 优化实现。"
+        }
+      ],
+      "anchors": [
+        "floating-point-instructions-fma",
+        "warp-level-matrix-instructions-mma",
+        "tcgen05-mma"
+      ],
+      "terms": [
+        "thread",
+        "matrix",
+        "global"
+      ],
+      "comparison": "先统一数学任务与布局，再比较两端如何高效实现；普通 GPU 线程版本不应拿来代表 GPU 的最佳矩阵性能。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    }
+  ],
+  "terms": {
+    "ptx": {
+      "name": "PTX",
+      "definition": "并行线程执行虚拟 ISA。它是设备代码生成入口之一，仍需工具链生成机器代码。",
+      "anchor": "programming-model"
+    },
+    "thread": {
+      "name": "线程",
+      "definition": "一个逻辑执行者，拥有自己的寄存器状态和线程索引。",
+      "anchor": "thread-hierarchy"
+    },
+    "warp": {
+      "name": "warp",
+      "definition": "NVIDIA GPU 的线程执行分组；本轮目标按 32 个 lane 理解。协作指令另有参与要求。",
+      "anchor": "set-of-simt-multiprocessors"
+    },
+    "cta": {
+      "name": "CTA / 线程块",
+      "definition": "线程的编程分组，提供 shared 存储和块内协作范围。",
+      "anchor": "cooperative-thread-arrays"
+    },
+    "grid": {
+      "name": "grid",
+      "definition": "一次 kernel 启动所组织的线程块集合。",
+      "anchor": "thread-hierarchy"
+    },
+    "sm": {
+      "name": "SM",
+      "definition": "硬件执行资源。CTA 是软件分组，SM 是硬件资源，不能永久一一对应。",
+      "anchor": "ptx-machine-model"
+    },
+    "register": {
+      "name": "寄存器",
+      "definition": "PTX 中保存线程临时值的虚拟寄存器；最终物理分配由工具链决定。",
+      "anchor": "register-state-space"
+    },
+    "global": {
+      "name": "global",
+      "definition": "设备全局内存空间，常用于输入和输出数组。",
+      "anchor": "global-state-space"
+    },
+    "shared": {
+      "name": "shared",
+      "definition": "用于线程协作的存储空间；可见范围和 cluster 规则须具体区分。",
+      "anchor": "shared-state-space"
+    },
+    "local": {
+      "name": "local",
+      "definition": "每线程私有内存空间；名字不表示必然位于高速片上存储。",
+      "anchor": "local-state-space"
+    },
+    "alignment": {
+      "name": "对齐",
+      "definition": "访问地址须满足操作要求的字节边界，尤其注意宽向量访问。",
+      "anchor": "data-movement-and-conversion-instructions-ld"
+    },
+    "predicate": {
+      "name": "谓词",
+      "definition": "控制条件执行的真/假值；通常由 setp 等指令产生。",
+      "anchor": "comparison-and-selection-instructions-setp"
+    },
+    "type": {
+      "name": "指令类型",
+      "definition": "如 .u32、.s32、.f32，描述操作数的解释或位宽。",
+      "anchor": "fundamental-types"
+    },
+    "target": {
+      "name": "目标架构",
+      "definition": "PTX .target 选择的设备功能集合；与 .version 的 ISA 版本不同。",
+      "anchor": "ptx-module-directives-target"
+    },
+    "barrier": {
+      "name": "屏障",
+      "definition": "按特定参与者和完成条件进行同步的机制。线程屏障与异步完成等待不可混为一谈。",
+      "anchor": "parallel-synchronization-and-communication-instructions-bar"
+    },
+    "async": {
+      "name": "异步操作",
+      "definition": "发起后不必立即完成，结果消费与资源复用需要对应的完成协议。",
+      "anchor": "memory-consistency-model"
+    },
+    "matrix": {
+      "name": "协作式矩阵操作",
+      "definition": "由规定的参与线程共同表达矩阵运算，布局决定每个参与者持有哪些数据。",
+      "anchor": "warp-level-matrix-instructions-mma"
+    },
+    "tmem": {
+      "name": "Tensor Memory",
+      "definition": "tcgen05 模型中的专用存储，拥有专门的分配、寻址和访问规则。",
+      "anchor": "tensor-memory"
+    }
+  },
+  "instruction_guides": {
+    "add": {
+      "summary": "相加两个值",
+      "example": "add.s32 %r3, %r1, %r2;",
+      "operands": "目的操作数 %r3；输入 %r1、%r2；.s32 指 32 位有符号整数。",
+      "result": "7 + 5 → 12",
+      "pitfall": "不同类型与饱和等限定符有各自规则；浮点形式须另看舍入与特殊值。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "integer-arithmetic-instructions-add"
+    },
+    "ld": {
+      "summary": "从内存读取到寄存器",
+      "example": "ld.global.f32 %f0, [%rd0];",
+      "operands": "%f0 是结果寄存器，%rd0 存放 global 地址；f32 是读取格式。",
+      "result": "地址对应的元素为 2.5 → %f0 得到 2.5",
+      "pitfall": "地址、访问宽度和对齐必须合法；没有自动的数组越界保护。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "data-movement-and-conversion-instructions-ld"
+    },
+    "st": {
+      "summary": "把寄存器值写入内存",
+      "example": "st.global.f32 [%rd0], %f0;",
+      "operands": "目标是方括号内的地址，%f0 是写入值。",
+      "result": "%f0 为 2.5 → 指定地址的元素被写为 2.5",
+      "pitfall": "多个线程写同一地址需要明确竞争与同步规则。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "data-movement-and-conversion-instructions-st"
+    },
+    "mov": {
+      "summary": "移动值或读取执行环境信息",
+      "example": "mov.u32 %r0, %tid.x;",
+      "operands": "%r0 是目标；%tid.x 给出当前线程在 CTA 内的 x 维编号。",
+      "result": "CTA 中 x 编号为 3 的线程 → %r0 为 3",
+      "pitfall": "移动位表示与数值转换不同；数值转换通常应看 cvt。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "data-movement-and-conversion-instructions-mov"
+    },
+    "cvt": {
+      "summary": "按指定类型转换数值",
+      "example": "cvt.rn.f32.u32 %f0, %r0;",
+      "operands": "目标类型 f32，来源类型 u32；rn 指定舍入方式。",
+      "result": "整数 7 → 浮点 7.0",
+      "pitfall": "范围、精度、舍入及饱和规则随类型组合变化。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "data-movement-and-conversion-instructions-cvt"
+    },
+    "cvta": {
+      "summary": "转换地址空间表示",
+      "example": "cvta.to.global.u64 %rd1, %rd0;",
+      "operands": "将通用地址转换为 global 地址表示；结果位宽为 64。",
+      "result": "传入合法 global 对象的通用指针 → 得到用于 global 访问的地址",
+      "pitfall": "对象必须属于指定空间；该操作不搬运指针指向的数据。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "data-movement-and-conversion-instructions-cvta"
+    },
+    "setp": {
+      "summary": "比较后生成谓词",
+      "example": "setp.ge.u32 %p0, %r0, %r1;",
+      "operands": "%p0 是谓词结果；ge 是大于等于；u32 为无符号比较。",
+      "result": "%r0=9，%r1=8 → %p0 为真",
+      "pitfall": "有符号与无符号比较不同，浮点比较还区分 NaN 情况。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "comparison-and-selection-instructions-setp"
+    },
+    "bra": {
+      "summary": "跳转到程序标签",
+      "example": "@%p0 bra DONE;",
+      "operands": "%p0 控制是否执行跳转；DONE 是目标标签。",
+      "result": "谓词真 → 下一条执行路径转到 DONE",
+      "pitfall": "分支路径必须符合后续协作指令的参与条件。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "control-flow-instructions-bra"
+    },
+    "ret": {
+      "summary": "从当前函数返回",
+      "example": "ret;",
+      "operands": "无返回值的 kernel 示例使用 ret 结束该线程执行。",
+      "result": "当前线程不再执行此入口后续指令",
+      "pitfall": "不要在其余线程等待完整 CTA 的屏障前让部分参与线程退出。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "control-flow-instructions-ret"
+    },
+    "fma": {
+      "summary": "执行融合乘加",
+      "example": "fma.rn.f32 %f3, %f0, %f1, %f2;",
+      "operands": "计算输入乘积加第三个输入，结果写 %f3；rn 为舍入模式。",
+      "result": "2 × 3 + 4 → 10",
+      "pitfall": "融合语义与分别 mul、add 的舍入不一定相同。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "floating-point-instructions-fma"
+    },
+    "mad": {
+      "summary": "乘加，常用于索引",
+      "example": "mad.lo.u32 %r3, %r1, %r2, %r0;",
+      "operands": "示例取整数乘积的低位并加偏移；目标写在最前。",
+      "result": "块号 2 × 块大小 256 + 线程号 3 → 515",
+      "pitfall": "此示例是 u32 索引运算，注意范围与溢出，不替代所有 mad 形式的语义。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "integer-arithmetic-instructions-mad"
+    },
+    "bar": {
+      "summary": "在线程块范围内进行协作同步",
+      "example": "bar.sync 0;",
+      "operands": "0 为 barrier 编号；此例要求 CTA 全部参与线程到达。",
+      "result": "所有参与线程到达后，才能继续使用受对应规则保障的共享结果",
+      "pitfall": "屏障不是任意异步操作的通用等待；参与范围与内存效果须按具体形式核对。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "parallel-synchronization-and-communication-instructions-bar"
+    },
+    "shfl.sync": {
+      "summary": "在 warp 参与线程之间交换寄存器值",
+      "example": "shfl.sync.bfly.b32 %r1, %r0, 1, 31, 0xffffffff;",
+      "operands": "本例使用完整活跃 warp；bfly 模式按 lane XOR 1 选择来源。",
+      "result": "lane 0 从 lane 1 获取值，lane 1 从 lane 0 获取值",
+      "pitfall": "所有指定的非退出参与线程须执行相应操作；不要将全掩码套用于任意分支。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "data-movement-and-conversion-instructions-shfl-sync"
+    },
+    "shl": {
+      "summary": "左移位",
+      "example": "shl.b32 %r1, %r0, 2;",
+      "operands": "目的寄存器、待移位值、位数。",
+      "result": "3 左移 2 位 → 12",
+      "pitfall": "位操作不自动检查索引溢出。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "logic-and-shift-instructions-shl"
+    },
+    "shr": {
+      "summary": "右移位",
+      "example": "shr.u32 %r1, %r0, 1;",
+      "operands": "u32 形式为无符号右移。",
+      "result": "8 右移 1 位 → 4",
+      "pitfall": "有符号形式的填充规则不同。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "logic-and-shift-instructions-shr"
+    },
+    "and": {
+      "summary": "按位与",
+      "example": "and.b32 %r1, %r0, 15;",
+      "operands": "两个输入按位与，结果写入第一个操作数。",
+      "result": "19 与 15 → 3",
+      "pitfall": "这是位运算，不是判断两个布尔表达式的高级语言短路运算。",
+      "scope": "illustrated_form_only",
+      "verification": "unverified",
+      "anchor": "logic-and-shift-instructions-and"
+    }
+  },
+  "sources": {
+    "manual": "https://docs.nvidia.com/cuda/archive/13.4.3/parallel-thread-execution/index.html",
+    "device": "https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/supported-gpus.html"
+  },
+  "limitations": [
+    "原创解释与示例基于固定官方资料整理，未经设备编译运行验证。",
+    "语法覆盖以提取报告为准；只有指定指令有人工组织的中文解释。",
+    "B300 支持为文档目标条件判定，不是逐语法形式的完整正确性证明。"
+  ]
+}

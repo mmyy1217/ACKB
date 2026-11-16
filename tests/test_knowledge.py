@@ -20,7 +20,7 @@ class KnowledgeTests(unittest.TestCase):
 
     def test_ptx_constraints_and_evidence(self):
         result = query('--backend', 'ptx', 'search', '--name', 'mma')['items'][0]
-        self.assertEqual(result['sm_89']['support'], 'partial')
+        self.assertEqual(result['target_assessment']['support'], 'partial')
         record = query('--backend', 'ptx', 'get', result['entry_id'])['items'][0]
         self.assertTrue(record['target_isa']['statements'])
         self.assertEqual(len(record['evidence'][0]['source_sha256']), 64)
@@ -33,7 +33,7 @@ class KnowledgeTests(unittest.TestCase):
 
     def test_notes_cite_sections(self):
         notes = query('--backend', 'ptx', 'topics')
-        self.assertEqual(notes['total'], 4)
+        self.assertEqual(notes['total'], 15)
         links = query('--backend', 'ptx', 'relations', notes['items'][0]['id'])
         self.assertTrue(links['items'])
         self.assertTrue(all(x['relation'] == 'cites_section' for x in links['items']))

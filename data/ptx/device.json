@@ -1,0 +1,11 @@
+{
+  "device": "NVIDIA B300",
+  "architecture": "Blackwell",
+  "compute_capability": "10.3",
+  "default_ptx_target": "sm_103a",
+  "source_url": "https://docs.nvidia.com/datacenter/tesla/mig-user-guide/latest/supported-gpus.html",
+  "source_sha256": "65b9eab561964b6136e7a0b2224564f42feddf1c6b765fc5561a7397143df470",
+  "observed_date": "2026-11-15",
+  "evidence": "official_device_table",
+  "device_query": "unverified"
+}
