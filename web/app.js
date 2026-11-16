@@ -117,9 +117,9 @@ function compatibilityMatches(r) {
   return (!state.proof || staticState(r) === state.proof) && (!state.deprecation || r.deprecation.status === state.deprecation) &&
     (!state.architecture || !state.availability || (state.availability === 'possible' ? r.compatibility.profiles[state.architecture] !== 'excluded' : r.compatibility.profiles[state.architecture] === state.availability));
 }
-function filtered() {
+function filtered(ignoreCompatibility = false) {
   const terms = state.query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  return baseRecords().filter(r => compatibilityMatches(r) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : ccecFamilyMatches(r,state.family))) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
+  return baseRecords().filter(r => (ignoreCompatibility || compatibilityMatches(r)) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : ccecFamilyMatches(r,state.family))) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
   $('#backend').value = state.backend==='ptx'?'ptx':state.backend==='ascendc'?(state.ascendcLayer==='capi'?'ascendc-capi':'ascendc'):state.backend==='cce-dialect'?(state.dialectLayer==='intrinsics'?'cce-dialect-intrinsics':'cce-dialect'):state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
@@ -136,7 +136,7 @@ function render(revealSelection = false) {
   if(state.backend==='ccec' || state.backend==='ascendc')fixedA5();
   document.body.classList.toggle('reading-ptx',isPtxReading());
   $('#reader-content').hidden = !isPtxReading();
-  for(const el of document.querySelectorAll('.list-pane > .list-summary,.list-pane > .table-scroll,.list-pane > #load-status')) el.hidden=isPtxReading();
+  for(const el of document.querySelectorAll('.list-pane > .list-summary,.list-pane > .table-scroll,.list-pane > #load-status,.list-pane > #unknown-hint')) el.hidden=isPtxReading();
   if(isPtxReading()) {renderPtxReader();return;}
   readingDetail = false;
   window.scrollTo(0,0);
@@ -161,7 +161,7 @@ function render(revealSelection = false) {
     const score = g => g.name.toLowerCase() === query ? 0 : g.name.toLowerCase().startsWith(query) ? 1 : g.name.toLowerCase().includes(query) ? 2 : 3;
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
-  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : state.backend==='cce-dialect' ? `${fmt(visible.length)} 个 ${state.dialectLayer==='intrinsics'?'Dialect Intrinsic':'Dialect Op'}` : state.backend==='ascendc' ? `${fmt(visible.length)} 个 ${state.ascendcLayer==='capi'?'ASC 底层接口':'AscendC 接口'}` : `${fmt(visible.length)} 个${state.view==='wrappers'?'接口':'名称'} · ${fmt(matches.length)} 条记录`;
+  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : state.backend==='cce-dialect' ? `${fmt(visible.length)} 个 ${state.dialectLayer==='intrinsics'?'Dialect Intrinsic':'Dialect Op'}` : state.backend==='ascendc' ? `${fmt(visible.length)} 个 ${state.ascendcLayer==='capi'?'AscendC C / SIMT API':'AscendC 高层 API'}` : `${fmt(visible.length)} 个${state.view==='wrappers'?'接口':'名称'} · ${fmt(matches.length)} 条记录`;
   const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : ccecFamilyLabel(state.family);
   $('#progress-scope').textContent = ptxScopeLabel || (state.query || state.group || state.file || state.architecture || state.deprecation || state.proof || state.support ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);

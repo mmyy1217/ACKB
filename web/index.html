@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>ACKB · CCEC / PTX 目标知识库</title>
+<title>ACKB · 编程接口与指令知识库</title>
 <style>/*__STYLE__*/</style>
 </head>
 <body>
 <a class="skip-link" href="#main">跳到接口列表</a>
 <header class="topbar">
   <a class="brand" href="#" aria-label="ACKB 首页">ACKB</a>
-  <label class="backend-switch"><span class="sr-only">目标后端</span><select id="backend" aria-label="目标后端"><option value="ccec">CCEC 接口</option><option value="ccec-intrinsics">CCEC Intrinsics</option><option value="ascendc">AscendC 接口</option><option value="ascendc-capi">AscendC 底层接口</option><option value="cce-dialect">CCE Dialect Ops</option><option value="cce-dialect-intrinsics">CCE Dialect Intrinsics</option><option value="ptx">PTX</option></select></label>
+  <label class="backend-switch"><span class="sr-only">目标后端</span><select id="backend" aria-label="目标后端"><option value="ccec">CCEC 编程接口</option><option value="ccec-intrinsics">CCEC Builtins</option><option value="ascendc">AscendC 高层 API</option><option value="ascendc-capi">AscendC C / SIMT API</option><option value="cce-dialect">CCE Dialect 语义 Op</option><option value="cce-dialect-intrinsics">CCE Dialect → LLVM Intrinsics</option><option value="ptx">PTX 虚拟指令集</option></select></label>
   <h1 id="page-title">指令接口</h1>
   <div class="toolbar">
     <label class="filter" title="本项目按来源头文件划分的接口组，不代表设备支持范围">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
@@ -48,7 +48,7 @@
     <div class="mobile-nav"><label>浏览<select id="mobile-view"><option value="interfaces">指令接口</option><option value="definitions">配套定义</option><option value="report">扫描报告</option></select></label><label id="mobile-family-label">指令族<select id="mobile-family"></select></label></div>
     <div id="catalog-view">
       <div class="catalog-layout">
-        <section class="list-pane" aria-label="阅读与检索"><article id="reader-content" hidden></article><div id="ptx-category-brief" class="category-brief" hidden></div><div class="list-summary"><div class="progress-summary"><span id="viewport-range" class="viewport-range" title="当前视口中的名称组范围">0–0 / 0</span><span id="progress-scope" class="progress-scope"></span><span id="result-count" role="status" aria-live="polite"></span></div><button id="reset" class="text-button">重置筛选</button></div><div class="table-scroll"><table class="interface-table"><thead><tr><th scope="col">接口 / 名称</th><th scope="col" id="classification-heading" title="按接口名称关键词归类，仅用于导航">指令族</th><th scope="col" title="按来源头文件分组，不代表设备支持范围">域</th><th scope="col" class="number">重载</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden><h2>没有匹配的条目</h2><p>试试更短的名称，或重置筛选。</p><button class="quiet-button" id="empty-unknown" hidden>显示待确认</button><button class="quiet-button" id="empty-layer" hidden>查看同路径 Intrinsics</button><button class="quiet-button" id="empty-reset">重置筛选</button></div></div><div id="load-status" class="load-status" role="status" aria-live="polite"></div></section>
+        <section class="list-pane" aria-label="阅读与检索"><article id="reader-content" hidden></article><div id="ptx-category-brief" class="category-brief" hidden></div><div class="list-summary"><div class="progress-summary"><span id="viewport-range" class="viewport-range" title="当前视口中的名称组范围">0–0 / 0</span><span id="progress-scope" class="progress-scope"></span><span id="result-count" role="status" aria-live="polite"></span></div><button id="reset" class="text-button">重置筛选</button></div><div id="unknown-hint" class="unknown-hint" hidden><span id="unknown-hint-text" role="status"></span><button id="show-hidden" class="text-button">显示待确认</button></div><div class="table-scroll"><table class="interface-table"><thead><tr><th scope="col">接口 / 名称</th><th scope="col" id="classification-heading" title="按接口名称关键词归类，仅用于导航">指令族</th><th scope="col" title="按来源头文件分组，不代表设备支持范围">域</th><th scope="col" class="number">重载</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden><h2>没有匹配的条目</h2><p>试试更短的名称，或重置筛选。</p><button class="quiet-button" id="empty-unknown" hidden>显示待确认</button><button class="quiet-button" id="empty-layer" hidden>查看同路径 Builtins</button><button class="quiet-button" id="empty-reset">重置筛选</button></div></div><div id="load-status" class="load-status" role="status" aria-live="polite"></div></section>
         <div id="resize-detail" class="splitter" role="separator" tabindex="0" aria-label="调整右侧栏宽度" aria-orientation="vertical" aria-controls="detail" title="拖动或用方向键调整；双击或 Enter 恢复默认宽度"></div>
         <button id="expand-lookup" class="quiet-button" hidden>展开查阅</button><section id="detail" class="detail-pane" aria-label="接口详情" tabindex="-1"></section>
       </div>

@@ -145,7 +145,7 @@ def dispatch_ascendc_or_dialect(args):
         rec = by_id[identity]
         if args.command == 'get':
             # Keep large forms/relations pageable instead of silently cutting the underlying data.
-            item = {k: v for k, v in rec.items() if k not in ('forms', 'excerpt', 'ccec_callees', 'implementation_candidates', 'impl_3510_functions')}
+            item = {k: v for k, v in rec.items() if k not in ('forms', 'excerpt', 'ccec_callees', 'implementation_candidates', 'impl_3510_functions', 'call_trace')}
             item['evidence_query'] = {'operation': 'evidence', 'identity': identity}
             item['relations_query'] = {'operation': 'relations', 'identity': identity}
             if backend == 'ascendc':
@@ -154,7 +154,17 @@ def dispatch_ascendc_or_dialect(args):
         if args.command == 'forms':
             return page(rec['forms'], args, context)
         if args.command == 'relations':
-            rels = [{'relation': 'candidate_intrinsic_mapping', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('intrinsic_ids', [])]
+            trace = rec.get('call_trace', {})
+            def traced_node(identity):
+                node = trace['nodes'][identity]
+                return {'id': identity, **node, 'sha256': data['files'][node['source']['file']]['sha256']}
+            rels = []
+            for edge in trace.get('edges', []) + trace.get('unresolved', []):
+                rels.append({'relation': 'unresolved_helper_call' if 'reason' in edge else 'candidate_call', **edge,
+                             'caller_definition': traced_node(edge['caller']),
+                             **({'callee_definition': traced_node(edge['callee'])} if 'callee' in edge else {}),
+                             'call_sha256': data['files'][edge['call']['source']['file']]['sha256']})
+            rels += [{'relation': 'candidate_intrinsic_mapping', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('intrinsic_ids', [])]
             rels += [{'relation': 'candidate_source_op', 'source_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('upstream_op_ids', [])]
             rels += [{'relation': 'candidate_ccec_op', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('ccec_candidate_op_ids', [])]
             for c in rec.get('ccec_callees', []):

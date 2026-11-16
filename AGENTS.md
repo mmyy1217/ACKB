@@ -186,6 +186,7 @@ python scripts/cce_dialect.py validate
 python scripts/query.py --backend ascendc --layer capi search --name asc_cast
 python scripts/query.py --backend ascendc --limit 10 forms ascendc_capi_asc_cast
 python scripts/query.py --backend ascendc get ascendc_capi_asc_cast
+python scripts/query.py --backend ascendc --limit 5 relations ascendc_basic_ascendc_reg_LoadAlign
 python scripts/query.py --backend cce-dialect --layer intrinsics search --name vadd
 python scripts/query.py --backend cce-dialect unresolved
 python scripts/query.py --backend ascendc schema

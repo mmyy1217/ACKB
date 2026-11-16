@@ -11,7 +11,7 @@ from catalog import ROOT, VERSION, clean
 from ccec_ops import Ops
 from ccec_transfer import transfer_for
 from compatibility import evaluate
-from database import Database
+from database import Database, stable_id
 
 ASC_STRIP_RE = re.compile(
     r'R"([A-Za-z0-9_]*)\([\s\S]*?\)\1"'
@@ -29,6 +29,7 @@ LIMITATIONS = [
     'Target assessment is locked to Huawei Ascend 950PR_9579 (__NPU_ARCH__ == 3510 / dav_3510).',
     'Condition matches means local declaration conditions match 3510 (c_api also requires a locally matching candidate body); it is not include reachability, implementation availability, compilation or device support. Missing implementations remain separate evidence.',
     'Implementation association and CCEC links are lexical/name-based candidates, not resolved C++ overloads or verified call chains. Families are repository heuristics.',
+    'Reg call traces include shared forwarding headers and dav_3510 helpers, bounded to four helper edges. Arity and explicit address-space checks only reject incompatible candidates; include reachability, template types and overload resolution remain unverified. Unresolved helpers are retained.',
 ]
 
 
@@ -129,6 +130,68 @@ def strip_comments(text: str) -> str:
             return re.sub(r'[^\n]', ' ', s)
         return re.sub(r'[^\n]', ' ', s)
     return ASC_STRIP_RE.sub(_repl, text)
+
+
+def closing_delimiter(text, start, left='(', right=')'):
+    depth = 0
+    for i in range(start, len(text)):
+        if text[i] == left:
+            depth += 1
+        elif text[i] == right:
+            depth -= 1
+            if not depth:
+                return i
+    raise ValueError('Unbalanced call delimiter')
+
+
+def function_calls(text, body_start, body_end, rel_file, line_conditions, guards):
+    """Locate lexical calls; preserve unresolved syntax instead of inventing an edge."""
+    sites = []
+    for m in re.finditer(r'\b([A-Za-z_]\w*)\s*(?=[<(])', text[body_start:body_end]):
+        name = m[1]
+        if name in ('if', 'for', 'while', 'switch', 'sizeof', 'static_assert', 'alignof'):
+            continue
+        start = body_start + m.start()
+        cursor = body_start + m.end()
+        try:
+            if text[cursor] == '<':
+                cursor = closing_delimiter(text, cursor, '<', '>') + 1
+                while cursor < body_end and text[cursor].isspace():
+                    cursor += 1
+            if cursor >= body_end or text[cursor] != '(':
+                continue
+            end = closing_delimiter(text, cursor)
+            arguments = split_params(text[cursor + 1:end])
+            line = text.count('\n', 0, start) + 1
+            sites.append({'name': name, 'arguments': [re.sub(r'\s+', ' ', a).strip() for a in arguments],
+                          'source': {'file': rel_file, 'line': line},
+                          'conditions': line_conditions.get(line, []), 'ignored_guards': guards})
+        except ValueError:
+            line = text.count('\n', 0, start) + 1
+            sites.append({'name': name, 'resolution': 'unparsed_call_syntax',
+                          'source': {'file': rel_file, 'line': line},
+                          'conditions': line_conditions.get(line, []), 'ignored_guards': guards})
+    return sites
+
+
+def compatible_helper(caller, call, target):
+    """Reject only arity/address-space contradictions; this is not C++ overload resolution."""
+    if 'arguments' not in call:
+        return False
+    params = target['parameters']
+    if not sum('=' not in p for p in params) <= len(call['arguments']) <= len(params):
+        return False
+    bindings = {}
+    for parameter in caller['parameters']:
+        declaration = parameter.split('=')[0].strip()
+        name = re.search(r'(\w+)\s*$', declaration)
+        if name:
+            bindings[name[1]] = declaration[:name.start()]
+    for argument, parameter in zip(call['arguments'], params):
+        actual = bindings.get(argument)
+        if actual is not None and ('__ubuf__' in actual) != ('__ubuf__' in parameter):
+            return False
+    return True
 
 
 def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[str]) -> list[dict]:
@@ -234,6 +297,7 @@ def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[st
             'parameters': params,
             'signature': sig_clean + (';' if term == ';' else ''),
             'has_body': term == '{',
+            'call_sites': function_calls(stripped, m.end(), end_pos, rel_file, line_conds, ignored_guards) if term == '{' else [],
             'core_guards': core_guards,
             'callees': callees,
             'raw_calls': raw_calls,
@@ -448,13 +512,15 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
     for impl_dir in (
         asc_root / 'impl/basic_api/dav_3510',
         asc_root / 'impl/basic_api/reg_compute/dav_3510',
+        asc_root / 'impl/basic_api/reg_compute',
         asc_root / 'impl/simt_api/cpp',
         asc_root / 'include/basic_api/reg_compute',
     ):
         if not impl_dir.exists():
             continue
         is_public_reg = 'include/basic_api/reg_compute' in impl_dir.as_posix()
-        for fp in sorted(impl_dir.rglob('*.h')):
+        shared_reg = impl_dir == asc_root / 'impl/basic_api/reg_compute'
+        for fp in sorted(impl_dir.glob('*.h') if shared_reg else impl_dir.rglob('*.h')):
             rel = fp.relative_to(toolkit).as_posix()
             if not is_public_reg:
                 files_meta[rel] = {'path': rel, 'sha256': sha256(fp)}
@@ -469,31 +535,76 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
                         impl_3510_funcs[fn['name']].append(fn)
                     helper_graph[domain][fn['name']].append(fn)
 
-    def resolve_transitive_callees(seeds: list[dict], domain: str, max_depth: int = 4) -> set[str]:
-        found = set()
-        seen = set()
+    def resolve_transitive_callees(seeds: list[dict], domain: str, max_depth: int = 4):
+        # Preserve the existing name-based analysis outside the Reg forwarding repair.
+        if domain != 'reg':
+            found, seen = set(), set()
+            queue = [(domain, fn, 0) for fn in seeds]
+            while queue:
+                cur_dom, fn, depth = queue.pop(0)
+                key = (cur_dom, fn['source']['file'], fn['source']['line'])
+                if key in seen or Path(fn['source']['file']).parent.as_posix().endswith('/impl/basic_api/reg_compute'):
+                    continue
+                seen.add(key)
+                found.update(fn['callees'])
+                if depth >= max_depth:
+                    continue
+                for name in fn.get('reg_refs', ()):
+                    for suffix in ('', 'Impl', 'Operator', 'Cal'):
+                        queue.extend(('reg', target, depth + 1) for target in helper_graph['reg'].get(name + suffix, ()))
+                for name in fn.get('raw_calls', ()):
+                    if len(name) >= 4:
+                        queue.extend((cur_dom, target, depth + 1) for target in helper_graph[cur_dom].get(name, ()))
+            return found, {}
+        found, seen = set(), set()
+        nodes, edges, unresolved = {}, {}, {}
         queue = [(domain, fn, 0) for fn in seeds]
+
+        def node(fn):
+            identity = stable_id('asc_fn_', [fn['source']['file'], fn['source']['line']])
+            if identity not in nodes:
+                nodes[identity] = {k: fn[k] for k in ('name', 'signature', 'source', 'conditions', 'ignored_guards')}
+            return identity
+
         while queue:
             cur_dom, fn, depth = queue.pop(0)
             key = (cur_dom, fn['source']['file'], fn['source']['line'])
-            if key in seen:
+            if key in seen or eval_3510(fn['conditions'], fn['ignored_guards']) == 'excluded':
                 continue
             seen.add(key)
-            found.update(fn['callees'])
-            if depth >= max_depth:
-                continue
-            for rname in fn.get('reg_refs', ()):
-                for target_fn in helper_graph['reg'].get(rname, ()):
-                    queue.append(('reg', target_fn, depth + 1))
-                for suffix in ('Impl', 'Operator', 'Cal'):
-                    for target_fn in helper_graph['reg'].get(rname + suffix, ()):
-                        queue.append(('reg', target_fn, depth + 1))
-            for cname in fn.get('raw_calls', ()):
-                if len(cname) < 4:
+            for site in fn['call_sites']:
+                if eval_3510(site.get('conditions', []), site.get('ignored_guards', [])) == 'excluded':
                     continue
-                for target_fn in helper_graph[cur_dom].get(cname, ()):
-                    queue.append((cur_dom, target_fn, depth + 1))
-        return found
+                name = site['name']
+                if name in known_ccec:
+                    found.add(name)
+                    if domain == 'reg':
+                        edge = {'caller': node(fn), 'callee_name': name, 'call': site,
+                                'resolution': 'lexical_ccec_call_not_overload_resolved'}
+                        edges[str((key, site['source']['line'], name))] = edge
+                    continue
+                # Keep the existing domain lookup, but never merge all DataCopyImpl overloads.
+                candidates = helper_graph[cur_dom].get(name, [])
+                if name in fn.get('reg_refs', []):
+                    candidates = helper_graph['reg'].get(name, [])
+                candidates = [target for target in candidates
+                              if compatible_helper(fn, site, target)
+                              and eval_3510(target['conditions'], target['ignored_guards']) != 'excluded']
+                if depth >= max_depth or not candidates:
+                    if domain == 'reg' and (name in helper_graph[cur_dom] or name.endswith('Impl')):
+                        unresolved[str((key, site['source']['line'], name))] = {
+                            'caller': node(fn), 'call': site,
+                            'reason': 'depth_limit' if depth >= max_depth else 'no_compatible_parsed_helper'}
+                    continue
+                for target in candidates:
+                    target_domain = 'reg' if '/reg_compute/' in target['source']['file'] else cur_dom
+                    queue.append((target_domain, target, depth + 1))
+                    if domain == 'reg':
+                        edge = {'caller': node(fn), 'callee': node(target), 'call': site,
+                                'resolution': 'arity_and_address_space_candidate'}
+                        edges[str((key, site['source']['line'], node(target)))] = edge
+        return found, {'nodes': nodes, 'edges': list(edges.values()), 'unresolved': list(unresolved.values()),
+                       'max_depth': max_depth, 'resolution': 'lexical_candidates_not_cpp_overload_resolution'}
 
     # 2) Parse public interface files in include/basic_api and include/simt_api/cpp
     decl_by_qname = defaultdict(list)
@@ -540,6 +651,11 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
         if not matched_impls and stem == 'kernel_operator_mm' and name.startswith('Mmad'):
             matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if 'Mmad' in cand['name'] or 'Mad' in cand['name']]
 
+        if is_reg_ns:
+            forwarders = [fn for fn in matched_impls if Path(fn['source']['file']).parent.as_posix().endswith('/impl/basic_api/reg_compute') and fn['name'] == name]
+            if forwarders:
+                matched_impls = forwarders
+
         cond_3510 = aggregate_conditions([fn for _, fn in entries])
 
         group = (
@@ -550,7 +666,7 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
         family, transfer = classify_ascendc_family(name, rel_file, sample['signature'])
 
         domain = 'reg' if is_reg_ns else 'basic'
-        callee_set = resolve_transitive_callees(matched_impls + [f for _, f in entries], domain)
+        callee_set, call_trace = resolve_transitive_callees(matched_impls + [f for _, f in entries], domain)
         callee_names = sorted(callee_set)
         callee_details = [ccec_index[c] for c in callee_names if c in ccec_index]
         ccec_op_ids = sorted({oid for cd in callee_details for oid in cd['candidate_op_ids']})
@@ -564,6 +680,7 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
             'layer': 'basic',
             'name': name,
             'qualified_name': qname,
+            'call_trace': call_trace,
             'namespace': ns,
             'group': group,
             'family': family,
@@ -677,6 +794,16 @@ def validate_model(data: dict) -> list[str]:
                     errors.append('Missing source: ' + item['id'])
             if item.get('relation_resolution') != 'lexical_name_candidate':
                 errors.append('Unqualified relation: ' + item['id'])
+            trace = item.get('call_trace', {})
+            nodes = trace.get('nodes', {})
+            for node in nodes.values():
+                if node['source']['file'] not in data['files']:
+                    errors.append('Missing trace source: ' + item['id'])
+            for edge in trace.get('edges', []) + trace.get('unresolved', []):
+                if edge['caller'] not in nodes or ('callee' in edge and edge['callee'] not in nodes):
+                    errors.append('Dangling trace edge: ' + item['id'])
+                if edge['call']['source']['file'] not in data['files']:
+                    errors.append('Missing call source: ' + item['id'])
     return errors
 
 

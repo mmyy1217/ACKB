@@ -22,6 +22,62 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.goto(url);
     await page.waitForSelector('#rows .row-button');
 
+    assert.deepEqual(await page.locator('#backend option').allTextContents(), [
+      'CCEC 编程接口', 'CCEC Builtins', 'AscendC 高层 API', 'AscendC C / SIMT API',
+      'CCE Dialect 语义 Op', 'CCE Dialect → LLVM Intrinsics', 'PTX 虚拟指令集',
+    ]);
+    await page.selectOption('#backend', 'ccec-intrinsics');
+    assert.match(await page.locator('#unknown-hint').innerText(), /2,839/);
+    await page.click('#show-hidden');
+    assert.match(await page.locator('#result-count').innerText(), /4,353/);
+    await page.uncheck('#include-unknown');
+    for (const [name, count] of [['vldsx1_', 34], ['vstsx1_', 34], ['vlds', 68], ['vsts', 37]]) {
+      await page.fill('#search', name);
+      assert.equal(await page.locator('#rows tr').count(), 0);
+      assert.match(await page.locator('#empty p').innerText(), new RegExp(`${count} 个匹配条目因 950 条件待确认被隐藏`));
+      await page.click('#empty-unknown');
+      assert.match(await page.locator('#result-count').innerText(), new RegExp(`${count} 个唯一 op`));
+      assert.equal(await page.locator('#rows tr').count(), Math.min(60, count));
+      await page.reload();
+      assert.equal(await page.locator('#include-unknown').isChecked(), true);
+      await page.uncheck('#include-unknown');
+    }
+    await page.fill('#search', 'vldsx1_');
+    await page.locator('[data-family="矩阵 / Cube"]').click();
+    assert.equal(await page.locator('#empty-unknown').isVisible(), false);
+    await page.click('#reset');
+    await page.fill('#search', 'vldsx1_');
+    for (const width of [1440, 320]) {
+      await page.setViewportSize({width, height: 950});
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      await page.screenshot({path: path.join(review, `builtin-hidden-${width}.png`)});
+    }
+    await page.setViewportSize({width: 1440, height: 950});
+    await page.fill('#search', 'no_such_instruction_123');
+    assert.equal(await page.locator('#empty-unknown').isVisible(), false);
+    assert.equal(await page.locator('#unknown-hint').isVisible(), false);
+
+    // The common DataCopyImpl name must not join load and store paths together.
+    await page.selectOption('#backend', 'ascendc');
+    for (const [name, expected, forbidden] of [['LoadAlign', /__builtin_cce_vldsx1_/, /__builtin_cce_vstsx1_/],
+                                              ['StoreAlign', /__builtin_cce_vstsx1_/, /__builtin_cce_vldsx1_/]]) {
+      await page.fill('#search', 'AscendC::Reg::' + name);
+      await page.locator('#rows .row-button').filter({hasText: new RegExp(`^${name}$`)}).click();
+      assert.match(await page.locator('#detail').innerText(), expected);
+      assert.doesNotMatch(await page.locator('#detail').innerText(), forbidden);
+      await page.locator('.call-trace > summary').click();
+      await page.locator('.call-trace details > summary').first().click();
+      assert.match(await page.locator('.call-trace').innerText(), /DataCopyImpl/);
+      assert.match(await page.locator('.call-trace').innerText(), /kernel_reg_compute_datacopy_intf_impl.h/);
+      assert.match(await page.locator('.call-trace').innerText(), /SHA-256 [a-f0-9]{64}/);
+    }
+    await page.screenshot({path: path.join(review, 'reg-call-trace-1440.png')});
+    await page.locator('#detail [data-op-ref^="ccec_op___builtin_cce_vstsx1_"]').first().click();
+    assert.equal(await page.locator('#backend').inputValue(), 'ccec-intrinsics');
+    assert.equal(await page.locator('#include-unknown').isChecked(), true);
+    assert.match(await page.locator('#detail').innerText(), /__builtin_cce_vstsx1_/);
+    await page.click('#reset');
+
     // 0. Verify no expanded DMA sub-items (transfer:*) in sidebar across backends, and CCEC round-trip direct link <-> intrinsic jump
     for (const backendVal of ['ccec', 'ascendc', 'cce-dialect']) {
       await page.selectOption('#backend', backendVal);
@@ -42,20 +98,20 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     // 1. Test AscendC upper layer (basic_api)
     await page.selectOption('#backend', 'ascendc');
-    assert.match(await page.locator('#result-count').innerText(), /491 个 AscendC 接口/);
+    assert.match(await page.locator('#result-count').innerText(), /491 个 AscendC 高层 API/);
     for (const [sym, expectRe] of [['DataCopy', /__builtin_cce_copy_gm_to_ubuf/], ['Add', /__builtin_cce_vadd/], ['Mmad', /__builtin_cce_mad/]]) {
       await page.fill('#search', sym);
       await page.locator('#rows .row-button').filter({hasText: new RegExp(`^${sym}$`)}).first().click();
-      assert.match(await page.locator('#detail').innerText(), /AscendC 接口 \(basic_api\)/);
+      assert.match(await page.locator('#detail').innerText(), /AscendC 高层 API \(basic_api\)/);
       assert.match(await page.locator('#detail').innerText(), expectRe);
     }
     await page.fill('#search', 'DataCopy');
     await page.locator('#rows .row-button').filter({hasText: /^DataCopy$/}).first().click();
     await page.screenshot({path: path.join(review, 'ascendc-basic-1440.png'), fullPage: true});
 
-    // 2. Test AscendC lower layer (c_api + simt_api) and jump to CCEC Intrinsics
+    // 2. Test AscendC lower layer (c_api + simt_api) and jump to CCEC Builtins
     await page.selectOption('#backend', 'ascendc-capi');
-    assert.match(await page.locator('#result-count').innerText(), /1,304 个 ASC 底层接口/);
+    assert.match(await page.locator('#result-count').innerText(), /1,304 个 AscendC C \/ SIMT API/);
     await page.fill('#search', 'asc_copy_gm2ub');
     await page.locator('#rows .row-button').filter({hasText: /^asc_copy_gm2ub$/}).first().click();
     await page.locator('#detail [data-op-ref="ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"]').first().click();
@@ -66,7 +122,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.selectOption('#backend', 'ascendc-capi');
     await page.fill('#search', 'asc_mmad');
     await page.locator('#rows .row-button').filter({hasText: /^asc_mmad$/}).first().click();
-    assert.match(await page.locator('#detail').innerText(), /AscendC 底层接口 \(c_api \/ simt_api\)/);
+    assert.match(await page.locator('#detail').innerText(), /AscendC C \/ SIMT API \(c_api \/ simt_api\)/);
     assert.match(await page.locator('#detail').innerText(), /__builtin_cce_mad/);
     await page.screenshot({path: path.join(review, 'ascendc-capi-1440.png'), fullPage: true});
 
@@ -75,7 +131,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.equal(await page.locator('#backend').inputValue(), 'ccec-intrinsics');
     assert.match(await page.locator('#detail').innerText(), /__builtin_cce_mad/);
 
-    // 3. Test CCE Dialect upper layer (CCE Dialect Ops) and jump to lower layer (CCE Dialect Intrinsics)
+    // 3. Test CCE Dialect upper layer (CCE Dialect 语义 Op) and jump to lower layer (CCE Dialect → LLVM Intrinsics)
     await page.selectOption('#backend', 'cce-dialect');
     assert.match(await page.locator('#result-count').innerText(), /247 个 Dialect Op/);
     await page.fill('#search', 'cce.mad');
@@ -83,10 +139,10 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.match(await page.locator('#detail').innerText(), /CCESpec\.md 中文规格说明/);
     await page.screenshot({path: path.join(review, 'cce-dialect-ops-1440.png'), fullPage: true});
 
-    // Jump from cce.mad to its lowered CCE Dialect Intrinsic
+    // Jump from cce.mad to its lowered CCE Dialect → LLVM Intrinsic
     await page.locator('#detail [data-op-ref^="cce_dialect_intr_"]').first().click();
     assert.equal(await page.locator('#backend').inputValue(), 'cce-dialect-intrinsics');
-    assert.match(await page.locator('#detail').innerText(), /CCE Dialect Intrinsic/);
+    assert.match(await page.locator('#detail').innerText(), /CCE Dialect → LLVM Intrinsic/);
     await page.screenshot({path: path.join(review, 'cce-dialect-intrinsics-1440.png'), fullPage: true});
 
     // Verify llvm.hivm.MOV.OUT.TO.UB.ALIGN.V2.f16.DV -> ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2

@@ -58,6 +58,55 @@ class EvidenceRegressionTests(unittest.TestCase):
         cls.asc = json.loads(ascendc.OUTPUT.read_text())
         cls.dialect = json.loads(cce_dialect.OUTPUT.read_text())
 
+    def test_reg_forwarders_preserve_load_store_direction_and_call_sources(self):
+        records = {r['qualified_name']: r for r in self.asc['basic_api']}
+        for name, expected, forbidden in [('LoadAlign', {'vlds', 'vld'}, {'vsts', 'vst'}),
+                                          ('StoreAlign', {'vsts', 'vst'}, {'vlds', 'vld'})]:
+            record = records['AscendC::Reg::' + name]
+            callees = {c['name'] for c in record['ccec_callees']}
+            self.assertTrue(expected <= callees)
+            self.assertFalse(forbidden & callees)
+            trace = record['call_trace']
+            self.assertTrue(any(n['name'] == name and '/reg_compute/kernel_reg_compute_datacopy_intf_impl.h' in n['source']['file']
+                                for n in trace['nodes'].values()))
+            self.assertTrue(any(e['call']['name'] == 'DataCopyImpl' for e in trace['edges']))
+            for edge in trace['edges']:
+                self.assertIn(edge['call']['source']['file'], self.asc['files'])
+                self.assertNotEqual(ascendc.eval_3510(edge['call']['conditions'], edge['call']['ignored_guards']), 'excluded')
+                if 'callee' in edge:
+                    target = trace['nodes'][edge['callee']]
+                    self.assertNotEqual(ascendc.eval_3510(target['conditions'], target['ignored_guards']), 'excluded')
+            result = query.run(query.parser().parse_args(['--backend', 'ascendc', '--limit', '2', 'relations', record['id']]))
+            self.assertEqual(result['items'][0]['relation'], 'candidate_call')
+            self.assertEqual(len(result['items'][0]['call_sha256']), 64)
+            self.assertEqual(len(result['items'][0]['caller_definition']['sha256']), 64)
+            self.assertIsNotNone(result['next_offset'])
+            result = query.run(query.parser().parse_args(['--backend', 'ascendc', 'get', record['id']]))
+            self.assertNotIn('call_trace', result['items'][0])
+        self.assertTrue(records['AscendC::Reg::StoreAlign']['call_trace']['unresolved'])
+
+    def test_helper_candidates_use_call_arity_and_address_spaces(self):
+        parsed = ascendc.parse_functions_in_header('''
+inline void LoadAlign(U& reg, __ubuf__ T* src, int stride) {
+  DataCopyImpl<T, Mode>(reg, src, stride);
+#if __NPU_ARCH__ == 9201
+  vsts(src, reg);
+#endif
+}
+inline void DataCopyImpl(U& reg, __ubuf__ T* src, int stride) {}
+inline void DataCopyImpl(__ubuf__ T* dst, U& reg, MaskReg& mask) {}
+inline void DataCopyImpl(U& reg, __ubuf__ T* src) {}
+''', 'sample.h', {'vsts'})
+        caller, load, store, short = parsed
+        site = next(c for c in caller['call_sites'] if c['name'] == 'DataCopyImpl')
+        self.assertEqual(site['arguments'], ['reg', 'src', 'stride'])
+        self.assertEqual(site['source']['line'], 3)
+        self.assertTrue(ascendc.compatible_helper(caller, site, load))
+        self.assertFalse(ascendc.compatible_helper(caller, site, store))
+        self.assertFalse(ascendc.compatible_helper(caller, site, short))
+        excluded = next(c for c in caller['call_sites'] if c['name'] == 'vsts')
+        self.assertEqual(ascendc.eval_3510(excluded['conditions'], excluded['ignored_guards']), 'excluded')
+
     def test_architecture_branch_cannot_be_overridden_by_body(self):
         record = next(x for x in self.asc['c_api'] if x['name'] == '__bfloat1622fp4x2_e1m2_rn')
         self.assertEqual(record['condition_3510'], 'excluded')

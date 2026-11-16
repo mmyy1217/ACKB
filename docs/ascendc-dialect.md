@@ -11,7 +11,7 @@
 | CCE Dialect ops | TableGen 定义的语义 Op；247 项 | CCEDialect 的 CCEOps.td / CCESIMTOps.td |
 | CCE Dialect intrinsics | 静态映射表出现的完整 llvm.hivm.* 符号；1,069 项 | CCEIntrinsicMap.td / CCESIMTIntrinsicMap.td，附关联 cce.intr.* 定义 |
 
-AscendC 扫描 373 个头文件，370 个文件的哈希与已有原包核验快照相符；其余 3 个只记录本地文件哈希，不声称原包已核验。版本固定为 9.3.0~weekly.20261104.01。Dialect 扫描 17 个源码及文档文件，保留 Git commit、工作区是否有修改及逐文件哈希；实际内容以哈希为准。两个数据文件同时绑定生成器与 CCEC catalog 哈希，陈旧快照会拒绝构建。
+AscendC 扫描 395 个头文件，392 个文件的哈希与已有原包核验快照相符；其余 3 个只记录本地文件哈希，不声称原包已核验。版本固定为 9.3.0~weekly.20261104.01。Dialect 扫描 17 个源码及文档文件，保留 Git commit、工作区是否有修改及逐文件哈希；实际内容以哈希为准。两个数据文件同时绑定生成器与 CCEC catalog 哈希，陈旧快照会拒绝构建。
 
 这些是有界静态提取，不是 AscendC 全部 API 或 LLVM intrinsic 全集。函数解析器不是完整 C++ 前端；命名空间部分按来源目录推断，宏生成函数与任意模板语义尚未全面求值。具体 TableGen 映射行保存原始来源，语义 Op 与映射键的关联另标为候选。
 
@@ -43,3 +43,12 @@ AscendC 到 CCEC 的关系来自函数名与词法引用，候选实现关联还
 两个新后端使用 `ackb.multi-backend.query.v1`，对应 `schemas/multi-backend-query-v1.schema.json`；既有 CCEC / PTX 查询不变。`--data` 支持索引文件或目录，读取后核验快照。未支持的筛选或不同芯片请求会明确报错。
 
 `search` 提供摘要；`get` 提供元数据及参数/证据分页入口；AscendC `forms` 分页读取全部声明形式；`relations` 输出候选边和实现来源；`evidence` 按摘录行分页并附源文件哈希，摘录行序号不冒充原文件行号；Dialect `unresolved` 列出未建立静态映射的 MLIR Op。响应带来源、验证状态与限制。单条超预算时返回错误，不截断为假完整结果。
+
+
+## Reg 公共转发层与逐调用来源
+
+寄存器接口额外扫描 `impl/basic_api/reg_compute/*.h` 的公共转发文件，保留原有 `reg_compute/dav_3510` 目标实现。例如 `LoadAlign` / `StoreAlign` 的声明位于 `include/basic_api/reg_compute/kernel_reg_compute_datacopy_intf.h`，定义在同名公共 `*_intf_impl.h`，两者分别调用 `DataCopyImpl(dstReg, srcAddr, …)` 和 `DataCopyImpl(dstAddr, srcReg, mask, …)`；目标候选分别落在 `dav_3510` 的 load / store 实现中，进而引用 `vlds/vld` 和 `vsts/vst` 等 CCEC 符号。
+
+不能把同名 `DataCopyImpl` 的所有重载直接合并。此次跟踪按调用实参数量和直接参数绑定的 `__ubuf__` 地址空间排除明显矛盾候选，并排除局部 3510 条件明确为假的函数及调用点。未知条件保留，模板实参和 C++ 重载并未完整求值，最多沿 4 条 helper 边展开。`call_trace` 保存函数节点、每处调用的文件/行号/实参/原始条件，以及未找到兼容 helper 或达到深度限制的断点；网页可展开查看，CLI `relations` 分页输出并附调用文件与函数来源哈希。它不是完整 include 可达性证明，也不替代编译器的调用图。
+
+这次补链不提升 CCEC builtin 的架构状态。`vldsx1_*`、`vstsx1_*` 各 34 个 builtin 只在调用处取得身份，仍缺明确入口声明，保持待确认。页面搜索在存在隐藏结果时显示数量，并允许一键启用“显示待确认”；已有可见名称组中的未知重载不重复计为隐藏条目。宽泛搜索 `vlds` 还会匹配 34 个 `vldsx2_*`（合计 68），`vsts` 还会匹配 3 个 `vstsx2_*`（合计 37），这些也保持待确认。

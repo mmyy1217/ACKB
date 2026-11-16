@@ -2,6 +2,20 @@
 
 ACKB（AI Compiler Knowledge Base）是 AI as Compiler 的目标知识层，提供接口、执行模型及可追溯的验证证据。
 
+## 页面层级名称
+
+| 页面入口 | 内容边界 | 稳定后端 / 层级标识 |
+| --- | --- | --- |
+| CCEC 编程接口 | 开发者可写的 CCE 源码函数：封装及已追踪的直连 alias 入口 | ccec / wrappers（网页）；interfaces（CLI 命令） |
+| CCEC Builtins | 按完整 `__builtin_cce_*` 标识符去重的编译器内建操作 | ccec / interfaces（网页）或 ops（CLI） |
+| AscendC 高层 API | `basic_api` 的 Tensor、Reg、SIMT C++ 接口 | ascendc / basic |
+| AscendC C / SIMT API | `c_api` 与 `simt_api` 的底层函数接口 | ascendc / capi |
+| CCE Dialect 语义 Op | MLIR 语义操作 | cce-dialect / ops |
+| CCE Dialect → LLVM Intrinsics | 映射表出现的具体 `llvm.hivm.*` 符号及关联 Op | cce-dialect / intrinsics |
+| PTX 虚拟指令集 | PTX 指令、执行模型和官方文档阅读层 | ptx |
+
+这是不同编程层级与来源体系，不是七个仓库或七套硬件 ISA。“编程接口”比“上层接口”更准确：CCEC 这一层同时保留封装和直连入口，并非每个条目都有额外封装。Builtin 指编译器内建标识，intrinsic 是更宽泛的概念，也用于 LLVM IR 层。显示名称调整不改变既有 CLI、数据 ID 或深链接。
+
 ## 术语
 
 **AI as Compiler**：由 AI 生成目标层级代码，再交给既有工具链完成后续编译。代码生成策略属于外部系统。

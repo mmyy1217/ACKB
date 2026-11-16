@@ -330,3 +330,6 @@ body { overflow-anchor: none; }
 }
 
 #include-unknown { accent-color: var(--ink); }
+
+.unknown-hint { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 3px 8px; background: var(--subtle); color: var(--muted); font-size: 11px; border-bottom: 1px solid var(--line); }
+.unknown-hint button { text-decoration: underline; text-underline-offset: 3px; }

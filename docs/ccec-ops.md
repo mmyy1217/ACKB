@@ -1,6 +1,6 @@
 # CCEC 唯一 op 与接口层级
 
-CCEC Intrinsics 目录限定在 intrinsic / builtin 层。op 的唯一身份是完整 `__builtin_cce_*` 标识符，而不是短函数名、头文件、声明行或硬件 opcode。同一 builtin 的不同 intrinsic 别名和来源归入同一 op；不同 builtin 即使语义相近也不合并。
+CCEC Builtins 目录限定在 intrinsic / builtin 层。op 的唯一身份是完整 `__builtin_cce_*` 标识符，而不是短函数名、头文件、声明行或硬件 opcode。同一 builtin 的不同 intrinsic 别名和来源归入同一 op；不同 builtin 即使语义相近也不合并。
 
 ## 依据与分类
 
@@ -36,7 +36,7 @@ AI 主入口为 `query.py ops`，按名称或 builtin 查询；`get / support / 
 
 ## 950 / A5 双层阅读（当前默认）
 
-页面固定 Huawei Ascend 950PR_9579 / NpuArch 3510，不提供 CCEC 架构选择。顶栏切换“CCEC 接口 / CCEC Intrinsics / PTX”；CCEC 默认调用接口层。接口以命名空间与名称唯一分组，368 个接口至少有一个声明条件符合（357 个封装及 11 个已追踪的搬运直连入口）；191 个只有未知声明条件，通过“显示待确认”加入，共 559 个；66 个全部排除，不进入主目录。
+页面固定 Huawei Ascend 950PR_9579 / NpuArch 3510，不提供 CCEC 架构选择。顶栏切换“CCEC 编程接口 / CCEC Builtins / PTX”；CCEC 默认调用接口层。接口以命名空间与名称唯一分组，368 个接口至少有一个声明条件符合（357 个封装及 11 个已追踪的搬运直连入口）；191 个只有未知声明条件，通过“显示待确认”加入，共 559 个；66 个全部排除，不进入主目录。
 
 两层默认均只显示符合声明条件的记录，不把它称为设备支持。Intrinsic 按入口声明独立判断，不继承封装条件。关系跳转到未知条目时显式打开待确认开关；排除的来源只作为单条证据查阅，不加入主列表。深链接中的旧芯片参数不会改变 950 范围。
 
