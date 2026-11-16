@@ -34,6 +34,11 @@
   </div>
   <button id="jump-end" aria-label="跳到结果末尾" title="跳到结果末尾"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 12h8M3 6l4 4 4-4M7 2v8"/></svg></button>
 </nav>
+<div id="site-update" hidden role="status">发现新版本。<button type="button" onclick="refreshSite()">刷新到最新版</button></div>
+<section id="site-loading" hidden aria-live="polite" aria-labelledby="site-loading-title">
+  <h1 id="site-loading-title">正在加载数据库</h1><p id="site-loading-message"></p>
+  <div class="loading-actions"><button id="site-retry" type="button" hidden>重试</button><button type="button" onclick="refreshSite()">刷新到最新版</button><a href="#home">返回首页</a></div>
+</section>
 <main id="home" hidden aria-labelledby="home-title">
   <div id="home-content" tabindex="-1"><h1 id="home-title">AI Compiler 目标知识库</h1>
   <p class="home-intro">理解程序如何走向硬件。沿 Huawei Ascend 的源码接口、编译器内建与 LLVM IR 向下追踪；独立阅读 NVIDIA PTX 的执行与指令模型。</p>

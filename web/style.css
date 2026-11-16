@@ -338,6 +338,15 @@ body { overflow-anchor: none; }
 body.home-mode .topbar > :not(.brand):not(.top-meta) {display:none}
 body.home-mode .top-meta {margin-left:auto}
 body.home-mode .workspace {display:none}
+body.data-loading #home,body.data-loading .workspace,body.data-loading #scroll-navigation {display:none}
+body.data-loading .topbar > :not(.brand):not(.backend-switch):not(.top-meta) {display:none}
+body.data-loading.home-mode .topbar .backend-switch,body.data-loading .topbar .backend-switch {display:block}
+#site-loading {max-width:70ch;margin:48px auto;padding:0 20px}
+#site-loading h1 {font-size:20px}
+#site-loading p {line-height:1.6;overflow-wrap:anywhere}
+.loading-actions {display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+#site-loading button,#site-update button {border:1px solid #aaa;border-radius:5px;padding:6px 10px;background:#fff;color:#222;cursor:pointer}
+#site-update {padding:8px 16px;border-bottom:1px solid #ddd;font-size:13px}
 #home {max-width:1120px;margin:0 auto;padding:24px 28px 36px}
 #home h1 {font-size:24px;line-height:1.3;margin:0 0 10px;letter-spacing:-.02em}
 #home h2 {font-size:14px;margin:22px 0 8px}

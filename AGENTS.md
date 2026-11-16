@@ -26,6 +26,15 @@ python scripts/catalog.py validate
 
 生成 `dist/index.html`，可直接在浏览器打开。`dist/` 不入库。更换数据可使用构建参数 `--data <catalog.json> --output <index.html>`。
 
+线上版按库加载并按内容哈希缓存，不能把离线大文件部署到 Pages。兼容规则见 [加载与更新](docs/loading.md)。
+
+```sh
+python scripts/build.py --site
+npm run test:site
+```
+
+生成 `dist/site/`，需通过 HTTP 预览。`test:site` 自动启动本地服务，使用下方相同的 Playwright / Chrome 环境变量。
+
 ## 从本地工具链重新提取
 
 已核对原包内 23 个扫描头文件。显式指定版本目录，不使用 latest；重新提取会重置包校验状态，须再次核验。
@@ -116,7 +125,7 @@ python scripts/query.py --backend ptx get learn_tcgen05_pipeline
 python scripts/query.py --backend ptx get tcgen05-mma-instructions-mma --architecture sm_103a
 ```
 
-GitHub Pages 通过 main 上的 `.github/workflows/pages.yml` 构建 `dist/` 并部署；无需提交 dist。线上入口 https://mmyy1217.github.io/ACKB/ 。用户于 2026-11-16 明确持续授权：本仓库后续任务完成并通过适用验证后，自动提交、推送 `origin/main`（`mmyy1217/ACKB`）并确认 GitHub Pages 部署成功，无需逐次确认。该授权仅限本仓库的推送和 Pages 部署，不涵盖 PR、其他仓库或强制推送；上方 PR 授权边界保持不变。
+GitHub Pages 通过 main 上的 `.github/workflows/pages.yml` 构建并验证 `dist/site/` 后部署；无需提交 dist。线上入口 https://mmyy1217.github.io/ACKB/ 。用户于 2026-11-16 明确持续授权：本仓库后续任务完成并通过适用验证后，自动提交、推送 `origin/main`（`mmyy1217/ACKB`）并确认 GitHub Pages 部署成功，无需逐次确认。该授权仅限本仓库的推送和 Pages 部署，不涵盖 PR、其他仓库或强制推送；上方 PR 授权边界保持不变。
 
 ## CCEC 架构支持追踪
 

@@ -1,7 +1,7 @@
 'use strict';
 
-const ascendcData = knowledgeData.ascendc || {basic_api: [], c_api: [], counts: {}, files: {}, limitations: []};
-const dialectData = knowledgeData.cce_dialect || {ops: [], intrinsics: [], counts: {}, source: {files: {}}, limitations: []};
+let ascendcData = knowledgeData.ascendc || {basic_api: [], c_api: [], counts: {}, files: {}, limitations: []};
+let dialectData = knowledgeData.cce_dialect || {ops: [], intrinsics: [], counts: {}, source: {files: {}}, limitations: []};
 
 function createAscendcRecords() {
   const mapItem = (item, layer) => ({
@@ -74,8 +74,8 @@ function createDialectRecords() {
   return [...ops, ...intrs];
 }
 
-const ascendcRecords = createAscendcRecords();
-const dialectRecords = createDialectRecords();
+let ascendcRecords = createAscendcRecords();
+let dialectRecords = createDialectRecords();
 
 const loweringModeLabels = {
   direct_to_llvm_ir: 'cce-translate 直接翻译',
@@ -115,7 +115,7 @@ function renderAscendcDetail(r) {
 
   const calleesHTML = (item.ccec_callees || []).length
     ? `<table class="parameter-table"><thead><tr><th>候选 CCEC 符号</th><th>候选入口性质</th><th>候选 CCEC builtin</th></tr></thead><tbody>${item.ccec_callees.map(c => {
-      const calleeRefId = (c.wrapper_record_ids || []).find(id => byId.has(id)) || (c.entry_record_ids || []).find(id => byId.has(id));
+      const calleeRefId = (c.wrapper_record_ids || []).find(id => Boolean(lookupRecord(id))) || (c.entry_record_ids || []).find(id => Boolean(lookupRecord(id)));
       const calleeCell = calleeRefId ? opLink(calleeRefId, c.name) : `<code>${esc(c.name)}</code>`;
       return `<tr><td>${calleeCell}</td><td>${esc(callKindLabels[c.call_kind] || c.call_kind)}</td><td>${(c.candidate_op_ids || []).map(oid => opLink(oid, oid.replace('ccec_op___builtin_cce_', '__builtin_cce_'))).join(' ') || '—'}</td></tr>`;
     }).join('')}</tbody></table>`
@@ -171,7 +171,7 @@ function renderDialectDetail(r) {
 
   if (isOp) {
     const o = r.dialectOp;
-    const intrLinks = (o.intrinsic_ids || []).map(id => opLink(id, byId.get(id)?.name || id)).join(' ');
+    const intrLinks = (o.intrinsic_ids || []).map(id => opLink(id, lookupRecord(id)?.name || id)).join(' ');
     const ccecLinks = (o.ccec_candidate_op_ids || []).map(id => opLink(id, id.replace('ccec_op___builtin_cce_', '__builtin_cce_'))).join(' ');
     let body = '';
     if (state.tab === 'source') {
@@ -185,7 +185,7 @@ function renderDialectDetail(r) {
     $('#copy-signature').onclick = () => copyText(`${o.name} ${o.assembly_format || ''}`.trim());
   } else {
     const intr = r.dialectIntr;
-    const upLinks = (intr.upstream_op_ids || []).map(id => opLink(id, byId.get(id)?.name || id)).join(' ');
+    const upLinks = (intr.upstream_op_ids || []).map(id => opLink(id, lookupRecord(id)?.name || id)).join(' ');
     const ccecLinks = (intr.ccec_candidate_op_ids || []).map(id => opLink(id, id.replace('ccec_op___builtin_cce_', '__builtin_cce_'))).join(' ');
     const mlirOpsHTML = (intr.mlir_intr_ops || []).length
       ? `<h3>显式 MLIR Intrinsic Op (CCEIntrinsicOps.td) · ${intr.mlir_intr_ops.length}</h3>` + intr.mlir_intr_ops.map(m => `<div class="rule-entry"><code>${esc(m.mnemonic)} (${esc(m.def_name)})</code><p>${esc(m.summary)}</p>${m.arguments ? `<pre><code>ins: ${esc(m.arguments)}\nouts: ${esc(m.results || 'empty')}</code></pre>` : ''}<p class="condition">${esc(sourceLabel(m.source))}</p></div>`).join('')

@@ -26,6 +26,8 @@ PTX 固定官方手册版本与哈希，当前主目标为 NVIDIA B300（CC 10.3
 
 原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。首页提供文字层级图和数据库入口。当前网页支持 **LLVM IR / CCEC / AscendC / CCE Dialect / PTX**，可直接[在线阅读](https://mmyy1217.github.io/ACKB/)。PTX 以正文为中心，术语与代码旁的指令可在侧栏随手查；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
 
+在线版首页仅约 0.20 MB（含代码和样式），数据库按需压缩加载。页面与数据分别缓存，更新时只重新下载发生变化的资源；单文件离线版继续保留。详见 [加载与更新](docs/loading.md)。
+
 统一 JSON CLI 提供 `--backend llvm|ccec|ascendc|cce-dialect|ptx`、分页搜索、主题、关联和证据查询。CCEC 原有声明协议保持兼容；新增知识查询带来源哈希、未知项和验证状态。先读 [AI 使用入口](docs/ai-entry.md)，无需将整份数据库塞入上下文。
 
 LLVM 核心默认聚焦 A5 来源，注册范围与 950 支持严格分开。120 项厂商类型编码未解析，16 种模块签名含未知类型；完整边界见 [LLVM 核心](docs/llvm-core.md)。

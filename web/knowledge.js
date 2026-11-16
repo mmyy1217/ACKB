@@ -2,16 +2,20 @@
 const knowledgeData = JSON.parse(document.querySelector('#knowledge-data').textContent);
 const supportLabels = {documented_supported:'文档支持',documented_not_supported:'文档排除',partial:'部分形式',unknown:'待确认'};
 const ptxKinds = {instruction:'指令',instruction_topic:'指令章节',execution_model:'执行模型',state_space:'状态空间',directive:'伪指令',directive_topic:'伪指令章节',special_register:'特殊寄存器',special_register_topic:'寄存器章节',introduction:'概述',release_note:'版本历史',notice:'声明',other:'其他章节',note:'深度笔记'};
-const ptxSections = new Map(knowledgeData.ptx.records.map(r => [r.anchor,r]));
-const ptxTaxonomy = knowledgeData.ptx.taxonomy || {domains:[],categories:[],instructions:{}};
-const ptxDomains = new Map(ptxTaxonomy.domains.map(d => [d.id,d]));
-const ptxCategories = new Map(ptxTaxonomy.categories.map(c => [c.id,c]));
-const ptxSubcategories = new Map(ptxTaxonomy.categories.flatMap(c => (c.subcategories || []).map(s => [s.id,{...s,category:c}])));
-const knowledgeRecords = [
-  ...knowledgeData.ptx.records.map(k => wrapKnowledge(k,'ptx')),
-  ...knowledgeData.ptx.notes.map(k => wrapKnowledge({...k,kind:'lesson'},'ptx')),
-  ...knowledgeData.ccec.topics.map(k => wrapKnowledge({...k,kind:'note'},'ccec'))
-];
+let ptxSections,ptxTaxonomy,ptxDomains,ptxCategories,ptxSubcategories,knowledgeRecords;
+function refreshKnowledge() {
+  ptxSections = new Map(knowledgeData.ptx.records.map(r => [r.anchor,r]));
+  ptxTaxonomy = knowledgeData.ptx.taxonomy || {domains:[],categories:[],instructions:{}};
+  ptxDomains = new Map(ptxTaxonomy.domains.map(d => [d.id,d]));
+  ptxCategories = new Map(ptxTaxonomy.categories.map(c => [c.id,c]));
+  ptxSubcategories = new Map(ptxTaxonomy.categories.flatMap(c => (c.subcategories || []).map(s => [s.id,{...s,category:c}])));
+  knowledgeRecords = [
+    ...knowledgeData.ptx.records.map(k => wrapKnowledge(k,'ptx')),
+    ...knowledgeData.ptx.notes.map(k => wrapKnowledge({...k,kind:'lesson'},'ptx')),
+    ...knowledgeData.ccec.topics.map(k => wrapKnowledge({...k,kind:'note'},'ccec'))
+  ];
+}
+refreshKnowledge();
 function wrapKnowledge(k,backend) {
   const tax = k.taxonomy;
   const cat = tax && ptxCategories.get(tax.category);

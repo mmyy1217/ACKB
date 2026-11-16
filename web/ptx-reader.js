@@ -1,6 +1,6 @@
 'use strict';
-const learning = knowledgeData.ptx.learning;
-const lessonViews = learning.chapters.map(c=>c.id);
+let learning = knowledgeData.ptx.learning;
+let lessonViews = learning.chapters.map(c=>c.id);
 let lookupReturn = null;
 function isPtxReading() {return state.backend==='ptx' && [...lessonViews,'instruction','search'].includes(state.view);}
 function renderPtxNavigation() {

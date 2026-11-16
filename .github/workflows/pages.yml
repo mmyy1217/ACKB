@@ -29,11 +29,21 @@ jobs:
           python3 -m unittest discover -s tests -q
           python3 scripts/ptx_index.py validate
       - name: Build static site
-        run: python3 scripts/build.py
+        run: python3 scripts/build.py --site
+      - name: Setup Node for loading regression
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Check lazy loading and update behavior
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npm run test:site
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./dist/site
 
   deploy:
     needs: build

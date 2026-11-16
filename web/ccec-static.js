@@ -1,5 +1,5 @@
 'use strict';
-const ccecStatic = knowledgeData.ccec.static_support;
+let ccecStatic = knowledgeData.ccec.static_support;
 function staticArch() {
   return state.architecture.startsWith('__NPU_ARCH__=') ? state.architecture.split('=')[1] : null;
 }

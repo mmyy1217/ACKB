@@ -1,8 +1,8 @@
 'use strict';
 const $ = selector => document.querySelector(selector);
-const data = JSON.parse($('#catalog-data').textContent);
-const opRecords = createOpRecords(data);
-const allRecords = [...opRecords, ...data.records, ...knowledgeRecords, ...ascendcRecords, ...dialectRecords, ...llvmRecords];
+let data = JSON.parse($('#catalog-data').textContent);
+let opRecords = createOpRecords(data);
+let allRecords = [...opRecords, ...data.records, ...knowledgeRecords, ...ascendcRecords, ...dialectRecords, ...llvmRecords];
 let records = data.records;
 const byId = new Map(allRecords.map(r => [r.id, r]));
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,8 +17,43 @@ const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
 const sourceLabel = s => `${s.file}:${s.line}${s.end_line > s.line ? '–' + s.end_line : ''}`;
-const searchTexts = new Map(allRecords.map(r => [r.id,[r.name,r.signature,r.group,r.family,r.namespace,r.transfer?.label || '',r.transfer?.search_alias || '',...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : r.ascendc ? [r.ascendc.qualified_name || '',...(r.ascendc.ccec_callees || []).map(c=>c.name)].join(' ') : r.dialectOp ? [r.dialectOp.def_name,r.dialectOp.summary,r.dialectOp.spec?.title_zh || ''].join(' ') : r.dialectIntr ? [...(r.dialectIntr.op_keys || []),...(r.dialectIntr.mlir_intr_ops || []).map(m=>m.mnemonic)].join(' ') : ''].join(' ').toLowerCase()]));
-const fileMap = new Map(data.files.map(f => [f.path,f]));
+function searchText(r) {return [r.name,r.signature,r.group,r.family,r.namespace,r.transfer?.label || '',r.transfer?.search_alias || '',...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : r.ascendc ? [r.ascendc.qualified_name || '',...(r.ascendc.ccec_callees || []).map(c=>c.name)].join(' ') : r.dialectOp ? [r.dialectOp.def_name,r.dialectOp.summary,r.dialectOp.spec?.title_zh || ''].join(' ') : r.dialectIntr ? [...(r.dialectIntr.op_keys || []),...(r.dialectIntr.mlir_intr_ops || []).map(m=>m.mnemonic)].join(' ') : ''].join(' ').toLowerCase();}
+const searchTexts = new Map(allRecords.map(r => [r.id, searchText(r)]));
+let fileMap = new Map(data.files.map(f => [f.path,f]));
+
+function lookupRecord(id) {return byId.get(id) || siteLoader?.lookup(id);}
+function installBackend(backend, payload, navigation) {
+  if(navigation) knowledgeData.navigation=navigation;
+  if(backend==='ccec') {
+    data=payload.catalog; knowledgeData.ccec=payload.knowledge;
+    opModel=knowledgeData.ccec.ops; ccecStatic=knowledgeData.ccec.static_support;
+    callEvidence=knowledgeData.ccec.call_evidence;
+    directEntryIDs=new Set(callEvidence.direct_entry_ids);
+    opRecords=createOpRecords(data); fileMap=new Map(data.files.map(f=>[f.path,f]));
+    refreshKnowledge();
+  } else if(backend==='ptx') {
+    knowledgeData.ptx=payload; refreshKnowledge();
+    learning=payload.learning; lessonViews=learning.chapters.map(c=>c.id);
+  } else if(backend==='ascendc') {
+    knowledgeData.ascendc=payload; ascendcData=payload; ascendcRecords=createAscendcRecords();
+  } else if(backend==='cce-dialect') {
+    knowledgeData.cce_dialect=payload; dialectData=payload; dialectRecords=createDialectRecords();
+  } else if(backend==='llvm') knowledgeData.llvm=payload;
+  if(backend==='llvm' || navigation) refreshLLVM();
+  allRecords=[...opRecords,...data.records,...knowledgeRecords,...ascendcRecords,...dialectRecords,...llvmRecords];
+  // Previously loaded databases retain their search index when another is opened.
+  for(const record of allRecords) {
+    byId.set(record.id,record);
+    if(!searchTexts.has(record.id)) searchTexts.set(record.id,searchText(record));
+  }
+}
+function navigateHash(reveal) {
+  const params=new URLSearchParams(location.hash.slice(1));
+  const home=!location.hash || location.hash==='#home';
+  const requested=['ptx','ascendc','cce-dialect','llvm'].includes(params.get('backend'))?params.get('backend'):'ccec';
+  const backend=home?null:backendForLink(params.get('r') || '',requested);
+  navigateWithData(backend,()=>{readHash();render(reveal);});
+}
 
 function saveHash(replace = true) {
   if(state.home)return;
@@ -229,7 +264,7 @@ function queueMore() {
   loadScheduled = true;
   requestAnimationFrame(() => {
     loadScheduled = false;
-    if (isPtxReading() || state.view === 'report' || readingDetail || state.limit >= visible.length) return;
+    if (state.home || document.body.classList.contains('data-loading') || isPtxReading() || state.view === 'report' || readingDetail || state.limit >= visible.length) return;
     const bounds = $('#load-status').getBoundingClientRect();
     if (bounds.top > innerHeight + 300 || bounds.bottom < 0) return;
     appendThrough(state.limit + BATCH_SIZE);
@@ -250,7 +285,7 @@ function rowMetrics() {
   return {rowTop:bounds.top,rowHeight:bounds.height,top,capacity,maxOffset:Math.max(0,visible.length - capacity)};
 }
 function updateProgress() {
-  if (isPtxReading() || state.view === 'report') return;
+  if (state.home || document.body.classList.contains('data-loading') || isPtxReading() || state.view === 'report') return;
   const m = rowMetrics(), total = visible.length;
   if (!m || !total) {$('#viewport-range').textContent = '0–0 / 0';return;}
   const clampIndex = index => Math.max(0,Math.min(state.limit - 1,index));
@@ -456,13 +491,17 @@ $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapse
 $('.skip-link').onclick=e=>{e.preventDefault();const target=state.home?$('#home-content'):$('#main');target.focus();target.scrollIntoView({block:'start'});};
 $('#download').onclick = download;
 $('#backend').onchange=e=>{
-  state.home=false;const val=e.target.value;
+  const val=e.target.value;
+  const backend=val.startsWith('ccec')?'ccec':val.startsWith('ascendc')?'ascendc':val.startsWith('cce-dialect')?'cce-dialect':val;
+  navigateWithData(backend,()=>{
+  state.home=false;
   if(val==='llvm'){state.backend='llvm';}
   else if(val==='ptx'){state.backend='ptx';}
   else if(val==='ascendc' || val==='ascendc-capi'){state.backend='ascendc';state.ascendcLayer=val==='ascendc-capi'?'capi':'basic';}
   else if(val==='cce-dialect' || val==='cce-dialect-intrinsics'){state.backend='cce-dialect';state.dialectLayer=val==='cce-dialect-intrinsics'?'intrinsics':'ops';}
   else{state.backend='ccec';state.ccecLayer=val==='ccec-intrinsics'?'interfaces':'wrappers';}
   state.includeUnknown=false;configureBackend();state.view=state.backend==='ptx'?'overview':activeLayerView();state.ptxTarget='sm_103a';reset();
+  });
 };
 $('#llvm-scope').onchange=e=>{state.llvmScope=e.target.value;state.selected='';render();};
 $('#llvm-evidence').onchange=e=>{state.llvmEvidence=e.target.value;state.selected='';render();};
@@ -489,10 +528,10 @@ document.addEventListener('keydown',e => {
   if (!state.home && e.key === '/' && !['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName) && state.view !== 'report') {e.preventDefault();$('#search').focus();}
   if (e.key === 'Escape' && document.activeElement === $('#search')) {reset();$('#search').focus();}
 });
-window.addEventListener('hashchange',() => {readHash();render(true);});
+window.addEventListener('hashchange',() => navigateHash(true));
 window.addEventListener('scroll',queueMore,{passive:true});
 window.addEventListener('scroll',queueProgress,{passive:true});
 if ('IntersectionObserver' in window) new IntersectionObserver(queueMore,{rootMargin:'300px 0px'}).observe($('#load-status'));
 initPanelResize();
 initScrollNavigation();
-readHash();render(Boolean(new URLSearchParams(location.hash.slice(1)).get('r')));
+navigateHash(Boolean(new URLSearchParams(location.hash.slice(1)).get('r')));

@@ -1,5 +1,5 @@
 'use strict';
-const opModel = knowledgeData.ccec.ops;
+let opModel = knowledgeData.ccec.ops;
 function createOpRecords(data) {
   if(!opModel)return [];
   const sources=new Map(data.records.map(r=>[r.id,r]));
@@ -17,6 +17,9 @@ function createOpRecords(data) {
   });
 }
 function opNavigate(id) {
+  navigateWithData(backendForLink(id, byId.get(id)?.backend || 'ccec'),()=>openOp(id));
+}
+function openOp(id) {
   const target=byId.get(id);if(!target)return;
   state.home=false;
   if(target.backend==='llvm'){state.backend='llvm';state.llvmScope=target.llvm.a5_source_lead?'a5-sources':'all';state.includeUnknown=target.llvm.identity_status==='candidate_only';state.llvmEvidence='';configureBackend();}
@@ -36,7 +39,7 @@ function opNavigate(id) {
   $('#detail').focus({preventScroll:true});
 }
 function wireOpLinks(pane) {pane.querySelectorAll('[data-op-ref]').forEach(b=>b.onclick=()=>opNavigate(b.dataset.opRef));}
-function opLink(id,label) {return `<button class="related-link" data-op-ref="${esc(id)}">${esc(label || byId.get(id)?.name || id)}</button>`;}
+function opLink(id,label) {return `<button class="related-link" data-op-ref="${esc(id)}">${esc(label || lookupRecord(id)?.name || id)}</button>`;}
 function opRecordEvidence(id) {
   const r=byId.get(id),status=state.architecture?r.compatibility.profiles[state.architecture]:'not_evaluated';
   const labels={matches:'声明条件符合',unknown:'声明条件未知',excluded:'声明条件排除',not_evaluated:'未指定架构'};

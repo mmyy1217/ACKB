@@ -1,6 +1,6 @@
 'use strict';
-const callEvidence=knowledgeData.ccec.call_evidence || {calls:[],files:{},direct_entry_ids:[],coverage:{},issues:[]};
-const directEntryIDs=new Set(callEvidence.direct_entry_ids);
+let callEvidence=knowledgeData.ccec.call_evidence || {calls:[],files:{},direct_entry_ids:[],coverage:{},issues:[]};
+let directEntryIDs=new Set(callEvidence.direct_entry_ids);
 function ccecIsInterface(r){return opModel?.record_layers[r.id]?.layer==='wrapper' || directEntryIDs.has(r.id);}
 function observedCalls(r){return callEvidence.calls.filter(c=>(r.op?c.op_id===r.id:c.entry_record_ids.includes(r.id)) && (c.condition_result==='matches' || state.includeUnknown && c.condition_result==='unknown'));}
 function observedGroups(r){

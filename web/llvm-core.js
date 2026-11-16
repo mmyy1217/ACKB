@@ -1,15 +1,19 @@
 'use strict';
-const llvmData = knowledgeData.llvm || {ops:[],forms:[],sources:{},relations:[],coverage:{},limitations:[],scans:[]};
-if(llvmData.web_encoding==='columnar-v1') {
-  for(const name of ['ops','forms']) {const table=llvmData[name];llvmData[name]=table.rows.map(row=>Object.fromEntries(table.columns.flatMap((key,i)=>row[i]===null?[]:[[key,row[i]]])));}
-  for(const o of llvmData.ops)o.presence=Object.fromEntries(o.presence.map((v,i)=>[llvmData.presence_columns[i],['not_scanned','scanned_absent','observed'][v]]));
-}
-const llvmForms = new Map(llvmData.forms.map(f=>[f.id,f]));
 const llvmDomains = {target_intrinsic:'目标 Intrinsic',standard_intrinsic:'标准 LLVM Intrinsic',ordinary_ir:'普通 LLVM IR'};
 const llvmIdentities = {registered:'编译器已注册',declaration_observed:'模块声明',lowering_reference:'外部 lowering 引用',candidate_only:'仅字符串候选',reference_model:'IR 参考模型'};
-const llvmRecords = llvmData.ops.map(op=>({id:op.id,name:op.name,backend:'llvm',kind:'llvm',llvm:op,group:llvmDomains[op.domain],family:op.family,namespace:'',signature:op.form_ids.map(id=>llvmForms.get(id)?.signature || '').join(' '),builtins:[],conditions:[],source:{file:llvmData.sources[op.evidence[0]?.source_id]?.path || 'LLVM LangRef',line:op.evidence[0]?.line || 0},files:op.evidence.map(e=>llvmData.sources[e.source_id]?.path).filter(Boolean)}));
-const llvmRelationsById = new Map();
-for(const edge of llvmData.relations) for(const id of [edge.from,edge.to]) {if(!llvmRelationsById.has(id))llvmRelationsById.set(id,[]);llvmRelationsById.get(id).push(edge);}
+let llvmData,llvmForms,llvmRecords,llvmRelationsById;
+function refreshLLVM() {
+  llvmData = knowledgeData.llvm || {ops:[],forms:[],sources:{},relations:[],coverage:{},limitations:[],scans:[]};
+  if(llvmData.web_encoding==='columnar-v1' && !Array.isArray(llvmData.ops)) {
+    for(const name of ['ops','forms']) {const table=llvmData[name];llvmData[name]=table.rows.map(row=>Object.fromEntries(table.columns.flatMap((key,i)=>row[i]===null?[]:[[key,row[i]]])));}
+    for(const o of llvmData.ops)o.presence=Object.fromEntries(o.presence.map((v,i)=>[llvmData.presence_columns[i],['not_scanned','scanned_absent','observed'][v]]));
+  }
+  llvmForms = new Map(llvmData.forms.map(f=>[f.id,f]));
+  llvmRecords = llvmData.ops.map(op=>({id:op.id,name:op.name,backend:'llvm',kind:'llvm',llvm:op,group:llvmDomains[op.domain],family:op.family,namespace:'',signature:op.form_ids.map(id=>llvmForms.get(id)?.signature || '').join(' '),builtins:[],conditions:[],source:{file:llvmData.sources[op.evidence[0]?.source_id]?.path || 'LLVM LangRef',line:op.evidence[0]?.line || 0},files:op.evidence.map(e=>llvmData.sources[e.source_id]?.path).filter(Boolean)}));
+  llvmRelationsById = new Map();
+  for(const edge of (knowledgeData.navigation?.llvm_relations || llvmData.relations)) for(const id of [edge.from,edge.to]) {if(!llvmRelationsById.has(id))llvmRelationsById.set(id,[]);llvmRelationsById.get(id).push(edge);}
+}
+refreshLLVM();
 function llvmMatches(r) {
   const o=r.llvm;
   return (state.llvmScope==='all' || o.a5_source_lead || o.domain==='ordinary_ir') && (state.includeUnknown || o.identity_status!=='candidate_only') && (!state.llvmEvidence || o.evidence.some(e=>e.kind===state.llvmEvidence));
