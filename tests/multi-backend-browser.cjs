@@ -42,7 +42,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     // 1. Test AscendC upper layer (basic_api)
     await page.selectOption('#backend', 'ascendc');
-    assert.match(await page.locator('#result-count').innerText(), /477 个 AscendC 接口/);
+    assert.match(await page.locator('#result-count').innerText(), /491 个 AscendC 接口/);
     for (const [sym, expectRe] of [['DataCopy', /__builtin_cce_copy_gm_to_ubuf/], ['Add', /__builtin_cce_vadd/], ['Mmad', /__builtin_cce_mad/]]) {
       await page.fill('#search', sym);
       await page.locator('#rows .row-button').filter({hasText: new RegExp(`^${sym}$`)}).first().click();
@@ -55,7 +55,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     // 2. Test AscendC lower layer (c_api + simt_api) and jump to CCEC Intrinsics
     await page.selectOption('#backend', 'ascendc-capi');
-    assert.match(await page.locator('#result-count').innerText(), /1,372 个 ASC 底层接口/);
+    assert.match(await page.locator('#result-count').innerText(), /1,304 个 ASC 底层接口/);
     await page.fill('#search', 'asc_copy_gm2ub');
     await page.locator('#rows .row-button').filter({hasText: /^asc_copy_gm2ub$/}).first().click();
     await page.locator('#detail [data-op-ref="ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2"]').first().click();
@@ -97,10 +97,41 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.match(await page.locator('#detail').innerText(), /__builtin_cce_copy_gm_to_ubuf_align_v2/);
     assert.equal(await page.locator('#rows tr.selected').count(), 1);
 
-    // Check responsive widths (1024, 390, 320) have zero horizontal overflow
-    for (const width of [1024, 390, 320]) {
-      await page.setViewportSize({width, height: 950});
-      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `overflow at ${width}`);
+    // Full parameter forms survive selection, deep links and offline export.
+    await page.selectOption('#backend', 'ascendc-capi');
+    await page.fill('#search', 'asc_cast');
+    await page.locator('#rows .row-button').filter({hasText: /^asc_cast$/}).first().click();
+    assert.equal(await page.locator('#ascendc-form option').count(), 467);
+    await page.selectOption('#ascendc-form', '466');
+    await page.reload();
+    assert.equal(await page.locator('#ascendc-form').inputValue(), '466');
+    assert.match(await page.locator('#detail').innerText(), /候选关联/);
+    const downloadPromise = page.waitForEvent('download');
+    await page.click('#download');
+    const download = await downloadPromise;
+    const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
+    assert.equal(exported.records.find(r => r.name === 'asc_cast').forms.length, 467);
+    assert.ok(Object.keys(exported.files).length > 300);
+    assert.ok(exported.limitations.length);
+    await page.fill('#search', '__bfloat1622fp4x2_e1m2_rn');
+    await page.check('#include-unknown');
+    assert.equal(await page.locator('#rows .row-button').count(), 0);
+
+    await page.selectOption('#backend', 'cce-dialect-intrinsics');
+    assert.match(await page.locator('#result-count').innerText(), /1,069/);
+    await page.click('#coverage');
+    assert.match(await page.locator('#report').innerText(), /未建立静态 LLVM 映射 · 5/);
+    assert.doesNotMatch(await page.locator('#report').innerText(), /42\.5%/);
+
+    // Inspect each new surface on desktop and narrow layouts, not only the final CCEC jump.
+    for (const backend of ['ascendc', 'ascendc-capi', 'cce-dialect', 'cce-dialect-intrinsics']) {
+      await page.selectOption('#backend', backend);
+      for (const width of [1440, 1024, 390, 320]) {
+        await page.setViewportSize({width, height: 950});
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `${backend} overflow at ${width}`);
+        await page.screenshot({path: path.join(review, `fixed-${backend}-${width}.png`)});
+      }
     }
 
     assert.deepEqual(errors, []);

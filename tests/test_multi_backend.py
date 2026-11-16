@@ -52,5 +52,97 @@ class MultiBackendTests(unittest.TestCase):
             self.assertGreater(res['total'], 0)
 
 
+class EvidenceRegressionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.asc = json.loads(ascendc.OUTPUT.read_text())
+        cls.dialect = json.loads(cce_dialect.OUTPUT.read_text())
+
+    def test_architecture_branch_cannot_be_overridden_by_body(self):
+        record = next(x for x in self.asc['c_api'] if x['name'] == '__bfloat1622fp4x2_e1m2_rn')
+        self.assertEqual(record['condition_3510'], 'excluded')
+        import copy
+        broken = copy.deepcopy(self.asc)
+        next(x for x in broken['c_api'] if x['name'] == record['name'])['condition_3510'] = 'matches'
+        self.assertTrue(any('Target condition mismatch' in e for e in ascendc.validate_model(broken)))
+        self.assertTrue(any('9201' in c for f in record['forms'] for s in f['sources'] for c in s['conditions']))
+        parsed = ascendc.parse_functions_in_header('''
+#ifndef SAMPLE_H
+#define SAMPLE_H
+#if __NPU_ARCH__ == 9201
+inline void f(int x) {}
+#elif __NPU_ARCH__ == 3510
+inline void f(float x) {}
+#else
+inline void f(double x) {}
+#endif
+#ifdef FEATURE_UNKNOWN
+inline void g() {}
+#endif
+#endif
+''', 'sample.h', set())
+        self.assertEqual([ascendc.eval_3510(f['conditions'], f['ignored_guards']) for f in parsed],
+                         ['excluded', 'matches', 'excluded', 'unknown'])
+        literal = ascendc.parse_functions_in_header('inline void h(const char *s = \"a,b\");', 'sample.h', set())[0]
+        self.assertEqual(literal['parameters'], ['const char *s = \"a,b\"'])
+        # The guard is retained as provenance, not confused with architecture exclusion.
+        self.assertIn('!defined(SAMPLE_H)', parsed[0]['conditions'])
+
+    def test_all_forms_and_conditional_occurrences_survive_export(self):
+        record = next(x for x in self.asc['c_api'] if x['name'] == 'asc_cast')
+        self.assertEqual(record['overload_count'], 467)
+        self.assertEqual(len(record['forms']), 467)
+        exported = ascendc.web_payload(self.asc)
+        self.assertEqual(next(x for x in exported['c_api'] if x['name'] == 'asc_cast')['forms'], record['forms'])
+        parsed = ascendc.parse_functions_in_header('''
+#if __NPU_ARCH__ == 3510
+inline void f(int x);
+#else
+inline void f(int x);
+#endif
+''', 'sample.h', set())
+        forms = ascendc.parameter_forms(parsed)
+        self.assertEqual(len(forms), 1)
+        self.assertEqual(len(forms[0]['sources']), 2)
+        self.assertEqual({s['condition_3510'] for s in forms[0]['sources']}, {'matches', 'excluded'})
+        import copy
+        broken = copy.deepcopy(self.asc)
+        next(x for x in broken['c_api'] if x['name'] == 'asc_cast')['forms'].pop()
+        self.assertTrue(any('Truncated forms' in e for e in ascendc.validate_model(broken)))
+
+    def test_only_concrete_llvm_symbols_are_counted(self):
+        self.assertEqual(self.dialect['counts']['intrinsics'], 1069)
+        self.assertEqual(self.dialect['counts']['unresolved_lowerings'], 5)
+        for item in self.dialect['intrinsics']:
+            self.assertRegex(item['name'], r'^llvm\.hivm\.[A-Za-z0-9_.]+$')
+            self.assertNotIn('ccec_op_ids', item)
+            self.assertEqual(item['relation_resolution'], 'lexical_name_candidate')
+        self.assertTrue(any('print' in r['mnemonic'] for r in self.dialect['unresolved_lowerings']))
+        self.assertEqual(cce_dialect.web_payload(self.dialect)['unresolved_lowerings'], self.dialect['unresolved_lowerings'])
+
+    def test_query_contract_forms_pagination_and_source_hashes(self):
+        for backend in ('ascendc', 'cce-dialect'):
+            schema = query.run(query.parser().parse_args(['--backend', backend, 'schema']))
+            result = query.run(query.parser().parse_args(['--backend', backend, 'info']))
+            self.assertEqual(result['schema_version'], schema['properties']['schema_version']['const'])
+            self.assertIn(backend, schema['properties']['backend']['enum'])
+            self.assertTrue(set(schema['oneOf'][1]['required']) <= set(result))
+            self.assertEqual(result['verification']['compile'], 'unverified')
+        offset, found = 0, []
+        while offset is not None:
+            result = query.run(query.parser().parse_args(['--backend', 'ascendc', '--limit', '50', '--offset', str(offset),
+                                                         'forms', 'ascendc_capi_asc_cast']))
+            found.extend(result['items'])
+            offset = result['next_offset']
+        self.assertEqual(len(found), 467)
+        result = query.run(query.parser().parse_args(['--backend', 'ascendc', 'get', 'ascendc_capi_asc_cast']))
+        self.assertEqual(result['items'][0]['forms_query']['total'], 467)
+        result = query.run(query.parser().parse_args(['--backend', 'ascendc', 'evidence', 'ascendc_capi_asc_cast']))
+        self.assertEqual(len(result['items'][0]['sha256']), 64)
+        with self.assertRaises(ValueError):
+            query.run(query.parser().parse_args(['--backend', 'ascendc', 'search', '--chip', 'Ascend310']))
+        with self.assertRaises(ValueError):
+            query.run(query.parser().parse_args(['--backend', 'ascendc', 'search', '--signature', 'int']))
+
 if __name__ == '__main__':
     unittest.main()

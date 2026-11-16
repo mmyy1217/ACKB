@@ -27,8 +27,8 @@ SCHEMA_VERSION = 'ackb.ascendc.v1'
 LIMITATIONS = [
     'Static extraction from CANN 9.3.0~weekly.20261104.01 AscendC headers; no device compilation or execution was performed.',
     'Target assessment is locked to Huawei Ascend 950PR_9579 (__NPU_ARCH__ == 3510 / dav_3510).',
-    'In c_api, declarations in vector_compute/ without reg_base_impl (3510) definitions are marked excluded (declared_only_2201) rather than supported on 950.',
-    'CCEC callee links are extracted lexically from 3510 implementation bodies and classified against CCEC wrappers vs clang_builtin_alias entries.',
+    'Condition matches means local declaration conditions match 3510 (c_api also requires a locally matching candidate body); it is not include reachability, implementation availability, compilation or device support. Missing implementations remain separate evidence.',
+    'Implementation association and CCEC links are lexical/name-based candidates, not resolved C++ overloads or verified call chains. Families are repository heuristics.',
 ]
 
 
@@ -36,15 +36,35 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def eval_3510(conditions: list[str]) -> str:
+def eval_3510(conditions: list[str], ignored_guards=()) -> str:
     if not conditions:
         return 'matches'
-    vals = [evaluate(c, {'__NPU_ARCH__': 3510, '__CCE_AICORE__': 3510}) for c in conditions]
+    vals = [evaluate(c, {'__NPU_ARCH__': 3510}) for c in conditions if c not in ignored_guards]
     if False in vals:
         return 'excluded'
     if None in vals:
         return 'unknown'
     return 'matches'
+
+
+def aggregate_conditions(functions):
+    states = [eval_3510(f['conditions'], f.get('ignored_guards', [])) for f in functions]
+    return 'matches' if 'matches' in states else 'excluded' if states and all(s == 'excluded' for s in states) else 'unknown'
+
+
+def parameter_forms(functions):
+    """Keep every lexical signature and all of its conditional source occurrences."""
+    groups = {}
+    for fn in functions:
+        evidence = {k: fn[k] for k in ('source', 'conditions', 'ignored_guards')}
+        evidence['condition_3510'] = eval_3510(fn['conditions'], fn['ignored_guards'])
+        form = groups.setdefault(fn['signature'], {
+            **{k: fn[k] for k in ('signature', 'template', 'return_type', 'parameters', 'source')},
+            'sources': [],
+        })
+        if evidence not in form['sources']:
+            form['sources'].append(evidence)
+    return list(groups.values())
 
 
 def classify_ascendc_family(name: str, rel_file: str, signature: str = '') -> tuple[str, dict | None]:
@@ -79,7 +99,7 @@ def ascendc_transfer(low_name: str, low_file: str, sig: str = '') -> dict | None
         (('l12l0b', 'cbuf_to_cb', 'l1_to_l0b'), ('cbuf', 'cb', 'L1 → L0B')),
         (('gm2l0a',), ('gm', 'ca', 'GM → L0A')),
         (('gm2l0b',), ('gm', 'cb', 'GM → L0B')),
-        (('l0c2gm', 'cc_to_gm', 'fixpipe'), ('cc', 'gm', 'L0C → GM')),
+        (('l0c2gm', 'cc_to_gm'), ('cc', 'gm', 'L0C → GM')),
         (('l0c2l1', 'cc_to_cbuf'), ('cc', 'cbuf', 'L0C → L1')),
         (('l0c2ub', 'cc_to_ub'), ('cc', 'ubuf', 'L0C → UB')),
         (('ub2l1', 'ubuf_to_cbuf'), ('ubuf', 'cbuf', 'UB → L1')),
@@ -114,6 +134,8 @@ def strip_comments(text: str) -> str:
 def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[str]) -> list[dict]:
     """Extract function declarations and inline definitions with line numbers, conditions, and callees."""
     stripped = strip_comments(text)
+    guards = re.finditer(r'(?m)^\s*#\s*ifndef\s+(\w+)\s*\n\s*#\s*define\s+\1\b', stripped)
+    ignored_guards = ['!defined(' + g[1] + ')' for g in guards if re.search(r'_H(?:__?)?$', g[1])]
     raw_lines = text.splitlines()
     lines = stripped.splitlines()
 
@@ -142,7 +164,7 @@ def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[st
             elif op == 'endif' and frames:
                 frames.pop()
         for ln in range(start_ln, idx + 1):
-            line_conds[ln] = [f['active'] for f in frames if not re.search(r'INCLUDE_.*_H|ASCENDC_MODULE_.*_H|ASCENDC_C_API_INCLUDE', f['active'])]
+            line_conds[ln] = [f['active'] for f in frames]
 
     # Scan for __aicore__ / __simd_callee__ / __inline__ / template function declarations & definitions
     results = []
@@ -175,6 +197,9 @@ def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[st
             end_pos = p
             body_text = stripped[m.end() - 1:end_pos]
         end_line = stripped.count('\n', 0, end_pos) + 1
+        tmpl = clean(text[m.start(1):m.end(1)]) if tmpl else ''
+        decl_head = clean(text[m.start(2):m.end(2)])
+        params_raw = clean(text[m.start(4):m.end(4)])
         sig_clean = re.sub(r'\s+', ' ', ((tmpl + ' ') if tmpl else '') + decl_head).strip()
         params = [re.sub(r'\s+', ' ', p).strip() for p in split_params(params_raw) if p.strip()]
         ret_prefix = re.sub(r'\s+', ' ', decl_head[:decl_head.rfind(func_name)]).strip()
@@ -215,18 +240,33 @@ def parse_functions_in_header(text: str, rel_file: str, known_ccec_names: set[st
             'reg_refs': reg_refs,
             'deprecated': deprecated,
             'conditions': line_conds.get(start_line, []),
+            'ignored_guards': ignored_guards,
             'source': {'file': rel_file, 'line': start_line, 'end_line': end_line},
-            'excerpt': excerpt[:2400],
+            'excerpt': excerpt,
         })
     return results
 
 
 def split_params(raw: str) -> list[str]:
     parts, cur, depth = [], [], 0
+    quote, escaped = '', False
     for ch in raw:
-        if ch in '<(':
+        if quote:
+            cur.append(ch)
+            if escaped:
+                escaped = False
+            elif ch == chr(92):
+                escaped = True
+            elif ch == quote:
+                quote = ''
+            continue
+        if ch in (chr(34), chr(39)):
+            quote = ch
+            cur.append(ch)
+            continue
+        if ch in '<([{':
             depth += 1
-        elif ch in '>)':
+        elif ch in '>)]}':
             depth = max(0, depth - 1)
         if ch == ',' and depth == 0:
             parts.append(''.join(cur))
@@ -249,7 +289,7 @@ def build_ccec_callee_index(db: Database, ops_model: dict) -> dict[str, dict]:
 
     index = {}
     for name, recs in by_name.items():
-        active = [r for r in recs if db.condition(r, target) != 'excluded'] or recs
+        active = [r for r in recs if db.condition(r, target) != 'excluded']
         lset = {layers[r['id']]['layer'] for r in active if r['id'] in layers}
         op_ids_raw = {oid for r in active for oid in layers.get(r['id'], {}).get('op_ids', [])}
         def op_sort_key(oid: str):
@@ -270,9 +310,11 @@ def build_ccec_callee_index(db: Database, ops_model: dict) -> dict[str, dict]:
         index[name] = {
             'name': name,
             'call_kind': call_kind,
-            'op_ids': op_ids[:16],
-            'wrapper_record_ids': wrapper_ids[:6],
-            'entry_record_ids': entry_ids[:6],
+            'candidate_op_ids': op_ids,
+            'resolution': 'lexical_name_candidate',
+            'record_conditions': {r['id']: db.condition(r, target) for r in active},
+            'wrapper_record_ids': wrapper_ids,
+            'entry_record_ids': entry_ids,
         }
     return index
 
@@ -351,37 +393,19 @@ def extract_capi_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: d
         )
         family, transfer = classify_ascendc_family(name, rel_file, sample['signature'])
 
-        # Determine 950 (3510) support status
+        # Conditions belong to each source occurrence; a body cannot override an excluded declaration.
         has_3510_body = bool(impls_3510) or any(d['has_body'] for d in decls)
-        if has_3510_body:
-            status_3510 = 'matches'
-            status_reason = 'implemented_on_3510'
-        elif name in impl_2201_names or is_vec_mem:
-            status_3510 = 'excluded'
-            status_reason = 'declared_only_implemented_on_2201'
-        else:
-            # Evaluate preprocessor conditions on declarations
-            cond_vals = [eval_3510(d['conditions']) for d in decls] if decls else ['unknown']
-            status_3510 = 'excluded' if all(v == 'excluded' for v in cond_vals) else 'unknown'
-            status_reason = 'declaration_without_3510_body'
+        declaration_condition = aggregate_conditions(decls or impls_3510)
+        implementation_condition = aggregate_conditions(impls_3510 + [d for d in decls if d['has_body']])
+        status_3510 = 'excluded' if declaration_condition == 'excluded' else 'matches' if declaration_condition == implementation_condition == 'matches' else 'unknown'
+        status_reason = 'local_conditions_only_not_include_or_overload_resolution'
 
         callee_names = sorted({c for fn in (impls_3510 + decls) for c in fn['callees']})
         callee_details = [ccec_index[c] for c in callee_names if c in ccec_index]
-        ccec_op_ids = sorted({oid for cd in callee_details for oid in cd['op_ids']})
+        ccec_op_ids = sorted({oid for cd in callee_details for oid in cd['candidate_op_ids']})
         core_guards = sorted({cg for fn in (impls_3510 + decls) for cg in fn['core_guards']})
 
-        forms = []
-        seen_sigs = set()
-        for fn in (decls or impls_3510):
-            if fn['signature'] in seen_sigs:
-                continue
-            seen_sigs.add(fn['signature'])
-            forms.append({
-                'signature': fn['signature'],
-                'return_type': fn['return_type'],
-                'parameters': fn['parameters'],
-                'source': fn['source'],
-            })
+        forms = parameter_forms(decls or impls_3510)
 
         rep_impl = impls_3510[0] if impls_3510 else next((d for d in decls if d['has_body']), sample)
         items.append({
@@ -394,13 +418,17 @@ def extract_capi_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: d
             'transfer': transfer,
             'condition_3510': status_3510,
             'status_reason': status_reason,
+            'declaration_condition_3510': declaration_condition,
+            'implementation_condition_3510': implementation_condition,
             'core_guards': core_guards,
             'deprecated': any(fn['deprecated'] for fn in (decls + impls_3510)),
             'overload_count': len(forms),
             'impl_3510_count': len(impls_3510),
-            'forms': forms[:24],
+            'implementation_candidates': [{k: fn[k] for k in ('name', 'signature', 'source', 'conditions', 'ignored_guards')} for fn in (impls_3510 + [d for d in decls if d['has_body']])],
+            'forms': forms,
             'ccec_callees': callee_details,
-            'ccec_op_ids': ccec_op_ids[:16],
+            'ccec_candidate_op_ids': ccec_op_ids,
+            'relation_resolution': 'lexical_name_candidate',
             'source': sample['source'],
             'impl_source': rep_impl['source'] if has_3510_body else None,
             'excerpt': rep_impl['excerpt'],
@@ -508,17 +536,11 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
                 if cand['name'].lower().startswith(name.lower()):
                     matched_impls.append(cand)
         if not matched_impls and stem == 'kernel_operator_data_copy' and name.startswith('DataCopy'):
-            matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if any(k in cand['name'] for k in ('CopyGmTo', 'CopyUbufTo', 'CopyCbufTo', 'DataCopy'))][:12]
+            matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if any(k in cand['name'] for k in ('CopyGmTo', 'CopyUbufTo', 'CopyCbufTo', 'DataCopy'))]
         if not matched_impls and stem == 'kernel_operator_mm' and name.startswith('Mmad'):
-            matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if 'Mmad' in cand['name'] or 'Mad' in cand['name']][:12]
+            matched_impls = [cand for cand in prefer_impl(impl_3510_by_stem.get(stem, [])) if 'Mmad' in cand['name'] or 'Mad' in cand['name']]
 
-        cond_vals = [eval_3510(fn['conditions']) for _, fn in entries]
-        if 'matches' in cond_vals or matched_impls:
-            cond_3510 = 'matches'
-        elif all(v == 'excluded' for v in cond_vals):
-            cond_3510 = 'excluded'
-        else:
-            cond_3510 = 'unknown'
+        cond_3510 = aggregate_conditions([fn for _, fn in entries])
 
         group = (
             'AscendC::Reg (寄存器编程接口)' if ns == 'AscendC::Reg'
@@ -531,22 +553,10 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
         callee_set = resolve_transitive_callees(matched_impls + [f for _, f in entries], domain)
         callee_names = sorted(callee_set)
         callee_details = [ccec_index[c] for c in callee_names if c in ccec_index]
-        ccec_op_ids = sorted({oid for cd in callee_details for oid in cd['op_ids']})
+        ccec_op_ids = sorted({oid for cd in callee_details for oid in cd['candidate_op_ids']})
         core_guards = sorted({cg for fn in matched_impls for cg in fn['core_guards']})
 
-        forms = []
-        seen_sigs = set()
-        for _, fn in entries:
-            if fn['signature'] in seen_sigs:
-                continue
-            seen_sigs.add(fn['signature'])
-            forms.append({
-                'signature': fn['signature'],
-                'template': fn['template'],
-                'return_type': fn['return_type'],
-                'parameters': fn['parameters'],
-                'source': fn['source'],
-            })
+        forms = parameter_forms([fn for _, fn in entries])
 
         rep_impl = matched_impls[0] if matched_impls else sample
         items.append({
@@ -559,15 +569,17 @@ def extract_basic_layer(toolkit: Path, ccec_index: dict[str, dict], files_meta: 
             'family': family,
             'transfer': transfer,
             'condition_3510': cond_3510,
+            'declaration_condition_3510': cond_3510,
             'core_guards': core_guards,
             'overload_count': len(forms),
             'impl_3510_functions': [
-                {'name': im['name'], 'signature': im['signature'], 'source': im['source']}
-                for im in matched_impls[:10]
+                {k: im[k] for k in ('name', 'signature', 'source', 'conditions', 'ignored_guards')}
+                for im in matched_impls
             ],
-            'forms': forms[:24],
+            'forms': forms,
             'ccec_callees': callee_details,
-            'ccec_op_ids': ccec_op_ids[:16],
+            'ccec_candidate_op_ids': ccec_op_ids,
+            'relation_resolution': 'lexical_name_candidate',
             'source': sample['source'],
             'impl_source': rep_impl['source'] if matched_impls else None,
             'excerpt': rep_impl['excerpt'],
@@ -589,10 +601,20 @@ def extract(toolkit: Path = DEFAULT_TOOLKIT) -> dict:
     basic_items = extract_basic_layer(toolkit, ccec_index, files_meta)
     capi_items = extract_capi_layer(toolkit, ccec_index, files_meta)
 
+    from ccec_support import Support
+    support = Support(db=db)
+    for path, meta in files_meta.items():
+        pinned = support.data['files'].get(path)
+        if pinned and pinned['sha256'] != meta['sha256']:
+            raise ValueError('Source differs from pinned support snapshot: ' + path)
+        meta['package_verified'] = bool(pinned and support.package_proof)
+
     payload = {
         'schema_version': SCHEMA_VERSION,
         'backend': 'ascendc',
         'version': VERSION,
+        'generator_sha256': sha256(Path(__file__)),
+        'catalog_sha256': sha256(ROOT / 'data' / VERSION / 'catalog.json'),
         'target': {
             'chip': 'Ascend950PR_9579',
             'architecture': '__NPU_ARCH__=3510',
@@ -605,6 +627,7 @@ def extract(toolkit: Path = DEFAULT_TOOLKIT) -> dict:
             'capi_by_condition_3510': dict(Counter(x['condition_3510'] for x in capi_items)),
             'capi_by_group': dict(Counter(x['group'] for x in capi_items)),
             'scanned_files': len(files_meta),
+            'package_verified_files': sum(f['package_verified'] for f in files_meta.values()),
         },
         'limitations': LIMITATIONS,
         'files': files_meta,
@@ -628,36 +651,42 @@ def validate_model(data: dict) -> list[str]:
         errors.append(f'Too few AscendC basic_api records: {len(basic_ids)}')
     if len(capi_ids) < 500:
         errors.append(f'Too few AscendC c_api records: {len(capi_ids)}')
+    if data.get('generator_sha256') != sha256(Path(__file__)):
+        errors.append('Stale AscendC generator snapshot')
+    if data.get('catalog_sha256') != sha256(ROOT / 'data' / VERSION / 'catalog.json'):
+        errors.append('Stale CCEC catalog binding')
+    for key in ('basic_api', 'c_api'):
+        for item in data.get(key, []):
+            forms = item.get('forms', [])
+            if len(forms) != item.get('overload_count'):
+                errors.append('Truncated forms: ' + item['id'])
+            occurrences = [source for form in forms for source in form.get('sources', [])]
+            if not occurrences or aggregate_conditions(occurrences) != item['declaration_condition_3510']:
+                errors.append('Condition aggregate mismatch: ' + item['id'])
+            declaration = item.get('declaration_condition_3510')
+            expected = declaration
+            if key == 'c_api':
+                implementation = aggregate_conditions(item.get('implementation_candidates', []))
+                expected = 'excluded' if declaration == 'excluded' else 'matches' if declaration == implementation == 'matches' else 'unknown'
+                if implementation != item.get('implementation_condition_3510'):
+                    errors.append('Implementation condition mismatch: ' + item['id'])
+            if expected != item['condition_3510']:
+                errors.append('Target condition mismatch: ' + item['id'])
+            for source in occurrences:
+                if source['source']['file'] not in data['files']:
+                    errors.append('Missing source: ' + item['id'])
+            if item.get('relation_resolution') != 'lexical_name_candidate':
+                errors.append('Unqualified relation: ' + item['id'])
     return errors
 
 
 def web_payload(data: dict | None = None) -> dict:
     if data is None:
         data = json.loads(OUTPUT.read_text())
-    return {
-        'schema_version': data['schema_version'],
-        'version': data['version'],
-        'target': data['target'],
-        'counts': data['counts'],
-        'limitations': data['limitations'],
-        'files': data['files'],
-        'basic_api': [
-            {
-                **x,
-                'forms': x.get('forms', [])[:12],
-                'excerpt': (x.get('excerpt') or '')[:900],
-            }
-            for x in data['basic_api']
-        ],
-        'c_api': [
-            {
-                **x,
-                'forms': x.get('forms', [])[:12],
-                'excerpt': (x.get('excerpt') or '')[:900],
-            }
-            for x in data['c_api']
-        ],
-    }
+    errors = validate_model(data)
+    if errors:
+        raise ValueError('; '.join(errors))
+    return data
 
 
 def main():

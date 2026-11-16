@@ -32,6 +32,9 @@ def parser():
     p.add_argument('--max-chars', type=int, default=24000)
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
+    forms = commands.add_parser('forms')
+    forms.add_argument('identity')
+    commands.add_parser('unresolved')
     schema = commands.add_parser('schema')
     schema.add_argument('--layer', choices=['declarations', 'ops', 'calls', 'basic', 'capi', 'intrinsics'], default='declarations')
     for operation in ('topics', 'builtins', 'categories'):
@@ -92,93 +95,97 @@ def page(items, args, context):
 
 
 def dispatch_ascendc_or_dialect(args):
-    if args.backend == 'cce-dialect' or getattr(args, 'identity', '').startswith(('cce_dialect_op_', 'cce_dialect_intr_')):
-        path = ROOT / 'data/cce_dialect/index.json'
-        data = json.loads(path.read_text())
-        context = {
-            'schema_version': data['schema_version'],
-            'backend': 'cce-dialect',
-            'operation': args.command,
-            'version': data['version'],
-            'target': data['target'],
-            'limitations': data['limitations'],
-            'provenance': {'index_sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'commit': data['source']['commit']},
-        }
-        if args.command == 'info':
-            return page([{'counts': data['counts'], 'target': data['target'], 'repository': data['source']['repository'], 'commit': data['source']['commit']}], args, context)
-        by_id = {x['id']: x for x in data['ops'] + data['intrinsics']}
-        identity = getattr(args, 'identity', None)
-        if identity:
-            if identity not in by_id:
-                raise ValueError(f'Unknown CCE Dialect identity: {identity}')
-            rec = by_id[identity]
-            if args.command == 'get':
-                return page([rec], args, context)
-            if args.command == 'relations':
-                rels = [{'relation': 'lowers_to_intrinsic', 'target_id': i} for i in rec.get('intrinsic_ids', [])]
-                rels += [{'relation': 'lowered_from_op', 'source_id': u} for u in rec.get('upstream_op_ids', [])]
-                rels += [{'relation': 'related_ccec_op', 'ccec_op_id': c} for c in rec.get('ccec_op_ids', [])]
-                return page(rels, args, context)
-            if args.command == 'evidence':
-                return page([{'source': rec['source'], 'excerpt': rec.get('excerpt', ''), 'spec_source': rec.get('spec', {}).get('source') if rec.get('spec') else None}], args, context)
-        layer = getattr(args, 'layer', None) or ('intrinsics' if args.command == 'ops' else 'ops')
-        pool = data['intrinsics'] if layer == 'intrinsics' else data['ops']
-        q = (getattr(args, 'name', None) or getattr(args, 'query', '') or '').lower()
-        items = [
-            {k: v for k, v in x.items() if k not in ('excerpt', 'spec', 'description', 'mappings', 'arguments', 'results')}
-            | ({'has_spec_doc': bool(x.get('spec'))} if 'spec' in x else {})
-            | ({'mapping_count': len(x['mappings'])} if 'mappings' in x else {})
-            for x in pool
-            if not q or q in json.dumps({k: x.get(k) for k in ('id', 'name', 'mnemonic', 'def_name', 'llvm_intrinsic', 'summary', 'family', 'group')}, ensure_ascii=False).lower()
-        ]
-        return page(items, args, context)
-
-    # --backend ascendc
-    path = ROOT / 'data/ascendc/index.json'
+    from pathlib import Path
+    import ascendc
+    import cce_dialect
+    identity = getattr(args, 'identity', '')
+    backend = 'cce-dialect' if identity.startswith('cce_dialect_') else 'ascendc' if identity.startswith('ascendc_') else args.backend
+    module = cce_dialect if backend == 'cce-dialect' else ascendc
+    allowed = {'info', 'search', 'get', 'relations', 'evidence', 'interfaces', 'ops'}
+    allowed |= {'forms'} if backend == 'ascendc' else {'unresolved'}
+    if args.command not in allowed:
+        raise ValueError(f'{args.command} is not implemented for {backend}')
+    for field in ('builtin', 'signature', 'support', 'category', 'core', 'deprecation'):
+        if getattr(args, field, None):
+            raise ValueError(f'--{field} is not implemented for {backend}')
+    if getattr(args, 'kind', 'interface') not in ('all', 'interface'):
+        raise ValueError('--kind is not implemented for this backend')
+    if getattr(args, 'chip', None) not in (None, 'Ascend950PR_9579') or getattr(args, 'architecture', None) not in (None, '__NPU_ARCH__=3510'):
+        raise ValueError('This snapshot is scoped to Ascend950PR_9579 / __NPU_ARCH__=3510')
+    layers = ('ops', 'intrinsics') if backend == 'cce-dialect' else ('basic', 'capi')
+    layer = getattr(args, 'layer', None) or layers[args.command == 'ops']
+    if layer not in layers:
+        raise ValueError(f'Invalid {backend} layer: {layer}')
+    path = Path(args.data) if args.data else module.OUTPUT
+    if path.is_dir():
+        path = path / 'index.json'
     data = json.loads(path.read_text())
+    errors = module.validate_model(data)
+    if errors:
+        raise ValueError('; '.join(errors))
     context = {
-        'schema_version': data['schema_version'],
-        'backend': 'ascendc',
-        'operation': args.command,
-        'version': data['version'],
-        'target': data['target'],
-        'limitations': data['limitations'],
-        'provenance': {'index_sha256': hashlib.sha256(path.read_bytes()).hexdigest()},
+        'schema_version': 'ackb.multi-backend.query.v1', 'backend': backend,
+        'operation': args.command, 'version': data['version'], 'target': data['target'],
+        'layer': layer, 'limitations': data['limitations'],
+        'verification': {'compile': 'unverified', 'runtime': 'unverified', 'performance': 'unverified'},
+        'provenance': {'index_sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                       'generator_sha256': data['generator_sha256'], 'catalog_sha256': data['catalog_sha256']},
     }
+    if backend == 'cce-dialect':
+        context['provenance']['commit'] = data['source']['commit']
     if args.command == 'info':
         return page([{'counts': data['counts'], 'target': data['target']}], args, context)
-    by_id = {x['id']: x for x in data['basic_api'] + data['c_api']}
-    identity = getattr(args, 'identity', None)
+    if args.command == 'unresolved':
+        return page(data['unresolved_lowerings'], args, context)
+    keys = ('ops', 'intrinsics') if backend == 'cce-dialect' else ('basic_api', 'c_api')
+    by_id = {r['id']: r for key in keys for r in data[key]}
     if identity:
         if identity not in by_id:
-            raise ValueError(f'Unknown AscendC identity: {identity}')
+            raise ValueError(f'Unknown {backend} identity: {identity}')
         rec = by_id[identity]
         if args.command == 'get':
-            return page([rec], args, context)
+            # Keep large forms/relations pageable instead of silently cutting the underlying data.
+            item = {k: v for k, v in rec.items() if k not in ('forms', 'excerpt', 'ccec_callees', 'implementation_candidates', 'impl_3510_functions')}
+            item['evidence_query'] = {'operation': 'evidence', 'identity': identity}
+            item['relations_query'] = {'operation': 'relations', 'identity': identity}
+            if backend == 'ascendc':
+                item['forms_query'] = {'operation': 'forms', 'identity': identity, 'total': len(rec['forms'])}
+            return page([item], args, context)
+        if args.command == 'forms':
+            return page(rec['forms'], args, context)
         if args.command == 'relations':
-            rels = [{'relation': 'calls_ccec', **c} for c in rec.get('ccec_callees', [])]
+            rels = [{'relation': 'candidate_intrinsic_mapping', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('intrinsic_ids', [])]
+            rels += [{'relation': 'candidate_source_op', 'source_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('upstream_op_ids', [])]
+            rels += [{'relation': 'candidate_ccec_op', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('ccec_candidate_op_ids', [])]
+            for c in rec.get('ccec_callees', []):
+                rels.append({'relation': 'candidate_ccec_symbol', **c})
+            for fn in rec.get('implementation_candidates', []) + rec.get('impl_3510_functions', []):
+                rels.append({'relation': 'candidate_implementation', 'resolution': 'name_based_not_overload_resolved', **fn})
             return page(rels, args, context)
         if args.command == 'evidence':
-            return page([{'source': rec['source'], 'impl_source': rec.get('impl_source'), 'excerpt': rec.get('excerpt', '')}], args, context)
-    layer = getattr(args, 'layer', None) or ('capi' if args.command == 'ops' else 'basic')
-    pool = data['c_api'] if layer == 'capi' else data['basic_api']
+            files = data['source']['files'] if backend == 'cce-dialect' else data['files']
+            source = rec.get('impl_source') or rec['source']
+            lines = rec.get('excerpt', '').splitlines()
+            return page([{'source': source, 'sha256': files[source['file']]['sha256'],
+                          'excerpt_line': i + 1, 'text': line} for i, line in enumerate(lines)], args, context)
+    pool = data[keys[layers.index(layer)]]
     q = (getattr(args, 'name', None) or getattr(args, 'query', '') or '').lower()
     cond = getattr(args, 'condition', None)
-    if args.command in ('interfaces', 'ops') and not cond:
+    if backend == 'cce-dialect' and args.command == 'ops':
+        cond = None
+    if backend == 'cce-dialect' and cond:
+        raise ValueError('Dialect mappings have no verified architecture condition assessment')
+    if backend == 'ascendc' and args.command == 'interfaces' and not cond:
         cond = 'possible' if getattr(args, 'include_unknown', False) else 'matches'
     items = []
     for x in pool:
-        if cond:
-            allowed = ('matches', 'unknown') if cond == 'possible' else (cond,)
-            if x['condition_3510'] not in allowed:
-                continue
-        if q and q not in json.dumps({k: x.get(k) for k in ('id', 'name', 'qualified_name', 'group', 'family', 'ccec_op_ids')}, ensure_ascii=False).lower():
+        if cond and x['condition_3510'] not in (('matches', 'unknown') if cond == 'possible' else (cond,)):
             continue
-        items.append({
-            **{k: v for k, v in x.items() if k not in ('excerpt', 'forms', 'impl_3510_functions', 'ccec_callees')},
-            'ccec_callee_names': [c['name'] for c in x.get('ccec_callees', [])],
-            'sample_signature': (x.get('forms') or [{}])[0].get('signature', ''),
-        })
+        if q and q not in json.dumps({k: x.get(k) for k in ('id', 'name', 'qualified_name', 'mnemonic', 'def_name', 'summary', 'family', 'group', 'ccec_candidate_op_ids')}, ensure_ascii=False).lower():
+            continue
+        item = {k: x[k] for k in ('id', 'name', 'qualified_name', 'family', 'group', 'condition_3510', 'overload_count', 'source', 'relation_resolution') if k in x}
+        item['sample_signature'] = (x.get('forms') or [{}])[0].get('signature', '')
+        items.append(item)
     return page(items, args, context)
 
 
@@ -186,10 +193,12 @@ def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
     if args.command == 'schema':
-        schema = 'knowledge-v1.schema.json' if args.backend in ('ptx', 'ascendc', 'cce-dialect') else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
+        schema = 'multi-backend-query-v1.schema.json' if args.backend in ('ascendc', 'cce-dialect') else 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'
         return json.loads((ROOT / 'schemas' / schema).read_text())
     if args.backend in ('ascendc', 'cce-dialect') or getattr(args, 'identity', '').startswith(('ascendc_', 'cce_dialect_')):
         return dispatch_ascendc_or_dialect(args)
+    if args.command in ('forms', 'unresolved'):
+        raise ValueError('Use --backend ascendc for forms or --backend cce-dialect for unresolved')
     knowledge_identity = getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))
     if args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or knowledge_identity:
         knowledge = Knowledge(args.backend, args.data)
@@ -324,7 +333,7 @@ def main():
         result = run(args)
         print(json.dumps(result, ensure_ascii=False, separators=(',', ':')))
     except (ValueError, AssertionError, OSError, KeyError, TypeError) as exc:
-        print(json.dumps({'schema_version': PROTOCOL if args and (args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))) else SCHEMA_VERSION, 'error': {'code': 'invalid_request_or_data', 'message': str(exc)}}, ensure_ascii=False))
+        print(json.dumps({'schema_version': 'ackb.multi-backend.query.v1' if args and (args.backend in ('ascendc', 'cce-dialect') or getattr(args, 'identity', '').startswith(('ascendc_', 'cce_dialect_'))) else PROTOCOL if args and (args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))) else SCHEMA_VERSION, 'error': {'code': 'invalid_request_or_data', 'message': str(exc)}}, ensure_ascii=False))
         return 2
     return 0
 

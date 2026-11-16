@@ -35,3 +35,7 @@
 ## CCEC 层级入口
 
 CCEC 页面固定 950 / A5，默认 `interfaces` 返回 368 个条件符合的调用接口（357 个封装及 11 个搬运直连入口），`--include-unknown` 加入 191 个待确认接口。Intrinsics 层以完整 builtin 身份唯一化，使用 `ops`，不要把兼容的声明层 `search` 结果当独立 op。封装调用多个 builtin 时保留一对多关系，源码条件和名称引用不提升为 op 支持。详情见 [op 模型](ccec-ops.md)。
+
+## AscendC 与 CCE Dialect 扩展
+
+本轮经用户授权加入两个独立来源体系。索引不代表高层 API 全集；新后端的局部条件、完整形式、候选关系、未解析项与 AI 查询契约见 [扩展索引](ascendc-dialect.md)。CCEC 原有 builtin 身份和 PTX 数据保持不变。

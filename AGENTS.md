@@ -173,3 +173,22 @@ python scripts/query.py --limit 3 calls copy_gm_to_cbuf_align_v2
 python scripts/query.py schema --layer calls
 python scripts/build.py
 ```
+
+## AscendC / CCE Dialect
+
+分层、条件口径、完整形式和候选关系见 [扩展索引](docs/ascendc-dialect.md)。新后端只做有界静态分析，不提升为编译或设备支持。
+
+```sh
+python scripts/ascendc.py extract --toolkit "$CCE_OPS_TOOLKIT"
+python scripts/cce_dialect.py extract --repo /home/zuomin/Projects/Compiler/CCEDialect
+python scripts/ascendc.py validate
+python scripts/cce_dialect.py validate
+python scripts/query.py --backend ascendc --layer capi search --name asc_cast
+python scripts/query.py --backend ascendc --limit 10 forms ascendc_capi_asc_cast
+python scripts/query.py --backend ascendc get ascendc_capi_asc_cast
+python scripts/query.py --backend cce-dialect --layer intrinsics search --name vadd
+python scripts/query.py --backend cce-dialect unresolved
+python scripts/query.py --backend ascendc schema
+```
+
+浏览器入口 `npm run test:browser` 同时运行 A5、PTX 和新增四个层级的回归。只读生成后须重新构建，不提交 dist。

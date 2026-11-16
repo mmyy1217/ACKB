@@ -29,6 +29,7 @@ function saveHash(replace = true) {
   if (state.support) p.set('support',state.support);
   if (state.backend === 'ccec' && state.view !== 'interfaces' || state.backend === 'ptx' && state.view !== 'interfaces' || (state.backend === 'ascendc' || state.backend === 'cce-dialect') && state.view === 'report') p.set('view',state.view);
   for (const key of ['family','query','group','file','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
+  if(state.backend==='ascendc' && state.opForm)p.set('form',state.opForm);
   if(state.backend==='ccec' && byId.get(state.selected)?.op){if(state.opForm)p.set('form',state.opForm);if(state.opCaller)p.set('caller',state.opCaller);}
   if(state.backend==='ccec' && observedCalls(byId.get(state.selected) || {}).length && state.observedCall)p.set('call',state.observedCall);
   const target = '#' + p.toString();
@@ -83,7 +84,8 @@ function download() {
   if (state.backend === 'ptx' || state.view === 'topics') return downloadKnowledge();
   if (state.backend === 'ascendc' || state.backend === 'cce-dialect') {
     const items = filtered().map(r => r.ascendc || r.dialectOp || r.dialectIntr || r);
-    const blob = new Blob([JSON.stringify({schema_version:'ackb.web-export.v1',backend:state.backend,layer:activeLayerView(),target:'Ascend950PR_9579',selection:{...state},total:items.length,records:items},null,2)],{type:'application/json;charset=utf-8'});
+    const snapshot = state.backend === 'ascendc' ? ascendcData : dialectData;
+    const blob = new Blob([JSON.stringify({version:snapshot.version,files:snapshot.files || snapshot.source.files,source:snapshot.source,limitations:snapshot.limitations,unresolved_lowerings:snapshot.unresolved_lowerings,generator_sha256:snapshot.generator_sha256,catalog_sha256:snapshot.catalog_sha256,schema_version:'ackb.web-export.v1',backend:state.backend,layer:activeLayerView(),target:'Ascend950PR_9579',selection:{...state},total:items.length,records:items},null,2)],{type:'application/json;charset=utf-8'});
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = `ackb-${state.backend}-${activeLayerView()}.json`;a.click();setTimeout(() => URL.revokeObjectURL(url),1000);
     return;
@@ -143,10 +145,10 @@ function render(revealSelection = false) {
   $('#family-section').hidden = state.backend==='ptx'?state.view!=='interfaces':false;$('#mobile-family-label').hidden = state.backend==='ptx'?state.view!=='interfaces':false;
   $('#page-title').textContent = viewLabels()[state.view] || '来源详情';
   $('.toolbar').hidden = report;
-  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM / MLIR Intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
-  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '翻译管线 / 域' : '950 条件';
+  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
+  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
-  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射行' : 'Intrinsic') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
+  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
   syncControls();syncPtxNavigation();

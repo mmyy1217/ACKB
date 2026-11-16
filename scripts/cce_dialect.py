@@ -434,7 +434,7 @@ def normalize_op_key_to_mnemonic(op_key: str) -> list[str]:
 
 
 def match_ccec_ops(llvm_intrinsic: str, ccec_ops_by_short: dict[str, list[str]]) -> list[str]:
-    """Deterministically link an llvm.hivm.* symbol to matching CCEC __builtin_cce_* op IDs when unambiguous."""
+    """Find lexical candidates only; spelling normalization does not prove lowering equivalence."""
     stem = llvm_intrinsic.removeprefix('llvm.hivm.').lower().replace('.', '_')
     candidates = set()
     if stem in ccec_ops_by_short:
@@ -479,7 +479,7 @@ def match_ccec_ops(llvm_intrinsic: str, ccec_ops_by_short: dict[str, list[str]])
     base0 = norm.split('_')[0]
     if not candidates and base0 in ccec_ops_by_short and len(ccec_ops_by_short[base0]) <= 4:
         candidates.update(ccec_ops_by_short[base0])
-    return sorted(candidates)[:8]
+    return sorted(candidates)
 
 
 def extract(repo: Path = DEFAULT_REPO) -> dict:
@@ -573,9 +573,11 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
                 'assembly_format': assembly,
                 'has_verifier': 'hasVerifier = 1' in raw,
                 'lowering_mode': lowering_mode,
+                'lowering_mode_basis': 'type_and_name_heuristic',
+                'relation_resolution': 'lexical_name_candidate',
                 'spec': spec,
                 'intrinsic_ids': [],
-                'ccec_op_ids': [],
+                'ccec_candidate_op_ids': [],
                 'source': {
                     'file': rel,
                     'line': blk['start_line'],
@@ -646,6 +648,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         intr_groups[llvm_name]['mappings'].append(m)
         intr_groups[llvm_name]['op_keys'].add(m['op_key'])
 
+    unresolved_lowerings = []
     # Attach mlir_intr_ops (from CCEIntrinsicOps.td) to their corresponding intr_group or create standalone entry
     for op_key, intr_op in mlir_intr_ops.items():
         matched = False
@@ -654,27 +657,8 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
                 g['mlir_intr_ops'].append(intr_op)
                 matched = True
         if not matched:
-            # e.g. intr.print or intr.simt.atomic_rmw / intr.simt.atomic_cas (lowered dynamically in CCETranslate*.cpp)
-            synth_target = (
-                'llvm.hivm.atom.<KIND>.<G|S>.<dtype>' if 'atomic_rmw' in op_key
-                else 'llvm.hivm.atom.CAS.<G|S>.<dtype>' if 'atomic_cas' in op_key
-                else 'llvm.hivm.ldg.<dtype>' if 'simt.load' in op_key
-                else 'llvm.hivm.stg.<dtype>' if 'simt.store' in op_key
-                else 'cce.runtime.print_library' if 'print' in op_key
-                else f'dynamic:{op_key}'
-            )
-            intr_groups[synth_target] = {
-                'llvm_intrinsic': synth_target,
-                'mappings': [{
-                    'def_name': intr_op['def_name'],
-                    'mapping_class': 'DynamicTranslationHandler',
-                    'op_key': op_key,
-                    'llvm_intrinsic': synth_target,
-                    'source': intr_op['source'],
-                }],
-                'mlir_intr_ops': [intr_op],
-                'op_keys': {op_key},
-            }
+            # Preserve the concrete MLIR op without inventing an LLVM target symbol.
+            unresolved_lowerings.append({**intr_op, 'resolution': 'no_static_table_mapping'})
 
     lower_intrinsics = []
     for llvm_name in sorted(intr_groups):
@@ -694,7 +678,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         for uid in upstream_ids:
             for up in upper_ops:
                 if up['id'] == uid:
-                    up['ccec_op_ids'].extend(ccec_ids)
+                    up['ccec_candidate_op_ids'].extend(ccec_ids)
 
         group_domain = (
             'SIMT Backend Intrinsics' if any('SIMT' in m['mapping_class'] or 'simt' in m.get('op_key', '') for m in g['mappings'])
@@ -713,7 +697,8 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             'mlir_intr_ops': g['mlir_intr_ops'],
             'mappings': [{k: v for k, v in m.items() if k != 'raw'} for m in g['mappings']],
             'upstream_op_ids': sorted(upstream_ids),
-            'ccec_op_ids': ccec_ids,
+            'ccec_candidate_op_ids': ccec_ids,
+            'relation_resolution': 'lexical_name_candidate',
             'source': {
                 **primary_map['source'],
                 'sha256': files_meta[primary_map['source']['file']]['sha256'],
@@ -723,7 +708,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
 
     for up in upper_ops:
         up['intrinsic_ids'] = sorted(set(up['intrinsic_ids']))
-        up['ccec_op_ids'] = sorted(set(up['ccec_op_ids']))[:12]
+        up['ccec_candidate_op_ids'] = sorted(set(up['ccec_candidate_op_ids']))
 
     matched_specs = {up['spec']['op_def'] for up in upper_ops if up.get('spec')}
     unmatched_specs = sorted(set(spec_sections) - matched_specs)
@@ -732,6 +717,8 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         'schema_version': SCHEMA_VERSION,
         'backend': 'cce-dialect',
         'version': f'git-{head_commit[:7]}',
+        'generator_sha256': sha256(Path(__file__)),
+        'catalog_sha256': sha256(ROOT / 'data' / VERSION / 'catalog.json'),
         'target': {
             'architecture': 'dav-351x',
             'chip': 'Ascend950PR_9579',
@@ -742,6 +729,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         'source': {
             'repository': 'https://gitcode.com/AICompile/CCEDialect',
             'commit': head_commit,
+            'working_tree_dirty': bool(subprocess.check_output(['git', '-C', str(repo), 'status', '--porcelain'], text=True).strip()),
             'files': files_meta,
         },
         'counts': {
@@ -749,12 +737,14 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             'ops_with_spec_doc': sum(1 for u in upper_ops if u.get('spec')),
             'ops_by_lowering_mode': dict(Counter(u['lowering_mode'] for u in upper_ops)),
             'intrinsics': len(lower_intrinsics),
+            'unresolved_lowerings': len(unresolved_lowerings),
             'explicit_mlir_intr_ops': len(mlir_intr_ops),
             'tablegen_mapping_rows': len(raw_mappings),
             'spec_sections': len(spec_sections),
             'unmatched_spec_sections': unmatched_specs,
         },
         'limitations': LIMITATIONS,
+        'unresolved_lowerings': unresolved_lowerings,
         'ops': sorted(upper_ops, key=lambda x: x['name']),
         'intrinsics': sorted(lower_intrinsics, key=lambda x: x['name']),
     }
@@ -783,46 +773,27 @@ def validate_model(data: dict) -> list[str]:
         for oid in i.get('upstream_op_ids', []):
             if oid not in op_ids:
                 errors.append(f'Dangling upstream_op_id {oid} in {i["id"]}')
+    if data.get('generator_sha256') != sha256(Path(__file__)):
+        errors.append('Stale CCE Dialect generator snapshot')
+    if data.get('catalog_sha256') != sha256(ROOT / 'data' / VERSION / 'catalog.json'):
+        errors.append('Stale CCEC catalog binding')
+    for item in data.get('intrinsics', []):
+        if not re.fullmatch(r'llvm\.hivm\.[A-Za-z0-9_.]+', item['name']):
+            errors.append('Non-concrete LLVM symbol: ' + item['name'])
+        if not item['mappings'] or any(m['llvm_intrinsic'] != item['name'] for m in item['mappings']):
+            errors.append('Inconsistent static mapping: ' + item['id'])
+    if data.get('counts', {}).get('intrinsics') != len(intr_ids):
+        errors.append('Incorrect concrete intrinsic count')
     return errors
 
 
 def web_payload(data: dict | None = None) -> dict:
     if data is None:
         data = json.loads(OUTPUT.read_text())
-    return {
-        'schema_version': data['schema_version'],
-        'version': data['version'],
-        'target': data['target'],
-        'source': data['source'],
-        'counts': data['counts'],
-        'limitations': data['limitations'],
-        'ops': [
-            {
-                **o,
-                'excerpt': (o.get('excerpt') or '')[:1000],
-                'spec': (
-                    {
-                        **o['spec'],
-                        'body': o['spec']['body'][:2200],
-                    }
-                    if o.get('spec')
-                    else None
-                ),
-            }
-            for o in data['ops']
-        ],
-        'intrinsics': [
-            {
-                **i,
-                'excerpt': (i.get('excerpt') or '')[:900],
-                'mlir_intr_ops': [
-                    {k: v for k, v in m.items() if k != 'excerpt'}
-                    for m in i.get('mlir_intr_ops', [])
-                ],
-            }
-            for i in data['intrinsics']
-        ],
-    }
+    errors = validate_model(data)
+    if errors:
+        raise ValueError('; '.join(errors))
+    return data
 
 
 def main():
