@@ -36,38 +36,41 @@
     {
       "id": "learn_overview",
       "chapter": "overview",
-      "title": "先看懂 PTX 在做什么",
-      "intro": "PTX 描述并行线程执行的程序。先弄清谁在执行、值放在哪里，再看一条指令怎样改变这些值。",
+      "title": "先看懂 PTX 在做什么：虚拟 ISA 与编译分层",
+      "intro": "PTX（Parallel Thread Execution）是连接前端代码生成（CUDA / Triton / TileLang / MLIR）与底层硬件 SASS 的稳定虚拟指令集与执行抽象。",
       "sections": [
         {
-          "title": "从程序到 GPU",
-          "text": "CUDA 等语言可以编译为 PTX；PTX 再由工具链生成设备机器代码。PTX 寄存器是虚拟寄存器，不能把文本中的名字直接当作硬件寄存器编号。"
+          "title": "虚拟寄存器与 SSA-like 降低层次",
+          "text": "PTX 提供无限虚拟寄存器（%r, %rd, %f, %p）与显式状态空间修饰，屏蔽各代 SM 物理寄存器文件宽度与调度细节；真正决定寄存器分配、指令配对与硬件重聚栈的是 ptxas 后端到 SASS 的编译阶段。编写或生成 PTX 时，既要按虚拟线程模型保证语义合法，也要替 ptxas 保留空间提示、矢量宽度与控制流收敛信息。"
         },
         {
-          "title": "三个相互连接的问题",
-          "text": "执行：哪个线程负责哪个元素？存储：输入、临时值、共享结果分别在哪里？指令：线程怎样读取、计算、写回，以及与其他线程配合？"
+          "title": "四条主线贯穿所有 PTX 程序",
+          "text": "1) 执行与收敛：线程如何按 grid/cluster/CTA/warp 分工，何时必须满足 membermask 收敛；2) 存储与代理：数据处于哪一状态空间，走 Generic Proxy 还是 Async/Tensormap Proxy；3) 算术与精度：舍入、FTZ、饱和与混合/微缩浮点；4) 异步引擎与矩阵：TMA、mbarrier 与 tcgen05 如何把单线程发射变成全 CTA/Cluster 流水。"
         },
         {
-          "title": "先读一条真正的指令",
-          "text": "下面是一条 32 位有符号整数加法。%r1 和 %r2 是输入，%r3 是结果；.s32 指定整数解释。假设输入为 7 和 5，结果为 12。",
-          "code": "add.s32 %r3, %r1, %r2;"
+          "title": "读一条完整修饰的 PTX 指令",
+          "text": "PTX 指令由“助记符 + 修饰符链 + 目的操作数 + 源操作数”组成。修饰符不是装饰：例如下例中 .global 指定显式地址空间、.cs 提示流式缓存、.v4 启用 128-bit 合并访存，而普通 add.s32 只做标量补码加。",
+          "code": "ld.global.cs.v4.f32 {%f0,%f1,%f2,%f3}, [%rd0];\nadd.s32 %r3, %r1, %r2;"
         },
         {
-          "title": "推荐阅读顺序",
-          "text": "先看执行模型与存储，再读基本指令，最后逐行阅读向量加法。归约引入线程协作，矩阵计算再引入布局与专用执行机制。"
+          "title": "如何使用本知识库按类别探索",
+          "text": "左侧可沿 7 个专题章节系统阅读底层机制；切换到「指令速查」后，可按 7 大能力域与 21 个官方 9.7.x 指令类别（及二级子类）分层筛选全部 221 条指令，查看每条指令的完整语法、修饰符字典、示例与目标条件。"
         }
       ],
       "anchors": [
         "programming-model",
         "ptx-machine-model",
-        "integer-arithmetic-instructions-add"
+        "integer-arithmetic-instructions-add",
+        "data-movement-and-conversion-instructions-ld"
       ],
       "terms": [
+        "ptx",
         "thread",
         "register",
-        "ptx"
+        "warp",
+        "proxy"
       ],
-      "comparison": "先分别理解两边。CCEC 是源码接口层，PTX 是虚拟 ISA；接口外形相似不意味着执行粒度相同。",
+      "comparison": "CCEC 是面向 Huawei Ascend AI Core 的 C++ 源码接口层，按 DMA/Vector/Cube 硬件单元组织操作；PTX 是以单线程 SIMT 视角外加协作/异步引擎扩展的虚拟 ISA。两边对比时必须先对齐抽象层级，不能做 1:1 助记符替换。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -78,30 +81,35 @@
     {
       "id": "learn_b300",
       "chapter": "overview",
-      "title": "B300 与 PTX 版本是两件事",
-      "intro": "本页以 B300 为设备目标，计算能力 10.3；手册保持已固定的 PTX ISA 9.4。",
+      "title": "B300 (sm_103a)、Family 目标与 ISA 9.4 边界",
+      "intro": "本库固定在 PTX ISA 9.4（CUDA 13.4.3），主设备目标为 NVIDIA B300（Compute Capability 10.3）；但“手册里写了”不等于“sm_103a 上全变体都支持”。",
       "sections": [
         {
-          "title": "目标开关的含义",
-          "text": "sm_103 是基础目标；sm_103f 表达对应 family-specific 功能；sm_103a 启用架构特定功能。默认选择 sm_103a 用来核对 B300 的文档规则，并不宣称任意 Blackwell 指令都可使用。"
+          "title": "无后缀 vs f 后缀 vs a 后缀的三重含义",
+          "text": "sm_103 是基础向前兼容目标，只包含基线功能；sm_103f 启用同 major（10.x）且 minor <= 3 的 family-specific 功能（如从 sm_100f 继承的常规 tcgen05 路径）；sm_103a 启用绑定 sm_103 架构特定优化的特性，但不继承 sm_90a（如 wgmma）或 sm_100a/sm_120a 专属变体！"
         },
         {
-          "title": "先看具体形式，再看支持状态",
-          "text": "同一助记符可能包含不同类型、矩阵形状和限定符。部分形式表示这些规则有差异；阅读具体规则，不能只看一枚支持标签。"
+          "title": "为什么同一条指令会出现“部分形式 (partial)”",
+          "text": "例如 mma、cvt、tcgen05.mma 和 fence 在同一条指令手册节下包含多种类型、矩阵形状与限定符：e4m3x4/mxf4 在特定代际上有额外门限，wgmma 锁定在 sm_90a，而 tcgen05.mma 的不同 .kind / .collector_usage 分别要求 sm_100f、sm_100a 或 sm_103a。切勿只看单条指令状态就放行所有操作数组合。"
         },
         {
-          "title": "验证边界",
-          "text": "本库按文档重新计算目标条件，尚未在 B300 上编译或运行。本机工具链与固定手册版本也可能不同。设备、PTX 版本、工具链版本和验证结果分开记录。"
+          "title": "示例：目标指令与架构绑定",
+          "text": "下面两个头部截然不同：基础教学 kernel 只用 .target sm_103 即可表达通用线程算术；涉及第 5 代 Tensor Core 特性时需按需选择 sm_103f 或 sm_103a，并配合 PTX .version。",
+          "code": ".version 8.8\n.target sm_103a\n.address_size 64"
         }
       ],
       "anchors": [
-        "ptx-module-directives-target"
+        "ptx-module-directives-target",
+        "tcgen05-mma-instructions-mma",
+        "asynchronous-warpgroup-level-matrix-instructions-wgmma-mma"
       ],
       "terms": [
         "target",
-        "ptx"
+        "ptx",
+        "tcgen05",
+        "wgmma"
       ],
-      "comparison": "先固定各自芯片与工具链版本，再讨论设计差异；不同代际的功能不能直接外推。",
+      "comparison": "Huawei Ascend 的芯片版本与核类型（Cube/Vector/SIMT）由工具链宏与平台配置决定；NVIDIA 通过 .target sm_XXX{f,a} 将二进制前向兼容性与架构专属指令严格切分。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -112,36 +120,40 @@
     {
       "id": "learn_threads",
       "chapter": "execution",
-      "title": "线程怎样分工",
-      "intro": "一个 kernel 可以启动许多线程。每个线程执行自己的指令流，使用自己的索引和寄存器值。",
+      "title": "执行层级：Grid、Cluster、CTA、Warp 与特殊寄存器",
+      "intro": "理解每个执行层级分别拥有什么资源（寄存器、Shared Memory、屏障、TMEM），以及通过哪些只读特殊寄存器读取自身坐标。",
       "sections": [
         {
-          "title": "grid、CTA 与线程",
-          "text": "grid 由线程块 CTA 组成，CTA 内包含线程。线程块是编程分组，SM 是硬件执行资源；不要把一个 CTA 与一个 SM 永久一一对应。"
+          "title": "四层分组与资源归属",
+          "text": "1) Thread（线程）：拥有私有虚拟寄存器与 .local 栈；2) Warp（32 连续 lane）：共享指令发射流、支持 shfl.sync/vote.sync/redux.sync 与矩阵协作；3) CTA（线程块）：拥有 .shared::cta、16 个硬件 barrier 与 TMEM 分配上下文；4) Cluster（sm_90+）：由多个协作 CTA 组成，开放 .shared::cluster 跨块访问与 TMA multicast。"
         },
         {
-          "title": "把线程映射到数组元素",
-          "text": "一维启动中，i = blockIdx.x × blockDim.x + threadIdx.x。下面从特殊寄存器取出三个量，再计算 i。",
-          "code": "mov.u32 %r0, %tid.x;\nmov.u32 %r1, %ctaid.x;\nmov.u32 %r2, %ntid.x;\nmad.lo.u32 %r3, %r1, %r2, %r0;"
+          "title": "通过特殊寄存器定位线程与 Warp",
+          "text": "PTX 通过 %tid（CTA 内线程 ID）、%ntid（CTA 尺寸）、%ctaid（Grid 内块 ID）、%nctaid（Grid 尺寸）、%laneid（0..31）、%warpid（动态物理 warp 槽位与静态 ID 注意区分）暴露运行期坐标。不要假定一个 CTA 永远绑定同一个物理 SM。",
+          "code": "mov.u32 %r0, %tid.x;\nmov.u32 %r1, %ctaid.x;\nmov.u32 %r2, %ntid.x;\nmad.lo.u32 %r3, %r1, %r2, %r0;\nmov.u32 %r4, %laneid;"
         },
         {
-          "title": "编号不是分配内存",
-          "text": "得到 i 只是确定工作。访问 A[i] 还需要 A 的基地址和元素字节大小；数组越界必须由程序检查。"
+          "title": "Cluster 坐标与 CTA Rank（sm_90+）",
+          "text": "在启用 Cluster 的内核中，%cluster_ctaid 与 %cluster_ctarank 给出当前 CTA 在 Cluster 内的位置；配合 mapa.shared::cluster 与 barrier.cluster，可让同 Cluster 内的不同 CTA 直接互相读写 shared memory，形成片上分布式共享缓存。"
         }
       ],
       "anchors": [
         "thread-hierarchy",
+        "cluster-of-cooperative-thread-arrays",
         "special-registers-tid",
         "special-registers-ctaid",
-        "special-registers-ntid"
+        "special-registers-ntid",
+        "special-registers-laneid"
       ],
       "terms": [
         "thread",
         "cta",
         "grid",
-        "sm"
+        "sm",
+        "warp",
+        "cluster"
       ],
-      "comparison": "不要把 PTX 的一个线程直接对应为一个 AI Core；先比较双方实际的工作划分单位。",
+      "comparison": "不要把 PTX 的一个线程对应成 Huawei Ascend 的一个 AI Core；在资源粒度上，一个 CTA 更接近拥有片上高速局部存储与块内同步域的工作单元，而单个 PTX 线程则是 SIMT 向量通道。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -152,34 +164,76 @@
     {
       "id": "learn_warp",
       "chapter": "execution",
-      "title": "warp 与分支",
-      "intro": "warp 组织一组线程的执行。阅读普通 PTX 时，寄存器值仍属于各自线程。",
+      "title": "SIMT、Independent Thread Scheduling 与协同规则",
+      "intro": "Volta（sm_70）起每条线程拥有独立 PC 与调用栈，这意味着旧时代“warp 天然锁步”的假设不再成立。",
       "sections": [
         {
-          "title": "线程模型与硬件执行分开看",
-          "text": "对本轮 NVIDIA 目标，warp 以 32 个 lane 理解。普通 add 是每个参与线程计算自己的值，而不是把一个线程的结果自动广播给所有线程。"
+          "title": "独立线程调度带来的语义变化",
+          "text": "在 Independent Thread Scheduling 下，同一 warp 内分叉的不同线程可能以任意交错顺序推进，不再保证“不加同步就自然同时到达下一行”。因此 shfl / vote / bar.warp 全部升级为带 32 位 membermask 的 .sync 形式。"
         },
         {
-          "title": "分支与谓词",
-          "text": "setp 产生谓词，@%p0 控制后面的指令是否执行。不同线程可以得到不同谓词；共同参与的同步指令必须满足各自的参与规则。",
-          "code": "setp.ge.u32 %p0, %r3, %r4;\n@%p0 bra DONE;\n// Work for in-range threads.\nDONE:\nret;"
+          "title": "谓词、分支与参与掩码陷阱",
+          "text": "下例中越界线程直接跳转到 DONE 并 ret；如果后续紧接一条带 0xffffffff 掩码的 shfl.sync，已经提前 ret 的线程将无法参与，触发未定义行为或挂起！分支内要做 warp 通信必须先用 activemask.b32 获取实际活跃子集，或把通信放在分支汇合后。",
+          "code": "setp.ge.u32 %p0, %r3, %r4;\n@%p0 bra DONE;\n// 仅活跃子集执行时不可直接用 0xffffffff 做 shfl.sync\nactivemask.b32 %r5;\nDONE:\nret;"
         },
         {
-          "title": "不要依靠隐含锁步",
-          "text": "不能仅因为两个线程属于一个 warp，就假定一个线程写入的数据已对另一个可见。按通信、同步和内存顺序规则构造程序。"
+          "title": "硬件 Warp 宽度不要硬编码假定为静态锁步",
+          "text": "虽然当前 NVIDIA 目标上 warp 为 32 lane，且代码常通过 %WARP_SZ 或 32 推导掩码，但同步语义必须显式通过 bar.warp.sync / vote.sync / bar.sync 表达，不可依赖硬件调度巧合。"
         }
       ],
       "anchors": [
         "set-of-simt-multiprocessors",
         "independent-thread-scheduling",
-        "control-flow-instructions-bra",
-        "comparison-and-selection-instructions-setp"
+        "parallel-synchronization-and-communication-instructions-bar-warp-sync",
+        "parallel-synchronization-and-communication-instructions-activemask"
       ],
       "terms": [
         "warp",
-        "predicate"
+        "predicate",
+        "membermask"
       ],
-      "comparison": "传统向量批量操作与 SIMT 线程执行的表达不同；Huawei Ascend 也存在 SIMT 路径，需绑定具体路径比较。",
+      "comparison": "传统显式 SIMD 向量单元由单条指令驱动固定宽度通道；SIMT 允许每线程独立控制流，并在硬件或显式 bar.warp.sync 点上重聚。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_predication_divergence",
+      "chapter": "execution",
+      "title": "谓词、无分支选择、统一跳转 (.uni) 与动态寄存器调控",
+      "intro": "从编译后端视角优化控制流与寄存器压力：何时用 selp / @p 替代分支、何时声明 .uni，以及如何用 setmaxnreg 实现 Warp Specialization。",
+      "sections": [
+        {
+          "title": "三层条件 lowering 策略：selp vs @p vs bra",
+          "text": "1) 纯值选择（两边操作数无副作用且已在寄存器）：使用 `setp` + `selp`，零分支开销；2) 有副作用但仅 1–3 条短指令（如尾部条件写回 `@%p0 st.global`）：用指令级谓词 `@%p0`，避免跳转指令与重聚栈操作；3) 大块分支或循环：用 `@%p0 bra`。",
+          "code": "setp.lt.f32 %p0, %f0, 0f00000000;\nselp.f32 %f1, 0f00000000, %f0, %p0;   // ReLU 无分支实现\n@!%p0 st.global.f32 [%rd0], %f1;"
+        },
+        {
+          "title": ".uni 一致性跳转与 brx.idx 跳转表",
+          "text": "如果整个 warp 的所有活跃线程保证走到同一分支（例如基于 %ctaid 或统一的循环计数 K 维分块条件），在 `bra.uni` / `call.uni` / `ret.uni` 加上 `.uni` 可提示 ptxas 跳过硬件重聚栈维护；多路 switch 状态机则由 `brx.idx` 配合 `.branchtargets` 实现。"
+        },
+        {
+          "title": "Warp Specialization 与 setmaxnreg（sm_90+）",
+          "text": "现代高性能 GEMM/Attention 内核常在同一个 CTA 内把 warp 分为 Producer（只管 TMA + mbarrier，仅需 ~32–40 寄存器）和 Consumer（做 MMA + Softmax + Epilogue，需要 ~200+ 寄存器）。通过 `setmaxnreg.dec` 让 Producer 归还寄存器，再由 Consumer 用 `setmaxnreg.inc` 接管配额，从而在不溢出 .local 的情况下最大化并行驻留 CTA 数。",
+          "code": "// Producer warp 释放多余寄存器；Consumer warp 申请更多寄存器\nsetmaxnreg.dec.sync.aligned.u32 40;\n// ... Consumer 分支:\nsetmaxnreg.inc.sync.aligned.u32 232;"
+        }
+      ],
+      "anchors": [
+        "control-flow-instructions-at",
+        "control-flow-instructions-bra",
+        "control-flow-instructions-brx-idx",
+        "comparison-and-selection-instructions-selp",
+        "miscellaneous-instructions-setmaxnreg"
+      ],
+      "terms": [
+        "predicate",
+        "warp",
+        "register"
+      ],
+      "comparison": "CCEC 中标量控制流（如循环分块与条件执行）与 Vector/Cube 异步发射流水线相对独立；PTX 在 Warp Specialization 下也演化出不同 warp 分担 Producer/Consumer 角色并动态重分配寄存器的模式。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -190,33 +244,35 @@
     {
       "id": "learn_registers",
       "chapter": "memory",
-      "title": "寄存器与类型",
-      "intro": "寄存器保存当前线程的临时值；类型后缀告诉指令如何解释这些位。",
+      "title": "寄存器、类型后缀与打包表示 (.f16x2 / .b64 / 向量打包)",
+      "intro": "PTX 寄存器声明决定了位宽和类型提示，而具体指令后缀决定位模式如何被解释、转换或向量打包。",
       "sections": [
         {
-          "title": "声明并使用",
-          "text": "% 是寄存器标识符的一部分；<4> 表示一组编号寄存器。下面声明整数和浮点寄存器；整数值不能仅靠改名字就变成相应浮点数。",
-          "code": ".reg .u32 %r<4>;\n.reg .f32 %f<4>;\nmov.u32 %r0, 7;\ncvt.rn.f32.u32 %f0, %r0;"
+          "title": "无类型位宽 (.b*) vs 语义类型 (.u*/.s*/.f*)",
+          "text": ".b16/.b32/.b64/.b128 只强调位宽，用于 mov、and/or/xor、lop3、shfl、ldmatrix 等纯位搬运或打包容器；.u/.s/.f 则绑定符号与浮点 IEEE 编码语义。同一寄存器可先以 .b32 容器被 ld.v2 读入，再交给 .f16x2 指令按两个 FP16 运算。"
         },
         {
-          "title": "位搬运与数值转换不同",
-          "text": "mov 用于移动值或位表示，cvt 才表达数值类型转换。舍入、饱和、符号和精度都要看指令限定符。"
+          "title": "打包/拆包 mov 与双元素打包转换",
+          "text": "PTX 用 `mov.b64 %rd0, {%r0, %r1}` 和 `mov.b128 %rq0, {%r0..%r3}`（9.7.10.4）在标量宽寄存器和向量组间零成本重解释；数值转换必须走 `cvt`，注意双输入打包转换 `cvt.rn.f16x2.f32 d, a, b` 把第二个输入 b 放在低 16 位、a 放在高 16 位。",
+          "code": ".reg .u32 %r<4>;\n.reg .f32 %f<4>;\ncvt.rn.f32.u32 %f0, %r0;\ncvt.rn.f16x2.f32 %r1, %f1, %f0;   // 低16位=%f0, 高16位=%f1\nmov.b64 %rd0, {%r0, %r1};"
         },
         {
-          "title": "寄存器不是免费且无限的硬件",
-          "text": "PTX 可以声明虚拟寄存器；最终工具链负责实际分配。资源压力可能导致 spill，影响性能，不能通过声明数量直接推出实际占用率。"
+          "title": "寄存器压力与 Spill 到 .local 的代价",
+          "text": "虽然 PTX 可随意声明上百个 .reg，但每 SM 物理寄存器文件总量有限（如 64K 32-bit 寄存器/SM）。一旦单线程活跃寄存器过多导致超过编译器配额，ptxas 会把多余变量 spill 到线程私有 .local 内存（走 L1/L2 甚至显存），延迟骤增。"
         }
       ],
       "anchors": [
         "register-state-space",
         "fundamental-types",
+        "data-movement-and-conversion-instructions-mov",
+        "data-movement-and-conversion-instructions-mov-2",
         "data-movement-and-conversion-instructions-cvt"
       ],
       "terms": [
         "register",
         "type"
       ],
-      "comparison": "CCEC 的向量类型、地址空间限定符与 PTX 标量寄存器各有含义，不应按名字或宽度直接配对。",
+      "comparison": "CCEC 向量寄存器与标量寄存器分离；PTX 统一用 .reg 声明标量/谓词，再以向量打包语法 {%r0,%r1} 或 .f16x2/.f32x2 表达 SIMD 吞吐。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -227,25 +283,21 @@
     {
       "id": "learn_spaces",
       "chapter": "memory",
-      "title": "global、shared、local 分别是什么",
-      "intro": "内存空间描述数据的作用域和访问方式。local 的“局部”表示线程私有，不等于一定在高速片上存储。",
+      "title": "状态空间全景：global / shared(::cta, ::cluster) / local / param / const / tmem",
+      "intro": "状态空间不是“物理存储名字”的简单同义词，而是定义了地址可寻址性、作用域、对齐约束与生命周期的内存域契约。",
       "sections": [
         {
-          "title": "global：输入输出的常见位置",
-          "text": "多个线程可访问 global 中的数组。是否发生数据竞争取决于地址、读写行为和同步，而不是指针名字。"
+          "title": "各状态空间的作用域与寻址规则",
+          "text": ".global（全设备可见读写，支持原子与 TMA）、.const（只读广播常量缓存）、.shared::cta（当前 CTA 线程共享，默认不写 ::cta 即为此项）、.shared::cluster（sm_90+ 跨同 cluster CTA 窗口，需 mapa 重映射）、.local（每线程私有，物理上经过缓存层次落到设备内存）、.param（核函数入口只读参数或设备函数栈传参）。"
         },
         {
-          "title": "shared：线程块内交换数据",
-          "text": "CTA 内的线程可以通过 shared 协作。每个线程写不同位置，再通过适当屏障确保消费者读到已经生产的数据。cluster 机制另有作用域与约束。"
+          "title": "Shared Memory 的 Bank 冲突与 Swizzle 思路",
+          "text": "硬件 Shared Memory 通常组织为 32 个 4 字节宽 Bank。同 warp 内不同线程访问同一 Bank 的不同 32-bit 字会串行化（bank conflict）。现代矩阵内核（TMA + ldmatrix/tcgen05）在写入 Shared 时即通过 32B/64B/128B Swizzle 模式重排物理列地址，使按行写与按列/砖块读都无冲突。"
         },
         {
-          "title": "local 与 param",
-          "text": "local 表达每线程私有的内存空间；param 用于参数传递。入口参数中的指针需按地址空间规则使用，不能把参数存储本身当作数组内容。"
-        },
-        {
-          "title": "地址与值",
-          "text": "[%rd0] 表示通过地址读取。若一个元素是 f32，相邻元素地址相差 4 字节；向量访问还需满足其总访问宽度的对齐。",
-          "code": "ld.global.f32 %f0, [%rd0];\nst.global.f32 [%rd1], %f0;"
+          "title": "为什么地址必须按访问宽度对齐",
+          "text": "无论是 `ld.global.v4.f32`（要求 16B 对齐）还是 `ldmatrix`（16B 对齐）或 TMA 目标（128B 对齐），未对齐都会触发硬件异常或非法地址错误。Shared 声明时应显式标注 `.align 16` 或 `.align 128`。",
+          "code": ".shared .align 128 .b8 smem_tile[8192];\nmov.u32 %r0, smem_tile;\nld.shared.v4.b32 {%r1,%r2,%r3,%r4}, [%r0];"
         }
       ],
       "anchors": [
@@ -253,15 +305,59 @@
         "global-state-space",
         "shared-state-space",
         "local-state-space",
-        "parameter-state-space"
+        "parameter-state-space",
+        "tensor-memory"
       ],
       "terms": [
         "global",
         "shared",
         "local",
-        "alignment"
+        "alignment",
+        "tmem"
       ],
-      "comparison": "可以比较存储的可见范围和数据流；不能把 shared 简单重命名为 UB，两者的访问主体与协作方式不同。",
+      "comparison": "不能把 .shared 简单等价成 Huawei Ascend 的 UB/L1：PTX 的 shared 由同 CTA 内多个 SIMT 线程协同读写并靠 barrier/mbarrier 协调；UB/L1 则配合 Vector/Cube 块级搬运与显式流水事件。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_cache_addressing",
+      "chapter": "memory",
+      "title": "地址转换 (cvta)、向量访存与 L1/L2 缓存逐出策略",
+      "intro": "真正拉满内存带宽的细节：消除通用指针判别、合并 128-bit 向量事务，并用 .cop / createpolicy / discard 精细管理 L1 与 L2 缓存。",
+      "sections": [
+        {
+          "title": "cvta 与 isspacep：消除 Generic Pointer 开销",
+          "text": "kernel 参数传入的指针属于通用（generic）地址空间。若直接写 `ld.f32 %f0, [%rd0]`（不带状态空间），硬件每次访存需判别落入哪个窗口。在入口处一次 `cvta.to.global.u64`（确保对象确属 global）转为显式指针后使用 `ld.global`，可解锁所有缓存策略与对齐优化。"
+        },
+        {
+          "title": "缓存算子 (.ca / .cg / .cs / .lu / .cv) 与只读 .nc",
+          "text": "1) `.ca`（默认）：缓存 L1 与 L2；2) `.cg`：绕过 L1 只缓存 L2（适合跨 CTA 共享或避免单次流式大读取挤爆 L1）；3) `.cs`：流式提示（evict-first，读完即逐出）；4) `.nc`（`ld.global.nc`）：声明数据在核内只读，走纹理只读缓存；5) `st.global.cs`：流式写出，减少对 L2 热权重的冲刷。",
+          "code": "ld.global.nc.v4.f32 {%f0,%f1,%f2,%f3}, [%rd0];\nst.global.cs.v4.f32 [%rd1], {%f0,%f1,%f2,%f3};"
+        },
+        {
+          "title": "createpolicy、cache_hint 与 discard（sm_80+）",
+          "text": "通过 `createpolicy.fractional` 或 `.range` 在 64 位寄存器生成 L2 驱逐策略句柄，并在 `ld` / `cp.async` / `cp.async.bulk.tensor` 带 `.level::cache_hint` 时传入，可把权重固定为 `.L2::evict_last`、激活固定为 `.L2::evict_first`。对于不再需要写回的临时片上/显存缓冲，可用 `discard.global.L2` 直接丢弃脏缓存行省下回写流量。",
+          "code": "createpolicy.fractional.L2::evict_last.L2::evict_first.b64 %rd2, 0.25;\nld.global.L2::cache_hint.v4.f32 {%f0,%f1,%f2,%f3}, [%rd0], %rd2;"
+        }
+      ],
+      "anchors": [
+        "data-movement-and-conversion-instructions-cvta",
+        "data-movement-and-conversion-instructions-isspacep",
+        "data-movement-and-conversion-instructions-ld",
+        "data-movement-and-conversion-instructions-ld-global-nc",
+        "data-movement-and-conversion-instructions-createpolicy",
+        "data-movement-and-conversion-instructions-discard"
+      ],
+      "terms": [
+        "global",
+        "alignment",
+        "cache_hint"
+      ],
+      "comparison": "CCEC 在软件层显式规划 GM↔L1↔UB 驻留；PTX 主要通过硬件自动缓存层次叠加 .cop、cache_hint、prefetch 与 discard 提示来保护热数据不被流式流量冲刷。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -272,34 +368,36 @@
     {
       "id": "learn_loads",
       "chapter": "basics",
-      "title": "先学读取、计算、写回",
-      "intro": "一条 load 将内存中的值读进寄存器，计算使用寄存器值，store 再把结果写到内存。",
+      "title": "Load → Compute → Store 流水与向量化合并访存",
+      "intro": "一条指令只描述单线程的数据流；当相邻 32 个 lane 访问连续地址且使用 .v2/.v4 时，硬件将其合并为极少数宽缓存事务。",
       "sections": [
         {
-          "title": "三个步骤",
-          "text": "假设地址已计算好，下面由当前线程读两个 f32，相加后写回。它只描述当前线程的一份工作。",
+          "title": "基础标量通路与地址方向约定",
+          "text": "PTX 遵循 `ld` 目的寄存器在左、源地址 `[src]` 在右；`st` 目标地址 `[dst]` 在左、源寄存器在右。每次访存需明确状态空间与数据位宽。",
           "code": "ld.global.f32 %f0, [%rd0];\nld.global.f32 %f1, [%rd1];\nadd.f32 %f2, %f0, %f1;\nst.global.f32 [%rd2], %f2;"
         },
         {
-          "title": "每个标记都在提供信息",
-          "text": "ld/st 是动作；global 是空间；f32 是数据格式；方括号表示地址；%f 是寄存器。不要把 ld 的目标操作数和 st 的目标地址顺序搞反。"
+          "title": "合并访存（Coalescing）与 .v4 向量化",
+          "text": "若相邻线程 i 访问 A[i]，32 线程×4B = 128B 恰好合成一次缓存行事务；若步幅过大或交叉跳跃则分裂成多次事务。对逐元素算子让每线程处理 4 个连续 f32 并使用 `ld.global.v4.f32` / `st.global.v4.f32`，还能进一步减少地址算术和发射指令数。",
+          "code": "ld.global.v4.f32 {%f0,%f1,%f2,%f3}, [%rd0];\nld.global.v4.f32 {%f4,%f5,%f6,%f7}, [%rd1];\nadd.f32 %f0, %f0, %f4;\nadd.f32 %f1, %f1, %f5;\nadd.f32 %f2, %f2, %f6;\nadd.f32 %f3, %f3, %f7;\nst.global.v4.f32 [%rd2], {%f0,%f1,%f2,%f3};"
         },
         {
-          "title": "这不是完整 kernel",
-          "text": "片段没有参数声明、线程索引与边界检查。完整程序页会把这些部分连接起来。"
+          "title": "从同步访存走向异步绕过寄存器",
+          "text": "传统 `ld.global` + `st.shared` 必须经由通用寄存器中转，受制于寄存器端口和停顿；在矩阵与高带宽流水线中，sm_80 起用 `cp.async`、sm_90+ 起用 TMA（`cp.async.bulk.tensor`）直接把数据从 Global 写入 Shared 而不占通用寄存器。"
         }
       ],
       "anchors": [
         "data-movement-and-conversion-instructions-ld",
-        "floating-point-instructions-add",
-        "data-movement-and-conversion-instructions-st"
+        "data-movement-and-conversion-instructions-st",
+        "floating-point-instructions-add"
       ],
       "terms": [
         "register",
         "global",
-        "thread"
+        "thread",
+        "alignment"
       ],
-      "comparison": "GPU 线程直接发出的 load/store 与块级 DMA 搬运不是同一种接口粒度。理解完这条路径再比较。",
+      "comparison": "GPU 线程级的 ld/st 依赖硬件合并单元聚合为缓存行请求；CCEC 则直接发射面向连续/跨步块的大粒度 DMA 指令。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -310,34 +408,37 @@
     {
       "id": "learn_arithmetic",
       "chapter": "basics",
-      "title": "算术、比较与控制流",
-      "intro": "助记符描述动作，后缀描述类型和变体，谓词控制执行。",
+      "title": "算术、高精度、SFU 近似与位域加速指令",
+      "intro": "除普通加减乘除外，编译器还需要掌握乘法截断宽度、FMA 舍入语义、SFU 超越函数代价以及 lop3 / bfe / dp4a 等单指令加速原语。",
       "sections": [
         {
-          "title": "整数与浮点分开读",
-          "text": "add.s32 和 add.f32 的输入解释不同；浮点数还涉及舍入、非正规数及融合等语义。不要用整数直觉解释所有浮点边界。"
+          "title": "整数位宽、乘法模式与多字链式算术",
+          "text": "整数乘加务必区分 `.lo` / `.hi` / `.wide`（32 位下标偏移转 64 位字节偏移必须用 `mul.wide.u32`）。128 位以上大整数算术使用 `add.cc` / `addc` / `mad.cc` / `madc` 通过隐式 CC.CF 进位标志级联。",
+          "code": "mul.wide.u32 %rd3, %r3, 4;\nmad.lo.u32 %r4, %r1, %r2, %r0;\nadd.cc.u64 %rd4, %rd0, %rd1;\naddc.u64 %rd5, %rd2, 0;"
         },
         {
-          "title": "乘加并不总是同一种乘加",
-          "text": "mad.lo.u32 可用于索引运算。fma.rn.f32 表达浮点融合乘加，其舍入行为不能随意替换为分开的乘法和加法。",
-          "code": "mad.lo.u32 %r3, %r1, %r2, %r0;\nfma.rn.f32 %f3, %f0, %f1, %f2;"
+          "title": "IEEE FMA vs SFU 近似超越函数",
+          "text": "`fma.rn.f32` 在中间无舍入地执行 a*b+c，既更快也更准；除法 `div.rn` 与平方根 `sqrt.rn` 展开代价极高，Softmax/LayerNorm 等场景应尽量拆成 `rcp.approx` / `rsqrt.approx` / `ex2.approx.ftz`（配合乘 log2(e)）。半精度可使用 `.f16x2` / `.bf16x2` 把吞吐翻倍。",
+          "code": "fma.rn.f32 %f3, %f0, %f1, %f2;\nex2.approx.ftz.f32 %f4, %f3;\nrsqrt.approx.f32 %f5, %f4;"
         },
         {
-          "title": "比较先产生条件",
-          "text": "setp 写谓词寄存器；bra 改变控制流；@%p0 是条件执行。理解这三个角色，就能读懂常见的越界处理和循环。"
+          "title": "单指令加速原语：lop3、bfe/bfi、dp4a、prmt",
+          "text": "编译器优化常用：`lop3.b32`（8 位真值表一口气算任意三变量位逻辑）、`bfe`/`bfi`（位域解包/描述符构造）、`prmt`（任意字节重排）和 `dp4a`（4 路 INT8 点积）。善用这些指令可将多条标量逻辑压缩至 1 个周期。",
+          "code": "lop3.b32 %r3, %r0, %r1, %r2, 0xe2;\ndp4a.s32.s32 %r4, %r0, %r1, %r4;"
         }
       ],
       "anchors": [
         "integer-arithmetic-instructions-mad",
         "floating-point-instructions-fma",
-        "comparison-and-selection-instructions-setp",
-        "control-flow-instructions-bra"
+        "floating-point-instructions-ex2",
+        "logic-and-shift-instructions-lop3",
+        "integer-arithmetic-instructions-dp4a"
       ],
       "terms": [
         "predicate",
         "type"
       ],
-      "comparison": "用运算的语义、执行粒度和舍入规则比较两端，不能只比较指令名称。",
+      "comparison": "比较算术指令时需核对舍入模式、非正规数冲刷（.ftz）、饱和策略（.sat/.satfinite）以及是单通道标量还是打包 SIMD 执行。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -348,34 +449,77 @@
     {
       "id": "learn_sync",
       "chapter": "cooperation",
-      "title": "交换数据之前，先明确谁在等待谁",
-      "intro": "线程通信同时涉及参与者、存储位置和执行顺序，单独一条“同步”无法回答所有问题。",
+      "title": "线程会合、原子与内存序：先拆清三个不同问题",
+      "intro": "“加个同步”在实际 GPU 编程里包含三个正交维度：1) 线程是否到达同一点（barrier）；2) 内存写入是否已对其他线程可见（fence/sem/scope）；3) 异步硬件引擎是否已完成（mbarrier/wait_group）。",
       "sections": [
         {
-          "title": "CTA 屏障",
-          "text": "bar.sync 0 常用于 CTA 协作：本例要求线程块内全部参与线程都到达同一屏障。不要让一部分线程提前 return，而其余线程仍等待完整 CTA。",
-          "code": "st.shared.u32 [%r0], %r1;\nbar.sync 0;\nld.shared.u32 %r2, [%r3];"
+          "title": "CTA 屏障与 Warp 屏障的管辖边界",
+          "text": "`barrier.sync 0`（旧名 `bar.sync 0`）使 CTA 内所有参与线程在此阻塞并附带 CTA 作用域内存可见性；`barrier.arrive` 允许生产者发出到达信号后继续做收尾而不阻塞；`bar.warp.sync mask` 仅保证同 warp 内指定 lane 重聚，**不能**保护跨 warp 的 shared 通信！",
+          "code": "st.shared.u32 [%r0], %r1;\nbarrier.sync 0;\nld.shared.u32 %r2, [%r3];"
         },
         {
-          "title": "warp 内交换寄存器值",
-          "text": "shfl.sync 通过指定的 lane 模式交换寄存器值，参与掩码与执行路径必须一致。它不是任意内存写入的完成等待。"
+          "title": "atom（带返回值）vs red（无返回值单向归约）",
+          "text": "只在需要读回旧值（如分配动态偏移或实现自旋锁 CAS）时使用 `atom`；如果只是把梯度/求和累加进直方图或全局张量，务必改用 `red`，允许硬件在 L2/互连控制器直接合批归约而无需阻塞等待返回。",
+          "code": "red.global.relaxed.gpu.add.f32 [%rd0], %f0;\natom.global.acq_rel.gpu.cas.b32 %r2, [%rd1], 0, 1;"
         },
         {
-          "title": "原子操作与内存顺序",
-          "text": "atom 表达对某个位置的原子读改写；fence 表达内存顺序约束。原子性、可见性、线程会合是三个问题，不能用一个概念替代另两个。"
+          "title": "为什么传统 barrier.sync 管不到 TMA 与 tcgen05",
+          "text": "TMA、cp.async 和 tcgen05 由独立的异步硬件引擎在 Async Proxy 下运行。线程执行完 `st.shared` 后直接让单线程发 TMA Store，即使中间做了 `barrier.sync`，如果没有 `fence.proxy.async` 建立 Generic → Async 代理同步，TMA 仍可能读出旧值！"
         }
       ],
       "anchors": [
         "parallel-synchronization-and-communication-instructions-bar",
-        "data-movement-and-conversion-instructions-shfl-sync",
-        "memory-consistency-model"
+        "parallel-synchronization-and-communication-instructions-bar-warp-sync",
+        "parallel-synchronization-and-communication-instructions-atom",
+        "parallel-synchronization-and-communication-instructions-red"
       ],
       "terms": [
         "barrier",
         "warp",
-        "shared"
+        "shared",
+        "scope"
       ],
-      "comparison": "CCEC 的流水事件通常表达执行单元之间的依赖；PTX 这里先表达线程协作。比较时先写清参与主体。",
+      "comparison": "CCEC 通过流水线事件（SetFlag/WaitFlag）和硬件同步管线表达单元间依赖；PTX 在基本 SIMT 层通过 CTA/Warp barrier 协调线程，在异步引擎层通过 mbarrier 与 proxy fence 协调硬件代理。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_memory_consistency",
+      "chapter": "cooperation",
+      "title": "内存一致性模型：Sem、Scope 与 Proxy Fence 体系",
+      "intro": "基于 PTX 第 8 章：掌握 .weak / .relaxed / .acquire / .release 与 .cta / .cluster / .gpu / .sys，以及打通 Generic / Async / Tensormap 代理的关键规则。",
+      "sections": [
+        {
+          "title": "四类内存语义（Sem）与 Release-Acquire 配对",
+          "text": "普通 `ld/st` 默认为 `.weak`（无同步顺序保证，必须靠外部 barrier/fence 隔离数据竞争）。构建无锁生产者-消费者信号传递时：生产者写入负载数据后发射 `st.release.gpu`（或 `atom.release`）写标志位；消费者用 `ld.acquire.gpu` 轮询读到标志后，保证能看到生产者在 release 之前写入的所有数据。",
+          "code": "// Producer 写入数据后发布标志:\nst.global.weak.f32 [%rd_data], %f0;\nst.global.release.gpu.u32 [%rd_flag], 1;\n// Consumer 等待标志并读取:\nPOLL:\nld.global.acquire.gpu.u32 %r0, [%rd_flag];\nsetp.eq.u32 %p0, %r0, 0;\n@%p0 bra POLL;\nld.global.weak.f32 %f1, [%rd_data];"
+        },
+        {
+          "title": "Scope 作用域必须覆盖所有通信参与者",
+          "text": "`.cta` 仅保证同 CTA 内线程有序（最快）；`.cluster`（sm_90+）覆盖同 cluster 内全部 CTA；`.gpu` 覆盖同一 GPU 所有 SM 间通信（跨 CTA global 信号必须至少用 `.gpu`！）；`.sys` 延伸到主机 CPU 与多 GPU。作用域选小了会有可见性竞态，选大了会增加不必要的缓存冲刷代价。"
+        },
+        {
+          "title": "Proxy 代理隔离与 fence.proxy.*（TMA/tcgen05 必修）",
+          "text": "PTX 把普通线程访存划入 **Generic Proxy**，把 `cp.async` / TMA / `tcgen05` 划入 **Async Proxy**，把 TMA 描述符读取划入 **Tensormap Proxy**。不同代理之间即使在同一线程里也不自动保证有序：\n1) 线程用 `st.shared` 写好数据准备给 TMA Store / `tcgen05` 读前，须调用 `fence.proxy.async.shared::cta`；\n2) 设备端用 `tensormap.replace` 修改完描述符后，须调用 `tensormap.cp_fenceproxy` 发布给 TMA。",
+          "code": "st.shared.v4.b32 [%r0], {%r1,%r2,%r3,%r4};\nfence.proxy.async.shared::cta;\ncp.async.bulk.tensor.2d.global.shared::cta.tile.bulk_group [%rd0, {%r5, %r6}], [%r0];"
+        }
+      ],
+      "anchors": [
+        "memory-consistency-model",
+        "parallel-synchronization-and-communication-instructions-membar",
+        "parallel-synchronization-and-communication-instructions-tensormap-cp-fenceproxy"
+      ],
+      "terms": [
+        "fence",
+        "scope",
+        "proxy",
+        "tensormap"
+      ],
+      "comparison": "相比传统 C++11 内存模型，PTX 多出了“硬件作用域（cta/cluster/gpu/sys）”和“硬件代理（Generic vs Async vs Tensormap）”两个 GPU 特有正交轴。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -386,33 +530,117 @@
     {
       "id": "learn_async",
       "chapter": "cooperation",
-      "title": "异步：发出操作不等于结果已可用",
-      "intro": "异步操作让发出者继续做别的工作，因此必须另外表达何时可以消费结果、何时可以复用资源。",
+      "title": "异步流水线总览：发射、双缓冲槽位与资源复用契约",
+      "intro": "所有 GPU 异步机制的本质都是把“发起搬运/计算”与“等待结果/归还缓冲区”拆开，让数据通路和计算单元并行重叠。",
       "sections": [
         {
-          "title": "先从数据依赖读起",
-          "text": "发起搬运后，计算必须在数据可用后读取；下一次搬运也不能覆盖仍在被计算使用的缓冲区。双缓冲只是安排资源的一种方法，不会自动建立同步。"
+          "title": "四套独立的异步完成体系（切勿混用）",
+          "text": "PTX 存在四条互不相通的异步等待机制：1) `cp.async`（non-bulk）：`cp.async.commit_group` / `wait_group`（或 `cp.async.mbarrier.arrive`）；2) TMA/Bulk 写出（shared→global）：`cp.async.bulk.commit_group` / `wait_group{.read}`；3) TMA 读入 / `st.async` / `tcgen05.commit`：`mbarrier` 对象状态与字节事务；4) `wgmma`（sm_90a）：`wgmma.commit_group` / `wait_group`。"
         },
         {
-          "title": "不同机制有不同完成协议",
-          "text": "cp.async 的分组等待、bulk/tensor 搬运的完成机制、mbarrier 的 phase/transaction 以及 tcgen05 完成协议不能互换。每个操作按对应指令族的规则阅读。"
+          "title": "双缓冲/多阶段流水线的两个屏障",
+          "text": "环形缓冲区至少需要两种信号：1) **Full 屏障**（生产者通知消费者“第 stage 槽数据已写完，可以读”）；2) **Empty 屏障**（消费者通知生产者“第 stage 槽已用完，可以覆写下一块”）。只等 Full 不等 Empty 会在第二轮循环就把尚未消费的数据冲掉！"
         },
         {
-          "title": "B300 阅读重点",
-          "text": "先读清 source/destination 空间、参与线程、完成信号和缓冲区生命周期，再看布局或吞吐优化。本页不提供未经验证的通用同步模板。"
+          "title": "B300 与 Hopper 时代的 Producer-Consumer 解耦",
+          "text": "随着 TMA 和 `tcgen05` 支持单线程发射，现代高性能内核不再让全 CTA 线程一起等 `bar.sync`，而是拆分成独立的 TMA Producer Warp 与 MMA/Epilogue Consumer Warp，各自仅靠轻量 mbarrier parity 推进，消除同步停顿。"
         }
       ],
       "anchors": [
-        "memory-consistency-model",
-        "tcgen05-memory-consistency-model",
-        "tcgen05-memory-consistency-model-mbarrier-completion"
+        "data-movement-and-conversion-instructions-cp-async",
+        "data-movement-and-conversion-instructions-cp-async-bulk-wait-group",
+        "parallel-synchronization-and-communication-instructions-mbarrier-init"
       ],
       "terms": [
         "async",
         "barrier",
-        "shared"
+        "mbarrier",
+        "tma"
       ],
-      "comparison": "两端都需要管理数据依赖，但对应的发起者、信号机制与可见性规则要独立解释。",
+      "comparison": "CCEC 在同一核内通过 MTE2/MTE3/Vector/Cube 队列与 SetFlag/WaitFlag 实现多阶段流水；PTX 通过异步引擎配合环形 shared 槽位与成对 Full/Empty mbarrier 实现类似重叠。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_tma_mbarrier",
+      "chapter": "cooperation",
+      "title": "从 cp.async 到 TMA 与 mbarrier 事务模型精解",
+      "intro": "逐行拆解 mbarrier 的 phase / arrive_count / tx_count 状态机，以及如何正确编写 `elect.sync` + TMA Tile 搬运循环。",
+      "sections": [
+        {
+          "title": "路线 A：Ampere 风格 cp.async（per-thread 异步搬运）",
+          "text": "每条线程各搬 4/8/16B，不需要 tensormap，支持 `src-size` 自动越界补零，适合不规则或小规模分块；通过 `commit_group` + `wait_group 1` 维护双缓冲：",
+          "code": "cp.async.cg.shared.global [%r_smem], [%rd_gmem], 16;\ncp.async.commit_group;\ncp.async.wait_group 1;\nbarrier.sync 0;   // 让同 CTA 其他线程也可见"
+        },
+        {
+          "title": "mbarrier 三元组：Phase Parity、Arrive Count 与 Expect TX",
+          "text": "一个 64 位 shared `mbarrier` 对象内部维护：(1) 当前相位 `phase`（0/1 交替翻转）；(2) 线程到达剩余计数 `pending_arrives`（由 `init` 设定初值）；(3) 异步字节事务剩余计数 `pending_tx`（由 `expect_tx` 累加，由 TMA 硬件完成时自动 `complete_tx` 扣减）。只有当 `pending_arrives == 0 && pending_tx == 0` 时，phase 翻转并重载计数值！"
+        },
+        {
+          "title": "路线 B：单线程 TMA Tile 搬运完整模板（sm_90+ / B300）",
+          "text": "关键步骤：1) 初始化 mbarrier 到达数为 1，并执行 barrier 使其全局可见；2) 由 `elect.sync` 选出唯一线程，调用 `mbarrier.arrive.expect_tx` 注册总字节数并触发 `cp.async.bulk.tensor`；3) 所有消费线程在 `mbarrier.try_wait.parity` 循环中等待当前相位完成。注意 `try_wait` 可能因内部超时返回 false，必须包在循环里！",
+          "code": "// 初始化阶段 (单线程 + CTA barrier)\n@%p_init mbarrier.init.shared::cta.b64 [%r_mbar], 1;\nbarrier.sync 0;\n\n// 生产者搬运 (单线程 elect.sync 发射)\nelect.sync _|%p_lead, 0xffffffff;\n@%p_lead mbarrier.arrive.expect_tx.release.cta.shared::cta.b64 _, [%r_mbar], 4096;\n@%p_lead cp.async.bulk.tensor.2d.shared::cta.global.tile.mbarrier::complete_tx::bytes\n         [%r_smem], [%rd_tmap, {%r_x, %r_y}], [%r_mbar];\n\n// 消费者等待 (phase_parity = 0, 下一轮用 1 交替)\nWAIT_TMA:\nmbarrier.try_wait.parity.acquire.cta.shared::cta.b64 %p_done, [%r_mbar], %r_parity;\n@!%p_done bra WAIT_TMA;"
+        }
+      ],
+      "anchors": [
+        "data-movement-and-conversion-instructions-cp-async",
+        "data-movement-and-conversion-instructions-cp-async-bulk-tensor",
+        "parallel-synchronization-and-communication-instructions-elect-sync",
+        "parallel-synchronization-and-communication-instructions-mbarrier-expect-tx",
+        "parallel-synchronization-and-communication-instructions-mbarrier-test-wait-try-wait"
+      ],
+      "terms": [
+        "mbarrier",
+        "tma",
+        "tensormap",
+        "barrier"
+      ],
+      "comparison": "在 CCEC 中，大块 2D/ND DMA 搬运同样由单核指令直接下发并在硬件队列推进；PTX 的 TMA + mbarrier 是 NVIDIA 从 per-thread 访存走向单线程粗粒度块搬运的关键转折。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_warp_collectives",
+      "chapter": "cooperation",
+      "title": "Warp 集合原语：Shuffle、Vote、Match、Redux 与 Elect",
+      "intro": "不用 Shared Memory，在 32 个 lane 寄存器之间直接完成归约、扫描、去重与单线程选举。",
+      "sections": [
+        {
+          "title": "shfl.sync 蝶形归约 vs 单指令 redux.sync",
+          "text": "经典 32 线程 Warp 求和需要 5 轮 `shfl.sync.bfly`（步长 16→8→4→2→1）配 5 次 `add`；从 sm_80 起对整数可用单条 `redux.sync.add.s32` 一步完成，而在 Blackwell (sm_100+) 上连 `.f32` 也加入了硬件 `redux.sync`！",
+          "code": "// 传统蝶形步长 16 -> 1 归约:\nshfl.sync.bfly.b32 %f1, %f0, 16, 31, 0xffffffff;\nadd.f32 %f0, %f0, %f1;\n// ... 8, 4, 2, 1 ...\n// sm_80+ 整数一步归约:\nredux.sync.add.s32 %r_sum, %r_val, 0xffffffff;"
+        },
+        {
+          "title": "vote.sync.ballot + popc/fns：Warp 级流压缩与稀疏过滤",
+          "text": "用 `vote.sync.ballot.b32` 收集 32 个线程的谓词生成位图，结合 `popc.b32` 得到本 warp 命中总数，再用 `bmsk` + `and` + `popc`（lane_mask = (1<<lane)-1）算出每个线程的前缀和偏移（prefix sum），常用于原子聚合写回以减少 32 倍全局原子冲突。",
+          "code": "vote.sync.ballot.b32 %r_mask, %p_valid, 0xffffffff;\npopc.b32 %r_total, %r_mask;"
+        },
+        {
+          "title": "match.sync 按键聚合 与 elect.sync 选举",
+          "text": "`match.any.sync` 自动找出 warp 内所有持有相同索引键（如同一词元/桶 ID）的 lane 掩码，配合 `fns.b32` 选出组内 leader 合并原子更新；`elect.sync` 则以最低开销选出唯一活跃线程去发射 TMA 或 `tcgen05`。"
+        }
+      ],
+      "anchors": [
+        "data-movement-and-conversion-instructions-shfl-sync",
+        "parallel-synchronization-and-communication-instructions-redux-sync",
+        "parallel-synchronization-and-communication-instructions-vote-sync",
+        "parallel-synchronization-and-communication-instructions-match-sync",
+        "parallel-synchronization-and-communication-instructions-elect-sync",
+        "integer-arithmetic-instructions-fns"
+      ],
+      "terms": [
+        "warp",
+        "membermask"
+      ],
+      "comparison": "Warp 集合原语属于 SIMT 架构特有的跨 lane 寄存器直通网络；传统向量处理器通常依赖向量归约/置换指令在单个执行流内完成类似操作。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -423,33 +651,79 @@
     {
       "id": "learn_matrix",
       "chapter": "matrix",
-      "title": "矩阵乘为什么需要协作",
-      "intro": "矩阵乘 C = A × B 会重复使用输入。性能优化同时涉及数据复用、线程协作、布局与专用计算机制。",
+      "title": "Tensor Core 矩阵指令三代演进：WMMA/MMA → WGMMA → tcgen05",
+      "intro": "理解 NVIDIA 三代 Tensor Core PTX 编程模型在参与者粒度、操作数位置和同步方式上的根本变革。",
       "sections": [
         {
-          "title": "先看普通线程实现",
-          "text": "一个线程计算 C 的一个元素，沿 K 维循环累加。这种写法帮助理解公式，但没有自动使用高效矩阵指令。完整程序页给出这种教学 kernel。"
+          "title": "第一/二代：Warp 级（32 线程，寄存器驻留 D）",
+          "text": "`wmma.*`（sm_70）隐藏了片段映射；`mma.sync`（sm_75/80+）精确规定每条线程寄存器对应的矩阵元素坐标，配合 `ldmatrix` 从 Shared 高效装片、`stmatrix` 写回 Shared。但 A、B、C、D 全部占用通用寄存器，大 Tile 下寄存器压力巨大。"
         },
         {
-          "title": "再看 warp 级矩阵指令",
-          "text": "mma.sync 的矩阵操作数被分布在线程的寄存器中。单个线程看到的寄存器只是片段；矩阵形状、类型和布局共同决定映射。不能让一个线程随意拿整块矩阵去调用。"
+          "title": "第三代：Warpgroup 级 wgmma（sm_90a 专属，4 个 Warp = 128 线程）",
+          "text": "Hopper 引入 `wgmma.mma_async`：操作数 B（及可选 A）通过 64 位描述符 `b-desc` 直接从 Shared 读取，不再进通用寄存器，且改为异步批提交（`wgmma.commit_group` / `wait_group`）。**重要提醒**：`wgmma` 锁定在 `sm_90a`，在 B300 (`sm_103a`) 上被文档排除！"
         },
         {
-          "title": "B300 的 tcgen05 路径",
-          "text": "第五代 Tensor Core 指令族引入其自身的操作数描述、Tensor Memory 及同步规则。它不是把 mma.sync 换个名字；需要整体理解数据流与资源生命周期。"
+          "title": "第四/五代：Blackwell / B300 的 tcgen05（单线程发射 + TMEM）",
+          "text": "B300 核心路径：引入专用片上累加存储器 **Tensor Memory (TMEM)**！累加器 D 驻留在 TMEM 中彻底释放通用寄存器；`tcgen05.mma` 只需**单线程**（而非 128 线程）发射即可驱动单 CTA（`.cta_group::1`）或双 CTA 联合（`.cta_group::2`），并通过 `tcgen05.commit` 触发 mbarrier 完成异步通知。"
         }
       ],
       "anchors": [
         "warp-level-matrix-instructions-mma",
-        "tcgen05-mma",
+        "asynchronous-warpgroup-level-matrix-instructions-wgmma-mma",
+        "tcgen05-mma-instructions-mma",
         "tensor-memory"
       ],
       "terms": [
         "matrix",
         "warp",
-        "tmem"
+        "fragment",
+        "wgmma",
+        "tcgen05",
+        "tmem",
+        "cta_group"
       ],
-      "comparison": "Cube 与 Tensor Core 都与矩阵计算相关，但编程参与者、操作数布局和完成协议不同，不建立一条指令的一对一映射。",
+      "comparison": "Huawei Ascend 的 Cube 单元天然以块级异步硬件引擎工作、累加器驻留于专门的 L0C/Bias 缓冲中；从早期的 warp 寄存器 mma 到 B300 的单线程发射 + TMEM，PTX 矩阵模型的形态演进值得深入对比。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_mma_wgmma",
+      "chapter": "matrix",
+      "title": "Warp 级 ldmatrix / mma.sync 片段分布与 stmatrix 写出",
+      "intro": "拆解 Ampere/Ada/兼容路径下最常用的显式片段矩阵乘：`ldmatrix` → `mma.sync.aligned.m16n8k16` → `stmatrix`。",
+      "sections": [
+        {
+          "title": "用 ldmatrix 取代手工拼装寄存器片段",
+          "text": "假设 Shared Memory 中存有一块 16×16 的 FP16 A 矩阵（已做 128B swizzle 消除 bank conflict）。通过 `ldmatrix.sync.aligned.m8n8.x4.shared::cta.b16`：32 个 lane 各提供一行 16B 对齐的 shared 地址，硬件自动把 4 块 8×8 砖块分发到每线程 4 个 32-bit 寄存器 {%r0..%r3} 中——恰好就是 `mma.m16n8k16`（沿 K 拆成或两个 N=8 块）的精确 A 片段布局！",
+          "code": "ldmatrix.sync.aligned.m8n8.x4.shared::cta.b16 {%r0,%r1,%r2,%r3}, [%r_smem_a];\nldmatrix.sync.aligned.m8n8.x2.trans.shared::cta.b16 {%r4,%r5}, [%r_smem_b];"
+        },
+        {
+          "title": "m16n8k16 寄存器映射与乘累加",
+          "text": "在 `mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32` 中：输出矩阵 D (16×8=128 个 f32) 平均分摊给 32 个线程，每线程持有 4 个 f32 寄存器 {%f0,%f1,%f2,%f3}（线程 t 所在 group = t/4，thread_in_group = t%4，分别持有第 0..15 行与成对偶/奇列）。A 必须 `.row`、B 必须 `.col`。",
+          "code": "mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32\n  {%f0,%f1,%f2,%f3}, {%r0,%r1,%r2,%r3}, {%r4,%r5}, {%f0,%f1,%f2,%f3};"
+        },
+        {
+          "title": "Epilogue：cvt 窄化 + stmatrix 写回 Shared 再 TMA Store",
+          "text": "累加完成后先用 `cvt.rn.f16x2.f32` 把 4 个 f32 压成 2 个 f16x2 寄存器，再用 `stmatrix.sync.aligned.m8n8.x2.shared::cta.b16` 无冲突写回 Shared，最后经过 `fence.proxy.async.shared::cta` 交给 TMA 写回 Global。"
+        }
+      ],
+      "anchors": [
+        "warp-level-matrix-instructions-ldmatrix",
+        "warp-level-matrix-instructions-mma",
+        "warp-level-matrix-instructions-stmatrix",
+        "warp-level-matrix-instructions-movmatrix"
+      ],
+      "terms": [
+        "matrix",
+        "fragment",
+        "warp",
+        "wgmma"
+      ],
+      "comparison": "mma.sync 将矩阵结果切碎分散在 32 个 lane 的通用寄存器中（做行规约如 Softmax 时需跨 lane shfl.sync）；而 Cube 单元与 tcgen05 TMEM 将矩阵块集中在专用累加存储里再统一读出。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -460,34 +734,85 @@
     {
       "id": "learn_tmem",
       "chapter": "matrix",
-      "title": "Tensor Memory 与矩阵操作的生命周期",
-      "intro": "Tensor Memory 是 tcgen05 模型中的专用存储，需要按该模型的分配、访问与同步规则使用。",
+      "title": "Tensor Memory (TMEM) 模型、资源分配与访存约束",
+      "intro": "Blackwell / B300 的 TMEM 是面向第 5 代 Tensor Core 的专用二维片上存储器，具备与 Shared Memory 完全不同的寻址与生命周期规则。",
       "sections": [
         {
-          "title": "先建立流程，而不是背参数",
-          "text": "分配所需资源，准备操作数与描述符，发起矩阵计算，按照对应协议确认完成，再读取或继续使用结果，最后释放资源。不同形式有不同细节。"
+          "title": "TMEM 物理组织与 32 位地址编码",
+          "text": "TMEM 按二维阵列（128 行 lanes × 512 列，每单元 32-bit）组织，属于每 CTA 的动态分配资源。32 位 TMEM 地址 `[taddr]` 的高 16 位编码起始行（lane offset），低 16 位编码起始列（column offset）。不同 CTA 之间不能直接通过普通指针互相读写 TMEM，必须由所属 CTA 的 warp/单线程访问。"
         },
         {
-          "title": "不要与 shared 混用",
-          "text": "Tensor Memory 的地址和访问指令有自己的约定。普通 ld.shared 不能被当作读取任意 Tensor Memory 的通用方法。"
+          "title": "alloc / dealloc / relinquish_alloc_permit 契约",
+          "text": "必须由**整个 warp（32 线程）对齐同步**调用 `tcgen05.alloc` 申请 2 的幂列数（32..512），分配得到的基址写回指定的 Shared 地址。所有 MMA 与 `tcgen05.ld` 完成后，**必须**调用 `tcgen05.dealloc` 归还列资源，否则 kernel 结束前资源状态异常。",
+          "code": "tcgen05.alloc.cta_group::1.sync.aligned.shared::cta.b32 [%r_tmem_ptr], 128;\nld.shared.b32 %r_taddr, [%r_tmem_ptr];\n// ... 使用 TMEM ...\ntcgen05.dealloc.cta_group::1.sync.aligned.b32 %r_taddr, 128;"
         },
         {
-          "title": "按形式核对 B300",
-          "text": "tcgen05 的形状、数据类型、CTA 分组和限定符分别受目标条件约束。默认 sm_103a 仍需逐项查表，尤其不要从 sm_100a 的支持推断全部可用于 sm_103a。"
+          "title": "不要混用 Shared 指令，严格遵循 tcgen05 同步规则",
+          "text": "`ld.shared` 不能读写 TMEM；只有 `tcgen05.ld` / `tcgen05.st`（面向通用寄存器，且必须接 `tcgen05.wait::ld` / `::st`）以及 `tcgen05.cp`（SMEM → TMEM）和 `tcgen05.mma`（读/累加）可以访问 TMEM。跨 warp 同步前后须配对 `tcgen05.fence`。"
         }
       ],
       "anchors": [
         "tensor-memory",
         "tensor-memory-allocation",
-        "tcgen05-tensor-memory-ld-st",
-        "tcgen05-mma-instructions-mma"
+        "tcgen05-instructions-tcgen05-alloc-dealloc-relinquish-alloc-permit",
+        "tcgen05-instructions-tcgen05-ld",
+        "tcgen05-instructions-tcgen05-st",
+        "tcgen05-instructions-tcgen05-wait"
       ],
       "terms": [
         "tmem",
+        "tcgen05",
         "async",
         "matrix"
       ],
-      "comparison": "这里应与 CCEC 的矩阵操作数、累加结果与资源管理整体比较，不能只按存储名称配对。",
+      "comparison": "TMEM 的角色与 Huawei Ascend L0C 累加缓冲高度可比——都是由矩阵计算单元直接写入、不占用标量/向量通用寄存器，计算完再搬出做 Epilogue。差异在于 TMEM 需显式 warp 级列配额管理并绑定 .cta_group。",
+      "evidence_level": "authored_explanation",
+      "verification": {
+        "compile": "unverified",
+        "runtime": "unverified",
+        "performance": "unverified"
+      }
+    },
+    {
+      "id": "learn_tcgen05_pipeline",
+      "chapter": "matrix",
+      "title": "B300 tcgen05 全链路：描述符、cta_group::2 与块缩放 MMA",
+      "intro": "把 TMA、mbarrier、s-desc / idesc、tcgen05.mma、tcgen05.commit 与 tcgen05.ld 串成完整的第 5 代 Tensor Core 生产-消费流水。",
+      "sections": [
+        {
+          "title": "两个关键描述符：64 位 SMEM 描述符 (a/b-desc) 与 32 位指令描述符 (idesc)",
+          "text": "`a-desc` / `b-desc` 是 64 位寄存器值，编码了 SMEM 基址（右移 4 位）、leading/stride 字节步幅以及 swizzle 模式（128B / 64B / 32B / None）；`idesc` 是 32 位寄存器值，编码了 M/N 形状、A/B 元素格式、累加器类型、转置标志及稀疏/块缩放设置，使单条 `tcgen05.mma` 语法即可覆盖多种类型组合。"
+        },
+        {
+          "title": "单 CTA (.cta_group::1) vs 双 CTA 联合 (.cta_group::2)",
+          "text": "在 Blackwell Cluster 中启用 `.cta_group::2` 时，相邻两个偶数/奇数 CTA 联合驱动一台更宽的 MMA：Leader CTA（rank % 2 == 0）只需单线程发射一次 `tcgen05.mma.cta_group::2`，硬件自动跨两个 CTA 各自读取一半 SMEM 数据并把结果各自写入各自 TMEM，令共享内存读取带宽与 TMA 多播压力减半！"
+        },
+        {
+          "title": "完整流水骨架（TMEM 分配 → TMA 进 SMEM → tcgen05.mma → commit → fence → ld）",
+          "text": "留意流水线里每一处必经同步节点：TMA 完成后无需再做 `fence.proxy.async` 即可被 MMA 读，但 MMA 完必须由 `tcgen05.commit` 触发 mbarrier，且 Epilogue warp 在 `mbarrier.try_wait` 之后、调用 `tcgen05.ld` 之前**必须插入 `tcgen05.fence::after_thread_sync`**，在 `tcgen05.ld` 后**必须调用 `tcgen05.wait::ld`**！",
+          "code": "// 1. 单线程发射 tcgen05.mma (enable-input-d=%p_accum, 首轮 false 清零累加器)\n@%p_lead tcgen05.mma.cta_group::1.kind::f16 [%r_taddr], %rd_adesc, %rd_bdesc, %r_idesc, %p_accum;\n// 2. 提交批次至 mbarrier\n@%p_lead tcgen05.commit.cta_group::1.mbarrier::arrive::one.shared::cta.b64 [%r_mma_mbar];\n\n// 3. Epilogue warp 等待 MMA 完成 -> fence -> 异步读取 TMEM -> wait::ld\nWAIT_MMA:\nmbarrier.try_wait.parity.acquire.cta.shared::cta.b64 %p_done, [%r_mma_mbar], %r_parity;\n@!%p_done bra WAIT_MMA;\ntcgen05.fence::after_thread_sync;\ntcgen05.ld.sync.aligned.32x32b.x16.b32 {%r0,%r1,%r2,%r3,%r4,%r5,%r6,%r7,%r8,%r9,%r10,%r11,%r12,%r13,%r14,%r15}, [%r_taddr];\ntcgen05.wait::ld.sync.aligned;"
+        },
+        {
+          "title": "块缩放（Block Scaling：.mxf8f6f4 / .mxf4 / .mxf4nvf4）",
+          "text": "B300 原生支持 OCP Microscaling（每 32 元素共享 1 个 E8M0 缩放因子）与 NVFP4（每 16 元素共享 1 个 E4M3 缩放因子）：先用 `tcgen05.cp` 将缩放表从 SMEM 拷入 TMEM，再调用带 `.block_scale` 与 `.scale_vec::1X/2X/4X` 的 `tcgen05.mma` 在硬件内完成反量化融合累加。使用前务必核对 sm_103a 的 Target ISA 规则。"
+        }
+      ],
+      "anchors": [
+        "tcgen05-mma-instructions-mma",
+        "tcgen05-instructions-tcgen05-cp",
+        "tcgen-async-sync-operations-commit",
+        "tcgen05-special-sync-operations-fence",
+        "tcgen05-instructions-tcgen05-ld",
+        "tcgen05-instructions-tcgen05-wait"
+      ],
+      "terms": [
+        "tcgen05",
+        "tmem",
+        "cta_group",
+        "descriptor",
+        "mbarrier"
+      ],
+      "comparison": "这套“TMA 搬入 SMEM → tcgen05 单线程发 MMA 进 TMEM → mbarrier 追踪 → tcgen05.ld 出到寄存器写回”的形态，已经非常接近 Cube 专用加速核的异步数据流架构。",
       "evidence_level": "authored_explanation",
       "verification": {
         "compile": "unverified",
@@ -498,29 +823,21 @@
     {
       "id": "learn_vector_add",
       "chapter": "programs",
-      "title": "完整例子：向量加法",
-      "intro": "目标是 C[i] = A[i] + B[i]。每个线程负责一个元素，三个数组互不重叠。",
+      "title": "完整例子：向量加法 (vector_add)",
+      "intro": "目标是 C[i] = A[i] + B[i]。展示完整设备端 PTX 核函数的模块头、参数加载、cvta 转换、边界守卫与 64 位寻址。",
       "sections": [
         {
           "title": "启动与输入约定",
           "text": "这是完整设备端 PTX kernel，不含主机加载器。输入为 N 个 f32，N 为正数；一维 block 为 256 线程，grid 为 ceil(N/256)，N ≤ 2^31。分配足够大小且至少 4 字节对齐的设备数组，由主机传入指针与 N。示例未经编译/运行验证。"
         },
         {
-          "title": "设备程序",
+          "title": "设备程序 (.target sm_103)",
           "text": "目标使用基础 sm_103，因为这个教学程序不需要架构特定矩阵功能。它与页面默认 sm_103a 的文档查询是不同用途。",
           "code": ".version 8.8\n.target sm_103\n.address_size 64\n.visible .entry vector_add(\n .param .u64 pa, .param .u64 pb, .param .u64 pc, .param .u32 pn\n) {\n .reg .pred %p;\n .reg .u32 %r<5>;\n .reg .u64 %rd<8>;\n .reg .f32 %f<3>;\n ld.param.u64 %rd0, [pa];\n ld.param.u64 %rd1, [pb];\n ld.param.u64 %rd2, [pc];\n ld.param.u32 %r4, [pn];\n cvta.to.global.u64 %rd0, %rd0;\n cvta.to.global.u64 %rd1, %rd1;\n cvta.to.global.u64 %rd2, %rd2;\n mov.u32 %r0, %tid.x;\n mov.u32 %r1, %ctaid.x;\n mov.u32 %r2, %ntid.x;\n mad.lo.u32 %r3, %r1, %r2, %r0;\n setp.ge.u32 %p, %r3, %r4;\n @%p bra DONE;\n mul.wide.u32 %rd3, %r3, 4;\n add.u64 %rd4, %rd0, %rd3;\n add.u64 %rd5, %rd1, %rd3;\n add.u64 %rd6, %rd2, %rd3;\n ld.global.f32 %f0, [%rd4];\n ld.global.f32 %f1, [%rd5];\n add.f32 %f2, %f0, %f1;\n st.global.f32 [%rd6], %f2;\nDONE:\n ret;\n}"
         },
         {
-          "title": "读参数与定位",
-          "text": "ld.param 获取参数值；cvta.to.global 把传入的通用地址转换为 global 地址。三个 mov 与 mad 计算当前线程的 i。"
-        },
-        {
-          "title": "处理尾部",
-          "text": "setp 检查 i ≥ N，越界线程跳到 DONE。这里没有块内屏障，所以提前退出不会留下其他线程等待完整 CTA。"
-        },
-        {
-          "title": "按字节寻址",
-          "text": "mul.wide 把元素索引变成 64 位字节偏移。两条 load 读输入，一条 add 计算，一条 store 写输出。若 A=[1,2]、B=[10,20]，预期 C=[11,22]；这是推导结果，不是设备测试输出。"
+          "title": "关键设计要点拆解",
+          "text": "1) `ld.param` 取参数后再 `cvta.to.global` 转为显式 global 指针，允许使用 `ld.global`/`st.global`；2) `mul.wide.u32` 把 32 位元素索引扩宽为 64 位字节偏移，防止 >4GB 张量寻址溢出；3) 越界线程经 `@%p bra DONE` 安全退出，因无 CTA 屏障不会引起死锁。"
         }
       ],
       "anchors": [
@@ -547,31 +864,28 @@
     {
       "id": "learn_reduction",
       "chapter": "programs",
-      "title": "完整例子：256 个数求和",
-      "intro": "把向量加法中的独立工作，改成线程通过 shared 合作归约。",
+      "title": "完整例子：256 个数 CTA Shared 归约 (reduce256)",
+      "intro": "把独立工作改成 CTA 内 256 线程经 Shared Memory 树形归约，理解为什么分支线程也必须经过屏障。",
       "sections": [
         {
           "title": "严格的启动约定",
           "text": "仅启动一个一维 CTA，恰好 256 个线程；输入恰好 256 个 f32，输出一个 f32，数组不重叠、地址对齐。不要把此例直接用于任意 N 或多个 CTA。未经编译/运行验证。"
         },
         {
-          "title": "设备程序",
+          "title": "设备程序 (.target sm_103)",
           "text": "每轮将活跃计算线程数减半，但所有 256 个线程仍经过屏障。",
           "code": ".version 8.8\n.target sm_103\n.address_size 64\n.visible .entry reduce256(.param .u64 pa, .param .u64 pout) {\n .reg .pred %p;\n .reg .u32 %r<6>;\n .reg .u64 %rd<4>;\n .reg .f32 %f<2>;\n .shared .align 4 .b8 scratch[1024];\n ld.param.u64 %rd0, [pa];\n ld.param.u64 %rd1, [pout];\n cvta.to.global.u64 %rd0, %rd0;\n cvta.to.global.u64 %rd1, %rd1;\n mov.u32 %r0, %tid.x;\n mul.wide.u32 %rd2, %r0, 4;\n add.u64 %rd3, %rd0, %rd2;\n ld.global.f32 %f0, [%rd3];\n mov.u32 %r1, scratch;\n shl.b32 %r2, %r0, 2;\n add.u32 %r2, %r1, %r2;\n st.shared.f32 [%r2], %f0;\n bar.sync 0;\n mov.u32 %r3, 128;\nLOOP:\n setp.ge.u32 %p, %r0, %r3;\n @%p bra WAIT;\n shl.b32 %r4, %r3, 2;\n add.u32 %r5, %r2, %r4;\n ld.shared.f32 %f1, [%r5];\n add.f32 %f0, %f0, %f1;\n st.shared.f32 [%r2], %f0;\nWAIT:\n bar.sync 0;\n shr.u32 %r3, %r3, 1;\n setp.ne.u32 %p, %r3, 0;\n @%p bra LOOP;\n setp.ne.u32 %p, %r0, 0;\n @%p bra DONE;\n st.global.f32 [%rd1], %f0;\nDONE:\n ret;\n}"
         },
         {
-          "title": "为什么 WAIT 在分支外",
-          "text": "一部分线程本轮不计算，但仍必须执行 bar.sync 0。若把它们直接 return，剩下线程可能等待无法满足的参与者。"
-        },
-        {
-          "title": "结果与数值顺序",
-          "text": "全 1 输入的数学结果为 256。一般浮点输入的加法顺序与串行求和不同，因此不能假定逐位相同。此教学实现展示依赖，不是性能最优归约。"
+          "title": "进阶优化方向提示",
+          "text": "这里用 `bar.sync 0` 展示全 CTA 依赖控制；在真实生产归约中，当步长 <= 16 时应改用无 Shared 开销的 `shfl.sync.down`（或 Blackwell 上直接用 `redux.sync`），最后只让各 warp leader 写回一次 Shared。"
         }
       ],
       "anchors": [
         "shared-state-space",
         "parallel-synchronization-and-communication-instructions-bar",
-        "floating-point-instructions-add"
+        "floating-point-instructions-add",
+        "data-movement-and-conversion-instructions-shfl-sync"
       ],
       "terms": [
         "cta",
@@ -589,36 +903,33 @@
     {
       "id": "learn_matmul",
       "chapter": "programs",
-      "title": "完整例子：先用普通线程理解矩阵乘",
-      "intro": "计算两个 16×16 行主序 f32 矩阵相乘。这个例子不使用 Tensor Core，用来建立索引与累加的直觉。",
+      "title": "完整例子：16×16 朴素矩阵乘 (matmul16)",
+      "intro": "用最清晰的普通线程每元素循环建立索引与 FMA 累加基线，然后对照理解为什么实战必须用 Shared 分块 + mma / tcgen05。",
       "sections": [
         {
           "title": "严格的启动约定",
           "text": "一个一维 CTA，恰好 256 个线程。A、B、C 各有 256 个 f32，地址对齐且互不重叠；线程 t 负责 C[t/16, t%16]。未经编译/运行验证。"
         },
         {
-          "title": "设备程序",
+          "title": "设备程序 (.target sm_103)",
           "text": "每个线程沿 K 维循环 16 次，读取 A 的一行与 B 的一列并累加。",
           "code": ".version 8.8\n.target sm_103\n.address_size 64\n.visible .entry matmul16(.param .u64 pa, .param .u64 pb, .param .u64 pc) {\n .reg .pred %p;\n .reg .u32 %r<9>;\n .reg .u64 %rd<8>;\n .reg .f32 %f<3>;\n ld.param.u64 %rd0, [pa];\n ld.param.u64 %rd1, [pb];\n ld.param.u64 %rd2, [pc];\n cvta.to.global.u64 %rd0, %rd0;\n cvta.to.global.u64 %rd1, %rd1;\n cvta.to.global.u64 %rd2, %rd2;\n mov.u32 %r0, %tid.x;\n shr.u32 %r1, %r0, 4;\n and.b32 %r2, %r0, 15;\n mov.u32 %r3, 0;\n mov.f32 %f2, 0f00000000;\nLOOP:\n mad.lo.u32 %r4, %r1, 16, %r3;\n mad.lo.u32 %r5, %r3, 16, %r2;\n mul.wide.u32 %rd3, %r4, 4;\n mul.wide.u32 %rd4, %r5, 4;\n add.u64 %rd5, %rd0, %rd3;\n add.u64 %rd6, %rd1, %rd4;\n ld.global.f32 %f0, [%rd5];\n ld.global.f32 %f1, [%rd6];\n fma.rn.f32 %f2, %f0, %f1, %f2;\n add.u32 %r3, %r3, 1;\n setp.lt.u32 %p, %r3, 16;\n @%p bra LOOP;\n mul.wide.u32 %rd3, %r0, 4;\n add.u64 %rd7, %rd2, %rd3;\n st.global.f32 [%rd7], %f2;\n ret;\n}"
         },
         {
-          "title": "怎样检查自己的理解",
-          "text": "若 A 和 B 全为 1，则每个输出在数学上为 16。若 B 是单位矩阵，数学结果为 A；浮点特殊值与舍入仍需按实际语义核对。"
-        },
-        {
-          "title": "下一步才是专用矩阵路径",
-          "text": "这份程序会重复读取输入，未做 shared 分块与专用矩阵协作。理解它之后，再学习 mma 或 tcgen05 的布局和同步，不把本例宣传为 B300 优化实现。"
+          "title": "下一步：从每线程标量走向 TMA + tcgen05",
+          "text": "此基线每计算一个输出元素就要从 Global 重复读 32 次输入；工业级矩阵乘先由 TMA 把大 Tile 搬入 Swizzle 过的 Shared Memory，再用 `tcgen05.mma`（或 `mma.sync`）在专用张量硬件上完成数千次 FMA 后写回。"
         }
       ],
       "anchors": [
         "floating-point-instructions-fma",
         "warp-level-matrix-instructions-mma",
-        "tcgen05-mma"
+        "tcgen05-mma-instructions-mma"
       ],
       "terms": [
         "thread",
         "matrix",
-        "global"
+        "global",
+        "tcgen05"
       ],
       "comparison": "先统一数学任务与布局，再比较两端如何高效实现；普通 GPU 线程版本不应拿来代表 GPU 的最佳矩阵性能。",
       "evidence_level": "authored_explanation",
@@ -632,255 +943,589 @@
   "terms": {
     "ptx": {
       "name": "PTX",
-      "definition": "并行线程执行虚拟 ISA。它是设备代码生成入口之一，仍需工具链生成机器代码。",
+      "definition": "并行线程执行虚拟 ISA。它是设备代码生成入口之一，仍需 ptxas 工具链编译为硬件 SASS。",
       "anchor": "programming-model"
     },
     "thread": {
       "name": "线程",
-      "definition": "一个逻辑执行者，拥有自己的寄存器状态和线程索引。",
+      "definition": "SIMT 最小逻辑执行者，拥有自己的虚拟寄存器与 .local 栈状态。",
       "anchor": "thread-hierarchy"
     },
     "warp": {
       "name": "warp",
-      "definition": "NVIDIA GPU 的线程执行分组；本轮目标按 32 个 lane 理解。协作指令另有参与要求。",
+      "definition": "NVIDIA GPU 线程调度与协作分组，当前目标按 32 个 lane 理解；Warp 级协作指令需显式 membermask。",
       "anchor": "set-of-simt-multiprocessors"
     },
     "cta": {
       "name": "CTA / 线程块",
-      "definition": "线程的编程分组，提供 shared 存储和块内协作范围。",
+      "definition": "线程的编程分组（CUDA thread block），提供 .shared::cta 存储、16 个硬件 barrier 与 TMEM 分配域。",
       "anchor": "cooperative-thread-arrays"
+    },
+    "cluster": {
+      "name": "Cluster",
+      "definition": "sm_90+ 引入的线程块集群，允许同集群 CTA 通过 .shared::cluster 互相访问共享内存、执行 TMA 多播与 tcgen05 双 CTA 联合。",
+      "anchor": "cluster-of-cooperative-thread-arrays"
     },
     "grid": {
       "name": "grid",
-      "definition": "一次 kernel 启动所组织的线程块集合。",
+      "definition": "一次 kernel 启动所组织的 CTA/Cluster 集合。",
       "anchor": "thread-hierarchy"
     },
     "sm": {
       "name": "SM",
-      "definition": "硬件执行资源。CTA 是软件分组，SM 是硬件资源，不能永久一一对应。",
+      "definition": "Streaming Multiprocessor 硬件执行资源。CTA 是软件分组，不能与物理 SM 一一对应。",
       "anchor": "ptx-machine-model"
     },
     "register": {
       "name": "寄存器",
-      "definition": "PTX 中保存线程临时值的虚拟寄存器；最终物理分配由工具链决定。",
+      "definition": "PTX 中的虚拟寄存器（%r/%rd/%f/%p）；最终物理分配受 SM 配额约束，超出将 spill 到 .local。",
       "anchor": "register-state-space"
     },
     "global": {
       "name": "global",
-      "definition": "设备全局内存空间，常用于输入和输出数组。",
+      "definition": "全设备全局内存空间，常用于输入输出张量，支持原子、缓存策略及 TMA 引擎。",
       "anchor": "global-state-space"
     },
     "shared": {
       "name": "shared",
-      "definition": "用于线程协作的存储空间；可见范围和 cluster 规则须具体区分。",
+      "definition": "CTA（::cta）或 Cluster（::cluster）内线程协作的片上高速存储，注意 bank conflict 与 swizzle。",
       "anchor": "shared-state-space"
     },
     "local": {
       "name": "local",
-      "definition": "每线程私有内存空间；名字不表示必然位于高速片上存储。",
+      "definition": "每线程私有内存空间，用于寄存器溢出与 alloca；物理上经缓存落回设备内存。",
       "anchor": "local-state-space"
     },
     "alignment": {
       "name": "对齐",
-      "definition": "访问地址须满足操作要求的字节边界，尤其注意宽向量访问。",
+      "definition": "访存地址须满足元素宽度×向量数的自然对齐（如 .v4.f32 须 16B，TMA/smem 常须 128B）。",
       "anchor": "data-movement-and-conversion-instructions-ld"
     },
     "predicate": {
       "name": "谓词",
-      "definition": "控制条件执行的真/假值；通常由 setp 等指令产生。",
+      "definition": "控制条件执行（@%p）或无分支选择（selp）的 1-bit 布尔寄存器，通常由 setp 产生。",
       "anchor": "comparison-and-selection-instructions-setp"
     },
     "type": {
       "name": "指令类型",
-      "definition": "如 .u32、.s32、.f32，描述操作数的解释或位宽。",
+      "definition": "如 .b32/.u32/.s32/.f32/.f16x2，分别决定位宽容器、整数符号或浮点编码解释。",
       "anchor": "fundamental-types"
     },
     "target": {
       "name": "目标架构",
-      "definition": "PTX .target 选择的设备功能集合；与 .version 的 ISA 版本不同。",
+      "definition": "PTX .target 选择的设备特性集：无后缀基础、f 同族、a 架构专属；与 .version 的 ISA 版本分开。",
       "anchor": "ptx-module-directives-target"
     },
     "barrier": {
       "name": "屏障",
-      "definition": "按特定参与者和完成条件进行同步的机制。线程屏障与异步完成等待不可混为一谈。",
+      "definition": "CTA 阻塞同步（barrier.sync）、分离到达（barrier.arrive）或 warp 收敛（bar.warp.sync）；不等同于异步引擎等待。",
       "anchor": "parallel-synchronization-and-communication-instructions-bar"
+    },
+    "mbarrier": {
+      "name": "mbarrier",
+      "definition": "位于 Shared Memory 的 64 位异步屏障对象，通过 phase 奇偶、到达计数与 expect_tx 字节计数协同 TMA 与 tcgen05。",
+      "anchor": "parallel-synchronization-and-communication-instructions-mbarrier-init"
     },
     "async": {
       "name": "异步操作",
-      "definition": "发起后不必立即完成，结果消费与资源复用需要对应的完成协议。",
+      "definition": "发起后后台引擎推进的操作，消费数据与复用缓冲必须通过对应 wait_group / mbarrier / commit 完成协议。",
       "anchor": "memory-consistency-model"
+    },
+    "tma": {
+      "name": "TMA",
+      "definition": "Tensor Memory Accelerator（sm_90+），单线程按 1024-bit tensormap 异步完成 1D–5D 张量搬运、OOB 补零与 swizzle。",
+      "anchor": "data-movement-and-conversion-instructions-cp-async-bulk-tensor"
+    },
+    "tensormap": {
+      "name": "tensormap",
+      "definition": "1024-bit (128B) TMA 张量描述符结构，设备端动态修改后须经 tensormap.cp_fenceproxy 才能被 TMA 读取。",
+      "anchor": "data-movement-and-conversion-instructions-tensormap-replace"
+    },
+    "proxy": {
+      "name": "Proxy 代理",
+      "definition": "PTX 第 8 章区分 Generic Proxy（普通 ld/st）与 Async / Tensormap Proxy；跨代理访问须经 fence.proxy.* 建立可见性。",
+      "anchor": "memory-consistency-model"
+    },
+    "fence": {
+      "name": "内存栅栏",
+      "definition": "在指定作用域与代理间建立内存读写顺序的指令（fence.acq_rel / fence.proxy.async / tcgen05.fence）。",
+      "anchor": "parallel-synchronization-and-communication-instructions-membar"
+    },
+    "scope": {
+      "name": "作用域 Scope",
+      "definition": "内存序和原子操作的可见边界：.cta（同块）、.cluster（同集群）、.gpu（同卡）、.sys（全系统）。",
+      "anchor": "memory-consistency-model"
+    },
+    "cache_hint": {
+      "name": "缓存提示",
+      "definition": "通过 .cop（.ca/.cg/.cs）或 createpolicy 生成的 64 位 L2 驱逐优先级句柄（.L2::cache_hint）控制缓存驻留。",
+      "anchor": "data-movement-and-conversion-instructions-createpolicy"
+    },
+    "membermask": {
+      "name": "membermask",
+      "definition": "32 位线程参与掩码，指定参与 shfl.sync / vote.sync / redux.sync / elect.sync 的 warp lane 集合。",
+      "anchor": "parallel-synchronization-and-communication-instructions-bar-warp-sync"
     },
     "matrix": {
       "name": "协作式矩阵操作",
-      "definition": "由规定的参与线程共同表达矩阵运算，布局决定每个参与者持有哪些数据。",
+      "definition": "按 warp / warpgroup / cta_group 共同表达的 Tensor Core 矩阵乘累加，具体布局决定操作数存放位置。",
       "anchor": "warp-level-matrix-instructions-mma"
+    },
+    "fragment": {
+      "name": "Matrix Fragment",
+      "definition": "mma.sync 中分布在 32 个 lane 通用寄存器里的矩阵子块片段，通常由 ldmatrix 自动从 Shared 装载分配。",
+      "anchor": "warp-level-matrix-instructions-ldmatrix"
+    },
+    "wgmma": {
+      "name": "wgmma",
+      "definition": "Hopper sm_90a 专属的 128 线程 Warpgroup 异步矩阵指令族；在 B300 (sm_103a) 上文档已排除，应转向 tcgen05。",
+      "anchor": "asynchronous-warpgroup-level-matrix-instructions-wgmma-mma"
+    },
+    "tcgen05": {
+      "name": "tcgen05",
+      "definition": "Blackwell / B300 第五代 Tensor Core 指令族：单线程发射、结果驻留 TMEM、支持 cta_group::2 与块缩放。",
+      "anchor": "tensorcore-5th-generation-instructions"
     },
     "tmem": {
       "name": "Tensor Memory",
-      "definition": "tcgen05 模型中的专用存储，拥有专门的分配、寻址和访问规则。",
+      "definition": "tcgen05 专用二维片上累加存储（128 行 × 512 列），通过 tcgen05.alloc 动态申请列并使用 tcgen05.ld/st/cp 访问。",
       "anchor": "tensor-memory"
+    },
+    "cta_group": {
+      "name": "cta_group",
+      "definition": "tcgen05 协同规模：::1 为单 CTA 独立执行，::2 为 Cluster 内相邻双 CTA 联合执行并共享操作数带宽。",
+      "anchor": "tcgen05-mma-instructions-mma"
+    },
+    "descriptor": {
+      "name": "SMEM / 指令描述符",
+      "definition": "wgmma 与 tcgen05 用于编码 Shared 基址/步幅/swizzle（64 位 a/b-desc）以及 MMA 形状与精度（32 位 idesc）的参数。",
+      "anchor": "tcgen05-mma-instructions-mma"
     }
   },
   "instruction_guides": {
     "add": {
-      "summary": "相加两个值",
+      "anchor": "integer-arithmetic-instructions-add",
+      "summary": "整数加法（支持 16/32/64 位及 SIMD 打包加与饱和）",
+      "mechanism": "单线程 ALU 指令；对两操作数执行二进制补码加法（对算术加减本身 u/s 结果位模式相同，但配合 .sat 时必须区分 .u32/.s32 与打包形式 .u16x2/.s16x2/.u8x4/.s8x4 的饱和边界）。",
+      "qualifiers": [
+        {
+          "token": ".u16/.s16/.u32/.s32/.u64/.s64",
+          "meaning": "标量整数位宽与符号解释"
+        },
+        {
+          "token": ".u16x2/.s16x2/.u8x4/.s8x4",
+          "meaning": "32 位寄存器内 2×16 位或 4×8 位打包 SIMD 加法"
+        },
+        {
+          "token": ".sat",
+          "meaning": "溢出时饱和钳位到该类型上下界（仅 .s32 及部分打包形式）"
+        }
+      ],
       "example": "add.s32 %r3, %r1, %r2;",
-      "operands": "目的操作数 %r3；输入 %r1、%r2；.s32 指 32 位有符号整数。",
-      "result": "7 + 5 → 12",
-      "pitfall": "不同类型与饱和等限定符有各自规则；浮点形式须另看舍入与特殊值。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "integer-arithmetic-instructions-add"
+      "operands": "%r3 目的；%r1、%r2 为 .s32 源操作数。",
+      "result": "%r1=7, %r2=5 → %r3=12（语义推导）",
+      "pitfall": "普通 add 不写入进位标志；多字大整数链式加法须使用 9.7.2 的 add.cc / addc。",
+      "related": [
+        "extended-precision-arithmetic-instructions-add-cc",
+        "integer-arithmetic-instructions-sub",
+        "floating-point-instructions-add"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "ld": {
-      "summary": "从内存读取到寄存器",
-      "example": "ld.global.f32 %f0, [%rd0];",
-      "operands": "%f0 是结果寄存器，%rd0 存放 global 地址；f32 是读取格式。",
-      "result": "地址对应的元素为 2.5 → %f0 得到 2.5",
-      "pitfall": "地址、访问宽度和对齐必须合法；没有自动的数组越界保护。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "data-movement-and-conversion-instructions-ld"
+      "anchor": "data-movement-and-conversion-instructions-ld",
+      "summary": "从指定内存空间加载数据到寄存器（支持向量、缓存提示与内存序）",
+      "mechanism": "GPU 最核心访存指令：按状态空间 .ss（.global/.shared/.local/.param/.const，省略时为 generic 通用指针）从地址 [a] 读取标量或 .v2/.v4/.v8 向量。可通过 .cop（.ca 缓存全级、.cg 绕过 L1、.cs 流式、.lu 最后使用、.cv 易失）或 .level1/.level2::eviction_priority 精细控制缓存；带 .relaxed/.acquire 时按第 8 章内存模型建立线程间可见性。",
+      "qualifiers": [
+        {
+          "token": ".global/.shared{::cta,::cluster}/.local/.param/.const",
+          "meaning": "显式状态空间（省去 generic 运行时地址判别）"
+        },
+        {
+          "token": ".v2 / .v4 / .v8",
+          "meaning": "单指令 64/128/256-bit 向量加载（要求总访问宽度对齐）"
+        },
+        {
+          "token": ".ca / .cg / .cs / .lu / .cv",
+          "meaning": "L1/L2 缓存分配与流式策略"
+        },
+        {
+          "token": ".weak / .volatile / .relaxed / .acquire",
+          "meaning": "第 8 章内存一致性语义"
+        },
+        {
+          "token": ".level::cache_hint / .level::prefetch_size",
+          "meaning": "绑定 createpolicy 生成的 64 位 L2 驱逐策略句柄及 L2 预取粒度"
+        }
+      ],
+      "example": "ld.global.v4.f32 {%f0,%f1,%f2,%f3}, [%rd0];",
+      "operands": "目的为 4 个 f32 寄存器向量；%rd0 须为 16 字节对齐的 global 指针。",
+      "result": "从 [%rd0..%rd0+15] 一次加载 16 字节合并事务（语义推导）",
+      "pitfall": "地址必须按“元素大小×向量宽”自然对齐；访问 .shared::cluster 需要 sm_90+ 且仅在同 cluster CTA 活跃期间有效；generic 加载比显式 .global/.shared 有额外开销。",
+      "related": [
+        "data-movement-and-conversion-instructions-st",
+        "data-movement-and-conversion-instructions-ld-global-nc",
+        "data-movement-and-conversion-instructions-cvta",
+        "data-movement-and-conversion-instructions-createpolicy"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "st": {
-      "summary": "把寄存器值写入内存",
-      "example": "st.global.f32 [%rd0], %f0;",
-      "operands": "目标是方括号内的地址，%f0 是写入值。",
-      "result": "%f0 为 2.5 → 指定地址的元素被写为 2.5",
-      "pitfall": "多个线程写同一地址需要明确竞争与同步规则。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "data-movement-and-conversion-instructions-st"
+      "anchor": "data-movement-and-conversion-instructions-st",
+      "summary": "将寄存器值写入内存（支持向量、缓存写穿/写回与 release 语义）",
+      "mechanism": "把标量或向量寄存器 b 写入状态空间 .ss 的地址 [a]。支持 .wb（写回 L1/L2）、.cg（绕过 L1 直接写 L2）、.cs（流式，降低缓存污染）、.wt（写穿，global 仅部分支持）及 .relaxed/.release 一致性写，用于构造自旋锁与生产-消费信号发布。",
+      "qualifiers": [
+        {
+          "token": ".global/.shared{::cta,::cluster}/.local/.param",
+          "meaning": "目标状态空间（不能写 .const）"
+        },
+        {
+          "token": ".wb / .cg / .cs / .wt",
+          "meaning": "缓存写入策略"
+        },
+        {
+          "token": ".weak / .volatile / .relaxed / .release",
+          "meaning": "内存序修饰符"
+        },
+        {
+          "token": ".v2 / .v4 / .v8",
+          "meaning": "多元素向量写入"
+        }
+      ],
+      "example": "st.global.cs.v4.f32 [%rd0], {%f0,%f1,%f2,%f3};",
+      "operands": "[%rd0] 目标地址；{%f0..%f3} 写入数据。",
+      "result": "以流式缓存提示向 global 写出 16 字节（语义推导）",
+      "pitfall": "注意语法里目标地址 [a] 在前、源寄存器 b 在后，正好与 ld 相反；流式输出（之后不再读回）加 .cs 可避免挤占 L2 热数据。",
+      "related": [
+        "data-movement-and-conversion-instructions-ld",
+        "data-movement-and-conversion-instructions-st-async",
+        "parallel-synchronization-and-communication-instructions-membar"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "mov": {
-      "summary": "移动值或读取执行环境信息",
+      "anchor": "data-movement-and-conversion-instructions-mov",
+      "summary": "标量/特殊寄存器/变量地址传送（位级搬运，不做数值转换）",
+      "mechanism": "在寄存器间复制位模式、读取只读特殊寄存器（%tid.x, %ctaid.x, %laneid 等），或取 .global/.shared 变量符号的基地址（mov.u32 %r1, scratch）。",
+      "qualifiers": [
+        {
+          "token": ".pred / .b* / .u* / .s* / .f*",
+          "meaning": "操作数位宽标签（mov 不改变位表示）"
+        }
+      ],
       "example": "mov.u32 %r0, %tid.x;",
-      "operands": "%r0 是目标；%tid.x 给出当前线程在 CTA 内的 x 维编号。",
-      "result": "CTA 中 x 编号为 3 的线程 → %r0 为 3",
-      "pitfall": "移动位表示与数值转换不同；数值转换通常应看 cvt。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "data-movement-and-conversion-instructions-mov"
+      "operands": "%r0 目的寄存器；%tid.x 为当前线程在 CTA 内的 x 维索引。",
+      "result": "第 3 号线程读取到 %r0=3（语义推导）",
+      "pitfall": "把整数写进浮点寄存器要用 cvt，mov 只做按位拷贝；取变量符号地址得到的是所属状态空间内偏移（shared 为 32 位）而非通用 64 位指针。",
+      "related": [
+        "data-movement-and-conversion-instructions-mov-2",
+        "data-movement-and-conversion-instructions-cvt",
+        "data-movement-and-conversion-instructions-cvta"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "cvt": {
-      "summary": "按指定类型转换数值",
-      "example": "cvt.rn.f32.u32 %f0, %r0;",
-      "operands": "目标类型 f32，来源类型 u32；rn 指定舍入方式。",
-      "result": "整数 7 → 浮点 7.0",
-      "pitfall": "范围、精度、舍入及饱和规则随类型组合变化。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "data-movement-and-conversion-instructions-cvt"
+      "anchor": "data-movement-and-conversion-instructions-cvt",
+      "summary": "通用标量与打包数值类型转换（含整数/浮点/FP16/BF16/FP8/FP4/饱和/随机舍入）",
+      "mechanism": "执行真正的数值语义转换（不同于 mov 的位拷贝）：支持所有整数↔浮点、高精度↔半精度/BF16/FP8（e4m3/e5m2）/FP4（e2m1）/TF32，以及双要素向量打包转换（如 .f16x2.f32 / .e4m3x2.f32）、随机舍入（.rs）和饱和（.sat/.satfinite）。",
+      "qualifiers": [
+        {
+          "token": ".irnd (.rni/.rzi/.rmi/.rpi) / .frnd (.rn/.rz/.rm/.rp/.rs)",
+          "meaning": "整数与浮点转换的舍入模式（.rs 为随机舍入）"
+        },
+        {
+          "token": ".ftz / .sat / .satfinite",
+          "meaning": "冲刷非正规数、整数饱和及微缩浮点有限饱和"
+        },
+        {
+          "token": ".dtype.atype",
+          "meaning": "目标类型与源类型（单元素或 x2/x4 打包）"
+        }
+      ],
+      "example": "cvt.rn.f16x2.f32 %r0, %f1, %f0;",
+      "operands": "%r0 打包结果（低 16 位来自 %f0，高 16 位来自 %f1！）。",
+      "result": "将两个独立 .f32 寄存器一次转换并打包为一个 .f16x2 寄存器（语义推导）",
+      "pitfall": "双输入打包形式（如 cvt.rn.f16x2.f32 d, a, b）中第二个输入 b 放入低半字、a 放入高半字！FP8/FP4 转换对 sm_89 / sm_100 / sm_120 各有不同的架构门限，必须核对 Target ISA Notes。",
+      "related": [
+        "data-movement-and-conversion-instructions-cvt-pack",
+        "data-movement-and-conversion-instructions-mov"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "cvta": {
-      "summary": "转换地址空间表示",
+      "anchor": "data-movement-and-conversion-instructions-cvta",
+      "summary": "在显式状态空间地址与通用（generic）地址之间互相转换",
+      "mechanism": "CUDA/C++ 函数传参默认传入 generic 64 位地址。使用 cvta.to.global / cvta.to.shared 可在核函数入口将通用指针转为显式空间地址，使后续 ld.global / ld.shared 绕开地址空间检查；反之 cvta.shared 转回 generic 以便传给通用设备函数。",
+      "qualifiers": [
+        {
+          "token": ".to.<space> vs .<space>",
+          "meaning": ".to.<space> 把 generic 转为显式空间；不带 .to 把显式空间转为 generic"
+        },
+        {
+          "token": ".u32 / .u64",
+          "meaning": "地址位宽（64 位内核下 global/generic 为 .u64，shared 偏移亦常用 .u32/.u64）"
+        }
+      ],
       "example": "cvta.to.global.u64 %rd1, %rd0;",
-      "operands": "将通用地址转换为 global 地址表示；结果位宽为 64。",
-      "result": "传入合法 global 对象的通用指针 → 得到用于 global 访问的地址",
-      "pitfall": "对象必须属于指定空间；该操作不搬运指针指向的数据。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "data-movement-and-conversion-instructions-cvta"
+      "operands": "%rd1 显式 global 地址；%rd0 传入的 generic 指针。",
+      "result": "假定 %rd0 确实指向 global 对象，%rd1 可安全用于 ld.global（语义推导）",
+      "pitfall": "如果原指针实际上指向 .shared 或 .local，却强行 cvta.to.global 会导致未定义访存！另外注意 shared 符号地址常为 32 位。",
+      "related": [
+        "data-movement-and-conversion-instructions-isspacep",
+        "data-movement-and-conversion-instructions-ld",
+        "data-movement-and-conversion-instructions-mapa"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "setp": {
-      "summary": "比较后生成谓词",
+      "anchor": "comparison-and-selection-instructions-setp",
+      "summary": "比较并生成谓词寄存器（支持双谓词 p|q 与谓词链 BoolOp）",
+      "mechanism": "最核心的条件产生指令：比较 a 与 b 写主谓词 p（以及可选反相副谓词 |q），可与第三个谓词 {!}c 做 .and/.or/.xor 归约，从而将复杂 && / || 条件压成单条指令。",
+      "qualifiers": [
+        {
+          "token": ".eq/.ne/.lt/.le/.gt/.ge / .lo/.ls/.hi/.hs / .equ/.neu...",
+          "meaning": "区分有符号、无符号与浮点 ordered/unordered NaN 语义"
+        },
+        {
+          "token": ".and / .or / .xor",
+          "meaning": "与第三谓词 c 融合的布尔运算"
+        }
+      ],
       "example": "setp.ge.u32 %p0, %r0, %r1;",
-      "operands": "%p0 是谓词结果；ge 是大于等于；u32 为无符号比较。",
-      "result": "%r0=9，%r1=8 → %p0 为真",
-      "pitfall": "有符号与无符号比较不同，浮点比较还区分 NaN 情况。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "comparison-and-selection-instructions-setp"
+      "operands": "%p0 目的谓词；%r0、%r1 为无符号 32 位源。",
+      "result": "%r0=9, %r1=8 → %p0=true（语义推导）",
+      "pitfall": "浮点比较默认为 ordered（任一为 NaN 则结果为假，.ne 除外需留心）；若需 NaN 时仍判定真，须使用 unordered 后缀如 .ltu/.neu。",
+      "related": [
+        "control-flow-instructions-at",
+        "control-flow-instructions-bra",
+        "comparison-and-selection-instructions-selp"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "bra": {
-      "summary": "跳转到程序标签",
+      "anchor": "control-flow-instructions-bra",
+      "summary": "条件或无条件跳转到程序标签（支持 .uni 一致性提示）",
+      "mechanism": "改变当前线程的程序计数器到标签 tgt；加 @p 为条件跳转。加上 .uni 声明当前 warp 所有活跃线程保证做出完全相同的跳转决策，允许 ptxas 省去硬件分歧重聚栈（BSSY/BSYNC）开销。",
+      "qualifiers": [
+        {
+          "token": ".uni",
+          "meaning": "保证整个 warp 一致跳转（统一控制流）"
+        }
+      ],
       "example": "@%p0 bra DONE;",
-      "operands": "%p0 控制是否执行跳转；DONE 是目标标签。",
-      "result": "谓词真 → 下一条执行路径转到 DONE",
-      "pitfall": "分支路径必须符合后续协作指令的参与条件。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "control-flow-instructions-bra"
+      "operands": "%p0 控制谓词；DONE 目标标签。",
+      "result": "%p0 为真时跳转到 DONE 继续执行（语义推导）",
+      "pitfall": "如果同一个 warp 内部分线程满足跳转而部分不满足，绝不能加 .uni（否则属未定义行为）；另外在进入 bar.sync 前不要用 bra 提前离开。",
+      "related": [
+        "control-flow-instructions-at",
+        "control-flow-instructions-brx-idx",
+        "parallel-synchronization-and-communication-instructions-bar"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "ret": {
-      "summary": "从当前函数返回",
+      "anchor": "control-flow-instructions-ret",
+      "summary": "从当前 .func 或 .entry 返回（可带 .uni）",
+      "mechanism": "在 .func 中将控制权交还调用者；在顶层 .entry 核函数中终止当前线程执行（等价于结束线程）。",
+      "qualifiers": [
+        {
+          "token": ".uni",
+          "meaning": "warp 一致返回提示"
+        }
+      ],
       "example": "ret;",
-      "operands": "无返回值的 kernel 示例使用 ret 结束该线程执行。",
-      "result": "当前线程不再执行此入口后续指令",
-      "pitfall": "不要在其余线程等待完整 CTA 的屏障前让部分参与线程退出。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "control-flow-instructions-ret"
+      "operands": "无显式操作数（返回值通过 call 声明的输出参数寄存器传出）。",
+      "result": "结束当前函数或入口线程（语义推导）",
+      "pitfall": "不要在还有同伴线程等待整块 CTA 的 bar.sync 前让部分线程先 ret！",
+      "related": [
+        "control-flow-instructions-exit",
+        "control-flow-instructions-call"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "fma": {
-      "summary": "执行融合乘加",
+      "anchor": "floating-point-instructions-fma",
+      "summary": "浮点融合乘加（a * b + c 仅做一次最终舍入）",
+      "mechanism": "GPU FP 计算核心指令：以无限精度中间积计算 a * b + c 后再执行单次 IEEE 舍入，精度显著优于分开 mul+add，并且是单条原生指令吞吐。",
+      "qualifiers": [
+        {
+          "token": ".rn / .rz / .rm / .rp",
+          "meaning": "必填舍入模式（fma 必须显式指定舍入）"
+        },
+        {
+          "token": ".ftz / .sat",
+          "meaning": "f32 非正规冲刷与 [0,1] 钳位"
+        }
+      ],
       "example": "fma.rn.f32 %f3, %f0, %f1, %f2;",
-      "operands": "计算输入乘积加第三个输入，结果写 %f3；rn 为舍入模式。",
-      "result": "2 × 3 + 4 → 10",
-      "pitfall": "融合语义与分别 mul、add 的舍入不一定相同。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "floating-point-instructions-fma"
+      "operands": "%f3 = round( %f0 * %f1 + %f2 )。",
+      "result": "2.0 * 3.0 + 4.0 → 10.0（语义推导）",
+      "pitfall": "与 mad 不同，fma 强制要求带舍入后缀（如 .rn），且不能被编译器当作等价于先 mul 后 add 的两次舍入。",
+      "related": [
+        "floating-point-instructions-mad",
+        "half-precision-floating-point-instructions-fma",
+        "mixed-precision-floating-point-instructions-fma"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "mad": {
-      "summary": "乘加，常用于索引",
+      "anchor": "integer-arithmetic-instructions-mad",
+      "summary": "整数乘加（d = a * b + c，支持 .lo/.hi/.wide 与饱和）",
+      "mechanism": "单指令完成乘法与加数 c 的累加：.lo/.hi 返回与源同宽结果，.wide 返回双倍位宽并与 2N 位 c 相加。GPU 上线程全局 ID（blockIdx * blockDim + threadIdx）与多维张量步长地址计算高度依赖 mad.lo / mad.wide。",
+      "qualifiers": [
+        {
+          "token": ".lo / .hi / .wide",
+          "meaning": "决定乘积截取方式与 c/d 的位宽"
+        },
+        {
+          "token": ".sat",
+          "meaning": "仅 mad.hi.sat.s32 支持饱和输出"
+        }
+      ],
       "example": "mad.lo.u32 %r3, %r1, %r2, %r0;",
-      "operands": "示例取整数乘积的低位并加偏移；目标写在最前。",
-      "result": "块号 2 × 块大小 256 + 线程号 3 → 515",
-      "pitfall": "此示例是 u32 索引运算，注意范围与溢出，不替代所有 mad 形式的语义。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "integer-arithmetic-instructions-mad"
+      "operands": "%r3 = (%r1 * %r2)[31:0] + %r0。",
+      "result": "%r1=2, %r2=256, %r0=3 → %r3=515（语义推导）",
+      "pitfall": "mad.wide.s32/u32 的 c 与 d 都是 64 位寄存器，不可把 32 位累加器直接传入。",
+      "related": [
+        "integer-arithmetic-instructions-mul",
+        "extended-precision-arithmetic-instructions-mad-cc",
+        "floating-point-instructions-fma"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "bar": {
-      "summary": "在线程块范围内进行协作同步",
-      "example": "bar.sync 0;",
-      "operands": "0 为 barrier 编号；此例要求 CTA 全部参与线程到达。",
-      "result": "所有参与线程到达后，才能继续使用受对应规则保障的共享结果",
-      "pitfall": "屏障不是任意异步操作的通用等待；参与范围与内存效果须按具体形式核对。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "parallel-synchronization-and-communication-instructions-bar"
+      "anchor": "parallel-synchronization-and-communication-instructions-bar",
+      "summary": "CTA 内线程会合与同步屏障（bar / barrier，0..15 号命名屏障）",
+      "mechanism": "每个 CTA 提供 16 个硬件命名屏障（0..15）：.sync 使到达线程等待直到 count（默认全 CTA 线程）都到达且附带 CTA 范围内存释放-获取同步；.arrive（split-barrier）仅登记到达并释放内存可见性而不阻塞当前线程；.red/.popc/.and/.or 形式在屏障同时执行 CTA 级谓词归约。",
+      "qualifiers": [
+        {
+          "token": ".cta / .sync / .arrive",
+          "meaning": "阻塞等待全部到达（sync）或仅发到达信号（arrive）"
+        },
+        {
+          "token": ".aligned",
+          "meaning": "保证全 CTA 对齐到达同一条屏障指令"
+        },
+        {
+          "token": ".red.and / .or / .popc",
+          "meaning": "在屏障同时归约每个线程的谓词条件"
+        }
+      ],
+      "example": "barrier.sync 0;",
+      "operands": "0 为屏障编号（0..15）；可选第二操作数为参与线程数（须为 warp_size 的倍数）。",
+      "result": "阻塞直到 CTA 内全部参与线程到达，且确保此前 shared/global 写入对互相可见（语义推导）",
+      "pitfall": "1) 异步引擎（cp.async / TMA / tcgen05）的写入不自动受 barrier.sync 保护，必须先 wait/mbarrier 完成；2) 分支中不可只让部分线程到达默认全 CTA 数量的 barrier.sync，否则永久死锁！",
+      "related": [
+        "parallel-synchronization-and-communication-instructions-bar-warp-sync",
+        "parallel-synchronization-and-communication-instructions-barrier-cluster",
+        "parallel-synchronization-and-communication-instructions-mbarrier-arrive"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "shfl.sync": {
-      "summary": "在 warp 参与线程之间交换寄存器值",
-      "example": "shfl.sync.bfly.b32 %r1, %r0, 1, 31, 0xffffffff;",
-      "operands": "本例使用完整活跃 warp；bfly 模式按 lane XOR 1 选择来源。",
-      "result": "lane 0 从 lane 1 获取值，lane 1 从 lane 0 获取值",
-      "pitfall": "所有指定的非退出参与线程须执行相应操作；不要将全掩码套用于任意分支。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "data-movement-and-conversion-instructions-shfl-sync"
+      "anchor": "data-movement-and-conversion-instructions-shfl-sync",
+      "summary": "Warp 内带同步掩码的寄存器直接交换（无需 shared 内存）",
+      "mechanism": "让 membermask 指定的参与 lane 直接读取同 warp 其他活跃 lane 的寄存器值：.bfly（laneId ^ b，Butterfly 树归约）、.down（laneId + b）、.up（laneId - b）、.idx（广播绝对下标 b）。操作数 c 同时编码了子 warp 分段宽度 clamp 与段掩码 segmask（全 warp 常用 31 或 0x1f）。",
+      "qualifiers": [
+        {
+          "token": ".up / .down / .bfly / .idx",
+          "meaning": "计算目标源 lane 号的寻址模式"
+        },
+        {
+          "token": "membermask",
+          "meaning": "32 位参与掩码，所有参与且未退出的 lane 必须收敛到此指令"
+        }
+      ],
+      "example": "shfl.sync.bfly.b32 %r1|%p0, %r0, 1, 31, 0xffffffff;",
+      "operands": "%r1 读回值，可选谓词 %p0 指示源 lane 是否在有效边界内；%r0 待发送值；1 偏移；31 全宽边界；0xffffffff 掩码。",
+      "result": "lane 0 得到 lane 1 的 %r0，lane 1 得到 lane 0 的 %r0（语义推导）",
+      "pitfall": "即使使用 shfl.sync，membermask 里包含已分支离开或已 exit 的线程也会造成死锁或未定义行为；若源 lane 越界，返回值等于当前线程自己的 %r0 且 |p 为 false。",
+      "related": [
+        "parallel-synchronization-and-communication-instructions-redux-sync",
+        "parallel-synchronization-and-communication-instructions-vote-sync",
+        "parallel-synchronization-and-communication-instructions-bar-warp-sync"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "shl": {
-      "summary": "左移位",
+      "anchor": "logic-and-shift-instructions-shl",
+      "summary": "逻辑左移（低位补 0，移位量 >= 位宽时结果为 0）",
+      "mechanism": "将 a 左移 b 位写入 d，常用于将元素下标乘以 2 的幂转换成字节偏移（如 f32 左移 2 位）。",
+      "qualifiers": [
+        {
+          "token": ".b16 / .b32 / .b64",
+          "meaning": "位宽；移位量 b 始终为 .u32"
+        }
+      ],
       "example": "shl.b32 %r1, %r0, 2;",
-      "operands": "目的寄存器、待移位值、位数。",
-      "result": "3 左移 2 位 → 12",
-      "pitfall": "位操作不自动检查索引溢出。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "logic-and-shift-instructions-shl"
+      "operands": "%r1 = %r0 << 2。",
+      "result": "%r0=3 → %r1=12（语义推导）",
+      "pitfall": "32 位地址下标左移在数组较大时会溢出；超过 4GB 寻址须先扩为 64 位再用 mul.wide 或 shl.b64。",
+      "related": [
+        "logic-and-shift-instructions-shr",
+        "logic-and-shift-instructions-shf"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "shr": {
-      "summary": "右移位",
+      "anchor": "logic-and-shift-instructions-shr",
+      "summary": "右移（.u 逻辑补 0 vs .s 算术符号扩展）",
+      "mechanism": "对无符号 .u* 和无类型 .b* 执行高位补 0 的逻辑右移；对有符号 .s* 复制最高位符号位执行算术右移。",
+      "qualifiers": [
+        {
+          "token": ".b16/.b32/.b64/.u16/.u32/.u64",
+          "meaning": "逻辑右移（高位补 0）"
+        },
+        {
+          "token": ".s16/.s32/.s64",
+          "meaning": "算术右移（高位补符号位）"
+        }
+      ],
       "example": "shr.u32 %r1, %r0, 1;",
-      "operands": "u32 形式为无符号右移。",
-      "result": "8 右移 1 位 → 4",
-      "pitfall": "有符号形式的填充规则不同。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "logic-and-shift-instructions-shr"
+      "operands": "%r1 = %r0 >> 1（无符号）。",
+      "result": "%r0=8 → %r1=4（语义推导）",
+      "pitfall": "负整数使用 .s32 右移向负无穷取整（-1 >> 1 仍为 -1），不同于向零截断的 div.s32。",
+      "related": [
+        "logic-and-shift-instructions-shl",
+        "integer-arithmetic-instructions-div"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     },
     "and": {
-      "summary": "按位与",
+      "anchor": "logic-and-shift-instructions-and",
+      "summary": "按位与或谓词逻辑与（.pred / .b16 / .b32 / .b64）",
+      "mechanism": "对两操作数执行逐位与；当类型为 .pred 时直接组合两个谓词寄存器，省去先转整数再合并。",
+      "qualifiers": [
+        {
+          "token": ".pred / .b16 / .b32 / .b64",
+          "meaning": "谓词或无类型位串宽度"
+        }
+      ],
       "example": "and.b32 %r1, %r0, 15;",
-      "operands": "两个输入按位与，结果写入第一个操作数。",
-      "result": "19 与 15 → 3",
-      "pitfall": "这是位运算，不是判断两个布尔表达式的高级语言短路运算。",
-      "scope": "illustrated_form_only",
-      "verification": "unverified",
-      "anchor": "logic-and-shift-instructions-and"
+      "operands": "%r1 = %r0 & 15（常用于对 2 的幂取模）。",
+      "result": "19 & 15 → 3（语义推导）",
+      "pitfall": "这是无条件逐位运算，不具备高级语言 && 的短路控制流语义。",
+      "related": [
+        "logic-and-shift-instructions-or",
+        "logic-and-shift-instructions-lop3"
+      ],
+      "scope": "representative_form_with_qualifiers",
+      "verification": "unverified"
     }
   },
   "sources": {
@@ -889,7 +1534,7 @@
   },
   "limitations": [
     "原创解释与示例基于固定官方资料整理，未经设备编译运行验证。",
-    "语法覆盖以提取报告为准；只有指定指令有人工组织的中文解释。",
+    "全部 221 条指令均附中文机制说明、修饰符拆解与代表性示例；完整变体约束请结合官方语法和 Target ISA Notes 核对。",
     "B300 支持为文档目标条件判定，不是逐语法形式的完整正确性证明。"
   ]
 }

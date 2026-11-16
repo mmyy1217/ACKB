@@ -36,13 +36,17 @@ class Knowledge:
             self.device = json.loads((self.root / 'device.json').read_text())
             self.learning = json.loads((self.root / 'learning.json').read_text())
             self.syntax = json.loads((self.root / 'syntax.json').read_text())
+            self.taxonomy = json.loads((self.root / 'taxonomy.json').read_text())
+            self.guides = json.loads((self.root / 'guides.json').read_text())
             if self.syntax['source_sha256'] != self.source['sha256']:
                 raise ValueError('PTX syntax source hash mismatch')
             for record in self.records:
                 record['target_assessments'] = {target: assess(record, target) for target in TARGETS}
                 record['target_assessment'] = record['target_assessments'][DEFAULT_TARGET]
                 record['syntax_detail'] = self.syntax['entries'].get(record['anchor'])
-                record['guide'] = next((self.learning['instruction_guides'][m] for m in record.get('mnemonics', []) if m in self.learning['instruction_guides'] and self.learning['instruction_guides'][m]['anchor'] == record['anchor']), None)
+                record['guide'] = self.guides['entries'].get(record['anchor']) or next((self.learning['instruction_guides'][m] for m in record.get('mnemonics', []) if m in self.learning['instruction_guides'] and self.learning['instruction_guides'][m]['anchor'] == record['anchor']), None)
+                if record['anchor'] in self.taxonomy['instructions']:
+                    record['taxonomy'] = self.taxonomy['instructions'][record['anchor']]
             self.notes = [{**n, 'kind': 'lesson', 'citations': [{'anchor': a} for a in n['anchors']]} for n in self.learning['lessons']]
             self.limits = self.learning['limitations'] + ['The documentation archive is not the installed CUDA toolkit.']
         else:
@@ -89,7 +93,7 @@ class Knowledge:
             if self.backend == 'ccec':
                 result.pop('evidence', None)
         else:
-            keys = ('entry_id', 'id', 'title', 'name', 'kind', 'anchor', 'section_number', 'mnemonics', 'depth', 'status')
+            keys = ('entry_id', 'id', 'title', 'name', 'kind', 'anchor', 'section_number', 'mnemonics', 'depth', 'status', 'taxonomy')
             result = {k: record[k] for k in keys if k in record}
         if self.backend == 'ptx' and 'target_assessment' in record:
             result['target_assessment'] = record['target_assessment'] if full else {k: v for k, v in record['target_assessment'].items() if k != 'statements'}
@@ -103,11 +107,11 @@ class Knowledge:
     def dispatch(self, args):
         command = args.command
         if self.backend == 'ccec':
-            for option in ('chip', 'architecture'):
+            for option in ('chip', 'architecture', 'category'):
                 if getattr(args, option, None):
-                    raise ValueError(f'--{option} applies to CCEC declarations, not header-surface topics')
+                    raise ValueError(f'--{option} applies to CCEC declarations or PTX category filtering, not header-surface topics')
         if command in ('get', 'relations'):
-            for option in ('name', 'builtin', 'signature', 'support', 'core', 'condition', 'deprecation'):
+            for option in ('name', 'builtin', 'signature', 'support', 'category', 'core', 'condition', 'deprecation'):
                 if getattr(args, option, None):
                     raise ValueError(f'--{option} is not supported for knowledge identity lookups')
             if args.kind != 'all':
@@ -131,8 +135,25 @@ class Knowledge:
                 record['target_assessment'] = record['target_assessments'][target]
         if command == 'info':
             if self.backend == 'ptx':
-                return [{'coverage': {'sections': len(self.records), 'instructions': sum(r['kind'] == 'instruction' for r in self.records), 'lessons': len(self.notes), 'syntax_blocks': len(self.syntax['entries']), 'target_support': dict(Counter(r['target_assessment']['support'] for r in self.records if r['kind'] == 'instruction'))}, 'source': self.source, 'legacy_snapshot': {'target': 'sm_89', 'source_file': 'source.json', 'scan_file': 'scan.json'}, 'default_target': DEFAULT_TARGET, 'device': self.device}]
+                insts = [r for r in self.records if r['kind'] == 'instruction']
+                return [{'coverage': {'sections': len(self.records), 'instructions': len(insts), 'guided_instructions': sum(bool(r.get('guide')) for r in insts), 'lessons': len(self.notes), 'categories': len(self.taxonomy['categories']), 'domains': len(self.taxonomy['domains']), 'syntax_blocks': len(self.syntax['entries']), 'target_support': dict(Counter(r['target_assessment']['support'] for r in insts))}, 'source': self.source, 'legacy_snapshot': {'target': 'sm_89', 'source_file': 'source.json', 'scan_file': 'scan.json'}, 'default_target': DEFAULT_TARGET, 'device': self.device}]
             return [{'coverage': self.tree['coverage'], 'target': self.tree['target']}]
+        if command == 'categories':
+            if self.backend != 'ptx':
+                raise ValueError('categories is currently supported for --backend ptx')
+            terms = args.query.lower().split()
+            insts = [r for r in self.records if r['kind'] == 'instruction']
+            items = []
+            for cat in self.taxonomy['categories']:
+                matched_insts = [r for r in insts if r.get('taxonomy', {}).get('category') == cat['id']]
+                entry = {
+                    **cat,
+                    'instruction_count': len(matched_insts),
+                    'target_support': dict(Counter(r['target_assessment']['support'] for r in matched_insts)),
+                }
+                if all(t in json.dumps(entry, ensure_ascii=False).lower() for t in terms):
+                    items.append(entry)
+            return items
         if command == 'targets':
             target = {'device': 'NVIDIA B300', 'compute_capability': '10.3', 'default': DEFAULT_TARGET, 'profiles': list(TARGETS), 'source': self.learning['sources']['device']} if self.backend == 'ptx' else {'chip': self.tree['target']}
             return [target] if args.name.lower() in json.dumps(target).lower() else []
@@ -165,6 +186,11 @@ class Knowledge:
                         continue
                     if args.support and record.get('target_assessment', {}).get('support', 'unknown') != args.support:
                         continue
+                    category = getattr(args, 'category', None)
+                    if category:
+                        tax = record.get('taxonomy', {})
+                        if category not in (tax.get('domain'), tax.get('category'), tax.get('subcategory')):
+                            continue
                 haystack = json.dumps({k: record.get(k) for k in ('title', 'name', 'anchor', 'mnemonics', 'section_number')}, ensure_ascii=False).lower()
                 if all(t in haystack for t in terms):
                     selected.append(self.item(record))

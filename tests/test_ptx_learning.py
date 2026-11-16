@@ -21,7 +21,7 @@ class LearningTests(unittest.TestCase):
     def test_links_resolve_and_examples_are_unverified(self):
         anchors = {r['anchor'] for r in self.k.records}
         lessons = self.k.learning['lessons']
-        self.assertEqual(len({l['id'] for l in lessons}), 15)
+        self.assertEqual(len({l['id'] for l in lessons}), 22)
         for lesson in lessons:
             self.assertTrue(set(lesson['anchors']) <= anchors, lesson['id'])
             self.assertTrue(set(lesson['terms']) <= self.k.learning['terms'].keys())
@@ -35,15 +35,20 @@ class LearningTests(unittest.TestCase):
 
     def test_syntax_coverage_and_fingerprints(self):
         self.assertEqual(self.k.syntax['source_sha256'], self.k.source['sha256'])
-        for record in self.k.records:
-            if record['kind'] != 'instruction':
-                continue
+        instructions = [r for r in self.k.records if r['kind'] == 'instruction']
+        self.assertEqual(len(instructions), 221)
+        for record in instructions:
             syntax = record['syntax_detail']
             self.assertIsNotNone(syntax, record['anchor'])
             self.assertEqual(syntax['source_anchor'], record['anchor'])
             self.assertEqual(syntax['sha256'], hashlib.sha256(syntax['text'].encode()).hexdigest())
-            if record['guide']:
-                self.assertEqual(record['guide']['anchor'], record['anchor'])
+            self.assertIsNotNone(record['guide'], record['anchor'])
+            self.assertEqual(record['guide']['anchor'], record['anchor'])
+            self.assertIn('taxonomy', record, record['anchor'])
+            self.assertGreaterEqual(record['taxonomy']['form_count'], 1)
+        self.assertEqual(len(self.k.taxonomy['domains']), 7)
+        self.assertEqual(len(self.k.taxonomy['categories']), 21)
+        self.assertEqual(len(self.k.taxonomy['instructions']), 221)
 
     def test_architecture_and_family_are_distinct(self):
         self.assertEqual(judge(statement('sm_100a', 'exact_sm'), 'sm_103a'), 'no')

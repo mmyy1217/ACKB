@@ -33,10 +33,21 @@ class KnowledgeTests(unittest.TestCase):
 
     def test_notes_cite_sections(self):
         notes = query('--backend', 'ptx', 'topics')
-        self.assertEqual(notes['total'], 15)
+        self.assertEqual(notes['total'], 22)
         links = query('--backend', 'ptx', 'relations', notes['items'][0]['id'])
         self.assertTrue(links['items'])
         self.assertTrue(all(x['relation'] == 'cites_section' for x in links['items']))
+
+    def test_ptx_categories_and_full_guides(self):
+        cats = query('--backend', 'ptx', '--limit', '30', '--max-chars', '60000', 'categories')
+        self.assertEqual(cats['total'], 21)
+        tcgen = query('--backend', 'ptx', '--limit', '20', 'search', '--category', '9.7.18')
+        self.assertEqual(tcgen['total'], 12)
+        tma = query('--backend', 'ptx', '--limit', '20', 'search', '--category', '9.7.10.bulk_tma')
+        self.assertEqual(tma['total'], 11)
+        mma = query('--backend', 'ptx', 'get', 'warp-level-matrix-instructions-mma')['items'][0]
+        self.assertEqual(mma['taxonomy']['category'], '9.7.16')
+        self.assertIn('mechanism', mma['guide'])
 
     def test_ccec_knowledge_and_legacy(self):
         with self.assertRaises(ValueError):

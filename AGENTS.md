@@ -107,7 +107,12 @@ python scripts/query.py --backend ptx schema
 
 ```sh
 python scripts/ptx_learning.py --html /home/zuomin/Projects/Compiler/work/experiments/ackb/ptx-index/source/ptx-isa-13.4.3-index.html
-python scripts/query.py --backend ptx get learn_vector_add
+python scripts/ptx_taxonomy.py
+python scripts/ptx_guides.py
+python scripts/ptx_build_learning.py
+python scripts/query.py --backend ptx categories
+python scripts/query.py --backend ptx search --category 9.7.18
+python scripts/query.py --backend ptx get learn_tcgen05_pipeline
 python scripts/query.py --backend ptx get tcgen05-mma-instructions-mma --architecture sm_103a
 ```
 

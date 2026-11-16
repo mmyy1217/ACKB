@@ -6,7 +6,7 @@ CCEC 与 PTX 分别建库，保留其抽象层差异。CCEC 是 ccec 接受的�
 
 CCEC 原始记录位于版本化 catalog；`data/ccec/knowledge.json` 绑定其 SHA-256，新增 8 个头文件表面主题和 2,222 个 builtin 名称引用。引用中 2 个没有可关联的解析记录，原始 catalog 的 29 个未解析项继续保留。主题包含来源、缺失种子和未知项，不凭名称补造硬件语义。
 
-PTX 固定 ISA 9.4 / CUDA 文档归档 13.4.3。`data/ptx` 保存全部 743 个 HTML 章节目录，221 个指令条目、39 个伪指令、35 个特殊寄存器及 77 个执行模型/状态空间章节。全文描述不入库；`syntax.json` 保存 296 个官方语法块（覆盖 221 条指令），`learning.json` 保存 15 篇原创中文主题、术语与教学代码。旧 4 篇笔记快照保留用于追溯。来源与支持归类规则见 [PTX 索引](ptx-index.md)。
+PTX 固定 ISA 9.4 / CUDA 文档归档 13.4.3。`data/ptx` 保存全部 743 个 HTML 章节目录，221 个指令条目、39 个伪指令、35 个特殊寄存器及 77 个执行模型/状态空间章节。全文描述不入库；`syntax.json` 保存 296 个官方语法块（覆盖 221 条指令），`taxonomy.json` 保存 7 个能力域、21 个官方 9.7.x 指令类别及二级子类结构，`guides.json` 为全部 221 条指令提供中文机制解析、修饰符拆解与示例，`learning.json` 保存 22 篇原创中文深度专题、32 个术语与教学代码。旧 4 篇笔记快照保留用于追溯。来源与支持归类规则见 [PTX 索引](ptx-index.md)。
 
 ## 查询协议
 
@@ -18,7 +18,8 @@ PTX 固定 ISA 9.4 / CUDA 文档归档 13.4.3。`data/ptx` 保存全部 743 个 
 | CCEC topics / builtins / 对应 ID 查询 | 返回 `ackb.knowledge-query.v1` |
 | `--backend ptx` | 返回 `ackb.knowledge-query.v1`；`--data` 可指定 PTX 索引目录 |
 | topics | 分页列出重点笔记；get 读取正文及未知项 |
-| search | PTX 默认仅 instruction；`--kind all` 搜索全部章节；query 匹配标题、助记符、锚点与章节号，`--name` 精确匹配助记符 |
+| categories | PTX 列出 21 个官方 9.7.x 指令类别、子类与当前目标支持计数 |
+| search | PTX 默认仅 instruction；`--kind all` 搜索全部章节；`--category` 按能力域/9.7.x/子类过滤；query 匹配标题、助记符、锚点与章节号，`--name` 精确匹配助记符 |
 | get | PTX 支持 entry_id、章节 anchor 或 learn_ 开头的学习主题 ID；CCEC 主题与 builtin 使用返回 ID |
 | relations | 章节返回直接子章节；笔记返回引用章节；CCEC 主题/builtin 返回头文件记录引用 |
 | evidence | 知识条目返回来源定位与哈希，原有 CCEC 记录仍返回提取文本 |
@@ -43,4 +44,4 @@ CCEC 还缺完整编译器 builtin 清单、核宏环境、每项参数单位/�
 
 ## PTX 阅读数据
 
-学习层次是编辑组织，不是官方 ISA 分组，也不按 CCEC 单元对齐。每个主题有引用锚点、解释、示例、验证状态及单独折叠的比较提示。`topics` 枚举主题；`get` 返回正文或官方语法与示例；`relations` / `evidence` 可遍历其出处。中文逐操作数解释目前覆盖 16 个特定指令条目，其余条目明确提示待整理。详细边界见 [PTX 阅读层](ptx-learning.md)。
+学习层次是编辑组织，不是官方 ISA 分组，也不按 CCEC 单元对齐。每个主题有引用锚点、解释、示例、验证状态及单独折叠的比较提示。`topics` 枚举 22 篇深度专题；`categories` 枚举官方 9.7.x 分类树；`get` 返回正文或官方语法、修饰符字典与示例；`relations` / `evidence` 可遍历其出处。全部 221 条指令条目均提供中文机制说明与代表性示例，完整变体仍须对照官方语法与目标条件。详细边界见 [PTX 阅读层](ptx-learning.md)。

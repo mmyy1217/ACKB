@@ -31,9 +31,10 @@ def parser():
     commands = p.add_subparsers(dest='command', required=True, parser_class=Parser)
     commands.add_parser('info')
     commands.add_parser('schema')
-    for operation in ('topics', 'builtins'):
+    for operation in ('topics', 'builtins', 'categories'):
         topic = commands.add_parser(operation)
         topic.add_argument('query', nargs='?', default='')
+        topic.add_argument('--architecture')
     targets = commands.add_parser('targets')
     targets.add_argument('--name', default='')
     for command in ('search', 'get', 'relations'):
@@ -47,6 +48,7 @@ def parser():
         sub.add_argument('--signature')
         sub.add_argument('--kind', choices=['all', 'interface', 'type', 'macro', 'constant', 'helper', 'instruction', 'instruction_topic', 'execution_model', 'state_space', 'directive', 'special_register'], default='interface' if command == 'search' else 'all')
         sub.add_argument('--support', choices=['documented_supported', 'documented_not_supported', 'partial', 'unknown'])
+        sub.add_argument('--category')
         sub.add_argument('--chip')
         sub.add_argument('--architecture')
         sub.add_argument('--core')
@@ -81,11 +83,13 @@ def run(args):
         schema = 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'query-v1.schema.json'
         return json.loads((ROOT / 'schemas' / schema).read_text())
     knowledge_identity = getattr(args, 'identity', '').startswith(('ccec_topic_', 'ccec_builtin_'))
-    if args.backend == 'ptx' or args.command in ('topics', 'builtins') or knowledge_identity:
+    if args.backend == 'ptx' or args.command in ('topics', 'builtins', 'categories') or knowledge_identity:
         knowledge = Knowledge(args.backend, args.data)
         return page(knowledge.dispatch(args), args, knowledge.context(args.command))
     if getattr(args, 'support', None):
         raise ValueError('--support is for PTX documentation assessments; CCEC uses --condition')
+    if getattr(args, 'category', None):
+        raise ValueError('--category is for PTX instruction taxonomy')
     if getattr(args, 'kind', 'all') not in ('all', 'interface', 'type', 'macro', 'constant', 'helper'):
         raise ValueError('This kind belongs to the PTX backend')
     db = Database(args.data)

@@ -19,7 +19,7 @@ def build(source, output):
     page = page.replace('/*__DATA__*/', payload)
     ptx = Knowledge('ptx')
     ccec = Knowledge('ccec')
-    knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning},
+    knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning, 'taxonomy': ptx.taxonomy},
                  'ccec': ccec.tree if source.resolve() == (ROOT / 'data' / VERSION / 'catalog.json').resolve() else {'topics': []}}
     encoded = json.dumps(knowledge, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
     page = page.replace('/*__KNOWLEDGE__*/', encoded)
