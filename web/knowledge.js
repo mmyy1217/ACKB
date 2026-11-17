@@ -44,9 +44,9 @@ function recordView(r) {
   return 'definitions';
 }
 function viewLabels() {
-  if(state.backend==='llvm')return {llvm:'LLVM IR 目标核心',report:'来源与覆盖'};
-  if (state.backend === 'ascendc') return {basic:'AscendC 高层 API',capi:'AscendC C / SIMT API',report:'说明 / 覆盖'};
-  if (state.backend === 'cce-dialect') return {dialect_ops:'CCE Dialect 语义 Op',dialect_intrinsics:'CCE Dialect → LLVM Intrinsics',report:'说明 / 覆盖'};
+  if(state.backend==='llvm')return {llvm:'LLVM IR',report:'来源与覆盖'};
+  if (state.backend === 'ascendc') return {basic:'AscendC 基础 C++ API',capi:'AscendC C / SIMT API',report:'说明 / 覆盖'};
+  if (state.backend === 'cce-dialect') return {dialect_ops:'CCE Dialect 语义 Ops',dialect_intrinsics:'CCE Dialect LLVM Intrinsics',report:'说明 / 覆盖'};
   return state.backend === 'ptx' ? {...Object.fromEntries(knowledgeData.ptx.learning.chapters.map(c=>[c.id,c.title])), interfaces:'指令速查', all:'官方手册目录', report:'来源与覆盖', instruction:'指令阅读', search:'搜索结果'} : {interfaces:'CCEC Builtins',declarations:'入口声明',wrappers:'CCEC 编程接口',records:'原始记录',unresolved:'待解析入口',definitions:'配套定义',topics:'知识主题',report:'说明 / 覆盖',references:'来源详情'};
 }
 function configureBackend() {

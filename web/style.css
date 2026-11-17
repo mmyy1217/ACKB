@@ -456,3 +456,20 @@ body.data-loading #ascendc-map {display:none}
  .structure-label .structure-sub {display:block}
  .home-guide span {display:block;margin:3px 0 0}
 }
+
+/* The structure is the homepage; only downloads add controls beside its links. */
+#home {max-width:1100px;padding:20px 24px}
+#home-content {display:block}
+#ascendc-map {max-width:none;margin:0;padding:0}
+.library-entry {display:flex;align-items:center;gap:8px;min-width:0}
+.library-entry > a {flex:1;min-width:0}
+.structure-label .library-entry {display:inline-flex}
+.structure-compiler > .library-entry {width:100%}
+.round-download {position:relative;display:flex;flex-direction:column;flex:none;margin:0;gap:2px;min-width:26px}
+.round-download button {display:grid;place-items:center;width:26px;height:26px;padding:4px;border-radius:50%;background:var(--subtle);color:var(--ink)}
+.round-download svg {width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.round-download span {font-size:9px;line-height:1.2}
+.round-download progress {width:26px;height:3px}
+.independent-library {display:flex;align-items:center;justify-content:flex-end;gap:12px;margin:16px 0 0;font-size:11px;color:var(--muted)}
+.independent-library > span {font-size:10px}
+@media(max-width:650px){#home {padding:16px 12px}.independent-library {flex-wrap:wrap;justify-content:flex-start}.structure-label .library-entry {display:flex}.structure-label .structure-sub {display:block}}

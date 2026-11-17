@@ -23,8 +23,8 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.waitForSelector('#rows .row-button');
 
     assert.deepEqual(await page.locator('#backend option').allTextContents(), [
-      'LLVM IR 目标核心', 'CCEC 编程接口', 'CCEC Builtins', 'AscendC 高层 API', 'AscendC C / SIMT API',
-      'CCE Dialect 语义 Op', 'CCE Dialect → LLVM Intrinsics', 'PTX 虚拟指令集',
+      'LLVM IR', 'CCEC 编程接口', 'CCEC Builtins', 'AscendC 基础 C++ API', 'AscendC C / SIMT API',
+      'CCE Dialect 语义 Ops', 'CCE Dialect LLVM Intrinsics', 'PTX 虚拟指令集',
     ]);
     await page.selectOption('#backend', 'ccec-intrinsics');
     assert.match(await page.locator('#unknown-hint').innerText(), /2,839/);
@@ -98,11 +98,11 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     // 1. Test AscendC upper layer (basic_api)
     await page.selectOption('#backend', 'ascendc');
-    assert.match(await page.locator('#result-count').innerText(), /491 个 AscendC 高层 API/);
+    assert.match(await page.locator('#result-count').innerText(), /491 个 AscendC 基础 C\+\+ API/);
     for (const [sym, expectRe] of [['DataCopy', /__builtin_cce_copy_gm_to_ubuf/], ['Add', /__builtin_cce_vadd/], ['Mmad', /__builtin_cce_mad/]]) {
       await page.fill('#search', sym);
       await page.locator('#rows .row-button').filter({hasText: new RegExp(`^${sym}$`)}).first().click();
-      assert.match(await page.locator('#detail').innerText(), /AscendC 高层 API \(basic_api\)/);
+      assert.match(await page.locator('#detail').innerText(), /AscendC 基础 C\+\+ API \(basic_api\)/);
       assert.match(await page.locator('#detail').innerText(), expectRe);
     }
     await page.fill('#search', 'DataCopy');
@@ -131,7 +131,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.equal(await page.locator('#backend').inputValue(), 'ccec-intrinsics');
     assert.match(await page.locator('#detail').innerText(), /__builtin_cce_mad/);
 
-    // 3. Test CCE Dialect upper layer (CCE Dialect 语义 Op) and jump to lower layer (CCE Dialect → LLVM Intrinsics)
+    // 3. Test CCE Dialect upper layer (CCE Dialect 语义 Ops) and jump to lower layer (CCE Dialect LLVM Intrinsics)
     await page.selectOption('#backend', 'cce-dialect');
     assert.match(await page.locator('#result-count').innerText(), /247 个 Dialect Op/);
     await page.fill('#search', 'cce.mad');
@@ -139,10 +139,10 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.match(await page.locator('#detail').innerText(), /CCESpec\.md 中文规格说明/);
     await page.screenshot({path: path.join(review, 'cce-dialect-ops-1440.png'), fullPage: true});
 
-    // Jump from cce.mad to its lowered CCE Dialect → LLVM Intrinsic
+    // Jump from cce.mad to its lowered CCE Dialect LLVM Intrinsic
     await page.locator('#detail [data-op-ref^="cce_dialect_intr_"]').first().click();
     assert.equal(await page.locator('#backend').inputValue(), 'cce-dialect-intrinsics');
-    assert.match(await page.locator('#detail').innerText(), /CCE Dialect → LLVM Intrinsic/);
+    assert.match(await page.locator('#detail').innerText(), /CCE Dialect LLVM Intrinsic/);
     await page.screenshot({path: path.join(review, 'cce-dialect-intrinsics-1440.png'), fullPage: true});
 
     // Verify llvm.hivm.MOV.OUT.TO.UB.ALIGN.V2.f16.DV -> ccec_op___builtin_cce_copy_gm_to_ubuf_align_v2

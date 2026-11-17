@@ -11,13 +11,13 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  const url=pathToFileURL(path.resolve('dist/index.html')).href;
  await page.goto(url);await page.waitForSelector('#home:not([hidden])');
  assert.equal(await page.locator('.workspace').isVisible(),false);
- assert.equal(await page.locator('.home-databases a').count(),8);
+ assert.equal(await page.locator('#home a[data-database]').count(),8);
  for(const width of [1440,1024,390,320]){
   await page.setViewportSize({width,height:950});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`home overflow ${width}`);
   await page.screenshot({path:`.impeccable/review/llvm-home-${width}.png`,fullPage:true});
  }
- await page.locator('.home-guide a').click();
+ await page.evaluate(()=>location.hash='ascendc-map');
  await page.locator('#ascendc-map:not([hidden])').waitFor();
  assert.equal(await page.locator('[data-library]').count(),7);
  const libraryLinks=await page.locator('[data-library]').evaluateAll(nodes=>nodes.map(n=>n.hash));
@@ -29,9 +29,9 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
   await page.locator('#ascendc-map:not([hidden])').waitFor();
  }
  await page.reload(); await page.locator('#ascendc-map:not([hidden])').waitFor();
- await page.locator('.map-nav a[href="#home"]').click();
+ await page.evaluate(()=>location.hash='home');
  await page.setViewportSize({width:1440,height:950});
- await page.locator('.home-databases a').filter({hasText:'LLVM IR 目标核心'}).click();
+ await page.locator('#home a[data-database]').filter({hasText:/^LLVM IR/}).click();
  await page.waitForSelector('#rows .row-button');
  assert.equal(await page.locator('#backend').inputValue(),'llvm');
  const baseline=await page.evaluate(()=>visible.length);
@@ -89,7 +89,7 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
   await page.screenshot({path:`.impeccable/review/llvm-core-${width}.png`,fullPage:true});
  }
  await page.click('.brand');await page.waitForSelector('#home:not([hidden])');
- const hrefs=await page.locator('.home-databases a').evaluateAll(as=>as.map(a=>a.hash));
+ const hrefs=await page.locator('#home a[data-database]').evaluateAll(as=>as.map(a=>a.hash));
  for(const hash of hrefs){
   await page.goto(url+hash);await page.waitForFunction(()=>!state.home);
   assert.equal(await page.locator('.workspace').isVisible(),true);

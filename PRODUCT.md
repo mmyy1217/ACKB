@@ -79,3 +79,7 @@ LLVM 默认范围为 950 包内证据（c310 模块声明 / 直接调用），A5
 ## Ascend C 体系与知识库入口
 
 `#ascendc-map` 使用已确认的黑白结构图，Read 模式；上方按模板库、高阶 API、基础 API、语言扩展分区，下方展开编译器，外部 CCE Dialect 单独放置。7 个入口分别链接 AscendC 两层、CCEC 两层、LLVM、Dialect 两层；不含 PTX，不再显示功能矩阵、具体接口或筛选器。结构图无需下载数据；点击后统一经过下载门控。窄屏纵向重排。
+
+## 结构图首页与下载
+
+无 fragment、`#home` 和旧 `#ascendc-map` 均进入结构图首页。7 个 Huawei Ascend 相关知识库在图内链接，PTX 保留图外独立入口。入口旁小圆钮负责下载／更新，悬停提示状态和体积，下载时显示百分比，完成后解锁链接；同库双层共用状态。离线单文件直接打开，无下载控件。统一名称为 AscendC 基础 C++ API、AscendC C / SIMT API、CCEC 编程接口、CCEC Builtins、LLVM IR、CCE Dialect 语义 Ops、CCE Dialect LLVM Intrinsics；URL 与数据 ID 保持兼容。

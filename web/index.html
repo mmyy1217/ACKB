@@ -11,7 +11,7 @@
 <a class="skip-link" href="#main">跳到接口列表</a>
 <header class="topbar">
   <a class="brand" href="#home" aria-label="ACKB 首页">ACKB</a>
-  <label class="backend-switch"><span class="sr-only">目标后端</span><select id="backend" aria-label="目标后端"><option value="llvm">LLVM IR 目标核心</option><option value="ccec">CCEC 编程接口</option><option value="ccec-intrinsics">CCEC Builtins</option><option value="ascendc">AscendC 高层 API</option><option value="ascendc-capi">AscendC C / SIMT API</option><option value="cce-dialect">CCE Dialect 语义 Op</option><option value="cce-dialect-intrinsics">CCE Dialect → LLVM Intrinsics</option><option value="ptx">PTX 虚拟指令集</option></select></label>
+  <label class="backend-switch"><span class="sr-only">目标后端</span><select id="backend" aria-label="目标后端"><option value="llvm">LLVM IR</option><option value="ccec">CCEC 编程接口</option><option value="ccec-intrinsics">CCEC Builtins</option><option value="ascendc">AscendC 基础 C++ API</option><option value="ascendc-capi">AscendC C / SIMT API</option><option value="cce-dialect">CCE Dialect 语义 Ops</option><option value="cce-dialect-intrinsics">CCE Dialect LLVM Intrinsics</option><option value="ptx">PTX 虚拟指令集</option></select></label>
   <h1 id="page-title">指令接口</h1>
   <div class="toolbar">
     <label class="filter" title="本项目按来源头文件划分的接口组，不代表设备支持范围">域<select id="group" aria-label="接口域"><option value="">全部接口域</option></select></label>
@@ -39,54 +39,6 @@
   <h1 id="site-loading-title">正在加载数据库</h1><p id="site-loading-message"></p>
   <div class="loading-actions"><button id="site-retry" type="button" hidden>重试</button><button type="button" onclick="refreshSite()">刷新到最新版</button><a href="#home">返回首页</a></div>
 </section>
-<main id="home" hidden aria-labelledby="home-title">
-  <div id="home-content" tabindex="-1"><h1 id="home-title">AI Compiler 目标知识库</h1>
-  <p class="home-intro">理解程序如何走向硬件。沿 Huawei Ascend 的源码接口、编译器内建与 LLVM IR 向下追踪；独立阅读 NVIDIA PTX 的执行与指令模型。</p>
-  <p class="home-guide"><a href="#ascendc-map">Ascend C 体系与知识库入口 →</a><span>查看层级，进入 7 个知识库</span></p>
-  <section aria-labelledby="topology-title"><h2 id="topology-title">层级与路径</h2>
-<div class="topology" aria-label="源码入口、编译降级与数据库关联">
-  <p class="path-label">Huawei Ascend · 两套源码入口</p>
-  <div class="source-entries">
-    <div class="path-node"><a href="#backend=ascendc&amp;layer=basic">AscendC 高层 API</a><small>Tensor / RegTensor / Simt C++</small></div>
-    <div class="path-node"><a href="#backend=ascendc&amp;layer=capi">AscendC C / SIMT API</a><small>asc_* / simt_api</small></div>
-  </div>
-  <p class="path-caption">两套入口并列展示；具体接口可经封装或直接使用内建入口。</p>
-  <div class="source-paths">
-    <div class="path-route"><span class="path-label">经封装</span><a href="#layer=interfaces">CCEC 编程接口</a><span aria-label="调用">→</span><a href="#layer=intrinsics">CCEC Builtins</a></div>
-    <div class="path-route"><span class="path-label">直接调用</span><span>任一源码入口</span><span aria-label="调用">→</span><a href="#layer=intrinsics">CCEC Builtins</a></div>
-  </div>
-  <p class="path-caption">内建入口包括 intrinsic alias 与 __builtin_cce_*；不要求经过全部层级。</p>
-  <div class="path-transition">↓ CCEC 前端 lowering</div>
-  <div class="path-node core-node"><a href="#backend=llvm">LLVM IR 目标核心</a><small>llvm.hivm.* / 标准 intrinsic / 普通 LLVM IR</small></div>
-  <p class="path-caption">普通 C/C++ 表达式也可生成普通 LLVM IR，不必经过目标 builtin。逐项 builtin → LLVM 映射仍以证据为准。</p>
-  <div class="path-endpoint">↓ Huawei Ascend 后端代码生成 → NPU<small>后端生成过程与机器指令不在当前索引范围</small></div>
-  <div class="external-path">
-    <p class="path-label">外部 CCE Dialect 工程</p>
-    <a href="#backend=cce-dialect&amp;layer=ops">CCE Dialect 语义 Op</a>
-    <div class="path-transition">↓ 外部工程 lowering</div>
-    <a href="#backend=cce-dialect&amp;layer=intrinsics">CCE Dialect → LLVM Intrinsics</a>
-    <div class="path-transition">↓ LLVM 符号关联（不再执行 lowering）</div>
-    <a href="#backend=llvm">LLVM IR 目标核心</a>
-  </div>
-  <div class="external-path">
-    <p class="path-label">NVIDIA · 独立路径</p>
-    <a href="#backend=ptx">PTX 虚拟指令集</a>
-    <div class="path-endpoint">↓ NVIDIA 后端代码生成 → GPU<small>后端生成过程与机器指令不在当前索引范围</small></div>
-  </div>
-</div>
-<p class="home-note">图示为实现路径概览，不是逐接口验证后的调用图；并列入口不表示完全没有交叉调用。外部工程的符号关联不证明 CANN 950 支持，LLVM IR 与 PTX 均不等同于硬件机器指令。</p></section>
-<section aria-labelledby="databases-title"><h2 id="databases-title">进入数据库</h2><table class="home-databases"><thead><tr><th>数据库</th><th>从这里看什么</th></tr></thead><tbody>
-<tr><td><a href="#backend=llvm">LLVM IR 目标核心</a></td><td>注册身份、类型约束、Bitcode 声明、工具链差异与上游关联。</td></tr>
-<tr><td><a href="#layer=intrinsics">CCEC Builtins</a></td><td>__builtin_cce_* 的唯一身份、入口参数和调用来源。</td></tr>
-<tr><td><a href="#layer=interfaces">CCEC 编程接口</a></td><td>开发者可调用的 C/C++ 封装、重载与搬运直连入口。</td></tr>
-<tr><td><a href="#backend=ascendc&amp;layer=capi">AscendC C / SIMT API</a></td><td>指针、寄存器与 SIMT 接口，以及下层调用线索。</td></tr>
-<tr><td><a href="#backend=ascendc&amp;layer=basic">AscendC 高层 API</a></td><td>Tensor / RegTensor 抽象与 3510 实现追踪。</td></tr>
-<tr><td><a href="#backend=cce-dialect&amp;layer=ops">CCE Dialect 语义 Op</a></td><td>独立 MLIR 工程的语义、操作数、文档与 lowering。</td></tr>
-<tr><td><a href="#backend=cce-dialect&amp;layer=intrinsics">CCE Dialect → LLVM Intrinsics</a></td><td>该工程引用的具体 LLVM 名称及映射。</td></tr>
-<tr><td><a href="#backend=ptx">PTX 虚拟指令集</a></td><td>B300 · 执行模型、存储、协作、矩阵计算与指令速查。</td></tr>
-</tbody></table></section>
-<p class="home-note">固定来源：CANN 9.3.0~weekly.20261104.01 · PTX ISA 9.4。静态知识与编译、运行、性能证据分开记录。页面可离线使用。</p></div>
-</main>
 <!--__ASCENDC_MAP__-->
 <div class="workspace">
   <aside id="sidebar" class="sidebar" aria-label="指令分类">

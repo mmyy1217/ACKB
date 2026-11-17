@@ -25,6 +25,7 @@ class SiteBuildTests(unittest.TestCase):
 
     def build(self, style='css', script='js', title=None):
         template = (Path(__file__).resolve().parents[1] / 'web/index.html').read_text()
+        template = template.replace('<!--__ASCENDC_MAP__-->', (Path(__file__).resolve().parents[1] / 'web/ascendc-map.html').read_text())
         if title:
             template = template.replace('AI Compiler 目标知识库', title)
         with redirect_stdout(StringIO()):

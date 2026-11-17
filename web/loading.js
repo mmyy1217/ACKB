@@ -196,11 +196,20 @@ function renderDownloads() {
     const {done,total} = siteLoader.progress(backend), busy = ['checking','downloading'].includes(status.phase);
     const label = {checking:'检查缓存…',missing:'下载',update:'更新',ready:'已下载',downloading:done >= total ? '校验中…' : '下载中',error:'重试'}[status.phase];
     const button = host.querySelector('button'), text = host.querySelector('span'), bar = host.querySelector('progress');
-    button.textContent = label; button.disabled = busy || status.phase === 'ready';
+    button.textContent = label;
+    button.setAttribute('aria-label', label); button.title = label + (status.error ? '：' + status.error : ' · ' + (total / 1e6).toFixed(2) + ' MB');
+    if (host.classList.contains('round-download')) {
+      const paths = status.phase === 'ready' ? '<path d="m6 12 4 4 8-8"/>' : status.phase === 'update' || status.phase === 'error' ? '<path d="M19 8a8 8 0 1 0 1 7M19 3v5h-5"/>' : '<path d="M12 4v11m-4-4 4 4 4-4M5 17v3h14v-3"/>';
+      button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + paths + '</svg>';
+    }
+    button.disabled = busy || status.phase === 'ready';
     text.textContent = status.error || (status.phase === 'downloading' ? `${Math.floor(done / total * 100)}% · ${(done / 1e6).toFixed(2)} / ${(total / 1e6).toFixed(2)} MB` : status.phase === 'ready' ? '可打开' : `${(total / 1e6).toFixed(2)} MB`);
+    if (host.classList.contains('round-download')) {
+      host.title = button.title; text.textContent = status.phase === 'downloading' ? (done >= total ? '校验' : Math.floor(done / total * 100) + '%') : '';
+    }
     bar.hidden = status.phase !== 'downloading'; bar.max = total; bar.value = done;
   }
-  for (const link of document.querySelectorAll('#home a[href^="#"]')) {
+  for (const link of document.querySelectorAll('#home a[data-database]')) {
     if (link.hash === '#ascendc-map') continue;
     const params = new URLSearchParams(link.hash.slice(1)), backend = downloadBackend(params.get('backend') || 'ccec');
     link.setAttribute('aria-disabled', String(siteLoader.status(backend).phase !== 'ready'));
@@ -226,15 +235,18 @@ function downloadControl(backend) {
   return host;
 }
 if (siteLoader) {
-  for (const link of document.querySelectorAll('.home-databases a')) {
+  for (const link of document.querySelectorAll('#home a[data-database]')) {
     const params = new URLSearchParams(link.hash.slice(1));
-    link.parentElement.append(downloadControl(downloadBackend(params.get('backend') || 'ccec')));
+    const wrap = document.createElement('div'); wrap.className = 'library-entry';
+    link.before(wrap); wrap.append(link);
+    const control = downloadControl(downloadBackend(params.get('backend') || 'ccec'));
+    control.classList.add('round-download'); wrap.append(control);
   }
   const top = downloadControl('llvm'); top.id = 'database-download'; top.hidden = true;
   document.querySelector('.backend-switch').after(top);
   document.querySelector('#home').addEventListener('click', event => {
     const link = event.target.closest('a[aria-disabled="true"]');
-    if (link) {event.preventDefault(); const params = new URLSearchParams(link.hash.slice(1)); const backend = downloadBackend(params.get('backend') || 'ccec'); document.querySelector(`.home-databases [data-download-backend="${backend}"] button`)?.focus();}
+    if (link) {event.preventDefault(); const params = new URLSearchParams(link.hash.slice(1)); const backend = downloadBackend(params.get('backend') || 'ccec'); document.querySelector(`#home [data-download-backend="${backend}"] button`)?.focus();}
   });
   siteLoader.subscribe(renderDownloads);
   siteLoader.initialized.then(() => {

@@ -206,7 +206,7 @@ function render(revealSelection = false) {
     const score = g => g.name.toLowerCase() === query ? 0 : g.name.toLowerCase().startsWith(query) ? 1 : g.name.toLowerCase().includes(query) ? 2 : 3;
     visible.sort((a,b) => score(a) - score(b) || a.name.localeCompare(b.name));
   }
-  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : state.backend==='cce-dialect' ? `${fmt(visible.length)} 个 ${state.dialectLayer==='intrinsics'?'Dialect Intrinsic':'Dialect Op'}` : state.backend==='ascendc' ? `${fmt(visible.length)} 个 ${state.ascendcLayer==='capi'?'AscendC C / SIMT API':'AscendC 高层 API'}` : `${fmt(visible.length)} 个${state.view==='wrappers'?'接口':'名称'} · ${fmt(matches.length)} 条记录`;
+  $('#result-count').textContent = state.backend==='ccec' && state.view==='interfaces' ? `${fmt(visible.length)} 个唯一 op` : state.backend==='cce-dialect' ? `${fmt(visible.length)} 个 ${state.dialectLayer==='intrinsics'?'Dialect Intrinsic':'Dialect Op'}` : state.backend==='ascendc' ? `${fmt(visible.length)} 个 ${state.ascendcLayer==='capi'?'AscendC C / SIMT API':'AscendC 基础 C++ API'}` : `${fmt(visible.length)} 个${state.view==='wrappers'?'接口':'名称'} · ${fmt(matches.length)} 条记录`;
   const ptxScopeLabel = state.backend === 'ptx' && state.family ? (ptxSubcategories.get(state.family)?.title_zh || ptxCategories.get(state.family)?.title_zh || ptxDomains.get(state.family)?.title || state.family) : ccecFamilyLabel(state.family);
   $('#progress-scope').textContent = ptxScopeLabel || (state.query || state.group || state.file || state.architecture || state.deprecation || state.proof || state.support ? '筛选结果' : state.view === 'definitions' ? '配套定义' : '全部指令');
   setProgressActive(visible.length > 0);
