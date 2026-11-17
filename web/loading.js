@@ -201,6 +201,7 @@ function renderDownloads() {
     bar.hidden = status.phase !== 'downloading'; bar.max = total; bar.value = done;
   }
   for (const link of document.querySelectorAll('#home a[href^="#"]')) {
+    if (link.hash === '#ascendc-map') continue;
     const params = new URLSearchParams(link.hash.slice(1)), backend = downloadBackend(params.get('backend') || 'ccec');
     link.setAttribute('aria-disabled', String(siteLoader.status(backend).phase !== 'ready'));
   }

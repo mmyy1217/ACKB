@@ -17,6 +17,12 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`home overflow ${width}`);
   await page.screenshot({path:`.impeccable/review/llvm-home-${width}.png`,fullPage:true});
  }
+ await page.locator('.home-guide a').click();
+ await page.locator('#ascendc-map:not([hidden])').waitFor();
+ await page.selectOption('#api-map-filter','resources');
+ assert.equal(await page.locator('[data-map-tags]:visible').count(),1);
+ await page.reload(); await page.locator('#ascendc-map:not([hidden])').waitFor();
+ await page.locator('.map-nav a[href="#home"]').click();
  await page.setViewportSize({width:1440,height:950});
  await page.locator('.home-databases a').filter({hasText:'LLVM IR 目标核心'}).click();
  await page.waitForSelector('#rows .row-button');

@@ -1,0 +1,91 @@
+{
+  "reference_commit": "d0ede7621d11bdc88cdafb221560ec6e0bfe996d",
+  "toolkit": "9.3.0~weekly.20261104.01",
+  "scope": "Curated orientation map, not a complete API or validated call-graph inventory",
+  "files": [
+    {
+      "id": "S1",
+      "source": "docs",
+      "path": "docs/api/Ascend-C-API列表.md",
+      "sha256": "e82712ab371077e99e886d137d2a5250e1ee4cce25165de56e08699425a643a4",
+      "examples": []
+    },
+    {
+      "id": "S2",
+      "source": "docs",
+      "path": "docs/api/SIMD-API/C-API/C-API.md",
+      "sha256": "15f3b7ed7d20a400bad0204c2b6e36f970b159063f8ff9e8682e10825ef908ac",
+      "examples": []
+    },
+    {
+      "id": "S3",
+      "source": "docs",
+      "path": "docs/api/Utils-API/Utils-API列表.md",
+      "sha256": "c9f35509fa228ba9b86fa9112b5fedf42de2265b7ed68f4ab1d4302afef392e4",
+      "examples": []
+    },
+    {
+      "id": "S4",
+      "source": "docs",
+      "path": "docs/api/AI-CPU-API/AI-CPU-API列表.md",
+      "sha256": "45f16e5b19d5ec851a8a22892f93fea7ff2826d514afabc3e83e06912bde5a89",
+      "examples": []
+    },
+    {
+      "id": "S5",
+      "source": "cann",
+      "path": "x86_64-linux/asc/impl/tensor_api/arch/cube/mmad/mmad_impl/instruction.h",
+      "sha256": "2f970563efc71108d2bfe68c1972a9858edffd1bb775dd34e0f3f0de6a87ec04",
+      "examples": [
+        {
+          "line": 63,
+          "text": "asc_mmad("
+        },
+        {
+          "line": 68,
+          "text": "asc_mmad(dst, fm, filter, m, k, n, unit_flag, disable_gemv, init_with_btbuf, init_with_zero);"
+        },
+        {
+          "line": 93,
+          "text": "asc_mmad("
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "source": "cann",
+      "path": "x86_64-linux/asc/impl/tensor_api/experimental/arch/vector/logical_compute_impl.h",
+      "sha256": "66121051dd307f07967553d6598e1e8ba89c13818567aa461966492493a01a52",
+      "examples": [
+        {
+          "line": 31,
+          "text": "asc_not(dst.reg, src.reg, src.mask);"
+        }
+      ]
+    },
+    {
+      "id": "S7",
+      "source": "cann",
+      "path": "x86_64-linux/asc/impl/adv_api/detail/matmul/stage/compute/mmad_compute.h",
+      "sha256": "cbb4573ba886d4ba3228b29a74bfc902fb5bd8937dbc0cef60140746fda09c50",
+      "examples": [
+        {
+          "line": 83,
+          "text": "Mmad(cMatrix, l0A, l0B, mmadParams);"
+        }
+      ]
+    },
+    {
+      "id": "S8",
+      "source": "repo",
+      "path": "scripts/ascendc.py",
+      "sha256": "9f08c19f13a433a04f02170603427da4ed82f50b9f4ff77790b50e5643e15311",
+      "examples": [
+        {
+          "line": 616,
+          "text": "if '/op_frame/' in rel or 'kernel_struct_' in fp.name or 'kernel_tensor' in fp.name or 'kernel_tpipe' in fp.name or 'kernel_type' in fp.name or 'kernel_base_types' in fp.name or 'utils' in fp.name:"
+        }
+      ]
+    }
+  ]
+}

@@ -14,6 +14,7 @@ def build(source, output, site=False):
     data = load_catalog(source)
     validate(data)
     page = (ROOT / 'web/index.html').read_text()
+    page = page.replace('<!--__ASCENDC_MAP__-->', (ROOT / 'web/ascendc-map.html').read_text())
     ptx = Knowledge('ptx')
     ccec = Knowledge('ccec')
     knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning, 'taxonomy': ptx.taxonomy},

@@ -60,6 +60,20 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
       assert.equal(await page.locator('.topology').evaluate(el=>el.scrollWidth <= el.clientWidth),true,'topology must fit without horizontal scrolling');
       await page.screenshot({path:`.impeccable/review/loading-home-${width}.png`,fullPage:true});
     }
+    await page.locator('.home-guide a').click();
+    await page.locator('#ascendc-map:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>installedBackends.size),0,'API map must not download a database');
+    for(const width of [1440,1024,390,320]) {
+      await page.setViewportSize({width,height:950});
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+      await page.screenshot({path:`.impeccable/review/api-map-${width}.png`,fullPage:true});
+    }
+    await page.selectOption('#api-map-filter','simt');
+    assert.equal(await page.locator('[data-map-tags]:visible').count(),5);
+    await page.selectOption('#api-map-filter','all');
+    await page.reload(); await page.locator('#ascendc-map:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(()=>installedBackends.size),0);
+    await page.locator('.map-nav a[href="#home"]').click();
     await page.setViewportSize({width:1440,height:950});
     assert.equal(await page.locator('.home-databases a[href*="backend=llvm"]').getAttribute('aria-disabled'),'true');
     await page.locator('.home-databases [data-download-backend=llvm] button').click();

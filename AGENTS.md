@@ -225,3 +225,7 @@ python scripts/build.py
 ```
 
 完整浏览器入口包含 `tests/llvm-browser.cjs`。离线分发使用构建得到的单文件 HTML；打包不改变已校验页面内容。
+
+## AscendC API 全景阅读页
+
+首页 `#ascendc-map` 的概念矩阵与收录边界见 [全景维护说明](docs/ascendc-api-map.md)。修改 `web/ascendc-map.html` 后同时构建在线与离线页面；`test:site` 与 LLVM 浏览器回归覆盖入口、筛选与深链接。来源快照独立于设备支持证据，不据此扩展 API 全量扫描。

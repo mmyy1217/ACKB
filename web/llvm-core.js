@@ -79,8 +79,9 @@ function downloadLLVM() {
 }
 function syncHome() {
   document.body.classList.toggle('home-mode',state.home);
-  $('#home').hidden=!state.home;$('.workspace').hidden=state.home;
-  $('.skip-link').href=state.home?'#home-content':'#main';
+  const map = state.home && location.hash === '#ascendc-map';
+  $('#home').hidden=!state.home || map;$('#ascendc-map').hidden=!map;$('.workspace').hidden=state.home;
+  $('.skip-link').href=state.home?(map?'#api-map-content':'#home-content'):'#main';
   if(state.home){setProgressActive(false);document.body.classList.remove('reading-ptx','lookup-collapsed');window.scrollTo(0,0);}
   return state.home;
 }
