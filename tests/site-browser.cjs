@@ -58,6 +58,13 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
       await page.setViewportSize({width,height:950});
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
       assert.equal(await page.locator('#ascendc-map').evaluate(el=>el.scrollWidth <= el.clientWidth),true,'topology must fit without horizontal scrolling');
+      const placement = await page.evaluate(() => {
+        const a = document.querySelector('.ecosystem-ascend').getBoundingClientRect();
+        const n = document.querySelector('.ecosystem-nvidia').getBoundingClientRect();
+        return innerWidth > 1100 ? n.left >= a.right : n.top >= a.bottom;
+      });
+      assert.equal(placement,true,'ecosystems must sit side by side on desktop and stack on narrow screens');
+      assert.equal(await page.locator('.ecosystem-nvidia a[data-database]').count(),1);
       await page.screenshot({path:`.impeccable/review/loading-home-${width}.png`,fullPage:true});
     }
     await page.evaluate(()=>location.hash='ascendc-map');

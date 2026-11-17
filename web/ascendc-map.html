@@ -1,4 +1,4 @@
-<main id="home" hidden aria-label="ACKB 知识库"><div id="home-content" tabindex="-1"><div id="ascendc-map"><div id="api-map-content" tabindex="-1">
+<main id="home" hidden aria-label="ACKB 知识库"><div id="home-content" tabindex="-1"><div id="ascendc-map"><div id="api-map-content" tabindex="-1"><div class="ecosystem-grid"><section class="ecosystem-ascend" aria-label="Huawei Ascend 生态">
 <div class="structure-band structure-python">Ascend C Python <span class="structure-sub">/ PyAsc</span></div>
 <section class="structure-frame"><div class="structure-frame-title">Ascend C</div><div class="structure-body"><div class="structure-rail">C++ 类库</div><div class="structure-layers">
 <div class="structure-layer"><div class="structure-label">算子模板库</div><div class="structure-cells"><div class="structure-cell">Cube</div><div class="structure-cell">Vector</div><div class="structure-cell">SIMT</div></div></div>
@@ -8,4 +8,27 @@
 <div class="structure-extension"><div class="structure-rail">语言扩展</div><div class="structure-layer"><a data-database data-library="ascendc-capi" class="structure-api-entry" href="#backend=ascendc&amp;layer=capi"><span>AscendC C / SIMT API ↗</span><span class="structure-cells structure-two"><span class="structure-cell">SIMD C API</span><span class="structure-cell">SIMT C API</span></span></a></div></div></section>
 <div class="structure-compiler-layout"><section class="structure-frame"><div class="structure-frame-title">毕昇编译器</div><div class="structure-compiler"><a data-database data-library="ccec-interface" class="structure-band structure-library-band" href="#layer=interfaces">CCEC 编程接口 ↗ <span class="structure-sub">源码封装</span></a><a data-database data-library="ccec-builtin" class="structure-band structure-library-band" href="#layer=intrinsics">CCEC Builtins ↗ <span class="structure-sub">前端内建</span></a><a data-database data-library="llvm" class="structure-band structure-library-band" href="#backend=llvm">LLVM IR ↗ <span class="structure-sub">目标 Intrinsics ＋ 普通 IR</span></a><div class="structure-band">目标后端 <span class="structure-sub">指令选择 · 寄存器分配 · 调度</span></div></div><div class="structure-compiler-note">源码封装可以绕过；普通表达式也可直接生成 LLVM IR。</div></section><section class="structure-frame structure-dialect"><div class="structure-frame-title">CCE Dialect</div><div class="structure-sub">外部 MLIR 工程</div><a data-database data-library="dialect-ops" class="structure-band structure-library-band" href="#backend=cce-dialect&amp;layer=ops">语义 Ops ↗</a><div class="structure-relation">↓ lowering 映射</div><a data-database data-library="dialect-intrinsics" class="structure-band structure-library-band" href="#backend=cce-dialect&amp;layer=intrinsics">LLVM Intrinsics ↗</a><div class="structure-relation">与 LLVM 核心按符号关联</div></section></div>
 <div class="structure-band structure-machine">Huawei Ascend NPU <span class="structure-sub">机器代码执行</span></div>
-<div class="structure-foot"><span>带 ↗ 的区域连接 7 个知识库，收录范围以各库为准。</span><span>分层示意，不表示固定调用链或能力全集。</span></div><p class="independent-library"><a data-database href="#backend=ptx">PTX 虚拟指令集 ↗</a><span>独立 GPU 编程体系</span></p></div></div></div></main>
+<div class="structure-foot"><span>带 ↗ 的区域连接 7 个知识库，收录范围以各库为准。</span><span>分层示意，不表示固定调用链或能力全集。</span></div></section>
+<section class="ecosystem-nvidia" aria-label="NVIDIA CUDA 生态">
+<section class="structure-frame"><div class="structure-frame-title">CUDA</div>
+<div class="structure-layer"><div class="structure-label">计算库</div><div class="structure-cells structure-two"><div class="structure-cell">数学与张量计算</div><div class="structure-cell">通信与并行算法</div></div></div>
+<div class="structure-layer"><div class="structure-label">模板与 C++ 类库</div><div class="structure-cells structure-two"><div class="structure-cell">CUTLASS / CuTe<span class="structure-sub">算子模板 · 布局</span></div><div class="structure-cell">CCCL<span class="structure-sub">Thrust · CUB · libcu++</span></div></div></div>
+<div class="structure-layer"><div class="structure-label">CUDA C++ 设备编程</div><div class="structure-cells structure-two"><div class="structure-cell">线程 · Warp · Block</div><div class="structure-cell">内存与地址空间</div><div class="structure-cell">同步与原子操作</div><div class="structure-cell">设备函数与 Intrinsics</div></div></div>
+<div class="cuda-host"><span>Host 侧</span><span>CUDA Runtime / Driver API</span><span class="structure-sub">资源管理 · 启动 · 模块加载</span></div>
+</section>
+<section class="structure-frame cuda-compilation"><div class="structure-frame-title">CUDA 编译工具链</div><div class="structure-compiler-note">nvcc 编译驱动 · 此处展开设备代码路径</div>
+<div class="structure-compiler">
+<div class="structure-band">CUDA C++ 前端</div>
+<div class="cuda-flow" aria-hidden="true">↓</div>
+<div class="structure-band">NVVM IR <span class="structure-sub">LLVM IR 约定 ＋ llvm.nvvm.*</span></div>
+<div class="cuda-flow">↓ NVVM 编译</div>
+<a data-database class="structure-band structure-library-band" href="#backend=ptx">PTX 虚拟指令集 ↗ <span class="structure-sub">本库入口 · B300 / sm_103a</span></a>
+<div class="cuda-flow" aria-hidden="true">↓</div>
+<div class="structure-cells structure-two cuda-codegen"><div class="structure-cell">ptxas<span class="structure-sub">离线编译</span></div><div class="structure-cell">Driver JIT<span class="structure-sub">运行时编译</span></div></div>
+<div class="cuda-flow" aria-hidden="true">↓</div>
+<div class="structure-band">GPU 机器码 <span class="structure-sub">SASS · cubin 承载设备二进制</span></div>
+</div><div class="structure-compiler-note">两种 PTX 编译路径可选；已有兼容 cubin 时无需 JIT。</div></section>
+<div class="structure-band structure-machine">NVIDIA GPU <span class="structure-sub">机器代码执行</span></div>
+<div class="structure-foot"><span>仅 PTX 已建立知识库；其余为体系定位。</span><span>NVVM IR ≠ PTX ≠ 机器码。</span></div>
+<details class="ecosystem-sources"><summary>来源与范围</summary><p>展示 CUDA C++ 的典型设备编译路径，不穷举语言前端，也不表示各层库必须依次调用。两侧位置不表示能力一一对应。</p><p><a href="https://docs.nvidia.com/cuda/archive/13.4.3/cuda-compiler-driver-nvcc/index.html">NVCC</a> · <a href="https://docs.nvidia.com/cuda/archive/13.4.3/nvvm-ir-spec/index.html">NVVM IR</a> · <a href="https://docs.nvidia.com/cutlass/latest/overview.html">CUTLASS / CuTe</a> · <a href="https://nvidia.github.io/cccl/unstable/cccl/index.html">CCCL</a></p></details>
+</section></div></div></div></div></main>

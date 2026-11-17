@@ -473,3 +473,30 @@ body.data-loading #ascendc-map {display:none}
 .independent-library {display:flex;align-items:center;justify-content:flex-end;gap:12px;margin:16px 0 0;font-size:11px;color:var(--muted)}
 .independent-library > span {font-size:10px}
 @media(max-width:650px){#home {padding:16px 12px}.independent-library {flex-wrap:wrap;justify-content:flex-start}.structure-label .library-entry {display:flex}.structure-label .structure-sub {display:block}}
+
+/* Ecosystems keep their own hierarchy, separated rather than row-aligned. */
+#home {max-width:1800px}
+.ecosystem-grid {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.ecosystem-grid > section {min-width:0}
+.ecosystem-nvidia {border-left:1px dashed var(--input-line);padding-left:28px}
+.ecosystem-grid .structure-four {grid-template-columns:repeat(2,minmax(0,1fr))}
+.ecosystem-grid .structure-compiler-layout {grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.ecosystem-grid .structure-label .structure-sub {display:block}
+.ecosystem-grid .structure-foot {display:block}
+.ecosystem-grid .structure-foot > span {display:block}
+.ecosystem-nvidia .structure-cell .structure-sub {display:block;margin:3px 0 0}
+.cuda-host {display:flex;flex-wrap:wrap;gap:5px 12px;border-top:1px solid var(--line);padding-top:12px;font-size:12px}
+.cuda-host > span:first-child {color:var(--muted)}
+.cuda-compilation > .structure-compiler-note {margin:-7px 0 16px}
+.cuda-compilation > .structure-compiler-note:last-child {margin:12px 0 0}
+.cuda-compilation .structure-compiler {gap:4px}
+.cuda-flow {text-align:center;font-size:11px;color:var(--muted);line-height:20px}
+.cuda-codegen {border:1px solid var(--line);border-radius:5px;padding:7px}
+.ecosystem-sources {font-size:11px;color:var(--muted);margin-top:10px}
+.ecosystem-sources summary {cursor:pointer}
+.ecosystem-sources p {margin:6px 0;max-width:65ch}
+@media(max-width:1100px){
+ .ecosystem-grid {grid-template-columns:1fr;gap:24px}
+ .ecosystem-nvidia {border-left:0;border-top:1px dashed var(--input-line);padding:24px 0 0}
+}
+@media(max-width:650px){.ecosystem-grid .structure-compiler-layout {grid-template-columns:1fr}}
