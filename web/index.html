@@ -42,33 +42,38 @@
 <main id="home" hidden aria-labelledby="home-title">
   <div id="home-content" tabindex="-1"><h1 id="home-title">AI Compiler 目标知识库</h1>
   <p class="home-intro">理解程序如何走向硬件。沿 Huawei Ascend 的源码接口、编译器内建与 LLVM IR 向下追踪；独立阅读 NVIDIA PTX 的执行与指令模型。</p>
-  <section aria-labelledby="topology-title"><h2 id="topology-title">层级与路径</h2><div class="topology-scroll" tabindex="0" aria-label="数据库层级图，可横向滚动"><pre class="topology">┌───────────────────────────────────────────────────────────────────┐
-│  <a href="#backend=ascendc&amp;layer=basic">AscendC High-level API</a>                                           │
-│  LocalTensor / GlobalTensor / RegTensor                           │
-└────────────┬───────────────────────────┬──────────────────────────┘
-             ▼                           ▼
-┌──────────────────────────┐  ┌────────────────────────────────────┐
-│ <a href="#backend=ascendc&amp;layer=capi">AscendC C / SIMT API</a>     │  │ <a href="#layer=interfaces">CCEC Programming API</a>               │
-│ asc_* / simt_api         │──▶ C/C++ wrappers &amp; direct entries    │
-└────────────┬─────────────┘  └───────────────┬────────────────────┘
-             │ direct paths                  │
-             └────────────────┬──────────────┘
-                              ▼
-                ┌───────────────────────────┐
-                │ <a href="#layer=intrinsics">CCEC Builtins</a>             │
-                │ __builtin_cce_*           │
-                └─────────────┬─────────────┘
-                              │ compiler lowering
-                              ▼
-┌───────────────────────────────────────────────────────────────────┐
-│ <a href="#backend=llvm">LLVM IR Target Core</a>                                               │
-│ llvm.hivm.* / standard intrinsics / ordinary IR                   │
-└───────────────────────────────────────────────▲───────────────────┘
-                                                │ external lowering
-<a href="#backend=cce-dialect&amp;layer=ops">CCE Dialect Ops</a> ──▶ <a href="#backend=cce-dialect&amp;layer=intrinsics">CCE Dialect → LLVM Intrinsics</a>
-
-NVIDIA: <a href="#backend=ptx">PTX Virtual ISA</a> ──▶ NVIDIA backend ──▶ GPU
-</pre></div><p class="home-note">图示是层级关系，不保证每个接口经过全部节点。具体连线按来源证据查询；名称候选不等于已验证降级。LLVM IR 与 PTX 均不等同于硬件机器指令。</p></section>
+  <section aria-labelledby="topology-title"><h2 id="topology-title">层级与路径</h2>
+<div class="topology" aria-label="源码入口、编译降级与数据库关联">
+  <p class="path-label">Huawei Ascend · 两套源码入口</p>
+  <div class="source-entries">
+    <div class="path-node"><a href="#backend=ascendc&amp;layer=basic">AscendC 高层 API</a><small>Tensor / RegTensor / Simt C++</small></div>
+    <div class="path-node"><a href="#backend=ascendc&amp;layer=capi">AscendC C / SIMT API</a><small>asc_* / simt_api</small></div>
+  </div>
+  <p class="path-caption">两套入口并列展示；具体接口可经封装或直接使用内建入口。</p>
+  <div class="source-paths">
+    <div class="path-route"><span class="path-label">经封装</span><a href="#layer=interfaces">CCEC 编程接口</a><span aria-label="调用">→</span><a href="#layer=intrinsics">CCEC Builtins</a></div>
+    <div class="path-route"><span class="path-label">直接调用</span><span>任一源码入口</span><span aria-label="调用">→</span><a href="#layer=intrinsics">CCEC Builtins</a></div>
+  </div>
+  <p class="path-caption">内建入口包括 intrinsic alias 与 __builtin_cce_*；不要求经过全部层级。</p>
+  <div class="path-transition">↓ CCEC 前端 lowering</div>
+  <div class="path-node core-node"><a href="#backend=llvm">LLVM IR 目标核心</a><small>llvm.hivm.* / 标准 intrinsic / 普通 LLVM IR</small></div>
+  <p class="path-caption">普通 C/C++ 表达式也可生成普通 LLVM IR，不必经过目标 builtin。逐项 builtin → LLVM 映射仍以证据为准。</p>
+  <div class="path-endpoint">↓ Huawei Ascend 后端代码生成 → NPU<small>后端生成过程与机器指令不在当前索引范围</small></div>
+  <div class="external-path">
+    <p class="path-label">外部 CCE Dialect 工程</p>
+    <a href="#backend=cce-dialect&amp;layer=ops">CCE Dialect 语义 Op</a>
+    <div class="path-transition">↓ 外部工程 lowering</div>
+    <a href="#backend=cce-dialect&amp;layer=intrinsics">CCE Dialect → LLVM Intrinsics</a>
+    <div class="path-transition">↓ LLVM 符号关联（不再执行 lowering）</div>
+    <a href="#backend=llvm">LLVM IR 目标核心</a>
+  </div>
+  <div class="external-path">
+    <p class="path-label">NVIDIA · 独立路径</p>
+    <a href="#backend=ptx">PTX 虚拟指令集</a>
+    <div class="path-endpoint">↓ NVIDIA 后端代码生成 → GPU<small>后端生成过程与机器指令不在当前索引范围</small></div>
+  </div>
+</div>
+<p class="home-note">图示为实现路径概览，不是逐接口验证后的调用图；并列入口不表示完全没有交叉调用。外部工程的符号关联不证明 CANN 950 支持，LLVM IR 与 PTX 均不等同于硬件机器指令。</p></section>
 <section aria-labelledby="databases-title"><h2 id="databases-title">进入数据库</h2><table class="home-databases"><thead><tr><th>数据库</th><th>从这里看什么</th></tr></thead><tbody>
 <tr><td><a href="#backend=llvm">LLVM IR 目标核心</a></td><td>注册身份、类型约束、Bitcode 声明、工具链差异与上游关联。</td></tr>
 <tr><td><a href="#layer=intrinsics">CCEC Builtins</a></td><td>__builtin_cce_* 的唯一身份、入口参数和调用来源。</td></tr>

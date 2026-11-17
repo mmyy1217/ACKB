@@ -381,3 +381,19 @@ body.data-loading.home-mode .topbar .backend-switch,body.data-loading .topbar .b
 #database-download {max-width:210px;margin:0}
 body.data-loading .topbar #database-download {display:flex}
 .home-databases a[aria-disabled="true"],.topology a[aria-disabled="true"] {color:var(--muted);text-decoration-style:dotted}
+
+/* The topology keeps source paths distinct from database symbol relations. */
+#home .topology {white-space:normal;font-family:inherit;font-size:12px;line-height:1.6;border:1px solid var(--line);border-radius:6px;padding:12px;background:var(--subtle);overflow-wrap:anywhere}
+.source-entries {display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.path-node {min-width:0;border:1px solid var(--line);border-radius:4px;padding:8px;background:var(--bg,#fff)}
+.path-node a {font-weight:600}
+.topology small {display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.topology .path-label {font-size:11px;color:var(--muted);margin:0 0 7px}
+.topology .path-caption {font-size:11px;color:var(--muted);margin:8px 0}
+.path-route {display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin:5px 0}
+.path-route .path-label {min-width:48px;margin:0}
+.path-transition {color:var(--muted);font-size:11px;margin:6px 0}
+.core-node {margin:6px 0}
+.path-endpoint {font-size:11px;margin:8px 0 0}
+.external-path {border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
+@media(max-width:480px) {.source-entries {grid-template-columns:1fr}.path-route {display:grid;grid-template-columns:1fr}.path-route .path-label {margin-top:5px}.path-route span[aria-label="调用"] {font-size:0}.path-route span[aria-label="调用"]::after {content:"↓";font-size:12px}}

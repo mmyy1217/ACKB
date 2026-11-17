@@ -57,6 +57,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     for (const width of [1440,1024,390,320]) {
       await page.setViewportSize({width,height:950});
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      assert.equal(await page.locator('.topology').evaluate(el=>el.scrollWidth <= el.clientWidth),true,'topology must fit without horizontal scrolling');
       await page.screenshot({path:`.impeccable/review/loading-home-${width}.png`,fullPage:true});
     }
     await page.setViewportSize({width:1440,height:950});
