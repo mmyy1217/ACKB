@@ -13,7 +13,7 @@ ACKB 以 Huawei Ascend 的 LLVM IR 目标能力层为核心，向上关联 CCEC 
 | 外部 CCEDialect | 1,069 个具体 LLVM 符号映射，并扫描已固定哈希的 C++ lowering 文件 | 外部工程的映射意图；不代替 CANN 的编译器实现 |
 | 普通 LLVM IR | 6 个阅读模型 | 解释算术、访存、控制、原子、地址空间；独立于 target intrinsic 数量 |
 
-完整快照包括 13,400 个目标名称、36 个标准 LLVM intrinsic 名称、6 个普通 IR 阅读模型。默认 A5 来源视图有 1,892 条，其中包含标准 intrinsic 和阅读模型；**这个数字不是 950 支持的指令数**。默认隐藏 158 个仅字符串候选；全部范围可查看其他跨架构注册项。页面、CLI 的筛选口径相同。
+完整快照包括 13,400 个目标名称、36 个标准 LLVM intrinsic 名称、6 个普通 IR 阅读模型。默认「950 包内证据」为 522 条（487 个目标 intrinsic、35 个标准 intrinsic），均在 c310 模块中有直接调用。「A5 相关线索」保留旧 1,892 条范围；**这些数字都不是经过目标编译或运行验证的指令数**。默认隐藏 158 个仅字符串候选；全部范围可查看其他跨架构注册项。页面、CLI 的筛选口径相同。
 
 12 个实际读取的 CANN 文件（三个编译器文件、九个 Bitcode）已通过流式读取外层与内层 Makeself / tar 归档核对 SHA-256，不执行安装脚本。每个来源保留包成员路径、内层包哈希、外层包哈希。外部 Dialect 来源独立标注 Git commit 与文件哈希。
 
@@ -23,7 +23,7 @@ ACKB 以 Huawei Ascend 的 LLVM IR 目标能力层为核心，向上关联 CCEC 
 
 IIT 按 [LLVM 15.0.5 的 Intrinsic 类型编码](https://github.com/llvm/llvm-project/blob/llvmorg-15.0.5/llvm/lib/IR/Function.cpp)解释，保留原始整数、字节数组、ELF 偏移和文件哈希。`T(arg_info=N)` 保留 LLVM 的重载约束编码，不是 C/C++ 形参名；`ptr(as=N, element=...)` 是编码约束。具体签名要优先看 Bitcode 的类型形式。120 个厂商描述符无法按此格式解释，显式保留 `unparsed_vendor_encoding`；不会补造完整签名或参数数量。
 
-普通 LLVM 15 / 18 / 20 读取器不能直接读取这些厂商 Bitcode（曾报告 `Invalid value`）。现采用标准库位流容器解析：校验块长、缩略码、VBR、字符串表、模块函数记录和类型表。只读取模块级函数类型，不读取函数体、调用或 debug 参数名。16 种签名包含未解释的厂商类型码，以 `UNRESOLVED_TYPE_*` 保留，标记 `partial_vendor_types`；原类型码与操作数保存于来源元数据。其余具体类型没有因此丢弃。
+普通 LLVM 15 / 18 / 20 读取器不能直接读取这些厂商 Bitcode（曾报告 `Invalid value`）。现采用标准库位流容器解析：校验块长、缩略码、VBR、字符串表、模块函数记录和类型表。模块类型解析与新增直接调用解析分开：后者按 LLVM 15 相对 value ID、函数类型、返回值及参数数目解析函数体，保留调用者、模块、精确类型形式和 bit 偏移；不恢复 debug 参数名。16 种签名包含未解释的厂商类型码，以 `UNRESOLVED_TYPE_*` 保留，标记 `partial_vendor_types`；原类型码与操作数保存于来源元数据。其余具体类型没有因此丢弃。
 
 本轮没有执行本地 CCEC / hivmc 编译器、没有 LLVM JIT，也没有设备实验。未来合法 lowering 样例只能作为新增独立证据；MLIR LLVM dialect 输出不能直接标作 LLVM IR 验证。
 
@@ -50,14 +50,16 @@ IIT 按 [LLVM 15.0.5 的 Intrinsic 类型编码](https://github.com/llvm/llvm-pr
 | 操作 | 返回内容 |
 | --- | --- |
 | `info` | 来源、覆盖、扫描状态、原包核对与限制 |
-| `search` | 简要身份、形式 ID、目标证据；默认 `a5-sources` 且不含字符串候选 |
+| `search` | 简要身份、形式 ID、目标证据；默认 `a5-evidence` 且不含字符串候选 |
 | `get` | 单条身份及 forms / relations / evidence 查询入口 |
 | `forms` | 分页完整类型形式，含来源哈希与偏移 |
 | `evidence` | 分页来源证据，不丢原始位置 |
+| `unresolved` | 分页查询无法解析的调用者、位置、原因和来源 |
+| `calls` | 按 op 分页读取 c310 直接调用，带精确类型形式、调用者、核模块、bit 偏移和来源哈希 |
 | `relations` | 入边和出边，候选性质及中间节点完整保留 |
 | `gaps` | 无 CCEC 映射、无可读类型、无 c310 声明、仅 A5 名称；均为知识缺口 |
 
-搜索支持 `--scope a5-sources|all`、`--include-candidates`、`--domain`、`--source`、`--evidence-kind`。来源 ID 可从 `info` 取得；不将旧 CCEC 的宏条件筛选错误套在 LLVM 证据上。既有后端 ID、原查询协议和深链接不变。
+搜索支持 `--scope a5-evidence|a5-sources|all`、`--include-candidates`、`--domain`、`--source`、`--evidence-kind`。来源 ID 可从 `info` 取得；不将旧 CCEC 的宏条件筛选错误套在 LLVM 证据上。既有后端 ID、原查询协议和深链接不变。
 
 ## 网页与离线交付
 
@@ -67,4 +69,28 @@ IIT 按 [LLVM 15.0.5 的 Intrinsic 类型编码](https://github.com/llvm/llvm-pr
 
 ## 后续独立证据
 
-仍可继续补充厂商类型描述符解释、函数体真实调用关系、正式 builtin → LLVM lowering、逐目标接受性与运行测试。现阶段不能保证每一项的 950 支持、参数语义、内存效果或弃用历史已经确定。以上未知项不会阻断已取得的正式注册身份和具体模块类型查询。
+仍可继续补充厂商类型描述符解释、间接调用解析、正式 builtin → LLVM lowering、逐目标接受性与运行测试。现阶段不能保证每一项的 950 支持、参数语义、内存效果或弃用历史已经确定。以上未知项不会阻断已取得的正式注册身份和具体模块类型查询。
+
+
+## 950 / A5 静态判定（2026-11-16）
+
+固定目标来自本地 CANN `Ascend950PR_9579.ini`：`NpuArch=3510`、`AIC-C-310`、`dav-c310-cube/vec`。该配置文件独立记录 SHA-256，原包比较仍标未核验；八个 c310 模块已核对原包。内部 `c310` 不是 Ascend 310 产品型号；本结果不自动覆盖每个 A5 产品。
+
+新增 `static_target` 与旧 `target_status` 并存，旧字段保持兼容。身份、静态目标依据、实验仍是独立维度：
+
+| 静态状态 | 含义 |
+| --- | --- |
+| `c310_direct_call` | 具体形式在 c310 模块的函数体内有已解析的直接调用 |
+| `c310_declaration` | 模块有声明，尚无已解析调用；本次没有剩余项 |
+| `a5_name_only` | A5 工具中出现名称，缺少 c310 模块依据 |
+| `cross_arch_registry` | 跨架构编译器注册，缺少更强目标依据 |
+| `external_only` | 仅外部工程映射，不能代表 CANN 的实现 |
+| `reference_model` / `insufficient` | 通用 IR 阅读模型 / 证据不足 |
+
+八个模块共记录 308,558 个直接 intrinsic 调用位置，涉及 522 个精确 LLVM 名称；6,250 个间接或常量表达式调用未解析，保留调用者、偏移及原因。没有从间接调用猜测目标。未知函数记录或类型 / 参数数目冲突会丢弃该函数整段推断并报告，避免 value ID 偏移后产生错误关联。没有证明入口可达性、执行条件、参数取值约束或设备支持；AIC/AIV/mix 仅说明调用所在模块，不据此排除其他核。
+
+源码核对范围为包内 bishengir / bisheng_compiler 的 h/hpp/td/cpp/json/ini 中 LLVM 名称字面量。只找到 builtin_vars 中的 IR 示例注释，未取得可逐项判定合法性的目标表；此扫描不能排除动态构造名称或未公开的 lowering 实现。CCEC 头文件条件、候选名称映射、外部 Dialect 均不传递为 LLVM 的支持或排除结论。当前没有具备充分证据的明确排除项，`support` / `exclusion` 均保持 `not_established`。
+
+`a5_call_table` 用共享调用者 / 形式 / 来源字典与四整数行无损保存全部位置；CLI 解码为普通调用记录；网页 JSON 导出附带所选 op 的调用行及解码字典。网页只渲染当前形式的前 25 个位置，点击继续显示。普通构建不重新扫描 Bitcode；重新提取会重建调用与源哈希，网页按既有内容哈希缓存机制更新。
+
+解析依据为 [LLVM 15 BitcodeReader](https://github.com/llvm/llvm-project/blob/llvmorg-15.0.5/llvm/lib/Bitcode/Reader/BitcodeReader.cpp) 与 [LLVMBitCodes](https://github.com/llvm/llvm-project/blob/llvmorg-15.0.5/llvm/include/llvm/Bitcode/LLVMBitCodes.h)。这些资料解释编码，不充当 Huawei Ascend 的目标支持规范。

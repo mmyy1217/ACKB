@@ -205,7 +205,7 @@ python scripts/query.py --backend ascendc schema
 
 ## LLVM IR 核心与首页
 
-数据口径、类型缺口及跨层边界见 [LLVM 核心](docs/llvm-core.md)。首页为 `#home`，LLVM 数据库入口为 `#backend=llvm`；无 fragment 默认首页。提取只读 ELF 注册元数据和 Bitcode 模块声明，不运行编译器或 kernel。复用原包核对仅限版本、路径和 SHA-256 全部相同的来源。
+数据口径、类型缺口及跨层边界见 [LLVM 核心](docs/llvm-core.md)。首页为 `#home`，LLVM 数据库入口为 `#backend=llvm`；无 fragment 默认首页。提取只读 ELF 注册元数据和 Bitcode 模块类型与直接调用，不运行编译器或 kernel。复用原包核对仅限版本、路径和 SHA-256 全部相同的来源。
 
 ```sh
 python scripts/llvm_ir.py extract --toolkit "$CCE_OPS_TOOLKIT" --repo /home/zuomin/Projects/Compiler/CCEDialect
@@ -216,6 +216,9 @@ python scripts/query.py --backend llvm search --name BARRIER
 python scripts/query.py --backend llvm search --scope all --include-candidates --source hivmc_a5
 python scripts/query.py --backend llvm forms llvm_ir_798ffe42fc5d9815c1e9
 python scripts/query.py --backend llvm relations llvm_ir_798ffe42fc5d9815c1e9
+python scripts/query.py --backend llvm --limit 5 unresolved
+python scripts/query.py --backend llvm --limit 5 calls llvm_ir_798ffe42fc5d9815c1e9
+python scripts/query.py --backend llvm search --scope a5-evidence --evidence-kind bitcode_call
 python scripts/query.py --backend llvm gaps --gap no_readable_signature
 python scripts/query.py --backend llvm schema
 python scripts/build.py

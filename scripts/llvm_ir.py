@@ -19,9 +19,9 @@ TOOLS = {'hivmc_a5':'tools/bishengir/bin/hivmc-a5',
          'llc':'tools/bisheng_compiler/lib/libbisheng-llc.so'}
 LIMITATIONS = [
     '注册表是本版本编译器的跨架构注册范围，不是 950 支持清单，也不是硬件 ISA 全集。',
-    'A5 来源视图只表示 hivmc-a5 名称出现、c310 模块声明或外部 Dialect 映射；不能推断逐项设备支持。',
+    '默认 950 包内证据仅含 c310 模块声明或调用；A5 名称及外部映射放在线索范围。模块核归属不等于对其他核的排除结论。',
     'IIT 为按上游 LLVM 15 格式解释的类型约束，保留原编码；未知厂商编码不补造签名。',
-    'Bitcode 只解析模块声明和类型，不解析函数体；声明不是调用、编译通过或运行验证。',
+    'c310 函数体只追踪已解析的直接调用；间接调用与未知编码单列。模块调用不证明入口可达、目标编译通过或运行验证。',
     'CCEDialect 是独立外部工程；名称候选关联不等于编译器 lowering 证明。',
     'gaps 表示索引缺口，不能据此声称发现未公开硬件能力。',
 ]
@@ -172,6 +172,8 @@ def extract(toolkit, dialect_repo, output=OUTPUT):
              'forms':sorted(forms.values(),key=lambda f:f['id']),'relations':sorted(edges,key=lambda e:(e['from'],e['to'],e['kind'])),
              'scans':scans,'limitations':LIMITATIONS,
              'format_reference':{'url':'https://github.com/llvm/llvm-project/blob/llvmorg-15.0.5/llvm/lib/IR/Function.cpp','scope':'IIT interpretation, not vendor support authority'}}
+    from llvm_a5 import enrich
+    enrich(model, toolkit)
     model['coverage']=coverage(model)
     # Reuse original-package comparisons only for identical versioned bytes.
     if previous.get('version') == VERSION and previous.get('package'):
@@ -189,7 +191,7 @@ def extract(toolkit, dialect_repo, output=OUTPUT):
 
 
 def generator_digest():
-    return hashlib.sha256(Path(__file__).read_bytes()+(ROOT/'scripts/llvm_sources.py').read_bytes()).hexdigest()
+    return hashlib.sha256(b''.join((ROOT/'scripts'/name).read_bytes() for name in ('llvm_ir.py','llvm_sources.py','llvm_calls.py','llvm_a5.py'))).hexdigest()
 
 
 def web_payload(model):
@@ -211,7 +213,8 @@ def coverage(model):
     b={o['name'] for o in target if any(o['presence'].get(k)=='observed' for k in ('ccec','llc'))}
     return {'records':len(ops),'domains':dict(Counter(o['domain'] for o in ops)),
             'identities':dict(Counter(o['identity_status'] for o in ops)),
-            'default_a5_source_view':sum(default_visible(o) for o in ops),
+            'default_a5_source_view':sum(o['domain']=='ordinary_ir' or o['a5_source_lead'] and o['identity_status']!='candidate_only' for o in ops),
+            'default_a5_evidence_view':sum(default_visible(o) for o in ops),
             'forms':len(model['forms']),'form_kinds':dict(Counter(f['kind'] for f in model['forms'])),
             'unparsed_registry_types':sum(f.get('status')=='unparsed_vendor_encoding' for f in model['forms']),
             'partial_bitcode_signatures':sum(f.get('signature_status')=='partial_vendor_types' for f in model['forms']),
@@ -222,7 +225,7 @@ def coverage(model):
 
 
 def default_visible(op):
-    return op['domain']=='ordinary_ir' or (op['a5_source_lead'] and op['identity_status']!='candidate_only')
+    return op.get('static_target',{}).get('package_evidence',False)
 
 
 def validate_model(model, check_generator=True):
@@ -252,6 +255,22 @@ def validate_model(model, check_generator=True):
     for e in model['relations']:
         if e['to'] not in ids: errors.append('Missing relation target')
     if model['coverage']!=coverage(model): errors.append('Coverage mismatch')
+    if 'static_target' in model['ops'][0]:
+        from llvm_a5 import classify, iter_calls
+        by_id={o['id']:o for o in model['ops']}; grouped={}; seen=set()
+        for call in iter_calls(model):
+            if call['id'] in seen: errors.append('Duplicate A5 call')
+            seen.add(call['id']); grouped.setdefault(call['op_id'],Counter())[call['module_core']]+=1
+            if call['op_id'] not in by_id or call['callee']!=by_id[call['op_id']]['name']: errors.append('A5 call identity mismatch')
+            if '.c310.' not in model['sources'].get(call['source_id'],{}).get('path',''): errors.append('A5 call lacks c310 source')
+            for fid in call['form_ids']:
+                if fid not in forms or forms[fid]['op_id']!=call['op_id'] or not any(e['source_id']==call['source_id'] and e.get('type_id')==call['function_type_id'] for e in forms[fid]['evidence']): errors.append('A5 call signature mismatch')
+        for op in model['ops']:
+            if op['static_target']!=classify(op,grouped.get(op['id'],[])): errors.append('A5 classification mismatch')
+        summary=model.get('a5_static_summary',{})
+        if summary.get('calls')!=len(seen) or summary.get('statuses')!=dict(Counter(o['static_target']['status'] for o in model['ops'])): errors.append('A5 coverage mismatch')
+        mapping=model.get('target_mapping',{})
+        if mapping.get('chip')!=model['target'] or mapping.get('npu_arch')!=3510 or mapping.get('version_fields',{}).get('ccec_aic_version')!='dav-c310-cube' or mapping.get('version_fields',{}).get('ccec_aiv_version')!='dav-c310-vec': errors.append('A5 target mapping mismatch')
     return sorted(set(errors))
 
 

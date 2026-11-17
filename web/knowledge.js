@@ -96,7 +96,7 @@ function configureBackend() {
   $('#fixed-chip').hidden=ptx;$('#unknown-filter').hidden=ptx || isDialect;$('#unknown-label').textContent=isLLVM?'含字符串候选':'显示待确认';document.querySelectorAll('.llvm-filter').forEach(n=>n.hidden=!isLLVM);$('#coverage').hidden=ptx;
   $('#mobile-view').closest('label').hidden=!ptx;
   document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);
-  $('.sidebar-note').innerHTML = isLLVM ? 'Huawei Ascend · LLVM IR<p>A5 来源 ≠ 950 支持</p><p>跨架构注册表独立保留</p>' : ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
+  $('.sidebar-note').innerHTML = isLLVM ? 'Huawei Ascend · LLVM IR<p>950 包内证据 · 3510</p><p>目标编译 / 运行未验证</p>' : ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
 }
 function knowledgeLink(r,label) {
   return `<button class="related-link" data-knowledge-ref="${esc(r.id)}">${esc(label || r.name)}</button>`;

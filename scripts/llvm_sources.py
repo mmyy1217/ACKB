@@ -77,11 +77,12 @@ class ELF:
 
 class Bitstream:
     """Decode container records, preserving unknown record codes and block boundaries."""
-    def __init__(self, data):
+    def __init__(self, data, body_handler=None):
         if data[:4] != b'BC\xc0\xde':
             raise ValueError('Expected raw LLVM bitcode magic')
         self.data, self.pos = data, 32
         self.info, self.records = {}, []
+        self.body_handler = body_handler
 
     def bits(self, n):
         if n < 0 or self.pos+n > len(self.data)*8:
@@ -143,7 +144,12 @@ class Bitstream:
                 if child_end > end:
                     raise ValueError('Child block exceeds parent')
                 # Body/metadata records are outside the declaration extraction scope.
-                if child in (12, 15, 16, 18, 22):
+                if child == 12 and self.body_handler:
+                    begin = len(self.records)
+                    self.block(child, child_width, child_end, path+(child,))
+                    self.body_handler(self.records[begin:], self.records[:begin], start)
+                    del self.records[begin:]
+                elif child in (12, 15, 16, 18, 22):
                     self.pos = child_end
                 else:
                     self.block(child, child_width, child_end, path+(child,))

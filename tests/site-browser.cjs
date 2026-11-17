@@ -8,7 +8,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 (async () => {
   const root = path.resolve('dist/site'), manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json')));
   const snapshot = backend => JSON.parse(gunzipSync(fs.readFileSync(path.join(root,manifest.datasets[backend].gzip.url)))).payload;
-  const llvmDefaultCount = snapshot('llvm').coverage.default_a5_source_view;
+  const llvmDefaultCount = snapshot('llvm').coverage.default_a5_evidence_view;
   const ptxInstructionCount = snapshot('ptx').records.filter(r=>r.kind==='instruction').length;
   const requests = [], faults = new Map();
   let revision = manifest.revision;

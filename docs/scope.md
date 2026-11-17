@@ -55,4 +55,4 @@ AI CPU NEON、主机 x86 指令、运行时启动与调试辅助函数不计入 
 
 ## LLVM IR 核心扩展
 
-用户已授权将 LLVM IR 目标能力层纳入核心范围：只读提取 CANN 编译器的注册元数据、Bitcode 模块声明与外部 lowering 线索；不做硬件 ISA 逆向。此前将 LLVM IR 仅作为后续附件的范围限制由本段扩展。完整边界见 [LLVM 核心](llvm-core.md)。
+用户已授权将 LLVM IR 目标能力层纳入核心范围：只读提取 CANN 编译器的注册元数据、Bitcode 模块声明及直接调用与外部 lowering 线索；不做硬件 ISA 逆向。此前将 LLVM IR 仅作为后续附件的范围限制由本段扩展。完整边界见 [LLVM 核心](llvm-core.md)。

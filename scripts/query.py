@@ -64,11 +64,11 @@ def parser():
         else:
             sub.add_argument('query', nargs='?', default='')
         sub.add_argument('--name')
-        sub.add_argument('--scope', choices=['a5-sources','all'], default='a5-sources')
+        sub.add_argument('--scope', choices=['a5-evidence','a5-sources','all'], default=None)
         sub.add_argument('--include-candidates', action='store_true')
         sub.add_argument('--domain', choices=['target_intrinsic','standard_intrinsic','ordinary_ir'])
         sub.add_argument('--source')
-        sub.add_argument('--evidence-kind', choices=['registry','bitcode_declaration','lowering_source','binary_string'])
+        sub.add_argument('--evidence-kind', choices=['registry','bitcode_declaration','bitcode_call','lowering_source','binary_string'])
         sub.add_argument('--builtin')
         sub.add_argument('--signature')
         sub.add_argument('--kind', choices=['all', 'interface', 'type', 'macro', 'constant', 'helper', 'instruction', 'instruction_topic', 'execution_model', 'state_space', 'directive', 'special_register'], default='interface' if command == 'search' else 'all')
@@ -212,7 +212,7 @@ def run(args):
     if args.backend == 'llvm' or getattr(args, 'identity', '').startswith('llvm_ir_'):
         from llvm_query import dispatch
         return dispatch(args, page)
-    if any(getattr(args, field, None) for field in ('domain','source','evidence_kind','include_candidates')) or getattr(args,'scope','a5-sources')!='a5-sources':
+    if any(getattr(args, field, None) for field in ('domain','source','evidence_kind','include_candidates')) or getattr(args,'scope',None) not in (None,'a5-sources'):
         raise ValueError('LLVM evidence filters require --backend llvm')
     if args.command == 'schema':
         schema = 'multi-backend-query-v1.schema.json' if args.backend in ('ascendc', 'cce-dialect') else 'knowledge-v1.schema.json' if args.backend == 'ptx' else 'calls-query-v1.schema.json' if args.layer == 'calls' else 'ops-query-v1.schema.json' if args.layer == 'ops' else 'query-v1.schema.json'

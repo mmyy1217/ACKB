@@ -22,7 +22,7 @@ function opNavigate(id) {
 function openOp(id) {
   const target=byId.get(id);if(!target)return;
   state.home=false;
-  if(target.backend==='llvm'){state.backend='llvm';state.llvmScope=target.llvm.a5_source_lead?'a5-sources':'all';state.includeUnknown=target.llvm.identity_status==='candidate_only';state.llvmEvidence='';configureBackend();}
+  if(target.backend==='llvm'){state.backend='llvm';state.llvmScope=target.llvm.static_target?.package_evidence?'a5-evidence':'all';state.includeUnknown=target.llvm.identity_status==='candidate_only';state.llvmEvidence='';configureBackend();}
   else if(target.backend==='ascendc'){
     state.backend='ascendc';state.ascendcLayer=target.ascendcLayer;configureBackend();
   }else if(target.backend==='cce-dialect'){
