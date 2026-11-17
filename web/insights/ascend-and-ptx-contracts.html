@@ -1,0 +1,69 @@
+<p class="insight-lead">NVIDIA 提供了公开、可编写并可交给工具链编译的 PTX 虚拟 ISA。对本项目研究的 Huawei Ascend CANN 工具链，我们主要通过源码接口、编译器内建及目标 IR 证据理解底层能力。两边最值得比较的是<strong>对外暴露的编程契约及其证据</strong>，而不是指令名称的多少。</p>
+<p class="insight-note">根据 Huawei Ascend 与 PTX 的讨论整理，供汇报阅读。Huawei Ascend 证据固定 CANN 9.3.0~weekly.20261104.01；PTX 文档固定 CUDA 13.4.3 / PTX ISA 9.4。本文未开展新的设备实验，不将此前讨论中“CUDA 12.9 已全部实测”的说法作为事实。统计为 2026-11-17 的 ACKB 快照。</p>
+<h2>公开契约：差异在哪里？</h2>
+<p>PTX 公开描述语法、语义、操作数约束、版本与目标架构要求，既是编译器生成目标，也是开发者可手写的虚拟汇编。它在 CUDA C++ 与 GPU 原生机器指令之间提供了一层独立的表达方式。<a href="https://docs.nvidia.com/cuda/archive/13.4.3/parallel-thread-execution/index.html#goals-of-ptx">PTX 的设计目标</a>包括跨代稳定的 ISA、代码分发以及供编译器和手写程序使用的公共目标。</p>
+<p>在本项目核查的 CANN 包及公开资料范围内，尚未建立一份与 PTX 在文法、语义和兼容承诺上等价的 AI Core 文本虚拟 ISA 规范。ACKB 因而需要把随包接口、builtin、LLVM 注册信息、Bitcode 与外部 lowering 分开取证。<strong>这是目前的资料与验证边界，不能扩大为“整个 Huawei Ascend 生态不存在公开虚拟 ISA 或汇编入口”。</strong></p>
+<p>两边都存在多层契约。CUDA 也有 C++ API、NVVM IR 和 ABI；Huawei Ascend 的公开开发接口也不止头文件。PTO 等 Tile 抽象应另行研究，不能仅凭“虚拟 ISA”这个名称，就认定它与 PTX 处于相同编译位置。</p>
+<h2>编译路径：接口、IR、虚拟汇编与机器码</h2>
+<pre aria-label="NVIDIA 与 Huawei Ascend 的简化编译路径">NVIDIA
+CUDA C++ / 设备接口
+  ├─ 前端 → NVVM IR / 目标 intrinsics ─┐
+  └─ inline PTX 文本 ────────────────┤
+                                    ↓
+                             PTX 虚拟汇编
+                                    ↓
+                            ptxas / 驱动 JIT
+                                    ↓
+                        GPU 机器码（SASS 表示）
+
+Huawei Ascend（本库追踪范围）
+AscendC 基础 C++ API    AscendC C / SIMT API
+         └──────────┬────────────┘
+                    ↓ 各自存在多种路径
+         CCEC 编程接口 / 直接 builtin 入口
+                    ↓ CCEC 前端
+     LLVM IR：llvm.hivm.* 等 + 普通 LLVM IR
+                    ↓ 目标后端
+               AI Core 机器码
+
+外部 CCE Dialect → lowering / LLVM 符号映射
+                              ↳ 与目标 IR 对照</pre>
+<p>图中是概念阶段，不表示所有工具逐个串行运行，也不表示一个源码操作只对应一个 IR 或机器指令。<code>hivmc-a5</code> 与 <code>libbisheng-llc.so</code> 是不同工具链证据来源，不能画成同一组件的两个名字。外部 CCE Dialect 的映射也不是 CANN 已接受该符号的证明。</p>
+<p>CCEC 编程接口属于 C/C++ 源码层；<code>__builtin_cce_*</code> 是编译器识别的源码内建入口；<code>llvm.hivm.*</code> 则属于 LLVM IR 目标 intrinsic。后两者都不是硬件 ISA 全集。若按编译阶段寻找近似对应，Huawei Ascend 的 LLVM IR 目标层更接近 NVIDIA 的 NVVM IR，而不是 PTX；这只是层级对照，不是语义等价。</p>
+<h2>为什么 PTX 看起来少，builtin 却很发散？</h2>
+<p>ACKB 原 PTX 索引的 221 条是手册指令条目。一节可以覆盖多种类型、修饰符、布局和形状。CCEC Builtins 则按完整名称去重，LLVM 目标库还包含类型化名称、模式变体及不同证据范围。三个数字的统计单位不同。</p>
+<p>PTX 通过语法模板表达变体，例如操作码、状态空间、类型与修饰符。不过这些选项<strong>不是可以任意相乘的笛卡尔积</strong>：合法组合还受操作数、指令版本、目标架构和执行条件限制。仅拼出一个像 PTX 的字符串，不能证明程序合法。</p>
+<p>Huawei Ascend 的上层接口可以通过 C++ 重载、模板、独立函数名以及部分操作的配置位域表达控制。底层注册名也会编码类型或模式，但“LLVM 强类型，所以必须把所有变体扁平展开”是错误解释。<a href="https://llvm.org/docs/LangRef.html#intrinsic-functions">LLVM 支持重载 intrinsic</a>，类型、立即数参数及属性都可以参与表达。具体如何拆分，是目标接口设计选择，需要逐项查看声明与实现。</p>
+<p>因此，PTX 条目少不等于能力少，LLVM 名称多也不等于硬件指令多。按 <code>.</code> 展开只是在浏览符号，不能代替语义分类。</p>
+<h2>新能力怎么触达？优化器又能看到多少？</h2>
+<p><strong>NVIDIA：</strong>即使某个 C++ 封装尚未提供，开发者也可能通过 inline PTX 使用工具链已支持的指令。<a href="https://docs.nvidia.com/cuda/archive/13.4.3/inline-ptx-assembly/index.html">官方 inline PTX 文档</a>给出了操作数约束及副作用声明方法。这条路径仍要求 PTX 版本、目标架构、汇编器或 JIT 支持匹配，并正确处理寄存器、地址空间和同步；不能简化为“写一个 asm 就能立即调用任何新能力”。</p>
+<p><strong>Huawei Ascend：</strong>本库目前能追踪的源码路径是编程接口与 builtin；也可以研究直接生成 MLIR / LLVM IR 的编译器路径。不能直接在普通 C++ 中把 <code>@llvm.hivm.*</code> 当函数调用，但这不意味着所有新能力都必须等待高层头文件封装。是否存在可用的低层入口、如何表达、工具链是否接受，需要独立证据。本文不作“没有任何 asm 逃生门”的全称断言。</p>
+<p>inline asm 通常不会向前端优化器暴露内部指令语义，但输入输出约束、<code>volatile</code> 和内存 clobber 会描述部分依赖及副作用，后续 PTX 工具链仍可处理其指令。intrinsic 的类型、属性与专用 pass 则可能提供更多分析机会；但<strong>强类型不等于所有优化器都理解全部硬件语义</strong>。不能据此断言 NVIDIA 优化不透明、Huawei Ascend 全程可见，更不能直接推出性能优劣。</p>
+<h2>硬件模型不同，但不宜二分</h2>
+<p>NVIDIA 的线程、warp 与 SIMT 执行模型，是理解 PTX 的重要起点；Huawei Ascend 的 Cube、Vector、多级存储和显式流水协作，是理解其算子接口的重要起点。但现代 NVIDIA 也有矩阵计算、异步搬运及集体操作，Huawei Ascend 也提供 SIMT 编程接口。</p>
+<p>这些硬件特征可以帮助理解接口风格，却不能证明“GPU 天生适合文本汇编、NPU 天生只能用配置位域”。应分别比较执行粒度、存储可见性、同步范围、数据布局和类型约束，而不是用 SIMT / SIMD 两个标签概括全部差异。</p>
+<h2>AscendC 的层级，哪些是并列入口？</h2>
+<p>高阶 API、Tensor API、基础 API 与 C API 可以按抽象程度排列，但不能直接画成每次调用都必须经过的四级链。当前源码追踪显示，基础 C++ API 与 C / SIMT API 各自存在下接 CCEC 封装或 builtin 的路径，不能认定基础 API 必经 C API。</p>
+<pre aria-label="AscendC API 抽象与常见调用关系">高阶算法 API                 Layout / Tensor API
+  ↓ 常见组合路径               ↓ 部分实现路径
+基础 C++ API                 C / SIMT API
+  ├─ CCEC 编程接口             ├─ CCEC 编程接口
+  └─ 直接 builtin              └─ 直接 builtin
+                 ↓
+          编译器目标 IR 与后端</pre>
+<p>这里的箭头是已观察到的路径概括，不是全部函数的依赖保证。SIMT C++ 接口、资源管理、调试与 Host 端工具还需要按职责区分。ACKB 当前收录的是有界来源，不是 AscendC 全生态 API 全集。</p>
+<h2>ACKB 已取得什么？</h2>
+<p>以下是固定版本的静态盘点，各行不可相加成为“950 指令总数”。详细来源与方法见仓库的<a href="https://github.com/mmyy1217/ACKB/blob/main/docs/ascendc-dialect.md">扩展索引</a>、<a href="https://github.com/mmyy1217/ACKB/blob/main/docs/ccec-ops.md">CCEC op 模型</a>和<a href="https://github.com/mmyy1217/ACKB/blob/main/docs/llvm-core.md">LLVM 核心说明</a>。</p>
+<ul>
+<li><strong>AscendC：</strong>基础 C++ / SIMT C++ 索引 617 组，C / SIMT 索引 1,876 组。这是扫描范围内的名称分组数，不是全部 950 可用接口数。</li>
+<li><strong>CCEC：</strong>接口默认范围 368 项，含 357 个封装与 11 个已追踪的搬运直连入口；含义是至少一个声明条件符合。Builtin 完整快照有 4,353 个唯一名称，不代表全部支持 950。</li>
+<li><strong>LLVM 注册信息：</strong><code>libbisheng-llc.so</code> 名称表有 23,447 个全目标注册项，其中 12,363 个 <code>llvm.hivm.*</code>；<code>hivmc-a5</code> 名称扫描得到 918 个精确拼写。注册与字符串出现是不同证据。</li>
+<li><strong>c310 Bitcode：</strong>8 个 <code>meta_op</code> 模块及 <code>malloc.bc</code> 中提取到 535 种具体声明类型，487 个目标名称有声明证据。当前默认“950 包内证据”含 522 条有直接调用证据的名称，其中 487 个目标 intrinsic、35 个标准 intrinsic。</li>
+<li><strong>外部 CCE Dialect：</strong>247 个语义 Op、1,069 个具体 LLVM 符号映射；这些是外部工程证据，不能替代 CANN 目标验证。</li>
+</ul>
+<p>这些统计支持的是“在指定包和源码范围内观察到了什么”。包内名字出现不等于 950 支持；某个 c310 模块调用一个形式，不等于所有类型、参数、核类型和源码入口都可用。未解析类型、未知条件及候选关联必须保留。</p>
+<h2>对 AI as Compiler 的实际启示</h2>
+<p><strong>面向 PTX，</strong>应建立语法与语义约束库，同时覆盖执行模型、内存模型、ABI、版本和目标条件。只索引 221 个手册条目，远不足以保证生成程序正确；仍需汇编、运行正确性与性能验证。</p>
+<p><strong>面向 Huawei Ascend，</strong>应将接口、builtin、目标 IR 与来源证据连接起来，区分精确调用、外部映射和名称候选。某个目标符号没有关联到上层接口，只能说明当前索引存在关联缺口，不能直接宣布发现“硬件支持但未公开的隐藏能力”。</p>
+<p><strong>两边共同的原则：</strong>先确定代码生成落在哪一层，再为这一层建立带版本的合法性约束和验证闭环。静态发现、编译接受、运行正确、性能测量分别记录。公开文法与包内证据带来不同的建库方法，但都不能省略验证。</p>
+<nav class="insight-related" aria-label="相关知识库"><a href="#backend=ptx">PTX</a><a href="#backend=ccec">CCEC 编程接口</a><a href="#backend=ccec-intrinsics">CCEC Builtins</a><a href="#backend=llvm">LLVM IR 目标核心</a></nav>

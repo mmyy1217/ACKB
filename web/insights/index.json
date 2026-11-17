@@ -1,8 +1,8 @@
 [
   {
-    "slug": "instruction-counts-and-layers",
-    "title": "为什么 NVVM 不到 300 条，而 LLVM 有上千条？",
+    "slug": "ascend-and-ptx-contracts",
+    "title": "Huawei Ascend 与 PTX：编程契约、编译层级与建库方法",
     "date": "2026-11-17",
-    "summary": "从计数口径、编译层级与来源覆盖，理解 PTX、NVVM 和 Huawei Ascend 目标知识库。"
+    "summary": "从公开接口到目标 IR，整理两套编程体系的差异、ACKB 的静态证据，以及汇报时需要说明的边界。"
   }
 ]
