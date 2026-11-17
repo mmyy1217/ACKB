@@ -24,7 +24,7 @@ class Parser(argparse.ArgumentParser):
 
 def parser():
     p = Parser(description=__doc__)
-    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx', 'llvm'], default='ccec')
+    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx', 'llvm', 'nvvm'], default='ccec')
     p.add_argument('--layer', choices=['declarations', 'ops', 'basic', 'capi', 'intrinsics'])
     p.add_argument('--data', help='Versioned catalog path; defaults to the repository snapshot')
     p.add_argument('--limit', type=int, default=10)
@@ -209,6 +209,22 @@ def dispatch_ascendc_or_dialect(args):
 def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
+    if args.backend == 'nvvm':
+        from nvvm_index import OUTPUT, validate as validate_nvvm
+        d = json.loads(OUTPUT.read_text()); validate_nvvm(d)
+        context = {'schema_version':'ackb.nvvm.query.v1','backend':'nvvm','version':d['version'],'source':d['source'],'limitations':d['limitations']}
+        if args.command == 'info': items = [{'records':len(d['records'])}]
+        elif args.command == 'search':
+            q=(getattr(args,'name',None) or getattr(args,'query','') or '').lower()
+            items=[r for r in d['records'] if q in r['name'].lower()]
+        elif args.command in ('get','forms','evidence','relations'):
+            matches=[r for r in d['records'] if args.identity in (r['id'],r['name'])]
+            if not matches: raise ValueError('Unknown NVVM identity')
+            items=matches if args.command=='get' else matches[0]['signatures'] if args.command=='forms' else matches[0]['evidence'] if args.command=='evidence' else []
+        elif args.command=='schema': items=[{'record_fields':['id','name','family','signatures','evidence','support']}]
+        else: raise ValueError('Unsupported NVVM query')
+        return page(items,args,context)
+
     if args.backend == 'llvm' or getattr(args, 'identity', '').startswith('llvm_ir_'):
         from llvm_query import dispatch
         return dispatch(args, page)

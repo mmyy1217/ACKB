@@ -52,7 +52,7 @@ def build_site(page, style, scripts, data, knowledge, output):
     (directory / 'assets').mkdir(parents=True, exist_ok=True)
     datasets = {'ccec': {'catalog': data, 'knowledge': knowledge['ccec']},
                 'navigation': navigation_data(data, knowledge)}
-    for name, key in [('ptx', 'ptx'), ('ascendc', 'ascendc'), ('cce-dialect', 'cce_dialect'), ('llvm', 'llvm')]:
+    for name, key in [('ptx', 'ptx'), ('ascendc', 'ascendc'), ('cce-dialect', 'cce_dialect'), ('llvm', 'llvm'), ('nvvm', 'nvvm')]:
         datasets[name] = knowledge.get(key, {})
     manifest = {'schema': SCHEMA, 'datasets': {name: pack_dataset(directory, name, value) for name, value in datasets.items()}}
     css = asset(directory, 'style', style.encode(), 'css')

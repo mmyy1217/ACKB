@@ -11,7 +11,7 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  const url=pathToFileURL(path.resolve('dist/index.html')).href;
  await page.goto(url);await page.waitForSelector('#home:not([hidden])');
  assert.equal(await page.locator('.workspace').isVisible(),false);
- assert.equal(await page.locator('#home a[data-database]').count(),8);
+ assert.equal(await page.locator('#home a[data-database]').count(),9);
  for(const width of [1440,1024,390,320]){
   await page.setViewportSize({width,height:950});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`home overflow ${width}`);

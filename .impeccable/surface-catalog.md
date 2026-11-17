@@ -87,3 +87,7 @@ LLVM 默认范围为「950 包内证据」，「A5 相关线索」和全库单�
 ## 结构图首页与下载
 
 无 fragment、`#home` 和旧 `#ascendc-map` 均进入结构图首页。7 个 Huawei Ascend 相关知识库在图内链接，PTX 位于右侧 NVIDIA CUDA 体系图内。入口旁小圆钮负责下载／更新，悬停提示状态和体积，下载时显示百分比，完成后解锁链接；同库双层共用状态。离线单文件直接打开，无下载控件。统一名称为 AscendC 基础 C++ API、AscendC C / SIMT API、CCEC 编程接口、CCEC Builtins、LLVM IR、CCE Dialect 语义 Ops、CCE Dialect LLVM Intrinsics；URL 与数据 ID 保持兼容。
+
+## 符号展开
+
+PTX、LLVM IR、NVVM IR 采用顶部离散滑块，默认全部展开，按点号前缀聚合并跳过固定公共前缀。不做语义归并。详情保留成员选择，显示组数与记录数。PTX 默认直接展示指令族列表；NVVM 接入首页下载圆钮。范围与验证见 [符号展开说明](../docs/symbol-depth.md)。

@@ -9,7 +9,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
   const root = path.resolve('dist/site'), manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json')));
   const snapshot = backend => JSON.parse(gunzipSync(fs.readFileSync(path.join(root,manifest.datasets[backend].gzip.url)))).payload;
   const llvmDefaultCount = snapshot('llvm').coverage.default_a5_evidence_view;
-  const ptxInstructionCount = snapshot('ptx').records.filter(r=>r.kind==='instruction').length;
+  const ptxInstructionCount = new Set(snapshot('ptx').forms.forms.map(r=>r.name)).size;
   const requests = [], faults = new Map();
   let revision = manifest.revision, latestDatasets = manifest.datasets;
   const server = http.createServer(async (req, res) => {
@@ -64,7 +64,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
         return innerWidth > 1100 ? n.left >= a.right : n.top >= a.bottom;
       });
       assert.equal(placement,true,'ecosystems must sit side by side on desktop and stack on narrow screens');
-      assert.equal(await page.locator('.ecosystem-nvidia a[data-database]').count(),1);
+      assert.equal(await page.locator('.ecosystem-nvidia a[data-database]').count(),2);
       await page.screenshot({path:`.impeccable/review/loading-home-${width}.png`,fullPage:true});
     }
     await page.evaluate(()=>location.hash='ascendc-map');
@@ -114,7 +114,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.locator('.llvm-links > summary').click();
     await page.locator('.llvm-links [data-op-ref^="llvm_ir_"]').first().click(); await ready(page,'llvm');
 
-    for (const [value, backend] of [['ccec','ccec'],['ccec-intrinsics','ccec'],['ascendc','ascendc'],['ascendc-capi','ascendc'],['cce-dialect','cce-dialect'],['cce-dialect-intrinsics','cce-dialect'],['ptx','ptx']]) {
+    for (const [value, backend] of [['ccec','ccec'],['ccec-intrinsics','ccec'],['ascendc','ascendc'],['ascendc-capi','ascendc'],['cce-dialect','cce-dialect'],['cce-dialect-intrinsics','cce-dialect'],['ptx','ptx'],['nvvm','nvvm']]) {
       await page.selectOption('#backend',value); await ready(page,backend);
       assert.equal(await page.locator('#backend').inputValue(), value);
       assert.ok(await page.evaluate(() => records.length) > 0, value);

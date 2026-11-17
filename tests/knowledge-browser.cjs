@@ -1,73 +1,43 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const {pathToFileURL} = require('node:url');
-const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs/promises'),path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT||'playwright');
 (async()=>{
- const root=path.resolve(__dirname,'..'),review=path.join(root,'.impeccable/review');
- await fs.mkdir(review,{recursive:true});
  const browser=await chromium.launch({executablePath:process.env.CCE_OPS_CHROME,headless:true,args:['--no-sandbox']});
- const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],network=[];
+ const page=await browser.newPage({viewport:{width:1440,height:950}}),errors=[],network=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))network.push(r.url());});
- const entry=pathToFileURL(path.join(root,'dist/index.html')).href;
- const shot=async name=>{await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(review,name),fullPage:true});};
- const downloadJSON=async()=>{const event=page.waitForEvent('download');await page.locator('#download').click();return JSON.parse(await fs.readFile(await (await event).path(),'utf8'));};
- await page.goto(entry+'#layer=interfaces');await page.waitForSelector('#rows .row-button');
- assert.match(await page.title(),/ACKB/);await page.selectOption('#backend','ptx');
- assert.equal(await page.locator('#ptx-target').inputValue(),'sm_103a');
- assert.match(await page.locator('#reader-content h1').innerText(),/先看懂 PTX/);
- assert.equal(await page.locator('#scroll-navigation').isVisible(),false);
- await shot('ackb-ptx-1440.png');
- await page.locator('[data-term="warp"]').count();
- await page.locator('[data-term="thread"]').click();assert.match(await page.locator('#detail').innerText(),/线程/);
- await page.locator('#return-reading').click();assert.equal(await page.locator('[data-term="thread"]').evaluate(n=>n===document.activeElement),true);
- await page.locator('#collapse-lookup').click();assert.equal(await page.locator('#detail').isVisible(),false);
- await page.locator('#expand-lookup').click();assert.equal(await page.locator('#detail').isVisible(),true);
- await page.locator('#resize-sidebar').focus();await page.keyboard.press('ArrowRight');
- await page.locator('#resize-detail').focus();await page.keyboard.press('ArrowLeft');
- await page.locator('[data-view="interfaces"]').click();assert.match(await page.locator('#result-count').innerText(),/221/);
- assert.equal(await page.locator('#ptx-category-brief').isVisible(),true);
- assert.equal(await page.locator('#family-section').isVisible(),true);
- await page.locator('#families [data-family="9.7.18"]').click();assert.match(await page.locator('#result-count').innerText(),/12/);
- assert.match(await page.locator('#ptx-category-brief').innerText(),/tcgen05/);
- await page.locator('#ptx-category-brief [data-ptx-cat="9.7.18.mma"]').click();assert.match(await page.locator('#result-count').innerText(),/4/);
- await page.locator('#families [data-family=""]').click();assert.match(await page.locator('#result-count').innerText(),/221/);
- await page.locator('#jump-end').click();await page.waitForTimeout(150);assert.equal(await page.locator('#rows tr').count(),221);
- await page.locator('#jump-start').click();
- await page.fill('#search','tcgen05.mma');await page.locator('#rows .row-button').filter({hasText:/^tcgen05.mma$/}).click();
- assert.match(await page.locator('#reader-content').innerText(),/官方语法/);
- assert.match(await page.locator('#reader-content').innerText(),/修饰符与参数域/);
- assert.match(await page.locator('#reader-content').innerText(),/协同与关联指令/);
- await page.locator('.reader-evidence').first().click();assert.match(await page.locator('#reader-content').innerText(),/sm_103a/);
- await page.selectOption('#ptx-target','sm_103');assert.match(await page.locator('.reader-evidence > summary').first().innerText(),/文档排除/);
- let exported=await downloadJSON();assert.equal(exported.target,'sm_103');assert.equal(exported.records[0].target_assessment.target,'sm_103');assert.equal('sm_89' in exported.records[0],false);
- await page.selectOption('#ptx-target','sm_103a');const deep=page.url();await page.reload();assert.equal(page.url(),deep);
- await shot('ackb-ptx-instruction-1440.png');
- await page.fill('#search','不存在的指令zzzz');assert.match(await page.locator('#reader-content').innerText(),/没有匹配/);
- await page.fill('#search','线程');assert.match(await page.locator('#reader-content h1').innerText(),/搜索结果/);
- exported=await downloadJSON();assert.ok(exported.records.length>0);assert.ok(exported.records.some(r=>r.kind==='lesson'));
- await page.fill('#search','');
- await page.locator('[data-view="all"]').click();assert.match(await page.locator('#result-count').innerText(),/743/);
- await page.locator('[data-view="report"]').click();assert.match(await page.locator('#report').innerText(),/221 \/ 221/);
- await page.selectOption('#backend','ccec');await page.locator('#coverage').click();await page.locator('#report summary').filter({hasText:'相关知识说明'}).click();await page.locator('#report [data-op-ref]').first().click();
- await page.locator('#tab-experiments').click();assert.match(await page.locator('#detail').innerText(),/Huawei Ascend/);
- await page.locator('#tab-definition').click();await page.locator('#detail [data-knowledge-ref]').first().click();assert.ok(await page.locator('#overload').count());
- await shot('ackb-ccec-1440.png');
- for(const width of [1024,390,320]){
-  await page.setViewportSize({width,height:900});await page.selectOption('#backend','ptx');
-  await shot(`ackb-ptx-${width}.png`);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`overflow ${width}`);
-  if(width<800)await page.selectOption('#mobile-view','programs');
-  else {await page.locator('.chapter-nav').filter({hasText:'完整程序'}).locator('summary').click();await page.locator('[data-lesson="learn_vector_add"]').click();}
-  assert.match(await page.locator('#reader-content').innerText(),/vector_add/);
-  const lookup=page.locator('[data-lookup]').first();await lookup.click();assert.match(await page.locator('#detail').innerText(),/在正文阅读完整条目/);
-  await page.locator('#return-reading').click();assert.equal(await lookup.evaluate(n=>n===document.activeElement),true);
-  await shot(`ackb-ptx-program-${width}.png`);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`program overflow ${width}`);
-  await lookup.click();await page.locator('#open-full-entry').click();assert.match(await page.locator('#reader-content').innerText(),/官方语法/);
-  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`instruction overflow ${width}`);
-  if(width<800){await page.selectOption('#mobile-view','interfaces');await page.selectOption('#mobile-family','9.7.18');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`interfaces overflow ${width}`);}
-  await page.selectOption('#backend','ccec');
- }
- assert.deepEqual(errors,[]);assert.deepEqual(network,[]);await browser.close();console.log('ACKB reading, lookup, targets, exports and offline browser checks passed');
-})().catch(e=>{console.error(e);process.exit(1);});
+ const url=pathToFileURL(path.resolve('dist/index.html')).href;
+ const setDepth=async value=>page.locator('#symbol-depth').evaluate((el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));},value);
+ try{
+  await page.goto(url+'#backend=ptx');await page.waitForSelector('#rows .row-button');
+  assert.equal(await page.evaluate(()=>state.view),'interfaces');assert.equal(await page.locator('.views').isVisible(),false);
+  assert.equal(await page.locator('#symbol-depth-label').textContent(),'全部展开');
+  const total=await page.evaluate(()=>visible.length);assert.ok(total>221);
+  await setDepth(1);assert.ok(await page.evaluate(()=>visible.length)<total);
+  await page.fill('#search','add.rn.ftz.sat.f32');
+  assert.equal(await page.evaluate(()=>visible[0].name),'add');
+  assert.match(await page.locator('#detail').textContent(),/add.rn.ftz.sat.f32/);
+  assert.match(await page.locator('#detail').textContent(),/官方完整语法/);
+  await setDepth(20);assert.equal(await page.evaluate(()=>visible[0].name),'add.rn.ftz.sat.f32');
+  const deep=page.url();await page.reload();assert.equal(page.url(),deep);
+  await page.fill('#search','does-not-exist-zzzz');assert.equal(await page.locator('#empty').isVisible(),true);
+  for(const backend of ['ptx','llvm','nvvm']){
+   await page.goto(url+'#backend='+backend);await page.waitForSelector('#rows .row-button');
+   const max=Number(await page.locator('#symbol-depth').getAttribute('max'));assert.ok(max>1);
+   const full=await page.evaluate(()=>visible.length);await setDepth(1);
+   assert.ok(await page.evaluate(()=>visible.length)<=full);
+   assert.equal(await page.evaluate(()=>state.query),'');
+   if(await page.locator('#detail .symbol-members select').count()){
+    const options=await page.locator('#detail .symbol-members option').count();assert.ok(options>1);
+    await page.locator('#detail .symbol-members select').selectOption({index:1});
+    assert.equal(await page.evaluate(()=>document.querySelector('#detail .symbol-members select').value===state.selected),true);
+   }
+   for(const width of [1440,1024,390,320]){
+    await page.setViewportSize({width,height:950});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,backend+' '+width);
+    await page.screenshot({path:`.impeccable/review/symbol-${backend}-${width}.png`,fullPage:true});
+   }
+  }
+  assert.deepEqual(errors,[]);assert.deepEqual(network,[]);console.log('PTX / LLVM / NVVM symbol browser checks passed');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

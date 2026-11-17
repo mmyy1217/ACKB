@@ -500,3 +500,5 @@ body.data-loading #ascendc-map {display:none}
  .ecosystem-nvidia {border-left:0;border-top:1px dashed var(--input-line);padding:24px 0 0}
 }
 @media(max-width:650px){.ecosystem-grid .structure-compiler-layout {grid-template-columns:1fr}}
+
+#symbol-depth-control {display:flex;align-items:center;gap:5px;font-size:11px} #symbol-depth-control[hidden]{display:none} #symbol-depth {width:100px;accent-color:var(--ink)} .symbol-members {padding:8px;border-bottom:1px solid var(--line)}

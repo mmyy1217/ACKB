@@ -44,7 +44,7 @@ function ptxCategoryMatches(r,filter) {
   return tax ? [tax.domain,tax.category,tax.subcategory].includes(filter) : r.family===filter;
 }
 function ptxInstructionCount(filter='') {
-  return records.filter(r=>r.kind==='instruction' && compatibilityMatches(r) && ptxCategoryMatches(r,filter)).length;
+  return makeGroups(records.filter(r=>r.kind==='instruction' && compatibilityMatches(r) && ptxCategoryMatches(r,filter))).length;
 }
 function renderPtxCategoryBrief() {
   const box=$('#ptx-category-brief');
@@ -179,6 +179,7 @@ function showTerm(id) {
   $('#detail').querySelectorAll('[data-open-ptx]').forEach(b=>b.onclick=()=>openPtxEntry(b.dataset.openPtx));focusLookup();
 }
 function renderPtxLookup(r,line='') {
+  if(r.knowledge.concrete_form){renderPTXForm(r);return;}
   const k=r.knowledge, g=k.guide, tax=k.taxonomy;
   const cat=tax && ptxCategories.get(tax.category);
   const exactForm=line && g && line.split(/[\s;]+/)[0]===g.example.trim().split(/[\s;]+/)[0];
@@ -190,4 +191,9 @@ function renderPtxReport() {
   const entries=knowledgeData.ptx.records.filter(r=>r.kind==='instruction');
   const counts={};entries.forEach(k=>{const s=assessment(k).support;counts[s]=(counts[s]||0)+1;});
   $('#report').innerHTML=`<h2>PTX 内容与来源</h2><p>主目标：NVIDIA B300 / ${esc(state.ptxTarget)}；固定手册：PTX ISA 9.4。</p><dl class="detail-meta"><dt>手册章节</dt><dd>743</dd><dt>指令条目</dt><dd>221</dd><dt>分类体系</dt><dd>${ptxTaxonomy.domains.length} 个能力域 · ${ptxTaxonomy.categories.length} 个官方 9.7.x 类别</dd><dt>学习主题</dt><dd>${learning.lessons.length}</dd><dt>已提供语法的指令</dt><dd>${entries.filter(k=>k.syntax_detail).length} / 221</dd><dt>已提供深度指南的指令</dt><dd>${entries.filter(k=>k.guide).length} / 221（含机制、修饰符与示例）</dd></dl><h3>当前目标文档判定</h3><p>${Object.entries(counts).map(([s,n])=>`${supportLabels[s]} ${n}`).join(' · ')}</p><p>基础目标、family-specific 与 architecture-specific 功能分别处理。未知和部分形式保留；结果不是逐形式编译证明。</p><h3>来源</h3><p><a href="${esc(learning.sources.device)}" target="_blank" rel="noopener">NVIDIA B300 设备与计算能力表</a></p>${ptxSources(['ptx-module-directives-target'])}<p class="condition">手册 SHA-256 ${esc(knowledgeData.ptx.source.isa.html.sha256)}</p><h3>覆盖边界</h3><p>语法来自固定手册，中文机制解析、修饰符字典与教学程序为原创整理；全文描述未复制入库。所有教学程序均未经编译和设备验证。历史 sm_89 原始快照保留供追溯，不作为当前界面结论。</p>`;
+}
+
+function renderPTXForm(r){
+ const k=r.knowledge,f=k.concrete_form;
+ $('#detail').innerHTML=`<div class="detail-heading"><h2>${esc(r.name)}</h2><p>${esc(r.family)}</p></div><div class="detail-body"><p>${f.evidence.includes('unexpanded_instruction_entry')?'原始指令条目，具体形式尚未展开。':'完整拼写来自 '+esc(f.evidence.join(' / '))+'。'}</p><p>当前形式的目标支持未逐项核验；以下条件属于原始指令条目。</p><h3>官方完整语法</h3><pre><code>${esc(k.syntax_detail?.text || '')}</code></pre>${ptxRules(k)}<h3>来源</h3>${ptxSources([k.anchor])}<p class="condition">${esc(knowledgeData.ptx.forms.source_sha256)}</p></div>`;
 }

@@ -23,7 +23,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.waitForSelector('#rows .row-button');
 
     assert.deepEqual(await page.locator('#backend option').allTextContents(), [
-      'LLVM IR', 'CCEC 编程接口', 'CCEC Builtins', 'AscendC 基础 C++ API', 'AscendC C / SIMT API',
+      'NVVM IR', 'LLVM IR', 'CCEC 编程接口', 'CCEC Builtins', 'AscendC 基础 C++ API', 'AscendC C / SIMT API',
       'CCE Dialect 语义 Ops', 'CCE Dialect LLVM Intrinsics', 'PTX 虚拟指令集',
     ]);
     await page.selectOption('#backend', 'ccec-intrinsics');

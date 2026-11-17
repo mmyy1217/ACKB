@@ -136,6 +136,7 @@ function refreshSite(backend = null) {
 function backendForLink(id, fallback = 'ccec') {
   const known = siteLoader?.lookup(id)?.backend;
   if (known) return known;
+  if(id.startsWith('nvvm_'))return 'nvvm';
   if (id.startsWith('llvm_')) return 'llvm';
   if (id.startsWith('ascendc_')) return 'ascendc';
   if (id.startsWith('cce_dialect_')) return 'cce-dialect';
@@ -252,7 +253,7 @@ if (siteLoader) {
   siteLoader.initialized.then(() => {
     renderDownloads();
     const url = new URL(location.href), backend = url.searchParams.get('download');
-    if (['llvm','ccec','ascendc','cce-dialect','ptx'].includes(backend)) {
+    if (['llvm','ccec','ascendc','cce-dialect','ptx','nvvm'].includes(backend)) {
       url.searchParams.delete('download'); history.replaceState(null,'',url); downloadDatabase(backend,true);
     }
   });

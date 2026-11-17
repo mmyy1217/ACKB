@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),vm=require('node:vm');
+const sandbox={knowledgeData:{},state:{backend:'llvm',view:'llvm',symbolDepth:0},records:[]};vm.createContext(sandbox);vm.runInContext(fs.readFileSync('web/symbol-depth.js','utf8'),sandbox);
+assert.equal(vm.runInContext("dotShape(['llvm.hivm.a.f32','llvm.hivm.a.f16','llvm.hivm.b']).prefix",sandbox),'llvm.hivm');
+assert.equal(vm.runInContext("dotShape(['add','add.rn.f32']).common",sandbox),0);
+sandbox.records=['llvm.hivm.a.f32','llvm.hivm.a.f16','llvm.hivm.b'].map((name,i)=>({id:String(i),name,family:'x'}));
+assert.equal(vm.runInContext('symbolGroups(records).length',sandbox),3);
+sandbox.state.symbolDepth=1;assert.equal(vm.runInContext('symbolGroups(records).length',sandbox),2);
+assert.equal(vm.runInContext('symbolGroups(records.slice(0,1))[0].name',sandbox),'llvm.hivm.a');
+console.log('Dot prefix grouping passed');

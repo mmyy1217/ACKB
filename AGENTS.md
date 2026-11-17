@@ -229,3 +229,7 @@ python scripts/build.py
 ## AscendC API 全景阅读页
 
 首页 `#ascendc-map` 的结构图与七个知识库入口见 [全景维护说明](docs/ascendc-api-map.md)。修改 `web/ascendc-map.html` 后同时构建在线与离线页面；`test:site` 与 LLVM 浏览器回归覆盖入口、下载门控与深链接。来源快照独立于设备支持证据，不据此扩展 API 全量扫描。
+
+## PTX / LLVM / NVVM 符号展开
+
+按点号前缀聚合，默认全部展开；数据边界及命令见 [符号展开](docs/symbol-depth.md)。新增 NVVM 入口 `--backend nvvm`；修改后运行 `node tests/symbol-depth.cjs`、知识浏览器回归及线上下载回归。

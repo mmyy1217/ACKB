@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test:browser": "node tests/a5-browser.cjs && node tests/knowledge-browser.cjs && node tests/multi-backend-browser.cjs && node tests/llvm-browser.cjs",
+    "test:browser": "node tests/symbol-depth.cjs && node tests/a5-browser.cjs && node tests/knowledge-browser.cjs && node tests/multi-backend-browser.cjs && node tests/llvm-browser.cjs",
     "test:site": "node tests/site-browser.cjs"
   },
   "devDependencies": {

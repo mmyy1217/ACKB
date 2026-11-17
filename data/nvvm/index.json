@@ -1,0 +1,4900 @@
+{
+  "schema_version": "ackb.nvvm.v1",
+  "version": "CUDA 13.4.3 / NVVM IR 2.0",
+  "source": {
+    "url": "https://docs.nvidia.com/cuda/archive/13.4.3/nvvm-ir-spec/index.html",
+    "sha256": "102a5a7c531d65bb0b99cf2fdb28060680489265bc1b95edb9ddc6458adfaa97"
+  },
+  "records": [
+    {
+      "id": "nvvm_e62adb0ddc3036ee367f",
+      "name": "llvm.nvvm.atomic.load.add.f32.p0f32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1420,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare float @llvm.nvvm.atomic.load.add.f32.p0f32(float* address, float val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ce2f676b49607b6235c7",
+      "name": "llvm.nvvm.atomic.load.add.f32.p1f32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1420,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare float @llvm.nvvm.atomic.load.add.f32.p1f32(float addrspace(1)* address, float val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_af4c91b7af4054aa2c9e",
+      "name": "llvm.nvvm.atomic.load.add.f32.p3f32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1420,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare float @llvm.nvvm.atomic.load.add.f32.p3f32(float addrspace(3)* address, float val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_e71c34bcd828c613f95c",
+      "name": "llvm.nvvm.atomic.load.add.f64.p0f64",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1420,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare double @llvm.nvvm.atomic.load.add.f64.p0f64(double* address, double val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_9da57638686f80d6b4df",
+      "name": "llvm.nvvm.atomic.load.add.f64.p1f64",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1420,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare double @llvm.nvvm.atomic.load.add.f64.p1f64(double addrspace(1)* address, double val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2b29313dbf2bb9ed61fe",
+      "name": "llvm.nvvm.atomic.load.add.f64.p3f64",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1420,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare double @llvm.nvvm.atomic.load.add.f64.p3f64(double addrspace(3)* address, double val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_7901d017ea61cf378987",
+      "name": "llvm.nvvm.atomic.load.dec.32.p0i32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1437,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.atomic.load.dec.32.p0i32(i32* address, i32 val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_67583a519a4d859ef236",
+      "name": "llvm.nvvm.atomic.load.dec.32.p1i32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1437,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.atomic.load.dec.32.p1i32(i32 addrspace(1)* address, i32 val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_df5b14dab91cd99a0ec8",
+      "name": "llvm.nvvm.atomic.load.dec.32.p3i32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1437,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.atomic.load.dec.32.p3i32(i32 addrspace(3)* address, i32 val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_aa6cb6def968acf42d91",
+      "name": "llvm.nvvm.atomic.load.inc.32.p0i32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1430,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.atomic.load.inc.32.p0i32(i32* address, i32 val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_aa2cc167cad13e89b8a8",
+      "name": "llvm.nvvm.atomic.load.inc.32.p1i32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1430,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.atomic.load.inc.32.p1i32(i32 addrspace(1)* address, i32 val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_feb0a0d0d0965bd82430",
+      "name": "llvm.nvvm.atomic.load.inc.32.p3i32",
+      "family": "15.1. Atomic",
+      "evidence": [
+        {
+          "anchor": "atomic",
+          "line": 1430,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.atomic.load.inc.32.p3i32(i32 addrspace(3)* address, i32 val)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_bf60c82e81cf0918131f",
+      "name": "llvm.nvvm.bar.warp.sync",
+      "family": "15.6.1. Barrier Synchronization",
+      "evidence": [
+        {
+          "anchor": "barrier-synchronization",
+          "line": 2241,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.bar.warp.sync(i32 %membermask)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_c8672792f156b1c7f527",
+      "name": "llvm.nvvm.barrier0",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1449,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.barrier0()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0cf3f7dc80cafcd8dd6d",
+      "name": "llvm.nvvm.barrier0.and",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1459,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.barrier0.and(i32)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0709ae6467cb0edb5a99",
+      "name": "llvm.nvvm.barrier0.or",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1464,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.barrier0.or(i32)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_e6f1da27e918a127b46d",
+      "name": "llvm.nvvm.barrier0.popc",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1454,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.barrier0.popc(i32)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_65773d873bd9f29bac1b",
+      "name": "llvm.nvvm.cluster.barrier",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1469,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.cluster.barrier(i32 %flags)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ef1559f43dec485a1701",
+      "name": "llvm.nvvm.hmma.m16n16k16.ld.a.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32, i32, i32, i32, i32} @llvm.nvvm.hmma.m16n16k16.ld.a.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_b308ae0457c6228b79fb",
+      "name": "llvm.nvvm.hmma.m16n16k16.ld.b.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32, i32, i32, i32, i32} @llvm.nvvm.hmma.m16n16k16.ld.b.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_ec4ae32ebe86942cb7b6",
+      "name": "llvm.nvvm.hmma.m16n16k16.ld.c.f16.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m16n16k16.ld.c.f16.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_d348b16523d0837b3b59",
+      "name": "llvm.nvvm.hmma.m16n16k16.ld.c.f32.p<n>f32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m16n16k16.ld.c.f32.p<n>f32(float addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_96ae09ff5b0770651238",
+      "name": "llvm.nvvm.hmma.m16n16k16.mma.f16.f16",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m16n16k16.mma.f16.f16(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, i32 %c0, i32 %c1, i32 %c2, i32 %c3);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_8adb8e8d9f0b52e9a3ef",
+      "name": "llvm.nvvm.hmma.m16n16k16.mma.f16.f32",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m16n16k16.mma.f16.f32(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, float %c0, float %c1, float %c2, float %c3, float %c4, float %c5, float %c6, float %c7);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_1cec8e9a23a335fe4be4",
+      "name": "llvm.nvvm.hmma.m16n16k16.mma.f32.f16",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m16n16k16.mma.f32.f16(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, i32 %c0, i32 %c1, i32 %c2, i32 %c3);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2298087dba7d99c68619",
+      "name": "llvm.nvvm.hmma.m16n16k16.mma.f32.f32",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m16n16k16.mma.f32.f32(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, float %c0, float %c1, float %c2, float %c3, float %c4, float %c5, float %c6, float %c7);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_7356ce3fafe1e3cde34e",
+      "name": "llvm.nvvm.hmma.m16n16k16.st.c.f16.p<n>i32",
+      "family": "15.6.5.2. Store Fragments",
+      "evidence": [
+        {
+          "anchor": "store-fragments",
+          "line": 2460,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.hmma.m16n16k16.st.c.f16.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol, i32, i32, i32, i32);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c558d9e1656428a368f8",
+      "name": "llvm.nvvm.hmma.m16n16k16.st.c.f32.p<n>float",
+      "family": "15.6.5.2. Store Fragments",
+      "evidence": [
+        {
+          "anchor": "store-fragments",
+          "line": 2460,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.hmma.m16n16k16.st.c.f32.p<n>float(float addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol, float, float, float, float, float, float, float, float);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_d83b4e083bf6f29dad0c",
+      "name": "llvm.nvvm.hmma.m32n8k16.ld.a.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32, i32, i32, i32, i32} @llvm.nvvm.hmma.m32n8k16.ld.a.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c336e4e12682b33fa8ad",
+      "name": "llvm.nvvm.hmma.m32n8k16.ld.b.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32, i32, i32, i32, i32} @llvm.nvvm.hmma.m32n8k16.ld.b.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_daa7be05e3a77c4f097c",
+      "name": "llvm.nvvm.hmma.m32n8k16.ld.c.f16.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m32n8k16.ld.c.f16.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_d13d0d13b13a0b46de70",
+      "name": "llvm.nvvm.hmma.m32n8k16.ld.c.f32.p<n>f32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m32n8k16.ld.c.f32.p<n>f32(float addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_fbc30cb9459916029acf",
+      "name": "llvm.nvvm.hmma.m32n8k16.mma.f16.f16",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m32n8k16.mma.f16.f16(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, i32 %c0, i32 %c1, i32 %c2, i32 %c3);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_b162aa7ec0e51999131b",
+      "name": "llvm.nvvm.hmma.m32n8k16.mma.f16.f32",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m32n8k16.mma.f16.f32(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, float %c0, float %c1, float %c2, float %c3, float %c4, float %c5, float %c6, float %c7);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_8d608b209c22d5cebab2",
+      "name": "llvm.nvvm.hmma.m32n8k16.mma.f32.f16",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m32n8k16.mma.f32.f16(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, i32 %c0, i32 %c1, i32 %c2, i32 %c3);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_80d6f8a8b9e6f6ae1345",
+      "name": "llvm.nvvm.hmma.m32n8k16.mma.f32.f32",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m32n8k16.mma.f32.f32(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, float %c0, float %c1, float %c2, float %c3, float %c4, float %c5, float %c6, float %c7);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_f02eb0670e91ae98f556",
+      "name": "llvm.nvvm.hmma.m32n8k16.st.c.f16.p<n>i32",
+      "family": "15.6.5.2. Store Fragments",
+      "evidence": [
+        {
+          "anchor": "store-fragments",
+          "line": 2460,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.hmma.m32n8k16.st.c.f16.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol, i32, i32, i32, i32);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_3ac2310a0fcd4cb01ff3",
+      "name": "llvm.nvvm.hmma.m32n8k16.st.c.f32.p<n>float",
+      "family": "15.6.5.2. Store Fragments",
+      "evidence": [
+        {
+          "anchor": "store-fragments",
+          "line": 2460,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.hmma.m32n8k16.st.c.f32.p<n>float(float addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol, float, float, float, float, float, float, float, float);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a6784d68d7553dfa5f96",
+      "name": "llvm.nvvm.hmma.m8n32k16.ld.a.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32, i32, i32, i32, i32} @llvm.nvvm.hmma.m8n32k16.ld.a.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6590e9c81101ab70b819",
+      "name": "llvm.nvvm.hmma.m8n32k16.ld.b.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32, i32, i32, i32, i32} @llvm.nvvm.hmma.m8n32k16.ld.b.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_205bb5d1365415a4e086",
+      "name": "llvm.nvvm.hmma.m8n32k16.ld.c.f16.p<n>i32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m8n32k16.ld.c.f16.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c4793af41e7acbeb1800",
+      "name": "llvm.nvvm.hmma.m8n32k16.ld.c.f32.p<n>f32",
+      "family": "15.6.5.1. Load Fragments",
+      "evidence": [
+        {
+          "anchor": "load-fragments",
+          "line": 2428,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m8n32k16.ld.c.f32.p<n>f32(float addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6bc480a1e78fe619cecc",
+      "name": "llvm.nvvm.hmma.m8n32k16.mma.f16.f16",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m8n32k16.mma.f16.f16(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, i32 %c0, i32 %c1, i32 %c2, i32 %c3);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_e33340bfd466e6e089a2",
+      "name": "llvm.nvvm.hmma.m8n32k16.mma.f16.f32",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i32, i32, i32} @llvm.nvvm.hmma.m8n32k16.mma.f16.f32(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, float %c0, float %c1, float %c2, float %c3, float %c4, float %c5, float %c6, float %c7);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_01989c2f1b70a486611e",
+      "name": "llvm.nvvm.hmma.m8n32k16.mma.f32.f16",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m8n32k16.mma.f32.f16(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, i32 %c0, i32 %c1, i32 %c2, i32 %c3);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_15355eb1587234048fc4",
+      "name": "llvm.nvvm.hmma.m8n32k16.mma.f32.f32",
+      "family": "15.6.5.3. Matrix Multiply-and-Accumulate",
+      "evidence": [
+        {
+          "anchor": "matrix-multiply-and-accumulate",
+          "line": 2481,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {float, float, float, float, float, float, float, float} @llvm.nvvm.hmma.m8n32k16.mma.f32.f32(i32 %rowcol, i32 %satf, i32 %a0, i32 %a1, i32 %a2, i32 %a3, i32 %a4, i32 %a5, i32 %a6, i32 %a7, i32 %b0, i32 %b1, i32 %b2, i32 %b3, i32 %b4, i32 %b5, i32 %b6, i32 %b7, float %c0, float %c1, float %c2, float %c3, float %c4, float %c5, float %c6, float %c7);"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_29ebb3903a562a5c0465",
+      "name": "llvm.nvvm.hmma.m8n32k16.st.c.f16.p<n>i32",
+      "family": "15.6.5.2. Store Fragments",
+      "evidence": [
+        {
+          "anchor": "store-fragments",
+          "line": 2460,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.hmma.m8n32k16.st.c.f16.p<n>i32(i32 addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol, i32, i32, i32, i32);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_fa89d574fddb9b879ac5",
+      "name": "llvm.nvvm.hmma.m8n32k16.st.c.f32.p<n>float",
+      "family": "15.6.5.2. Store Fragments",
+      "evidence": [
+        {
+          "anchor": "store-fragments",
+          "line": 2460,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.hmma.m8n32k16.st.c.f32.p<n>float(float addrspace(<n>)* %ptr, i32 %ldm, i32 %rowcol, float, float, float, float, float, float, float, float);"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_23a6a132b167504c471a",
+      "name": "llvm.nvvm.isspacep.cluster_shared",
+      "family": "12.2.2. Conversion",
+      "evidence": [
+        {
+          "anchor": "conversion",
+          "line": 1237,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i1 @llvm.nvvm.isspacep.cluster_shared(i8*)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_468a573fa836155b15d3",
+      "name": "llvm.nvvm.isspacep.grid_const",
+      "family": "12.2.2. Conversion",
+      "evidence": [
+        {
+          "anchor": "conversion",
+          "line": 1232,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i1 @llvm.nvvm.isspacep.grid_const(i8*)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0bcc186cc015b74b4200",
+      "name": "llvm.nvvm.match.all.sync.i32",
+      "family": "15.6.4. Match",
+      "evidence": [
+        {
+          "anchor": "match",
+          "line": 2395,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.match.all.sync.i32(i32 %membermask, i32 %value)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_652a371075f8e2a998fc",
+      "name": "llvm.nvvm.match.all.sync.i64",
+      "family": "15.6.4. Match",
+      "evidence": [
+        {
+          "anchor": "match",
+          "line": 2395,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.match.all.sync.i64(i32 %membermask, i64 %value)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_20cc38ff461277610aa0",
+      "name": "llvm.nvvm.match.any.sync.i32",
+      "family": "15.6.4. Match",
+      "evidence": [
+        {
+          "anchor": "match",
+          "line": 2395,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.match.any.sync.i32(i32 %membermask, i32 %value)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_cd70ec083adfbefbaa37",
+      "name": "llvm.nvvm.match.any.sync.i64",
+      "family": "15.6.4. Match",
+      "evidence": [
+        {
+          "anchor": "match",
+          "line": 2395,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.match.any.sync.i64(i32 %membermask, i64 %value)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4ea20967e471739c5a5f",
+      "name": "llvm.nvvm.membar",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1579,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.membar(i32 %flags)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0ef752be40467fed4bad",
+      "name": "llvm.nvvm.membar.cta",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1564,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.membar.cta()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4b9c9b141ec9b20988bc",
+      "name": "llvm.nvvm.membar.gl",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1569,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.membar.gl()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_82b2217b83ddc4a5547e",
+      "name": "llvm.nvvm.membar.sys",
+      "family": "15.2. Barrier and Memory Fence",
+      "evidence": [
+        {
+          "anchor": "barrier-and-memory-fence",
+          "line": 1574,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare void @llvm.nvvm.membar.sys()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_bab707e6f7e2206e4187",
+      "name": "llvm.nvvm.read.ptx.sreg.ctaid.x",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.ctaid.x()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_71ae457d67b1a7c636f8",
+      "name": "llvm.nvvm.read.ptx.sreg.ctaid.y",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.ctaid.y()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_54b9300754c203421a9a",
+      "name": "llvm.nvvm.read.ptx.sreg.ctaid.z",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.ctaid.z()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0d2f1d739d9644a897dc",
+      "name": "llvm.nvvm.read.ptx.sreg.nctaid.x",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.nctaid.x()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_686f0ab99ae2df835f76",
+      "name": "llvm.nvvm.read.ptx.sreg.nctaid.y",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.nctaid.y()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_9681a6f03172efed4154",
+      "name": "llvm.nvvm.read.ptx.sreg.nctaid.z",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.nctaid.z()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_b20ea6ca5e7314ffc62b",
+      "name": "llvm.nvvm.read.ptx.sreg.ntid.x",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.ntid.x()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ea0dbb52573e17717536",
+      "name": "llvm.nvvm.read.ptx.sreg.ntid.y",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.ntid.y()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2465bc62adc5cc1cd392",
+      "name": "llvm.nvvm.read.ptx.sreg.ntid.z",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.ntid.z()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_833c5ee76ca2b2d60cdf",
+      "name": "llvm.nvvm.read.ptx.sreg.tid.x",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.tid.x()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_86addff2ab81b1c71ff2",
+      "name": "llvm.nvvm.read.ptx.sreg.tid.y",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.tid.y()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_6fbc736aab324bd1de9c",
+      "name": "llvm.nvvm.read.ptx.sreg.tid.z",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.tid.z()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_b2143b98203619da2742",
+      "name": "llvm.nvvm.read.ptx.sreg.warpsize",
+      "family": "15.4. Special Registers",
+      "evidence": [
+        {
+          "anchor": "special-registers",
+          "line": 1669,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare i32 @llvm.nvvm.read.ptx.sreg.warpsize()"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_a7d7a2a1e097ac52057f",
+      "name": "llvm.nvvm.shfl.sync.bfly.i32p",
+      "family": "15.6.2. Data Movement",
+      "evidence": [
+        {
+          "anchor": "data-movement",
+          "line": 2255,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.shfl.sync.bfly.i32p(i32 %membermask, i32 %a, i32 %b, i32 %c)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_c275c0ff5a15b9a1faf0",
+      "name": "llvm.nvvm.shfl.sync.down.i32p",
+      "family": "15.6.2. Data Movement",
+      "evidence": [
+        {
+          "anchor": "data-movement",
+          "line": 2255,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.shfl.sync.down.i32p(i32 %membermask, i32 %a, i32 %b, i32 %c)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_03fc464bf2ae8b6dea06",
+      "name": "llvm.nvvm.shfl.sync.i32",
+      "family": "15.6.2. Data Movement",
+      "evidence": [
+        {
+          "anchor": "data-movement",
+          "line": 2255,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.shfl.sync.i32(i32 %membermask, i32 %mode, i32 %a, i32 %b, i32 %c)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_b1a3650f016aeef6927d",
+      "name": "llvm.nvvm.shfl.sync.idx.i32p",
+      "family": "15.6.2. Data Movement",
+      "evidence": [
+        {
+          "anchor": "data-movement",
+          "line": 2255,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.shfl.sync.idx.i32p(i32 %membermask, i32 %a, i32 %b, i32 %c)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_251978858051ef8182c4",
+      "name": "llvm.nvvm.shfl.sync.up.i32p",
+      "family": "15.6.2. Data Movement",
+      "evidence": [
+        {
+          "anchor": "data-movement",
+          "line": 2255,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.shfl.sync.up.i32p(i32 %membermask, i32 %a, i32 %b, i32 %c)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_cfbf5cc4bc09eda829df",
+      "name": "llvm.nvvm.suld.1d.array.i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.1d.array.i16.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_199c479cf6493e546249",
+      "name": "llvm.nvvm.suld.1d.array.i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i32 @llvm.nvvm.suld.1d.array.i32.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_1345eb2ac5df00d50368",
+      "name": "llvm.nvvm.suld.1d.array.i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i64 @llvm.nvvm.suld.1d.array.i64.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_137da8ec9a1d41e3a208",
+      "name": "llvm.nvvm.suld.1d.array.i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.1d.array.i8.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f310a4ebfecf4f615962",
+      "name": "llvm.nvvm.suld.1d.array.v2i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.1d.array.v2i16.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_8b746c2b8958ddc8ed43",
+      "name": "llvm.nvvm.suld.1d.array.v2i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int2 @llvm.nvvm.suld.1d.array.v2i32.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_85ea70942c9583a99e1c",
+      "name": "llvm.nvvm.suld.1d.array.v2i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%long2 @llvm.nvvm.suld.1d.array.v2i64.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_58048a614a07d568a405",
+      "name": "llvm.nvvm.suld.1d.array.v2i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.1d.array.v2i8.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_59666d2fa75b07636228",
+      "name": "llvm.nvvm.suld.1d.array.v4i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.1d.array.v4i16.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6efa8bc99551c4bb3008",
+      "name": "llvm.nvvm.suld.1d.array.v4i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.suld.1d.array.v4i32.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_4b6e7bc8c0e1dcb35444",
+      "name": "llvm.nvvm.suld.1d.array.v4i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1962,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.1d.array.v4i8.<clamp>(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_1eaaf7bf5c1751bc1b96",
+      "name": "llvm.nvvm.suld.1d.i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.1d.i16.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f03f20cba4a940847451",
+      "name": "llvm.nvvm.suld.1d.i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i32 @llvm.nvvm.suld.1d.i32.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_e93a32030f08d1cf3efb",
+      "name": "llvm.nvvm.suld.1d.i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i64 @llvm.nvvm.suld.1d.i64.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_16750c64649df7161473",
+      "name": "llvm.nvvm.suld.1d.i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.1d.i8.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a68d5a35d88cd9083801",
+      "name": "llvm.nvvm.suld.1d.v2i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.1d.v2i16.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c6a04287cd440a7e3de3",
+      "name": "llvm.nvvm.suld.1d.v2i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int2 @llvm.nvvm.suld.1d.v2i32.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9804b953d35531e1706b",
+      "name": "llvm.nvvm.suld.1d.v2i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%long2 @llvm.nvvm.suld.1d.v2i64.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_902e9e68a07af67992a6",
+      "name": "llvm.nvvm.suld.1d.v2i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.1d.v2i8.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_1d22a2788f83a95fba5e",
+      "name": "llvm.nvvm.suld.1d.v4i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.1d.v4i16.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_2e1dc0243eee31ddc8df",
+      "name": "llvm.nvvm.suld.1d.v4i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.suld.1d.v4i32.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_4b2b05b6140824bef9c7",
+      "name": "llvm.nvvm.suld.1d.v4i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1945,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.1d.v4i8.<clamp>(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c17270e010bfb1d977a5",
+      "name": "llvm.nvvm.suld.2d.array.i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.2d.array.i16.<clamp>(i64 %tex, i32 %idx, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_8f313d597e30b381321b",
+      "name": "llvm.nvvm.suld.2d.array.i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i32 @llvm.nvvm.suld.2d.array.i32.<clamp>(i64 %tex, i32 %idx, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_7dc3effce296fa741cf6",
+      "name": "llvm.nvvm.suld.2d.array.i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i64 @llvm.nvvm.suld.2d.array.i64.<clamp>(i64 %tex, i32 %idx, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_12f4d97384828cd1a03f",
+      "name": "llvm.nvvm.suld.2d.array.i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.2d.array.i8.<clamp>(i64 %tex, i32 %idx, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6f42ace7c475f05c6425",
+      "name": "llvm.nvvm.suld.2d.array.v2i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.2d.array.v2i16.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_e586947c6c42c43e2e3f",
+      "name": "llvm.nvvm.suld.2d.array.v2i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int2 @llvm.nvvm.suld.2d.array.v2i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a4a7a69b53054918e796",
+      "name": "llvm.nvvm.suld.2d.array.v2i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%long2 @llvm.nvvm.suld.2d.array.v2i64.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f932bf787346ddcb8482",
+      "name": "llvm.nvvm.suld.2d.array.v2i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.2d.array.v2i8.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_79ed2f03d1f497d20bc3",
+      "name": "llvm.nvvm.suld.2d.array.v4i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.2d.array.v4i16.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f238f5c5f0f5fdc0349f",
+      "name": "llvm.nvvm.suld.2d.array.v4i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.suld.2d.array.v4i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_50ad1b67d19f63dfb637",
+      "name": "llvm.nvvm.suld.2d.array.v4i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1996,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.2d.array.v4i8.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_b9c7a30fda9ff4727e54",
+      "name": "llvm.nvvm.suld.2d.i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.2d.i16.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f1e9f6a4a8c283446cbf",
+      "name": "llvm.nvvm.suld.2d.i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i32 @llvm.nvvm.suld.2d.i32.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a5a4fa335a42d09a3034",
+      "name": "llvm.nvvm.suld.2d.i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i64 @llvm.nvvm.suld.2d.i64.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f826eed905ef54b9faa3",
+      "name": "llvm.nvvm.suld.2d.i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.2d.i8.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c8c385c1fb65e94ff511",
+      "name": "llvm.nvvm.suld.2d.v2i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.2d.v2i16.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_945611dd3d250be194c7",
+      "name": "llvm.nvvm.suld.2d.v2i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int2 @llvm.nvvm.suld.2d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_92dfe55ef85bd1e69a4b",
+      "name": "llvm.nvvm.suld.2d.v2i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%long2 @llvm.nvvm.suld.2d.v2i64.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_199d1cae2311350deba7",
+      "name": "llvm.nvvm.suld.2d.v2i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.2d.v2i8.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6f8f4d3edc274cd69a20",
+      "name": "llvm.nvvm.suld.2d.v4i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.2d.v4i16.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_21aa37adc096ef31af2d",
+      "name": "llvm.nvvm.suld.2d.v4i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.suld.2d.v4i32.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6e969e9b3dea0774f840",
+      "name": "llvm.nvvm.suld.2d.v4i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 1979,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.2d.v4i8.<clamp>(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_7402924cf30d9f2ee5e9",
+      "name": "llvm.nvvm.suld.3d.i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.3d.i16.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_35d902c6154a7bd74066",
+      "name": "llvm.nvvm.suld.3d.i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i32 @llvm.nvvm.suld.3d.i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9fc285a99016aaa99d5f",
+      "name": "llvm.nvvm.suld.3d.i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i64 @llvm.nvvm.suld.3d.i64.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_fc65db135c9c87dcf122",
+      "name": "llvm.nvvm.suld.3d.i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "i16 @llvm.nvvm.suld.3d.i8.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f9a78c91b5d9808a15bb",
+      "name": "llvm.nvvm.suld.3d.v2i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.3d.v2i16.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_34a96c00408613cc0b09",
+      "name": "llvm.nvvm.suld.3d.v2i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int2 @llvm.nvvm.suld.3d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_56226b8ccfc7ddb3c1dc",
+      "name": "llvm.nvvm.suld.3d.v2i64.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%long2 @llvm.nvvm.suld.3d.v2i64.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c0e47f2837f049a0bc47",
+      "name": "llvm.nvvm.suld.3d.v2i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short2 @llvm.nvvm.suld.3d.v2i8.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9527e8fc52aef86930a0",
+      "name": "llvm.nvvm.suld.3d.v4i16.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.3d.v4i16.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_86ac69bf0d8c5b5e7d1e",
+      "name": "llvm.nvvm.suld.3d.v4i32.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.suld.3d.v4i32.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_435b48d9161d7ada009e",
+      "name": "llvm.nvvm.suld.3d.v4i8.<clamp>",
+      "family": "15.5.2. Surface Loads",
+      "evidence": [
+        {
+          "anchor": "surface-loads",
+          "line": 2020,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%short4 @llvm.nvvm.suld.3d.v4i8.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_2a4d10cac89859788202",
+      "name": "llvm.nvvm.sust.b.1d.array.i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.i16.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_ef4e9ed0a04062b5b94a",
+      "name": "llvm.nvvm.sust.b.1d.array.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.i32.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_455a064ce809d169af10",
+      "name": "llvm.nvvm.sust.b.1d.array.i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.i64.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9d7288edd3ab452c8ffe",
+      "name": "llvm.nvvm.sust.b.1d.array.i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.i8.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_5f3747a732d464c90252",
+      "name": "llvm.nvvm.sust.b.1d.array.v2i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v2i16.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_93fe7b9642e84557ca40",
+      "name": "llvm.nvvm.sust.b.1d.array.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v2i32.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_b72b8f98f2490a7a1f44",
+      "name": "llvm.nvvm.sust.b.1d.array.v2i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v2i64.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_2073133258e47af23a46",
+      "name": "llvm.nvvm.sust.b.1d.array.v2i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v2i8.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_698fcf9589edcf867f54",
+      "name": "llvm.nvvm.sust.b.1d.array.v4i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v4i16.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c318e4140cce819110bf",
+      "name": "llvm.nvvm.sust.b.1d.array.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v4i32.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_1b1845e47b449ea6f90e",
+      "name": "llvm.nvvm.sust.b.1d.array.v4i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.array.v4i8.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_17b39b0f3be03b2fe8f8",
+      "name": "llvm.nvvm.sust.b.1d.i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.i16.<clamp>(i64 %tex, i32 %x, i16 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_42744d4bd4321b8a0ee1",
+      "name": "llvm.nvvm.sust.b.1d.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.i32.<clamp>(i64 %tex, i32 %x, i32 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_00da01b4d158b4794146",
+      "name": "llvm.nvvm.sust.b.1d.i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.i64.<clamp>(i64 %tex, i32 %x, i64 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_246a538af891da40935d",
+      "name": "llvm.nvvm.sust.b.1d.i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.i8.<clamp>(i64 %tex, i32 %x, i16 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c591043b505e67461adf",
+      "name": "llvm.nvvm.sust.b.1d.v2i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v2i16.<clamp>(i64 %tex, i32 %x, i16 %r, i16 %g)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_14e53d7e603f6c4608b5",
+      "name": "llvm.nvvm.sust.b.1d.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %r, i32 %g)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_303c57eb4653618a83d1",
+      "name": "llvm.nvvm.sust.b.1d.v2i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v2i64.<clamp>(i64 %tex, i32 %x, i64 %r, i64 %g)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f6536f7aa679e553a417",
+      "name": "llvm.nvvm.sust.b.1d.v2i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v2i8.<clamp>(i64 %tex, i32 %x, i16 %r, i16 %g)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_89d689080d7ba630998d",
+      "name": "llvm.nvvm.sust.b.1d.v4i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v4i16.<clamp>(i64 %tex, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_ba57326fe699a31a0a05",
+      "name": "llvm.nvvm.sust.b.1d.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v4i32.<clamp>(i64 %tex, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_3f0c352dfb028e85197e",
+      "name": "llvm.nvvm.sust.b.1d.v4i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.1d.v4i8.<clamp>(i64 %tex, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9938036bda83eb8769e1",
+      "name": "llvm.nvvm.sust.b.2d.array.i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.i16.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_1efb205cfff4078fd2b7",
+      "name": "llvm.nvvm.sust.b.2d.array.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_ead42a271c7bfe8be8e5",
+      "name": "llvm.nvvm.sust.b.2d.array.i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.i64.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_8a989a654f77089d2f4f",
+      "name": "llvm.nvvm.sust.b.2d.array.i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.i8.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_af3f47cf6bf3ecb6613f",
+      "name": "llvm.nvvm.sust.b.2d.array.v2i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v2i16.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9cee72ae1cbac6d06655",
+      "name": "llvm.nvvm.sust.b.2d.array.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v2i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_cc87cf657f4f85be6e07",
+      "name": "llvm.nvvm.sust.b.2d.array.v2i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v2i64.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_5770427b3feb1338e4b3",
+      "name": "llvm.nvvm.sust.b.2d.array.v2i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v2i8.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_79dab086981c4123e22e",
+      "name": "llvm.nvvm.sust.b.2d.array.v4i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v4i16.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_00f1868503c0243fe715",
+      "name": "llvm.nvvm.sust.b.2d.array.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v4i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a0d8ad38c0fe1116bbf2",
+      "name": "llvm.nvvm.sust.b.2d.array.v4i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.array.v4i8.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_67037fffd85ebaf15311",
+      "name": "llvm.nvvm.sust.b.2d.i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.i16.<clamp>(i64 %tex, i32 %x, i32 %y, i16 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_590d6e89cae0e0626946",
+      "name": "llvm.nvvm.sust.b.2d.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_81064af83827ce0595d6",
+      "name": "llvm.nvvm.sust.b.2d.i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.i64.<clamp>(i64 %tex, i32 %x, i32 %y, i64 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_2860e6715b51023ddf23",
+      "name": "llvm.nvvm.sust.b.2d.i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.i8.<clamp>(i64 %tex, i32 %x, i32 %y, i16 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a44c0842ce3e2a260c01",
+      "name": "llvm.nvvm.sust.b.2d.v2i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v2i16.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_492741a852b445947ee7",
+      "name": "llvm.nvvm.sust.b.2d.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_703f2a1a59806c8d86ac",
+      "name": "llvm.nvvm.sust.b.2d.v2i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v2i64.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_dedcbbde8ca2f65058b7",
+      "name": "llvm.nvvm.sust.b.2d.v2i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v2i8.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_05861ff4c2cf46b3a62e",
+      "name": "llvm.nvvm.sust.b.2d.v4i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v4i16.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_43bacf25b444220a59db",
+      "name": "llvm.nvvm.sust.b.2d.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v4i32.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_8f511e39db1999c0a940",
+      "name": "llvm.nvvm.sust.b.2d.v4i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.2d.v4i8.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_12df5a3c505ed6d0eb31",
+      "name": "llvm.nvvm.sust.b.3d.i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.i16.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z, i16 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_0e2beed1f54c39cacc9b",
+      "name": "llvm.nvvm.sust.b.3d.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z, i32 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9905bcd2ccc1dc11d7b8",
+      "name": "llvm.nvvm.sust.b.3d.i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.i64.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z, i64 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_965004a62ab63f33ba4c",
+      "name": "llvm.nvvm.sust.b.3d.i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.i8.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z, i16 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_5bc36861520087da9a31",
+      "name": "llvm.nvvm.sust.b.3d.v2i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v2i16.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_8d14db5264c82a27b8a5",
+      "name": "llvm.nvvm.sust.b.3d.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_2e43bd084c39b664036a",
+      "name": "llvm.nvvm.sust.b.3d.v2i64.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v2i64.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_896a2385597f0e6e6f17",
+      "name": "llvm.nvvm.sust.b.3d.v2i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v2i8.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_de03b07ab9ec89d5ccd7",
+      "name": "llvm.nvvm.sust.b.3d.v4i16.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v4i16.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_994047a812c4811ed943",
+      "name": "llvm.nvvm.sust.b.3d.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v4i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_a6a4cb633c86d240ff52",
+      "name": "llvm.nvvm.sust.b.3d.v4i8.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.b.3d.v4i8.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_c3f3ef655c206cf5655f",
+      "name": "llvm.nvvm.sust.p.1d.array.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.1d.array.i32.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_f14b0a37d0cfb57ddaf6",
+      "name": "llvm.nvvm.sust.p.1d.array.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.1d.array.v2i32.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_64db4c8c3bab4a00c9bd",
+      "name": "llvm.nvvm.sust.p.1d.array.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2076,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.1d.array.v4i32.<clamp>(i64 %tex, i32 %idx, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_8a5c7435b26b206a0206",
+      "name": "llvm.nvvm.sust.p.1d.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.1d.i32.<clamp>(i64 %tex, i32 %x, i32 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_1812c64175a7334e68f1",
+      "name": "llvm.nvvm.sust.p.1d.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.1d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %r, i32 %g)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_87e2ba3be628bbf94a6b",
+      "name": "llvm.nvvm.sust.p.1d.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2047,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.1d.v4i32.<clamp>(i64 %tex, i32 %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6cdb9febf0d6b0702090",
+      "name": "llvm.nvvm.sust.p.2d.array.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.2d.array.i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_0ac416f0ee40fbba8322",
+      "name": "llvm.nvvm.sust.p.2d.array.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.2d.array.v2i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_92cbcad4b850f5f98a82",
+      "name": "llvm.nvvm.sust.p.2d.array.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2149,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.2d.array.v4i32.<clamp>(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_e8b0c0e4af522252399a",
+      "name": "llvm.nvvm.sust.p.2d.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.2d.i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_28e7aa00d18c1f1c97ee",
+      "name": "llvm.nvvm.sust.p.2d.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.2d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_6c86f3651523e5d44582",
+      "name": "llvm.nvvm.sust.p.2d.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2115,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.2d.v4i32.<clamp>(i64 %tex, i32 %x, i32 %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_65df2eea41975dc4e1f2",
+      "name": "llvm.nvvm.sust.p.3d.i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.3d.i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z, i32 %r)"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_cdce7cc2956a2bfff757",
+      "name": "llvm.nvvm.sust.p.3d.v2i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.3d.v2i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_9ff913bef25bbb3ee97a",
+      "name": "llvm.nvvm.sust.p.3d.v4i32.<clamp>",
+      "family": "15.5.3. Surface Stores",
+      "evidence": [
+        {
+          "anchor": "surface-stores",
+          "line": 2197,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "void @llvm.nvvm.sust.p.3d.v4i32.<clamp>(i64 %tex, i32 %x, i32 %y, i32 %z,"
+      ],
+      "support": "unknown",
+      "name_kind": "template"
+    },
+    {
+      "id": "nvvm_ec90ad693f63ad33e041",
+      "name": "llvm.nvvm.tex.unified.1d.array.grad.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.array.grad.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_105ccfa6cf8bdb7e95ed",
+      "name": "llvm.nvvm.tex.unified.1d.array.grad.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.grad.v4s32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_46dce50ab398b087c59e",
+      "name": "llvm.nvvm.tex.unified.1d.array.grad.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.grad.v4u32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ad198aa1165f9adf722d",
+      "name": "llvm.nvvm.tex.unified.1d.array.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.array.level.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_41916bc4835efa6693f8",
+      "name": "llvm.nvvm.tex.unified.1d.array.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.level.v4s32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_6389f14435c56ef2b3f8",
+      "name": "llvm.nvvm.tex.unified.1d.array.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.level.v4u32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_91b3f6022896ba7d822f",
+      "name": "llvm.nvvm.tex.unified.1d.array.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.array.v4f32.f32(i64 %tex, i32 %idx, float %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_7092454dab9f70e25925",
+      "name": "llvm.nvvm.tex.unified.1d.array.v4f32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.array.v4f32.s32(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_99563a23dc943bf9fa67",
+      "name": "llvm.nvvm.tex.unified.1d.array.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.v4s32.f32(i64 %tex, i32 %idx, float %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2d06c83f29c3f0fa400b",
+      "name": "llvm.nvvm.tex.unified.1d.array.v4s32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.v4s32.s32(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_f8a75fce9064612811fb",
+      "name": "llvm.nvvm.tex.unified.1d.array.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.v4u32.f32(i64 %tex, i32 %idx, float %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_37db1fd4d035f9ad839c",
+      "name": "llvm.nvvm.tex.unified.1d.array.v4u32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1738,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.array.v4u32.s32(i64 %tex, i32 %idx, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_d04b7fbfd8e90d898ed8",
+      "name": "llvm.nvvm.tex.unified.1d.grad.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.grad.v4f32.f32(i64 %tex, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_b7995d13cddbda1c5804",
+      "name": "llvm.nvvm.tex.unified.1d.grad.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.grad.v4s32.f32(i64 %tex, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_86be180c9754078d8de7",
+      "name": "llvm.nvvm.tex.unified.1d.grad.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.grad.v4u32.f32(i64 %tex, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ef535d292e8b216015f7",
+      "name": "llvm.nvvm.tex.unified.1d.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.level.v4f32.f32(i64 %tex, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_e90038e55848e5a4e6a9",
+      "name": "llvm.nvvm.tex.unified.1d.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.level.v4s32.f32(i64 %tex, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_a6c0bd0b475209ad8024",
+      "name": "llvm.nvvm.tex.unified.1d.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.level.v4u32.f32(i64 %tex, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_af93638bd73659d176e4",
+      "name": "llvm.nvvm.tex.unified.1d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.v4f32.f32(i64 %tex, float %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_95247696c77b74547246",
+      "name": "llvm.nvvm.tex.unified.1d.v4f32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.1d.v4f32.s32(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_f6d198e46b79edb6c55b",
+      "name": "llvm.nvvm.tex.unified.1d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.v4s32.f32(i64 %tex, float %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_c1c77caeb0825d266c88",
+      "name": "llvm.nvvm.tex.unified.1d.v4s32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.v4s32.s32(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_603c33bc0f08f96af518",
+      "name": "llvm.nvvm.tex.unified.1d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.v4u32.f32(i64 %tex, float %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_74b708c19883b28f729d",
+      "name": "llvm.nvvm.tex.unified.1d.v4u32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1711,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.1d.v4u32.s32(i64 %tex, i32 %x)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_3e1f4ca7b97e484168f6",
+      "name": "llvm.nvvm.tex.unified.2d.array.grad.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.array.grad.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_aadb7761b21ec25e50bb",
+      "name": "llvm.nvvm.tex.unified.2d.array.grad.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.grad.v4s32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_9780befb82ef1c253461",
+      "name": "llvm.nvvm.tex.unified.2d.array.grad.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.grad.v4u32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_eb7bd4f2416c6d311de7",
+      "name": "llvm.nvvm.tex.unified.2d.array.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.array.level.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_c10eb7e3a68f5ccda9c5",
+      "name": "llvm.nvvm.tex.unified.2d.array.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.level.v4s32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4c7e9c3cf8101cc95b0e",
+      "name": "llvm.nvvm.tex.unified.2d.array.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.level.v4u32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_779fe8fdce2918ae3291",
+      "name": "llvm.nvvm.tex.unified.2d.array.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.array.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_bf59624807eb9ceddece",
+      "name": "llvm.nvvm.tex.unified.2d.array.v4f32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.array.v4f32.s32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ce8a9782b9e24a57484c",
+      "name": "llvm.nvvm.tex.unified.2d.array.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.v4s32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_10f119bdb4e49daa7979",
+      "name": "llvm.nvvm.tex.unified.2d.array.v4s32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.v4s32.s32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_e4d45db9518d0c3dc9f8",
+      "name": "llvm.nvvm.tex.unified.2d.array.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.v4u32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_9dae14c7e67bf319e6b7",
+      "name": "llvm.nvvm.tex.unified.2d.array.v4u32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1798,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.array.v4u32.s32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_1553a4f3ec18a0085f43",
+      "name": "llvm.nvvm.tex.unified.2d.grad.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.grad.v4f32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_eca1a08d9b9c00630b24",
+      "name": "llvm.nvvm.tex.unified.2d.grad.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.grad.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_df34e0e17fc225dc03f8",
+      "name": "llvm.nvvm.tex.unified.2d.grad.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.grad.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_47fa29eaf55cc7ed3fde",
+      "name": "llvm.nvvm.tex.unified.2d.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.level.v4f32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_51c5dade0e3e63255f4f",
+      "name": "llvm.nvvm.tex.unified.2d.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.level.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_69ecc25f717d946fe3cf",
+      "name": "llvm.nvvm.tex.unified.2d.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.level.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_5edf6b6fc81de0527592",
+      "name": "llvm.nvvm.tex.unified.2d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.v4f32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_01d32877c0fdf39d19a7",
+      "name": "llvm.nvvm.tex.unified.2d.v4f32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.2d.v4f32.s32(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_1cafc6cc3549d8461657",
+      "name": "llvm.nvvm.tex.unified.2d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.v4s32.f32(i64 %tex, float %x, float %y,)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4f5899fab14c545ca250",
+      "name": "llvm.nvvm.tex.unified.2d.v4s32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.v4s32.s32(i64 %tex, i32 %x, i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_8aa02b7d922c8b7cdb7b",
+      "name": "llvm.nvvm.tex.unified.2d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.v4u32.f32(i64 %tex, float %x float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_904c052a9ae6ae992538",
+      "name": "llvm.nvvm.tex.unified.2d.v4u32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1771,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.2d.v4u32.s32(i64 %tex, i32 %x i32 %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_a90d8bcba2eec3e1c3fb",
+      "name": "llvm.nvvm.tex.unified.3d.grad.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.3d.grad.v4f32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ef00e6dc2901026095c8",
+      "name": "llvm.nvvm.tex.unified.3d.grad.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.grad.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_279405055207c2a889fe",
+      "name": "llvm.nvvm.tex.unified.3d.grad.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.grad.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_b91004ca6597780524e8",
+      "name": "llvm.nvvm.tex.unified.3d.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.3d.level.v4f32.f32(i64 %tex,float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_6898aec55b54934c8bda",
+      "name": "llvm.nvvm.tex.unified.3d.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.level.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4bcdac28473e5eec1d90",
+      "name": "llvm.nvvm.tex.unified.3d.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.level.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_612f592e8ef748f339cc",
+      "name": "llvm.nvvm.tex.unified.3d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.3d.v4f32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_6f76b8c13716ce2e79a7",
+      "name": "llvm.nvvm.tex.unified.3d.v4f32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.3d.v4f32.s32(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_84ed7d022cd8cf630eda",
+      "name": "llvm.nvvm.tex.unified.3d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_ed23dbf5ed83a8447ac5",
+      "name": "llvm.nvvm.tex.unified.3d.v4s32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.v4s32.s32(i64 %tex, i32 %x, i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_c180cf068991a3ccbaf7",
+      "name": "llvm.nvvm.tex.unified.3d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_fd6f0397dbb8c8058846",
+      "name": "llvm.nvvm.tex.unified.3d.v4u32.s32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1843,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.3d.v4u32.s32(i64 %tex, i32 %x i32 %y, i32 %z)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_8c59ca7ab02bb22e57cc",
+      "name": "llvm.nvvm.tex.unified.cube.array.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1897,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.cube.array.level.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0b32e66393adc18b8c14",
+      "name": "llvm.nvvm.tex.unified.cube.array.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1897,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.array.level.v4s32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_73d95636a57fd9612cab",
+      "name": "llvm.nvvm.tex.unified.cube.array.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1897,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.array.level.v4u32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_72ad6232a84c8d922357",
+      "name": "llvm.nvvm.tex.unified.cube.array.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1897,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.cube.array.v4f32.f32(i64 %tex, i32 %idx,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_d22716f78e7a8f5687f2",
+      "name": "llvm.nvvm.tex.unified.cube.array.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1897,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.array.v4s32.f32(i64 %tex, i32 %idx, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_1c2992db0eeaba16ebac",
+      "name": "llvm.nvvm.tex.unified.cube.array.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1897,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.array.v4u32.f32(i64 %tex, i32 %idx, float %x,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_1b7682bf611542033945",
+      "name": "llvm.nvvm.tex.unified.cube.level.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1879,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.cube.level.v4f32.f32(i64 %tex,float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_0bebdf4cd0255c9b9d42",
+      "name": "llvm.nvvm.tex.unified.cube.level.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1879,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.level.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_437d703e678e5c71e712",
+      "name": "llvm.nvvm.tex.unified.cube.level.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1879,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.level.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_da2b7f4fb4cb5547b187",
+      "name": "llvm.nvvm.tex.unified.cube.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1879,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tex.unified.cube.v4f32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_6db0d604419a9261ba4f",
+      "name": "llvm.nvvm.tex.unified.cube.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1879,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.v4s32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_a461ddfad6a99e10b060",
+      "name": "llvm.nvvm.tex.unified.cube.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1879,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tex.unified.cube.v4u32.f32(i64 %tex, float %x, float %y,"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_7ed30945af302cbf2846",
+      "name": "llvm.nvvm.texsurf.handle.p1i64",
+      "family": "14.2. Accessing Texture Memory or Surface Memory",
+      "evidence": [
+        {
+          "anchor": "accessing-texture-memory-or-surface-memory",
+          "line": 1403,
+          "kind": "specification_code"
+        },
+        {
+          "anchor": "texture-surface-access",
+          "line": 1691,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "delcare i64 %llvm.nvvm.texsurf.handle.p1i64(metadata, i64 addrspace(1)*)",
+        "declare i64 %llvm.nvvm.texsurf.handle.p1i64(metadata, i64 addrspace(1)*)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4cfe7c1303b646911140",
+      "name": "llvm.nvvm.tld4.unified.a.2d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tld4.unified.a.2d.v4f32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_26c1162e0d7bbfb2ed00",
+      "name": "llvm.nvvm.tld4.unified.a.2d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.a.2d.v4s32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_6952bcbc5c2044b1cb4f",
+      "name": "llvm.nvvm.tld4.unified.a.2d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.a.2d.v4u32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_fba299f5b7138654f9f8",
+      "name": "llvm.nvvm.tld4.unified.b.2d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tld4.unified.b.2d.v4f32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_7236551cc2519cb24c45",
+      "name": "llvm.nvvm.tld4.unified.b.2d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.b.2d.v4s32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2a4df53a3d887868e07d",
+      "name": "llvm.nvvm.tld4.unified.b.2d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.b.2d.v4u32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_52376323f181122f1083",
+      "name": "llvm.nvvm.tld4.unified.g.2d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tld4.unified.g.2d.v4f32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_669068e5494f99b774f9",
+      "name": "llvm.nvvm.tld4.unified.g.2d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.g.2d.v4s32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4edcb81df8fcd11a2c33",
+      "name": "llvm.nvvm.tld4.unified.g.2d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.g.2d.v4u32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2d16c3508f522afd67ee",
+      "name": "llvm.nvvm.tld4.unified.r.2d.v4f32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%float4 @llvm.nvvm.tld4.unified.r.2d.v4f32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_fabb0f90365daccd06e9",
+      "name": "llvm.nvvm.tld4.unified.r.2d.v4s32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.r.2d.v4s32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_2c875de0cc820ecf6c9b",
+      "name": "llvm.nvvm.tld4.unified.r.2d.v4u32.f32",
+      "family": "15.5.1. Texture Reads",
+      "evidence": [
+        {
+          "anchor": "texture-reads",
+          "line": 1920,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "%int4 @llvm.nvvm.tld4.unified.r.2d.v4u32.f32(i64 %tex, float %x, float %y)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    },
+    {
+      "id": "nvvm_4b51d4039dd9eb36a0f6",
+      "name": "llvm.nvvm.vote.sync",
+      "family": "15.6.3. Vote",
+      "evidence": [
+        {
+          "anchor": "vote",
+          "line": 2342,
+          "kind": "specification_code"
+        }
+      ],
+      "signatures": [
+        "declare {i32, i1} @llvm.nvvm.vote.sync(i32 %membermask, i32 %mode, i1 %predicate)"
+      ],
+      "support": "unknown",
+      "name_kind": "literal"
+    }
+  ],
+  "limitations": [
+    "固定官方规范代码块中的符号及泛型名称模板索引，不是编译器注册表全集。",
+    "符号出现不代表 B300 全部形式可用；目标编译、运行均未验证。",
+    "签名保留原文行；泛型占位符不展开为未经文档确认的符号。"
+  ]
+}

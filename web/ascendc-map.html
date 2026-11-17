@@ -20,7 +20,7 @@
 <div class="structure-compiler">
 <div class="structure-band">CUDA C++ 前端</div>
 <div class="cuda-flow" aria-hidden="true">↓</div>
-<div class="structure-band">NVVM IR <span class="structure-sub">LLVM IR 约定 ＋ llvm.nvvm.*</span></div>
+<a data-database class="structure-band structure-library-band" href="#backend=nvvm">NVVM IR ↗ <span class="structure-sub">LLVM IR 约定 ＋ llvm.nvvm.*</span></a>
 <div class="cuda-flow">↓ NVVM 编译</div>
 <a data-database class="structure-band structure-library-band" href="#backend=ptx">PTX 虚拟指令集 ↗ <span class="structure-sub">本库入口 · B300 / sm_103a</span></a>
 <div class="cuda-flow" aria-hidden="true">↓</div>
@@ -29,6 +29,6 @@
 <div class="structure-band">GPU 机器码 <span class="structure-sub">SASS · cubin 承载设备二进制</span></div>
 </div><div class="structure-compiler-note">两种 PTX 编译路径可选；已有兼容 cubin 时无需 JIT。</div></section>
 <div class="structure-band structure-machine">NVIDIA GPU <span class="structure-sub">机器代码执行</span></div>
-<div class="structure-foot"><span>仅 PTX 已建立知识库；其余为体系定位。</span><span>NVVM IR ≠ PTX ≠ 机器码。</span></div>
+<div class="structure-foot"><span>PTX 与 NVVM IR 已建立知识库；其余为体系定位。</span><span>NVVM IR ≠ PTX ≠ 机器码。</span></div>
 <details class="ecosystem-sources"><summary>来源与范围</summary><p>展示 CUDA C++ 的典型设备编译路径，不穷举语言前端，也不表示各层库必须依次调用。两侧位置不表示能力一一对应。</p><p><a href="https://docs.nvidia.com/cuda/archive/13.4.3/cuda-compiler-driver-nvcc/index.html">NVCC</a> · <a href="https://docs.nvidia.com/cuda/archive/13.4.3/nvvm-ir-spec/index.html">NVVM IR</a> · <a href="https://docs.nvidia.com/cutlass/latest/overview.html">CUTLASS / CuTe</a> · <a href="https://nvidia.github.io/cccl/unstable/cccl/index.html">CCCL</a></p></details>
 </section></div></div></div></div></main>

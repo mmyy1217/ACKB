@@ -57,9 +57,11 @@ def build(source, output, site=False):
         if errors: raise ValueError('; '.join(errors))
         from llvm_ir import web_payload as llvm_web_payload
         knowledge['llvm'] = llvm_web_payload(llvm)
+    knowledge['nvvm'] = json.loads((ROOT / 'data/nvvm/index.json').read_text())
+    knowledge['ptx']['forms'] = json.loads((ROOT / 'data/ptx/forms.json').read_text())
     scripts = '\n'.join((ROOT / 'web' / name).read_text() for name in [
         'loading.js', 'knowledge.js', 'ptx-reader.js', 'ccec-static.js', 'ccec-ops.js',
-        'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'app.js'])
+        'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'symbol-depth.js', 'app.js'])
     style = (ROOT / 'web/style.css').read_text()
     from site_build import inline_json, build_site
     if site:

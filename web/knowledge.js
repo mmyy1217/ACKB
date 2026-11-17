@@ -10,7 +10,8 @@ function refreshKnowledge() {
   ptxCategories = new Map(ptxTaxonomy.categories.map(c => [c.id,c]));
   ptxSubcategories = new Map(ptxTaxonomy.categories.flatMap(c => (c.subcategories || []).map(s => [s.id,{...s,category:c}])));
   knowledgeRecords = [
-    ...knowledgeData.ptx.records.map(k => wrapKnowledge(k,'ptx')),
+    ...knowledgeData.ptx.records.map(k => wrapKnowledge(knowledgeData.ptx.forms && k.kind==='instruction'?{...k,kind:'instruction_topic'}:k,'ptx')),
+    ...(knowledgeData.ptx.forms?.forms || []).map(f=>{const k=ptxSections.get(f.anchor);return wrapKnowledge({...k,entry_id:f.id,mnemonics:[f.name],concrete_form:f},'ptx');}),
     ...knowledgeData.ptx.notes.map(k => wrapKnowledge({...k,kind:'lesson'},'ptx')),
     ...knowledgeData.ccec.topics.map(k => wrapKnowledge({...k,kind:'note'},'ccec'))
   ];
@@ -26,6 +27,7 @@ function wrapKnowledge(k,backend) {
     signature:'',namespace:'',builtins:[],conditions:[],source:{file:backend === 'ptx' ? 'PTX ISA 9.4' : 'CANN 头文件'}};
 }
 function recordView(r) {
+  if(r.backend==='nvvm')return 'nvvm';
   if(r.backend==='llvm')return 'llvm';
   if (r.backend === 'ascendc') return r.ascendcLayer === 'capi' ? 'capi' : 'basic';
   if (r.backend === 'cce-dialect') return r.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops';
@@ -44,6 +46,7 @@ function recordView(r) {
   return 'definitions';
 }
 function viewLabels() {
+  if(state.backend==='nvvm')return {nvvm:'NVVM IR',report:'来源与覆盖'};
   if(state.backend==='llvm')return {llvm:'LLVM IR',report:'来源与覆盖'};
   if (state.backend === 'ascendc') return {basic:'AscendC 基础 C++ API',capi:'AscendC C / SIMT API',report:'说明 / 覆盖'};
   if (state.backend === 'cce-dialect') return {dialect_ops:'CCE Dialect 语义 Ops',dialect_intrinsics:'CCE Dialect LLVM Intrinsics',report:'说明 / 覆盖'};
@@ -54,8 +57,8 @@ function configureBackend() {
   const isLLVM=state.backend==='llvm';
   const isAscendc = state.backend === 'ascendc';
   const isDialect = state.backend === 'cce-dialect';
-  $('#page-title').hidden=!ptx;
-  records = isLLVM ? llvmRecords : ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : isAscendc ? ascendcRecords : isDialect ? dialectRecords : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
+  $('#page-title').hidden=true;
+  records = state.backend==='nvvm' ? nvvmRecords : isLLVM ? llvmRecords : ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : isAscendc ? ascendcRecords : isDialect ? dialectRecords : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
   document.body.classList.toggle('ptx-mode',ptx);
   document.body.classList.toggle('llvm-mode',isLLVM);
   const labels = viewLabels();
@@ -63,11 +66,11 @@ function configureBackend() {
     const count = key === 'report' ? '' : fmt(makeGroups(records.filter(r => key==='records'?isInterface(r):key === 'all' ? !['note','lesson'].includes(r.kind) : recordView(r) === key)).length);
     return `<button data-view="${key}" class="view">${esc(label)} <span id="nav-${key}">${count}</span></button>`;
   }).join('');
-  $('.views').hidden=!ptx;
-  if(ptx) renderPtxNavigation();
+  $('.views').hidden=true;
+
   $('#mobile-view').innerHTML = Object.entries(labels).map(([key,label]) => `<option value="${key}">${esc(label)}</option>`).join('');
   if (ptx) {
-    $('#family-section h2').textContent = '指令分类探索';
+    $('#family-section h2').textContent = '指令族';
     $('#family-section h2').title = '按能力域、PTX 9.7 类别及功能子类分层探索';
     $('#families').innerHTML = `<button class="family" data-family="">全部指令<span></span></button>` + ptxTaxonomy.domains.map(d => {
       const cats = d.categories.map(cid => ptxCategories.get(cid)).filter(Boolean);
@@ -77,26 +80,26 @@ function configureBackend() {
       }).join('');
       return `<div class="family-domain"><button class="family family-dom" data-family="${esc(d.id)}" title="${esc(d.summary)}">${esc(d.title)}<span></span></button>${catsHTML}</div>`;
     }).join('');
-    $('#mobile-family').innerHTML = '<option value="">全部指令 (221)</option>' + ptxTaxonomy.domains.map(d => `<optgroup label="${esc(d.title)}"><option value="${esc(d.id)}">${esc(d.title)}（全部）</option>${d.categories.map(cid => {const c=ptxCategories.get(cid);return c?`<option value="${esc(c.id)}">${esc(c.id)} ${esc(c.title_zh)}</option>`+(c.subcategories||[]).map(s=>`<option value="${esc(s.id)}">　└ ${esc(s.title_zh)}</option>`).join(''):'';}).join('')}</optgroup>`).join('');
+    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + ptxTaxonomy.domains.map(d => `<optgroup label="${esc(d.title)}"><option value="${esc(d.id)}">${esc(d.title)}（全部）</option>${d.categories.map(cid => {const c=ptxCategories.get(cid);return c?`<option value="${esc(c.id)}">${esc(c.id)} ${esc(c.title_zh)}</option>`+(c.subcategories||[]).map(s=>`<option value="${esc(s.id)}">　└ ${esc(s.title_zh)}</option>`).join(''):'';}).join('')}</optgroup>`).join('');
   } else {
     $('#family-section h2').textContent = '指令族';
     $('#family-section h2').title = '按接口名称关键词归类，仅用于导航';
-    $('#families').innerHTML = [['','全部指令'],...families.map(f=>[f,f])].map(([key,label])=>`<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
-    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + families.map(f=>`<option>${esc(f)}</option>`).join('');
+    $('#families').innerHTML = [['','全部指令'],...(state.backend==='nvvm'?[...new Set(records.map(r=>r.family))]:families).map(f=>[f,f])].map(([key,label])=>`<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
+    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + (state.backend==='nvvm'?[...new Set(records.map(r=>r.family))]:families).map(f=>`<option>${esc(f)}</option>`).join('');
   }
-  const activePool = isLLVM || isAscendc || isDialect ? records : data.records;
-  const activeFiles = isLLVM ? Object.values(llvmData.sources).map(s=>s.path).sort() : isAscendc ? Object.keys(ascendcData.files || {}).sort() : isDialect ? Object.keys(dialectData.source?.files || {}).sort() : data.files.map(f => f.path);
+  const activePool = state.backend==='nvvm' ? records : isLLVM || isAscendc || isDialect ? records : data.records;
+  const activeFiles = state.backend==='nvvm' ? ['NVVM IR Specification 13.4.3'] : isLLVM ? Object.values(llvmData.sources).map(s=>s.path).sort() : isAscendc ? Object.keys(ascendcData.files || {}).sort() : isDialect ? Object.keys(dialectData.source?.files || {}).sort() : data.files.map(f => f.path);
   $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(activePool.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
   $('#file').innerHTML = '<option value="">全部源文件</option>' + activeFiles.map(f => `<option>${esc(f)}</option>`).join('');
-  $('#version').textContent = ptx ? 'PTX ISA 9.4' : isDialect ? `CCEDialect ${dialectData.version || ''}` : data.version;
-  $('#footer-source').textContent = isLLVM ? `${Object.keys(llvmData.sources).length} 个版本化来源 · CANN ${data.version} · LLVM IR` : ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : isDialect ? `${activeFiles.length} 个 TableGen/文档源文件 · CCEDialect ${dialectData.version || ''} · dav-351x` : isAscendc ? `${activeFiles.length} 个 AscendC 头文件 · CANN ${data.version} · 950 / dav_3510` : `${data.files.length} 个源文件 · CANN ${data.version}`;
+  $('#version').textContent = state.backend==='nvvm' ? knowledgeData.nvvm?.version || 'NVVM IR' : ptx ? 'PTX ISA 9.4' : isDialect ? `CCEDialect ${dialectData.version || ''}` : data.version;
+  $('#footer-source').textContent = state.backend==='nvvm' ? 'NVVM IR 官方规范 · 文档索引 · 设备支持未验证' : isLLVM ? `${Object.keys(llvmData.sources).length} 个版本化来源 · CANN ${data.version} · LLVM IR` : ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : isDialect ? `${activeFiles.length} 个 TableGen/文档源文件 · CCEDialect ${dialectData.version || ''} · dav-351x` : isAscendc ? `${activeFiles.length} 个 AscendC 头文件 · CANN ${data.version} · 950 / dav_3510` : `${data.files.length} 个源文件 · CANN ${data.version}`;
   $('#search').placeholder = isLLVM ? '搜索 LLVM 名称、类型…' : ptx ? '搜索指令、章节、目标条件…' : isDialect ? '搜索 cce.* Op、llvm.hivm.*、语法…' : '搜索名称、类型、builtin、条件…';
   $('#search').setAttribute('aria-label',ptx ? '搜索 PTX 指令与章节' : '搜索接口或配套定义');
   for(const node of [$('#group').closest('label'),$('#file').closest('label')]) node.hidden=ptx;
-  $('#fixed-chip').hidden=ptx;$('#unknown-filter').hidden=ptx || isDialect;$('#unknown-label').textContent=isLLVM?'含字符串候选':'显示待确认';document.querySelectorAll('.llvm-filter').forEach(n=>n.hidden=!isLLVM);$('#coverage').hidden=ptx;
-  $('#mobile-view').closest('label').hidden=!ptx;
+  $('#fixed-chip').hidden=ptx || state.backend==='nvvm';$('#unknown-filter').hidden=ptx || isDialect || state.backend==='nvvm';$('#unknown-label').textContent=isLLVM?'含字符串候选':'显示待确认';document.querySelectorAll('.llvm-filter').forEach(n=>n.hidden=!isLLVM);$('#coverage').hidden=false;
+  $('#mobile-view').closest('label').hidden=true;
   document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);
-  $('.sidebar-note').innerHTML = isLLVM ? 'Huawei Ascend · LLVM IR<p>950 包内证据 · 3510</p><p>目标编译 / 运行未验证</p>' : ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
+  $('.sidebar-note').innerHTML = state.backend==='nvvm' ? 'NVVM IR<p>官方规范显式符号</p><p>编译与运行未验证</p>' : isLLVM ? 'Huawei Ascend · LLVM IR<p>950 包内证据 · 3510</p><p>目标编译 / 运行未验证</p>' : ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
 }
 function knowledgeLink(r,label) {
   return `<button class="related-link" data-knowledge-ref="${esc(r.id)}">${esc(label || r.name)}</button>`;

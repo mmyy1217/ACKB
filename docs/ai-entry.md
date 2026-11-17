@@ -43,3 +43,5 @@ CCEC 页面固定 950 / A5，默认 `interfaces` 返回 368 个条件符合的�
 ## LLVM IR 核心
 
 用 `--backend llvm` 查询 CANN 注册表、具体模块类型、上游关系与索引缺口。先读 [LLVM 核心](llvm-core.md)；不要把 `registered`、`c310_module_declaration` 或默认 A5 来源视图解释成设备支持。`forms` 和 `evidence` 独立分页。
+
+NVVM IR 现在可用 `scripts/query.py --backend nvvm info/search/get/forms/evidence/schema` 分页查询。源范围与 PTX 形式见 [符号展开](symbol-depth.md)；纯点号分组不改变原始身份。
