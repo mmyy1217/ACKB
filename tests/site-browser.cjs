@@ -11,7 +11,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
   const llvmDefaultCount = snapshot('llvm').coverage.default_a5_evidence_view;
   const ptxInstructionCount = snapshot('ptx').records.filter(r=>r.kind==='instruction').length;
   const requests = [], faults = new Map();
-  let revision = manifest.revision;
+  let revision = manifest.revision, latestDatasets = manifest.datasets;
   const server = http.createServer(async (req, res) => {
     const pathname = new URL(req.url, 'http://localhost').pathname;
     requests.push(pathname);
@@ -19,11 +19,16 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     if (fault === 'delay') await new Promise(resolve => setTimeout(resolve, 1200));
     if (fault === '404') {res.writeHead(404); res.end(); return;}
     if (fault === 'corrupt') {res.end('corrupt asset'); return;}
-    if (pathname === '/manifest.json') {res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({...manifest, revision})); return;}
+    if (pathname === '/manifest.json') {res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify({...manifest, revision, datasets:latestDatasets})); return;}
     const file = path.join(root, pathname === '/' ? 'index.html' : pathname);
     if (!file.startsWith(root + path.sep) || !fs.existsSync(file)) {res.writeHead(404); res.end(); return;}
     res.setHeader('Content-Length', fs.statSync(file).size);
     res.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html' : 'application/octet-stream');
+    if (fault === 'stream') {
+      const bytes = fs.readFileSync(file);
+      for(let offset=0;offset<bytes.length;offset+=32768) {res.write(bytes.subarray(offset,offset+32768)); await new Promise(resolve=>setTimeout(resolve,100));}
+      res.end(); return;
+    }
     fs.createReadStream(file).pipe(res);
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -36,6 +41,8 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     return page;
   };
   const ready = async (page, backend) => {
+    await page.waitForFunction(backend => installedBackends.has(backend) || (pendingNavigation?.backend === backend && ['missing','update','error'].includes(siteLoader.status(backend).phase)),backend);
+    if (await page.evaluate(backend => !installedBackends.has(backend) && ['missing','update','error'].includes(siteLoader.status(backend).phase),backend)) await page.click('#site-retry');
     await page.waitForFunction(backend => !document.body.classList.contains('data-loading') && typeof state !== 'undefined' && state.backend === backend && installedBackends.has(backend), backend);
   };
   try {
@@ -53,6 +60,9 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
       await page.screenshot({path:`.impeccable/review/loading-home-${width}.png`,fullPage:true});
     }
     await page.setViewportSize({width:1440,height:950});
+    assert.equal(await page.locator('.home-databases a[href*="backend=llvm"]').getAttribute('aria-disabled'),'true');
+    await page.locator('.home-databases [data-download-backend=llvm] button').click();
+    await page.waitForFunction(() => siteLoader.status('llvm').phase === 'ready');
     await page.locator('.home-databases a[href*="backend=llvm"]').click(); await ready(page,'llvm');
     assert.equal(await page.evaluate(() => visible.length), llvmDefaultCount);
     assert.equal(await page.evaluate(() => data.records.length), 0, 'LLVM must not download CCEC');
@@ -100,7 +110,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     // Failure, retry, cancellation and narrow-screen loading are part of navigation.
     const failure = await makePage(); faults.set('ptx','404');
-    await failure.goto(url+'#backend=ptx'); await failure.waitForSelector('#site-retry:not([hidden])');
+    await failure.goto(url+'#backend=ptx'); await failure.locator('#site-retry:enabled').click(); await failure.waitForFunction(() => siteLoader.status('ptx').phase === 'error'); await failure.waitForSelector('#site-retry:not([hidden])');
     assert.match(await failure.locator('#site-loading-message').textContent(), /最新版/);
     for(const width of [1440,1024,390,320]) {
       await failure.setViewportSize({width,height:950});
@@ -110,7 +120,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     faults.delete('ptx'); await failure.click('#site-retry'); await ready(failure,'ptx');
     await failure.close();
     faults.set('llvm','delay');
-    const raced = await makePage(); await raced.goto(url+'#backend=llvm');
+    const raced = await makePage(); await raced.goto(url+'#backend=llvm'); await raced.locator('#site-retry:enabled').click();
     await raced.locator('#site-loading a').click();
     await raced.waitForFunction(() => state.home && !document.body.classList.contains('data-loading'));
     await raced.waitForFunction(() => installedBackends.has('llvm'));
@@ -119,18 +129,45 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     faults.set('ccec','delay');
     const switched = await makePage(); await switched.goto(url+'#layer=interfaces');
-    await switched.locator('#site-loading').waitFor({state:'visible'});
+    await switched.locator('#site-loading').waitFor({state:'visible'}); await switched.locator('#site-retry:enabled').click();
     await switched.selectOption('#backend','ptx'); await ready(switched,'ptx');
     await switched.waitForFunction(()=>installedBackends.has('ccec'));
     assert.equal(await switched.evaluate(()=>state.backend),'ptx','late load must not override a new selection');
     faults.delete('ccec'); await switched.close();
 
     faults.set('ptx','corrupt');
-    const corrupted = await makePage(); await corrupted.goto(url+'#backend=ptx');
+    const corrupted = await makePage(); await corrupted.goto(url+'#backend=ptx'); await corrupted.locator('#site-retry:enabled').click(); await corrupted.waitForFunction(() => siteLoader.status('ptx').phase === 'error');
     await corrupted.waitForSelector('#site-retry:not([hidden])');
     assert.match(await corrupted.locator('#site-loading-message').textContent(), /校验失败/);
     assert.equal(await corrupted.evaluate(() => installedBackends.has('ptx')), false);
     faults.delete('ptx'); await corrupted.click('#site-retry'); await ready(corrupted,'ptx'); await corrupted.close();
+
+    // Existing older data requires an explicit update; cold navigation never fetches silently.
+    const old = await makePage(); await old.goto(url);
+    await old.evaluate(async () => {
+      const cache = await caches.open('ackb-data-v1:' + new URL('.',location.href).pathname);
+      await cache.put(new URL('assets/ptx.old.json.gz',location.href),new Response('previous version'));
+    });
+    await old.reload(); await old.waitForFunction(() => siteLoader.status('ptx').phase === 'update');
+    assert.equal(await old.locator('.home-databases [data-download-backend=ptx] button').textContent(),'更新');
+    const beforeUpdate = requests.filter(p=>p.includes('/ptx.')).length;
+    await old.locator('.home-databases a[href="#backend=ptx"]').click({force:true});
+    assert.equal(await old.locator('#home').isVisible(),true);
+    assert.equal(requests.filter(p=>p.includes('/ptx.')).length,beforeUpdate);
+    faults.set('ptx','stream');
+    await old.locator('.home-databases [data-download-backend=ptx] button').click();
+    await old.locator('.home-databases [data-download-backend=ptx] progress').waitFor({state:'visible'});
+    assert.equal(await old.locator('.home-databases a[href="#backend=ptx"]').getAttribute('aria-disabled'),'true');
+    await old.waitForFunction(() => {const {done,total}=siteLoader.progress('ptx'); return done>0 && done<total;});
+    await old.screenshot({path:'.impeccable/review/download-progress.png',fullPage:true});
+    await old.waitForFunction(()=>siteLoader.status('ptx').phase === 'ready'); faults.delete('ptx');
+    await old.locator('.home-databases a[href="#backend=ptx"]').click(); await ready(old,'ptx');
+    assert.equal(await old.evaluate(async () => !!(await (await caches.open('ackb-data-v1:/')).match(new URL('assets/ptx.old.json.gz',location.href)))),false);
+    await old.selectOption('#backend','llvm');
+    await old.waitForFunction(()=>siteLoader.status('llvm').phase === 'missing');
+    assert.equal(await old.locator('#database-download button').textContent(),'下载');
+    assert.equal(await old.evaluate(()=>installedBackends.has('llvm')),false);
+    await old.locator('#database-download button').click(); await ready(old,'llvm'); await old.close();
 
     // Older browsers and disabled persistent storage retain the same data.
     const fallback = await makePage();
@@ -138,6 +175,18 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await fallback.goto(url+'#backend=ptx&view=interfaces'); await ready(fallback,'ptx');
     assert.equal(await fallback.evaluate(() => visible.length),ptxInstructionCount);
     assert.ok(requests.includes('/'+manifest.datasets.ptx.plain.url)); await fallback.close();
+
+    latestDatasets = {...manifest.datasets,ptx:{...manifest.datasets.ptx,gzip:{...manifest.datasets.ptx.gzip,sha256:'new-content'}}};
+    revision='changed-data';
+    const fresh = await makePage(); await fresh.goto(url);
+    await fresh.waitForFunction(()=>siteLoader.isStale('ptx'));
+    assert.equal(await fresh.locator('.home-databases [data-download-backend=ptx] button').textContent(),'更新');
+    await fresh.evaluate(()=>location.hash='backend=ptx');
+    await fresh.waitForFunction(()=>pendingNavigation?.backend === 'ptx');
+    assert.equal(await fresh.locator('#database-download button').textContent(),'更新');
+    latestDatasets=manifest.datasets; revision=manifest.revision;
+    await fresh.locator('#database-download button').click(); await fresh.waitForURL(/updated=/); await ready(fresh,'ptx');
+    assert.equal(await fresh.evaluate(()=>state.backend),'ptx'); await fresh.close();
 
     revision='next-version';
     const updated = await makePage(); await updated.goto(url+'#backend=llvm'); await ready(updated,'llvm');

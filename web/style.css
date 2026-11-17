@@ -371,3 +371,13 @@ body.data-loading.home-mode .topbar .backend-switch,body.data-loading .topbar .b
 .llvm-mode .topbar {gap:6px}
 @media(min-width:801px) {.llvm-mode .backend-switch select {max-width:165px}.llvm-mode .filter #file {width:132px}.llvm-mode .filter #group {width:102px}.llvm-mode .llvm-filter select {width:90px}}
 @media(min-width:801px) and (max-width:1220px) {.llvm-mode .topbar {height:auto;flex-wrap:wrap;padding:6px 10px}.llvm-mode .toolbar {order:3;flex-basis:100%;width:100%}.llvm-mode #coverage {margin-left:auto}}
+
+.database-download {display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px;font-size:11px;font-weight:400;margin-top:5px;max-width:100%}
+.database-download[hidden] {display:none!important}
+.database-download button {border:1px solid var(--input-line);border-radius:5px;background:var(--subtle);color:var(--ink);padding:3px 8px;cursor:pointer}
+.database-download button:disabled {cursor:default;color:var(--muted)}
+.database-download span {overflow-wrap:anywhere;color:var(--muted)}
+.database-download progress {width:100%;height:5px;accent-color:var(--ink)}
+#database-download {max-width:210px;margin:0}
+body.data-loading .topbar #database-download {display:flex}
+.home-databases a[aria-disabled="true"],.topology a[aria-disabled="true"] {color:var(--muted);text-decoration-style:dotted}
