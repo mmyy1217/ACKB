@@ -8,6 +8,7 @@ from pathlib import Path
 from catalog import ROOT, VERSION, validate
 from database import load_catalog
 from knowledge import Knowledge
+from insights import render as render_insights
 
 
 def build(source, output, site=False):
@@ -15,6 +16,7 @@ def build(source, output, site=False):
     validate(data)
     page = (ROOT / 'web/index.html').read_text()
     page = page.replace('<!--__ASCENDC_MAP__-->', (ROOT / 'web/ascendc-map.html').read_text())
+    page = page.replace('<!--__INSIGHTS__-->', render_insights())
     ptx = Knowledge('ptx')
     ccec = Knowledge('ccec')
     knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning, 'taxonomy': ptx.taxonomy},

@@ -10,6 +10,7 @@ from io import StringIO
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import site_build
+from insights import render as render_insights
 
 
 class SiteBuildTests(unittest.TestCase):
@@ -26,6 +27,7 @@ class SiteBuildTests(unittest.TestCase):
     def build(self, style='css', script='js', title=None):
         template = (Path(__file__).resolve().parents[1] / 'web/index.html').read_text()
         template = template.replace('<!--__ASCENDC_MAP__-->', (Path(__file__).resolve().parents[1] / 'web/ascendc-map.html').read_text())
+        template = template.replace('<!--__INSIGHTS__-->', render_insights())
         if title:
             template = template.replace('AI Compiler 目标知识库', title)
         with redirect_stdout(StringIO()):

@@ -1,0 +1,39 @@
+<p class="insight-lead">当前 NVVM 的 287 条，是 ACKB 从一份规范中提取到的名称记录，不是 NVIDIA GPU 的全部指令，也不是 NVVM 的完整能力集合。它与 LLVM 核心中的上千个符号，不能直接比较数量。</p>
+<h2>先问：一条记录代表什么？</h2>
+<p>同一个加法操作，可以按“加法”计一条，也可以按整数、浮点、位宽和模式分别计数。PTX 手册把许多形式写在同一节里；编译器 intrinsic 则可能把类型和模式编码进函数名。名称更多，不意味着硬件能力更多。</p>
+<ul>
+<li><strong>PTX：</strong>原索引的 221 条是指令手册条目。当前形式索引有 1,057 条记录、1,033 个不同拼写，来自示例及有界语法展开；仍保留 19 个未展开条目，不能称为所有合法组合。</li>
+<li><strong>Huawei Ascend LLVM 核心：</strong>按完整目标符号建档，并区分注册信息、Bitcode、外部映射和仅字符串候选。类型变体和证据范围都会影响数量。</li>
+<li><strong>NVVM：</strong>当前 287 条按规范代码块中的函数名称去重，包含泛型名称模板，也可能包含标准 <code>llvm.*</code> 名称，不等于 287 个具体 GPU 指令。</li>
+</ul>
+<p class="insight-note">以上为 2026-11-17、仓库提交 <code>26cf786</code> 的索引快照。后续数据更新可能改变数字；比较前应同时说明版本、来源、计数单位和筛选条件。</p>
+<h2>NVVM 目前少在哪里？</h2>
+<p>当前提取器只扫描固定 CUDA 13.4.3 NVVM IR 规范的代码块，没有系统覆盖正文、表格及其他文档，也没有导入 LLVM NVPTX 后端的完整 intrinsic 定义。像 <code>&lt;n&gt;</code> 这样的占位符保留为模板，没有人为枚举类型组合。</p>
+<p>更关键的是，<strong>NVVM IR 不只是 <code>llvm.nvvm.*</code> 函数集合</strong>。它还包括普通 LLVM 指令、类型、地址空间、元数据和使用约束。例如普通算术、分支与访存不必各自表现为目标 intrinsic。这部分执行模型也需要单独建立索引。<a href="https://docs.nvidia.com/cuda/archive/13.4.3/nvvm-ir-spec/index.html">NVVM IR 规范</a>明确将其定义为受规则和约束限制的 LLVM IR。</p>
+<p>补全应分三路：规范中的声明与模板、固定版本的编译器定义、普通 IR 与执行约束。<a href="https://github.com/llvm/llvm-project/blob/main/llvm/include/llvm/IR/IntrinsicsNVVM.td">LLVM 的 IntrinsicsNVVM.td</a> 是重要来源，但上游 LLVM 中存在某个定义，不能直接证明某版 NVIDIA libNVVM 接受它，更不能证明 B300 上可用。导入时必须固定提交并分开标注来源与验证状态。</p>
+<h2>这些名称处于哪一层？</h2>
+<pre aria-label="两条编译路径的简化示意">CUDA C++ / 设备接口
+  ↓ 前端
+NVVM IR：普通 LLVM IR + 目标 intrinsics + 约束
+  ↓ 目标代码生成
+PTX：虚拟汇编
+  ↓ ptxas / 驱动 JIT
+GPU 机器指令（SASS 汇编表示）
+
+Huawei Ascend C / CCEC 源码接口
+  ↓ 前端（含 __builtin_cce_* 处理）
+LLVM IR：普通 IR + llvm.hivm.* 等目标 intrinsics
+  ↓ Huawei Ascend 后端
+AI Core 机器指令</pre>
+<p>这张图表示编译阶段，不表示每个源操作都必须经过一个目标 intrinsic，也不表示上下层一一对应。一个操作可以展开为多个操作，多个操作也可能在优化后合并或消失。NVVM 到 PTX 的关系可见<a href="https://docs.nvidia.com/cuda/archive/13.4.3/nvvm-ir-spec/index.html#introduction">官方规范引言</a>；PTX 的编译流程可见<a href="https://docs.nvidia.com/cuda/archive/13.4.3/cuda-compiler-driver-nvcc/index.html">NVCC 文档</a>。</p>
+<p><code>__builtin_cce_*</code> 是源码层的编译器内建入口，<code>llvm.hivm.*</code> 是 IR 层的目标 intrinsic。两者都不能直接当作硬件机器指令。CCEC 编程接口仍属于 C/C++ 源码接口；不能因为它较底层，就把它称为 Huawei Ascend 的 PTX。</p>
+<p>按编译阶段寻找对照时，NVVM IR 与 Huawei Ascend 的 LLVM IR 目标层更接近。但两者的执行模型、地址空间与目标能力仍需分别理解；“都基于 LLVM”不等于语义相同。</p>
+<h2>虚拟 ISA 也有边界</h2>
+<p><a href="https://docs.nvidia.com/cuda/archive/13.4.3/parallel-thread-execution/index.html">PTX</a> 以虚拟寄存器、显式访存和控制流描述计算，目标之一是跨代提供稳定的虚拟 ISA。它不是 C API；有地址和局部存储操作，也不意味着它提供了 C/C++ 运行库或 Host 端内存分配功能。</p>
+<p>跨代并非无条件兼容。PTX 版本、目标架构和特性都有约束，架构专用目标的适用范围尤其需要单独检查。LLVM IR、builtin 或 intrinsic 的名称本身也不构成跨代兼容承诺。</p>
+<p><a href="https://github.com/hw-native-sys/pto-isa">PTO</a> 采用 Tile 操作抽象，并以虚拟 ISA 为设计方向；这不意味着它与 PTX 处在完全相同的编译阶段。需要同时看它描述什么，以及具体实现通过哪些接口降级，不能只按“虚拟 ISA”四个字把两者放到同一层。</p>
+<h2>在 ACKB 中应该怎样读？</h2>
+<p>先选目标与来源范围，再看完整名称和签名，最后查看支持证据与上下游关系。包内出现、编译接受、运行正确是不同结论。“950 支持未确定”表示当前证据不足，既不是支持，也不是不支持。</p>
+<p>展开滑块只按 <code>.</code> 分段聚合名称，并跳过所有条目共有的前缀。它可以帮助浏览符号规模，<strong>不进行语义归类，也不会生成新的指令</strong>。相同前缀不保证相同功能，完整展开也不保证数据库已经完整。</p>
+<p>真正值得比较的是：各层暴露哪些计算、存储与同步能力，这些能力如何表达，又有哪些可核对的支持条件。条目数量只描述当前索引，不能替代这些问题。</p>
+<nav class="insight-related" aria-label="相关知识库"><a href="#backend=nvvm">查看 NVVM IR</a><a href="#backend=llvm">查看 LLVM IR</a><a href="#backend=ptx">查看 PTX</a></nav>

@@ -50,7 +50,7 @@ function installBackend(backend, payload, navigation) {
 }
 function navigateHash(reveal) {
   const params=new URLSearchParams(location.hash.slice(1));
-  const home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map';
+  const home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map' || location.hash==='#insights' || location.hash.startsWith('#insight=');
   const requested=['ptx','ascendc','cce-dialect','llvm','nvvm'].includes(params.get('backend'))?params.get('backend'):'ccec';
   const backend=home?null:backendForLink(params.get('r') || '',requested);
   navigateWithData(backend,()=>{readHash();render(reveal);});
@@ -78,7 +78,7 @@ function saveHash(replace = true) {
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   state.symbolDepth=Math.max(0,parseInt(p.get('depth'),10)||0);
-  state.home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map';
+  state.home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map' || location.hash==='#insights' || location.hash.startsWith('#insight=');
   state.llvmScope=['all','a5-sources'].includes(p.get('scope'))?p.get('scope'):'a5-evidence';state.llvmEvidence=p.get('evidence') || '';
   const rawBackend = p.get('backend');
   state.backend = ['ptx','ascendc','cce-dialect','llvm','nvvm'].includes(rawBackend) ? rawBackend : 'ccec';
@@ -502,7 +502,7 @@ function reset() {state.llvmScope='a5-evidence';state.llvmEvidence='';if(['ccec'
 function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
-$('.skip-link').onclick=e=>{e.preventDefault();const target=state.home?(location.hash==='#ascendc-map'?$('#api-map-content'):$('#home-content')):$('#main');target.focus();target.scrollIntoView({block:'start'});};
+$('.skip-link').onclick=e=>{e.preventDefault();const target=state.home?(!$('#insights').hidden?$('#insights-content'):$('#home-content')):$('#main');target.focus();target.scrollIntoView({block:'start'});};
 $('#download').onclick = download;
 $('#backend').onchange=e=>{
   const val=e.target.value;

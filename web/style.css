@@ -335,7 +335,7 @@ body { overflow-anchor: none; }
 .unknown-hint button { text-decoration: underline; text-underline-offset: 3px; }
 
 /* Home is a reading index within the existing monochrome tool. */
-body.home-mode .topbar > :not(.brand):not(.top-meta) {display:none}
+body.home-mode .topbar > :not(.brand):not(.top-meta):not(.insights-link) {display:none}
 body.home-mode .top-meta {margin-left:auto}
 body.home-mode .workspace {display:none}
 body.data-loading #home,body.data-loading .workspace,body.data-loading #scroll-navigation {display:none}
@@ -502,3 +502,24 @@ body.data-loading #ascendc-map {display:none}
 @media(max-width:650px){.ecosystem-grid .structure-compiler-layout {grid-template-columns:1fr}}
 
 #symbol-depth-control {display:flex;align-items:center;gap:5px;font-size:11px} #symbol-depth-control[hidden]{display:none} #symbol-depth {width:100px;accent-color:var(--ink)} .symbol-members {padding:8px;border-bottom:1px solid var(--line)}
+
+.insights-link {color:var(--muted);text-decoration:none;padding:5px 8px;border-radius:6px;white-space:nowrap}
+.insights-link:hover,.insights-link[aria-current] {color:var(--ink);background:var(--soft,#f3f3f3)}
+#insights {max-width:820px;margin:0 auto;padding:36px 24px 72px}
+#insights h1 {white-space:normal;overflow-wrap:anywhere;font-size:26px;line-height:1.4;margin:0 0 12px;letter-spacing:-.02em}
+#insights h2 {font-size:19px;line-height:1.5;margin:32px 0 12px}
+#insights p,#insights li {font-size:15px;line-height:1.9}
+#insights p {margin:12px 0}
+#insights a {text-underline-offset:4px}
+#insights time,.insights-intro,.insight-note {color:var(--muted)}
+.insights-list {list-style:none;padding:0;margin:28px 0}
+.insights-list>li {display:grid;grid-template-columns:100px 1fr;gap:20px;padding:22px 0;border-top:1px solid var(--line,#ddd)}
+.insights-list a {font-weight:600;font-size:18px;color:var(--ink)}
+.insights-list p {color:var(--muted)}
+.insight-back {display:inline-block;margin-bottom:24px;color:var(--muted)}
+#insights article header {padding-bottom:16px;border-bottom:1px solid var(--line,#ddd)}
+#insights .insight-lead {font-size:17px;margin:24px 0}
+#insights pre {white-space:pre-wrap;overflow-wrap:anywhere;padding:20px;background:#f5f5f5;border-radius:8px;font-size:13px;line-height:1.8}
+#insights code {overflow-wrap:anywhere;font-size:.92em}
+.insight-related {display:flex;flex-wrap:wrap;gap:20px;border-top:1px solid var(--line,#ddd);padding-top:24px;margin-top:32px}
+@media(max-width:600px){#insights{padding:24px 16px 48px}#insights h1{font-size:23px}.insights-list>li{grid-template-columns:1fr;gap:6px}#insights pre{padding:12px;font-size:12px}}

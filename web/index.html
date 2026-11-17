@@ -11,6 +11,7 @@
 <a class="skip-link" href="#main">跳到接口列表</a>
 <header class="topbar">
   <a class="brand" href="#home" aria-label="ACKB 首页">ACKB</a>
+  <a class="insights-link" href="#insights">洞察</a>
   <label class="backend-switch"><span class="sr-only">目标后端</span><select id="backend" aria-label="目标后端"><option value="nvvm">NVVM IR</option><option value="llvm">LLVM IR</option><option value="ccec">CCEC 编程接口</option><option value="ccec-intrinsics">CCEC Builtins</option><option value="ascendc">AscendC 基础 C++ API</option><option value="ascendc-capi">AscendC C / SIMT API</option><option value="cce-dialect">CCE Dialect 语义 Ops</option><option value="cce-dialect-intrinsics">CCE Dialect LLVM Intrinsics</option><option value="ptx">PTX 虚拟指令集</option></select></label>
   <h1 id="page-title">指令接口</h1>
   <div class="toolbar"><label id="symbol-depth-control" hidden>展开 <input id="symbol-depth" type="range" min="1" max="1" value="1" aria-label="符号展开层级"><span id="symbol-depth-label">全部展开</span></label>
@@ -40,6 +41,7 @@
   <div class="loading-actions"><button id="site-retry" type="button" hidden>重试</button><button type="button" onclick="refreshSite()">刷新到最新版</button><a href="#home">返回首页</a></div>
 </section>
 <!--__ASCENDC_MAP__-->
+<!--__INSIGHTS__-->
 <div class="workspace">
   <aside id="sidebar" class="sidebar" aria-label="指令分类">
     <nav class="views" aria-label="内容类型">

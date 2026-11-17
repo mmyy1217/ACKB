@@ -79,9 +79,20 @@ function downloadLLVM() {
 }
 function syncHome() {
   document.body.classList.toggle('home-mode',state.home);
-  const map = state.home;
-  $('#home').hidden=!state.home;$('#ascendc-map').hidden=!map;$('.workspace').hidden=state.home;
-  $('.skip-link').href=state.home?(map?'#api-map-content':'#home-content'):'#main';
+  const reading = state.home && (location.hash==='#insights' || location.hash.startsWith('#insight='));
+  const slug = new URLSearchParams(location.hash.slice(1)).get('insight');
+  const articles = [...document.querySelectorAll('[data-insight]')];
+  const selected = articles.find(article=>article.dataset.insight===slug);
+  $('#insights').hidden=!reading;
+  $('#insights-index').hidden=!!slug || location.hash.startsWith('#insight=');
+  articles.forEach(article=>{article.hidden=!reading || article!==selected;});
+  $('#insight-missing').hidden=!reading || !location.hash.startsWith('#insight=') || !!selected;
+  if(reading) $('.insights-link').setAttribute('aria-current','page');
+  else $('.insights-link').removeAttribute('aria-current');
+  document.title=reading?(selected?selected.querySelector('h1').textContent+' · ACKB':'洞察 · ACKB'):'ACKB · AI Compiler 目标知识库';
+  const map = state.home && !reading;
+  $('#home').hidden=!map;$('#ascendc-map').hidden=!map;$('.workspace').hidden=state.home;
+  $('.skip-link').href=reading?'#insights-content':state.home?'#api-map-content':'#main';
   if(state.home){setProgressActive(false);document.body.classList.remove('reading-ptx','lookup-collapsed');window.scrollTo(0,0);}
   return state.home;
 }

@@ -233,3 +233,7 @@ python scripts/build.py
 ## PTX / LLVM / NVVM 符号展开
 
 按点号前缀聚合，默认全部展开；数据边界及命令见 [符号展开](docs/symbol-depth.md)。新增 NVVM 入口 `--backend nvvm`；修改后运行 `node tests/symbol-depth.cjs`、知识浏览器回归及线上下载回归。
+
+## 洞察文章
+
+首页顶部文章入口和离线维护见 [洞察维护](docs/insights.md)。正文、来源与快照口径随构建发布；回归入口 `node tests/insights-browser.cjs`。
