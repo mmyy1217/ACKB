@@ -228,4 +228,4 @@ python scripts/build.py
 
 ## AscendC API 全景阅读页
 
-首页 `#ascendc-map` 的概念矩阵与收录边界见 [全景维护说明](docs/ascendc-api-map.md)。修改 `web/ascendc-map.html` 后同时构建在线与离线页面；`test:site` 与 LLVM 浏览器回归覆盖入口、筛选与深链接。来源快照独立于设备支持证据，不据此扩展 API 全量扫描。
+首页 `#ascendc-map` 的结构图与七个知识库入口见 [全景维护说明](docs/ascendc-api-map.md)。修改 `web/ascendc-map.html` 后同时构建在线与离线页面；`test:site` 与 LLVM 浏览器回归覆盖入口、下载门控与深链接。来源快照独立于设备支持证据，不据此扩展 API 全量扫描。

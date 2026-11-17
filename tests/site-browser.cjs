@@ -68,9 +68,15 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
       await page.screenshot({path:`.impeccable/review/api-map-${width}.png`,fullPage:true});
     }
-    await page.selectOption('#api-map-filter','simt');
-    assert.equal(await page.locator('[data-map-tags]:visible').count(),5);
-    await page.selectOption('#api-map-filter','all');
+    assert.equal(await page.locator('[data-library]').count(),7);
+    const libraryLinks = await page.locator('[data-library]').evaluateAll(nodes=>nodes.map(n=>n.hash));
+    for (const link of libraryLinks) {
+      await page.evaluate(hash=>location.hash=hash,link);
+      await page.locator('#site-loading:not([hidden])').waitFor();
+      assert.equal(await page.evaluate(()=>installedBackends.size),0,'library requires explicit download');
+      await page.evaluate(()=>location.hash='ascendc-map');
+      await page.locator('#ascendc-map:not([hidden])').waitFor();
+    }
     await page.reload(); await page.locator('#ascendc-map:not([hidden])').waitFor();
     assert.equal(await page.evaluate(()=>installedBackends.size),0);
     await page.locator('.map-nav a[href="#home"]').click();

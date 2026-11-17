@@ -535,12 +535,3 @@ if ('IntersectionObserver' in window) new IntersectionObserver(queueMore,{rootMa
 initPanelResize();
 initScrollNavigation();
 navigateHash(Boolean(new URLSearchParams(location.hash.slice(1)).get('r')));
-
-$('#api-map-filter').onchange = event => {
-  let count = 0;
-  for (const row of document.querySelectorAll('[data-map-tags]')) {
-    row.hidden = event.target.value !== 'all' && !row.dataset.mapTags.split(' ').includes(event.target.value);
-    if (!row.hidden) count++;
-  }
-  $('#api-map-count').textContent = count + ' 类功能';
-};

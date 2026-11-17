@@ -19,8 +19,15 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  }
  await page.locator('.home-guide a').click();
  await page.locator('#ascendc-map:not([hidden])').waitFor();
- await page.selectOption('#api-map-filter','resources');
- assert.equal(await page.locator('[data-map-tags]:visible').count(),1);
+ assert.equal(await page.locator('[data-library]').count(),7);
+ const libraryLinks=await page.locator('[data-library]').evaluateAll(nodes=>nodes.map(n=>n.hash));
+ for(const link of libraryLinks){
+  await page.evaluate(hash=>location.hash=hash,link);
+  await page.waitForFunction(()=>!state.home);
+  assert.equal(await page.locator('.workspace').isVisible(),true);
+  await page.evaluate(()=>location.hash='ascendc-map');
+  await page.locator('#ascendc-map:not([hidden])').waitFor();
+ }
  await page.reload(); await page.locator('#ascendc-map:not([hidden])').waitFor();
  await page.locator('.map-nav a[href="#home"]').click();
  await page.setViewportSize({width:1440,height:950});
