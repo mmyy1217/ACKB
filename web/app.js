@@ -12,7 +12,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {home:false,llvmScope:'a5-evidence',llvmEvidence:'',backend:'ccec',ccecLayer:'wrappers',ascendcLayer:'basic',dialectLayer:'ops',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {home:false,llvmSource:'',llvmScope:'a5-sources',llvmEvidence:'',backend:'ccec',ccecLayer:'wrappers',ascendcLayer:'basic',dialectLayer:'ops',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -61,7 +61,7 @@ function saveHash(replace = true) {
   const p = new URLSearchParams();
   if(state.backend==='nvvm')p.set('backend','nvvm');
   if(state.symbolDepth)p.set('depth',state.symbolDepth);
-  if(state.backend==='llvm'){p.set('backend','llvm');p.set('scope',state.llvmScope);if(state.llvmEvidence)p.set('evidence',state.llvmEvidence);if(state.includeUnknown)p.set('unknown','1');if(state.opForm)p.set('form',state.opForm);if(state.view==='report')p.set('view','report');}
+  if(state.backend==='llvm'){p.set('backend','llvm');p.set('scope',state.llvmScope);if(state.llvmSource)p.set('source',state.llvmSource);if(state.llvmEvidence)p.set('evidence',state.llvmEvidence);if(state.includeUnknown)p.set('unknown','1');if(state.opForm)p.set('form',state.opForm);if(state.view==='report')p.set('view','report');}
   if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
   if(state.backend==='ccec'){p.set('layer',state.ccecLayer==='interfaces'?'intrinsics':'interfaces');if(state.includeUnknown)p.set('unknown','1');}
   if(state.backend==='ascendc'){p.set('backend','ascendc');p.set('layer',state.ascendcLayer);if(state.includeUnknown)p.set('unknown','1');}
@@ -79,7 +79,7 @@ function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   state.symbolDepth=Math.max(0,parseInt(p.get('depth'),10)||0);
   state.home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map' || location.hash==='#insights' || location.hash.startsWith('#insight=');
-  state.llvmScope=['all','a5-sources'].includes(p.get('scope'))?p.get('scope'):'a5-evidence';state.llvmEvidence=p.get('evidence') || '';
+  state.llvmScope=['all','a5-evidence'].includes(p.get('scope'))?p.get('scope'):'a5-sources';state.llvmSource=Object.hasOwn(llvmSourceLabels,p.get('source'))?p.get('source'):'';state.llvmEvidence=p.get('evidence') || '';
   const rawBackend = p.get('backend');
   state.backend = ['ptx','ascendc','cce-dialect','llvm','nvvm'].includes(rawBackend) ? rawBackend : 'ccec';
   state.ptxTarget = ['sm_103','sm_103f','sm_103a'].includes(p.get('target')) ? p.get('target') : 'sm_103a';
@@ -95,7 +95,7 @@ function readHash() {
   state.selected = p.get('r') || '';
   if (state.selected && byId.has(state.selected)) {
     const sel = byId.get(state.selected);
-    if (sel.backend === 'llvm') {state.backend='llvm';state.home=false;state.view=p.get('view')==='report'?'report':'llvm';if(sel.llvm.identity_status==='candidate_only')state.includeUnknown=true;if(!sel.llvm.static_target?.package_evidence && state.llvmScope==='a5-evidence')state.llvmScope='all';configureBackend();}
+    if (sel.backend === 'llvm') {state.backend='llvm';state.home=false;state.view=p.get('view')==='report'?'report':'llvm';if(sel.llvm.identity_status==='candidate_only')state.includeUnknown=true;if((!sel.llvm.static_target?.package_evidence && state.llvmScope==='a5-evidence') || (state.llvmScope==='a5-sources' && !sel.llvm.a5_source_lead && sel.llvm.domain!=='ordinary_ir'))state.llvmScope='all';configureBackend();}
     else if (sel.backend === 'ascendc') {state.backend = 'ascendc'; state.ascendcLayer = sel.ascendcLayer; configureBackend(); state.view = recordView(sel);}
     else if (sel.backend === 'cce-dialect') {state.backend = 'cce-dialect'; state.dialectLayer = sel.dialectLayer; configureBackend(); state.view = recordView(sel);}
     else if (!p.has('view') || state.view==='interfaces' && !sel.op && !sel.knowledge) state.view = recordView(sel);
@@ -200,12 +200,12 @@ function render(revealSelection = false) {
   $('#page-title').textContent = viewLabels()[state.view] || '来源详情';
   $('.toolbar').hidden = report;
   document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'nvvm' ? 'NVVM 符号' : state.backend === 'llvm' ? 'LLVM 名称 / IR 模型' : state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
-  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'nvvm' ? '来源依据' : state.backend === 'llvm' ? '身份依据' : state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
+  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'nvvm' ? '来源依据' : state.backend === 'llvm' ? '指令族' : state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
   document.querySelectorAll('.interface-table th')[3].textContent = depthEnabled() ? '记录数' : state.backend === 'llvm' ? '形式' : state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
-  syncControls();syncPtxNavigation();syncDepthControl();
+  configureLLVMColumns();syncControls();syncPtxNavigation();syncDepthControl();
   if (report) {setProgressActive(false);if($('#ptx-category-brief'))$('#ptx-category-brief').hidden=true;renderReport();saveHash();return;}
   $('#ptx-category-brief').hidden=true;
   const matches = filtered();
@@ -240,10 +240,11 @@ function rowHTML(groups) {
     const r0 = g.items[0];
     const selected = g.items.some(r => r.id === state.selected);
     const classification = r0.knowledge ? g.family : state.view === 'definitions' ? kinds[r0.kind] : r0.transfer?.label || g.family;
+    const secondColumn = r0.llvm ? [...new Set(g.items.flatMap(r=>r.sourceKeys))].map(k=>llvmSourceLabels[k]).join(' · ') : classification;
     const qualified = [r0.namespace,g.name].filter(Boolean).join('::');
     const col3 = r0.knowledge?.concrete_form ? '形式支持待核对' : g.symbolGroup && g.items.length>1 ? '逐条查看' : r0.nvvm ? '文档符号' : r0.llvm ? llvmIdentities[r0.llvm.identity_status] : state.backend === 'ptx' ? supportLabels[r0.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : state.backend === 'cce-dialect' ? (r0.dialectOp ? (loweringModeLabels[r0.dialectOp.lowering_mode] || r0.group) : r0.group) : a5GroupLabel(g.items);
     const col4 = g.symbolGroup ? g.items.length : r0.llvm ? (r0.llvm.form_ids.length || '—') : state.backend === 'ptx' ? esc(r0.knowledge.section_number || '—') : r0.dialectOp ? (r0.dialectOp.intrinsic_ids?.length || '—') : r0.dialectIntr ? (r0.dialectIntr.mappings?.length || 1) : r0.ascendc ? (r0.ascendc.overload_count || 1) : r0.op ? (scopedA5Op(r0.op).forms.length || '—') : g.items.length;
-    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${r0.id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}${directEntryIDs.has(r0.id)?' · 直连':''}</span></button></td><td title="${esc(classification)}">${esc(classification)}</td><td>${esc(col3)}</td><td class="number">${col4}</td></tr>`;
+    return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${r0.id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}${directEntryIDs.has(r0.id)?' · 直连':''}</span></button></td><td title="${esc(secondColumn)}">${esc(secondColumn)}</td><td>${esc(r0.llvm ? classification : col3)}</td><td class="number">${col4}</td></tr>`;
   }).join('');
 }
 function updateLoadStatus() {
@@ -498,7 +499,7 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {state.llvmScope='a5-evidence';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function reset() {state.llvmScope='a5-sources';state.llvmSource='';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};

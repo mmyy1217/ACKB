@@ -523,3 +523,11 @@ body.data-loading #ascendc-map {display:none}
 #insights code {overflow-wrap:anywhere;font-size:.92em}
 .insight-related {display:flex;flex-wrap:wrap;gap:20px;border-top:1px solid var(--line,#ddd);padding-top:24px;margin-top:32px}
 @media(max-width:600px){#insights{padding:24px 16px 48px}#insights h1{font-size:23px}.insights-list>li{grid-template-columns:1fr;gap:6px}#insights pre{padding:12px;font-size:12px}}
+.llvm-mode .interface-table th {position:relative}
+.llvm-mode .interface-table th:nth-child(2) {width:25%}
+.llvm-mode .interface-table th:nth-child(3) {width:16%}
+#llvm-source {max-width:100%;width:100%;min-width:0;font:inherit;color:inherit;background:transparent;border:0;cursor:pointer}
+.llvm-column-resizer {position:absolute;inset:0 0 0 auto;width:7px;border-right:1px solid var(--line);cursor:col-resize;touch-action:none;user-select:none}
+.llvm-column-resizer:hover,.llvm-column-resizer:focus-visible {background:var(--line)}
+
+.llvm-mode .interface-table th {overflow:hidden;text-overflow:ellipsis}

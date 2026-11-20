@@ -18,6 +18,20 @@ function appendLLVMCalls() {
 const llvmDomains = {target_intrinsic:'目标 Intrinsic',standard_intrinsic:'标准 LLVM Intrinsic',ordinary_ir:'普通 LLVM IR'};
 const llvmIdentities = {registered:'编译器已注册',declaration_observed:'模块声明',lowering_reference:'外部 lowering 引用',candidate_only:'仅字符串候选',reference_model:'IR 参考模型'};
 let llvmData,llvmForms,llvmRecords,llvmRelationsById;
+const llvmSourceLabels = {
+  hivmc_a5: 'hivmc-a5', ccec: 'ccec', llc: 'libbisheng-llc.so',
+  c310: 'c310 Bitcode', malloc: 'malloc.bc', dialect: 'CCE Dialect', langref: 'LLVM LangRef'
+};
+function llvmSourceKeys(op) {
+  if (op.domain === 'ordinary_ir') return ['langref'];
+  const sources = new Set();
+  for (const [key, status] of Object.entries(op.presence)) {
+    if (status !== 'observed') continue;
+    sources.add(key.startsWith('bc_meta_op_') ? 'c310' : key === 'bc_malloc_bc' ? 'malloc' : key);
+  }
+  return Object.keys(llvmSourceLabels).filter(key => sources.has(key));
+}
+
 function refreshLLVM() {
   llvmData = knowledgeData.llvm || {ops:[],forms:[],sources:{},relations:[],coverage:{},limitations:[],scans:[]};
   if(llvmData.web_encoding==='columnar-v1' && !Array.isArray(llvmData.ops)) {
@@ -26,13 +40,14 @@ function refreshLLVM() {
   }
   llvmForms = new Map(llvmData.forms.map(f=>[f.id,f]));
   llvmRecords = llvmData.ops.map(op=>({id:op.id,name:op.name,backend:'llvm',kind:'llvm',llvm:op,group:llvmDomains[op.domain],family:op.family,namespace:'',signature:op.form_ids.map(id=>llvmForms.get(id)?.signature || '').join(' '),builtins:[],conditions:[],source:{file:llvmData.sources[op.evidence[0]?.source_id]?.path || 'LLVM LangRef',line:op.evidence[0]?.line || 0},files:op.evidence.map(e=>llvmData.sources[e.source_id]?.path).filter(Boolean)}));
+  for (const record of llvmRecords) record.sourceKeys = llvmSourceKeys(record.llvm);
   llvmRelationsById = new Map();
   for(const edge of (knowledgeData.navigation?.llvm_relations || llvmData.relations)) for(const id of [edge.from,edge.to]) {if(!llvmRelationsById.has(id))llvmRelationsById.set(id,[]);llvmRelationsById.get(id).push(edge);}
 }
 refreshLLVM();
 function llvmMatches(r) {
   const o=r.llvm;
-  return (state.llvmScope==='all' || (state.llvmScope==='a5-evidence' ? o.static_target?.package_evidence : o.a5_source_lead || o.domain==='ordinary_ir')) && (state.includeUnknown || o.identity_status!=='candidate_only') && (!state.llvmEvidence || (state.llvmEvidence==='bitcode_call' ? o.static_target?.call_count>0 : o.evidence.some(e=>e.kind===state.llvmEvidence)));
+  return (!state.llvmSource || r.sourceKeys.includes(state.llvmSource)) && (state.llvmScope==='all' || (state.llvmScope==='a5-evidence' ? o.static_target?.package_evidence : o.a5_source_lead || o.domain==='ordinary_ir')) && (state.includeUnknown || o.identity_status!=='candidate_only') && (!state.llvmEvidence || (state.llvmEvidence==='bitcode_call' ? o.static_target?.call_count>0 : o.evidence.some(e=>e.kind===state.llvmEvidence)));
 }
 function llvmRelationHTML(id) {
   const edges=llvmRelationsById.get(id) || [];
@@ -65,7 +80,7 @@ function renderLLVMDetail(r) {
   wireOpLinks(pane);
 }
 function renderLLVMReport() {
-  $('#report').innerHTML=`<h2>LLVM IR 核心 · 来源与边界</h2><p>默认仅显示 c310 模块中的声明或调用；A5 相关线索另列。其他跨架构注册项可通过「全部范围」查看；字符串候选需要另行勾选。</p><pre><code>${esc(JSON.stringify({coverage:llvmData.coverage,target_mapping:llvmData.target_mapping,static:llvmData.a5_static_summary},null,2))}</code></pre><ul>${llvmData.limitations.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><details><summary>c310 调用解析缺口</summary><pre><code>${esc(JSON.stringify((llvmData.a5_call_scans || []).map(s=>({...s,issues:undefined})),null,2))}</code></pre><p>完整未解析位置可从数据库快照 a5_call_scans 查询。</p></details><details><summary>提取覆盖与失败记录</summary><pre><code>${esc(JSON.stringify(llvmData.scans,null,2))}</code></pre></details><details><summary>原包核对</summary><pre><code>${esc(JSON.stringify(llvmData.package,null,2))}</code></pre></details>`;
+  $('#report').innerHTML=`<h2>LLVM IR 核心 · 来源与边界</h2><p>默认显示 A5 相关线索。选择「950 包内证据」可查看 c310 模块中有直接调用的条目。其他跨架构注册项可通过「全部范围」查看；字符串候选需要另行勾选。</p><pre><code>${esc(JSON.stringify({coverage:llvmData.coverage,target_mapping:llvmData.target_mapping,static:llvmData.a5_static_summary},null,2))}</code></pre><ul>${llvmData.limitations.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><details><summary>c310 调用解析缺口</summary><pre><code>${esc(JSON.stringify((llvmData.a5_call_scans || []).map(s=>({...s,issues:undefined})),null,2))}</code></pre><p>完整未解析位置可从数据库快照 a5_call_scans 查询。</p></details><details><summary>提取覆盖与失败记录</summary><pre><code>${esc(JSON.stringify(llvmData.scans,null,2))}</code></pre></details><details><summary>原包核对</summary><pre><code>${esc(JSON.stringify(llvmData.package,null,2))}</code></pre></details>`;
 }
 function downloadLLVM() {
   const selected=filtered().map(r=>r.llvm), ids=new Set(selected.map(o=>o.id));
@@ -73,7 +88,7 @@ function downloadLLVM() {
   const sourceIds=new Set([...selected.flatMap(o=>o.evidence),...forms.flatMap(f=>f.evidence)].map(e=>e.source_id));
   const formIds=new Set(forms.map(f=>f.id)), table=llvmData.a5_call_table;
   const callTable=table?{...table,rows:table.rows.filter(row=>formIds.has(table.forms[row[1]]))}:undefined;
-  const payload={schema_version:'ackb.llvm.export.v1',version:llvmData.version,target:llvmData.target,target_mapping:llvmData.target_mapping,a5_call_table:callTable,selection:{scope:state.llvmScope,include_candidates:state.includeUnknown,evidence:state.llvmEvidence,query:state.query,group:state.group,file:state.file},limitations:llvmData.limitations,ops:selected,forms,relations:llvmData.relations.filter(e=>ids.has(e.from)||ids.has(e.to)),sources:Object.fromEntries([...sourceIds].map(id=>[id,llvmData.sources[id]]))};
+  const payload={schema_version:'ackb.llvm.export.v1',version:llvmData.version,target:llvmData.target,target_mapping:llvmData.target_mapping,a5_call_table:callTable,selection:{scope:state.llvmScope,source:state.llvmSource,include_candidates:state.includeUnknown,evidence:state.llvmEvidence,query:state.query,group:state.group,file:state.file},limitations:llvmData.limitations,ops:selected,forms,relations:llvmData.relations.filter(e=>ids.has(e.from)||ids.has(e.to)),sources:Object.fromEntries([...sourceIds].map(id=>[id,llvmData.sources[id]]))};
   const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
   const a=document.createElement('a');a.href=url;a.download='ackb-llvm-ir.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
@@ -95,4 +110,62 @@ function syncHome() {
   $('.skip-link').href=reading?'#insights-content':state.home?'#api-map-content':'#main';
   if(state.home){setProgressActive(false);document.body.classList.remove('reading-ptx','lookup-collapsed');window.scrollTo(0,0);}
   return state.home;
+}
+
+function configureLLVMColumns() {
+  const cells = [...document.querySelectorAll('.interface-table thead th')];
+  for (const cell of cells) cell.style.removeProperty('width');
+  if (state.backend !== 'llvm') return;
+  cells[1].title = '按已观察到的来源筛选';
+  cells[2].title = '指令族';
+  const select = document.createElement('select');
+  select.id = 'llvm-source';
+  select.setAttribute('aria-label', '筛选 LLVM 来源');
+  select.add(new Option('来源', ''));
+  for (const [key, label] of Object.entries(llvmSourceLabels)) select.add(new Option(label, key));
+  select.value = state.llvmSource;
+  select.onchange = () => {
+    state.llvmSource = select.value;
+    state.selected = '';
+    render();
+    document.querySelector('#llvm-source')?.focus();
+  };
+  cells[1].replaceChildren(select);
+  cells[2].textContent = '指令族';
+  const storageKey = 'ackb-llvm-column-widths';
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (Array.isArray(saved) && saved.length === cells.length && saved.every(n => Number.isFinite(n) && n > 0))
+      cells.forEach((cell, i) => cell.style.width = saved[i] + '%');
+  } catch {}
+  cells.slice(0, -1).forEach((cell, i) => {
+    const handle = document.createElement('span');
+    handle.className = 'llvm-column-resizer';
+    handle.tabIndex = 0;
+    handle.setAttribute('role','separator');
+    handle.setAttribute('aria-orientation','vertical');
+    handle.setAttribute('aria-label','调整第 ' + (i + 1) + ' 列宽度');
+    function resize(widths, delta) {
+      const total = widths.reduce((a,b) => a+b, 0);
+      const change = Math.max(28-widths[i], Math.min(delta, widths[i+1]-28));
+      const next = widths.map((w,j) => 100*(w+(j===i?change:j===i+1?-change:0))/total);
+      cells.forEach((c,j) => c.style.width = next[j]+'%');
+      try {localStorage.setItem(storageKey, JSON.stringify(next));} catch {}
+    }
+    const measure = () => cells.map(c => c.getBoundingClientRect().width);
+    handle.onpointerdown = event => {
+      if(event.button !== 0) return;
+      event.preventDefault();
+      const start = event.clientX, widths = measure();
+      handle.setPointerCapture(event.pointerId);
+      handle.onpointermove = e => resize(widths,e.clientX-start);
+      handle.onlostpointercapture = () => {handle.onpointermove=null;};
+    };
+    handle.onkeydown = e => {
+      if (!['ArrowLeft','ArrowRight'].includes(e.key)) return;
+      e.preventDefault();
+      resize(measure(),e.key==='ArrowRight'?8:-8);
+    };
+    cell.append(handle);
+  });
 }
