@@ -16,6 +16,11 @@ def dispatch(args, page):
     context={'schema_version':PROTOCOL,'backend':'llvm','operation':args.command,'version':model['version'],
              'target':model['target'],'index_sha256':file_digest(path),'limitations':model['limitations']}
     ops={o['id']:o for o in model['ops']}; forms={f['id']:f for f in model['forms']}
+    if args.command in ('gaps', 'relations'):
+        from llvm_ir import dialect_navigation
+        dialect_path = ROOT / 'data/cce_dialect/index.json'
+        if dialect_path.is_file():
+            model['relations'] += dialect_navigation(model, json.loads(dialect_path.read_text()))
     identity=getattr(args,'identity','')
     def evidence(items):
         return [{**e,'source':model['sources'][e['source_id']]} for e in items]
@@ -45,7 +50,7 @@ def dispatch(args, page):
         items=[]
         for op in model['ops']:
             if scope=='a5-evidence' and not default_visible(op): continue
-            if scope=='a5-sources' and not (op['a5_source_lead'] or op['domain']=='ordinary_ir'): continue
+            if scope=='a5-sources' and not op['a5_source_lead']: continue
             if not args.include_candidates and op['identity_status']=='candidate_only': continue
             if args.domain and op['domain']!=args.domain: continue
             if args.source and op['presence'].get(args.source)!='observed': continue

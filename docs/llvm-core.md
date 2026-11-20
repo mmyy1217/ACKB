@@ -10,12 +10,10 @@ ACKB 以 Huawei Ascend 的 LLVM IR 目标能力层为核心，向上关联 CCEC 
 | `hivmc-a5` 名称扫描 | 918 个精确拼写 | A5 工具中出现过名称；不是注册、类型或支持证明 |
 | `ccec` + `libbisheng-llc.so` 名称扫描 | 12,376 个 | 与 A5 工具交集 757；仅 A5 161；仅 CCEC / LLC 11,619 |
 | 8 个 `meta_op.*.c310.{O0,O2}.bc` + `malloc.bc` | 535 种去重具体声明类型；487 个目标名称有 c310 声明 | 这些模块内存在函数声明或定义的类型；不证明实际调用、运行或全目标适用 |
-| 外部 CCEDialect | 1,069 个具体 LLVM 符号映射，并扫描已固定哈希的 C++ lowering 文件 | 外部工程的映射意图；不代替 CANN 的编译器实现 |
-| 普通 LLVM IR | 6 个阅读模型 | 解释算术、访存、控制、原子、地址空间；独立于 target intrinsic 数量 |
 
-完整快照包括 13,400 个目标名称、36 个标准 LLVM intrinsic 名称、6 个普通 IR 阅读模型。「950 包内证据」为 522 条（487 个目标 intrinsic、35 个标准 intrinsic），均在 c310 模块中有直接调用。网页默认打开「A5 相关线索」，共 1,892 条。列表第二列可筛选来源，相邻列表头之间可拖动调整宽度；**这些数字都不是经过目标编译或运行验证的指令数**。默认隐藏 158 个仅字符串候选；全部范围可查看其他跨架构注册项。页面、CLI 的筛选口径相同。
+完整快照包括 12,737 个目标名称和 36 个标准 LLVM intrinsic 名称。「950 包内证据」为 522 条（487 个目标 intrinsic、35 个标准 intrinsic），均在 c310 模块中有直接调用。网页默认打开「A5 相关线索」，共 1,136 条。列表第二列可筛选来源，相邻列表头之间可拖动调整宽度；**这些数字都不是经过目标编译或运行验证的指令数**。默认隐藏 全部范围中的 168 个仅字符串候选；全部范围可查看其他跨架构注册项。页面、CLI 的筛选口径相同。
 
-12 个实际读取的 CANN 文件（三个编译器文件、九个 Bitcode）已通过流式读取外层与内层 Makeself / tar 归档核对 SHA-256，不执行安装脚本。每个来源保留包成员路径、内层包哈希、外层包哈希。外部 Dialect 来源独立标注 Git commit 与文件哈希。
+12 个实际读取的 CANN 文件（三个编译器文件、九个 Bitcode）已通过流式读取外层与内层 Makeself / tar 归档核对 SHA-256，不执行安装脚本。每个来源保留包成员路径、内层包哈希、外层包哈希。外部 Dialect 只在包内名称集合固定后按名称建立导航关系，不参与入库、分类、类型或 A5 判定。
 
 ## 取得方式与边界
 
@@ -31,17 +29,17 @@ IIT 按 [LLVM 15.0.5 的 Intrinsic 类型编码](https://github.com/llvm/llvm-pr
 
 数据位置：`data/llvm/9.3.0~weekly.20261104.01/index.json`。日常 build / query 只消费已提交快照，不依赖 CANN 安装。
 
-- `sources`：按来源 ID 唯一保存相对路径、哈希、原包核对或外部 Git 来源。
-- `ops`：按精确名称 + domain 生成稳定 ID。目标 intrinsic、标准 intrinsic、普通 IR 分域；不擅自剥离类型后缀，也不把不同模式强并为一个 op。
+- `sources`：按来源 ID 唯一保存相对路径、哈希、原包核对状态。
+- `ops`：按精确名称 + domain 生成稳定 ID。目标 intrinsic 与标准 intrinsic 分域；不擅自剥离类型后缀，也不把不同模式强并为一个 op。
 - `forms`：独立、完整的类型形式。`registry_constraints` 是注册约束；`observed_signature` 是具体模块类型，后者仍可能含未解析厂商类型。不能把约束数当成已验证重载数。
-- `relations`：双向可查询的有向边。`exact_llvm_symbol` 表示同一 LLVM 拼写；`dialect_mapping` 保留原映射中间节点；`naming_candidate` 只表示 CCEC 名称候选；`overload_name_candidate` 连接候选基名，绝不用于身份归并。
+- 原始库的 `relations` 只含包内名称关系。网页导航与 CLI 的 relations/gaps 查询在读取两个独立索引后再连接外部记录。`exact_llvm_symbol` 表示同一 LLVM 拼写；`dialect_mapping` 保留原映射中间节点；`naming_candidate` 只表示 CCEC 名称候选；`overload_name_candidate` 连接候选基名，绝不用于身份归并。
 - `scans` / `coverage`：扫描方法、成功 / 失败、覆盖与集合差。失败不删除，不当成空扫描。
 
 身份、签名、目标与实验分别记录。`identity_status=registered` 不推出 `target_status`；`c310_module_declaration` 也不是“950 已验证支持”。所有编译、运行、性能状态仍为 `unverified`。
 
 `presence` 的三态为 `observed`、`scanned_absent`、`not_scanned`。例如工具名称正则只扫描 `llvm.hivm.*` / `llvm.cce.*`，不能把未扫描的标准 LLVM intrinsic 记成不存在。没有上游映射只能叫索引缺口，不能叫“没有公开 API 的隐藏硬件能力”。
 
-地址空间表来自外部 `include/Utils/AddressSpaces.td`：GM=1、L1=2、L0A=3、L0B=4、L0C=5、UB=6、PRIVATE=9。Bitcode 的具体 `ptr addrspace(N)` 单独保留；没有把外部工程的命名自动提升为所有 CANN 模块的正式映射。
+地址空间以包内 Bitcode 具体签名中的 `ptr addrspace(N)` 为准。
 
 ## AI 查询契约
 
@@ -84,8 +82,6 @@ IIT 按 [LLVM 15.0.5 的 Intrinsic 类型编码](https://github.com/llvm/llvm-pr
 | `c310_declaration` | 模块有声明，尚无已解析调用；本次没有剩余项 |
 | `a5_name_only` | A5 工具中出现名称，缺少 c310 模块依据 |
 | `cross_arch_registry` | 跨架构编译器注册，缺少更强目标依据 |
-| `external_only` | 仅外部工程映射，不能代表 CANN 的实现 |
-| `reference_model` / `insufficient` | 通用 IR 阅读模型 / 证据不足 |
 
 八个模块共记录 308,558 个直接 intrinsic 调用位置，涉及 522 个精确 LLVM 名称；6,250 个间接或常量表达式调用未解析，保留调用者、偏移及原因。没有从间接调用猜测目标。未知函数记录或类型 / 参数数目冲突会丢弃该函数整段推断并报告，避免 value ID 偏移后产生错误关联。没有证明入口可达性、执行条件、参数取值约束或设备支持；AIC/AIV/mix 仅说明调用所在模块，不据此排除其他核。
 

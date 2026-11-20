@@ -61,6 +61,8 @@ def build(source, output, site=False):
         if errors: raise ValueError('; '.join(errors))
         from llvm_ir import web_payload as llvm_web_payload
         knowledge['llvm'] = llvm_web_payload(llvm)
+        from llvm_ir import dialect_navigation
+        knowledge['llvm_navigation'] = dialect_navigation(llvm, knowledge.get('cce_dialect', {'intrinsics': []}))
     knowledge['nvvm'] = json.loads((ROOT / 'data/nvvm/index.json').read_text())
     knowledge['ptx']['forms'] = json.loads((ROOT / 'data/ptx/forms.json').read_text())
     scripts = '\n'.join((ROOT / 'web' / name).read_text() for name in [

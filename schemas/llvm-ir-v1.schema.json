@@ -55,9 +55,6 @@
         "properties": {
           "kind": {
             "enum": [
-              "exact_llvm_symbol",
-              "dialect_mapping",
-              "naming_candidate",
               "overload_name_candidate"
             ]
           }
@@ -116,8 +113,7 @@
         },
         "origin": {
           "enum": [
-            "cann",
-            "cce_dialect"
+            "cann"
           ]
         },
         "package_status": {
@@ -142,9 +138,7 @@
           "enum": [
             "registry",
             "binary_string",
-            "bitcode_declaration",
-            "lowering_source",
-            "external_model"
+            "bitcode_declaration"
           ]
         },
         "byte_offset": {
@@ -182,17 +176,14 @@
         "domain": {
           "enum": [
             "target_intrinsic",
-            "standard_intrinsic",
-            "ordinary_ir"
+            "standard_intrinsic"
           ]
         },
         "identity_status": {
           "enum": [
-            "registered",
-            "declaration_observed",
-            "lowering_reference",
             "candidate_only",
-            "reference_model"
+            "registered",
+            "declaration_observed"
           ]
         },
         "target_status": {

@@ -208,7 +208,7 @@ python scripts/query.py --backend ascendc schema
 数据口径、类型缺口及跨层边界见 [LLVM 核心](docs/llvm-core.md)。首页为 `#home`，LLVM 数据库入口为 `#backend=llvm`；无 fragment 默认首页。提取只读 ELF 注册元数据和 Bitcode 模块类型与直接调用，不运行编译器或 kernel。复用原包核对仅限版本、路径和 SHA-256 全部相同的来源。
 
 ```sh
-python scripts/llvm_ir.py extract --toolkit "$CCE_OPS_TOOLKIT" --repo /home/zuomin/Projects/Compiler/CCEDialect
+python scripts/llvm_ir.py extract --toolkit "$CCE_OPS_TOOLKIT"
 python scripts/llvm_ir.py verify-package --package "$CCE_OPS_PACKAGE" --work-dir ../work/experiments/ackb/llvm-core/package
 python scripts/llvm_ir.py validate
 python scripts/query.py --backend llvm info

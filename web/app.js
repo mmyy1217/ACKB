@@ -79,7 +79,7 @@ function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   state.symbolDepth=Math.max(0,parseInt(p.get('depth'),10)||0);
   state.home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map' || location.hash==='#insights' || location.hash.startsWith('#insight=');
-  state.llvmScope=['all','a5-evidence'].includes(p.get('scope'))?p.get('scope'):'a5-sources';state.llvmSource=Object.hasOwn(llvmSourceLabels,p.get('source'))?p.get('source'):'';state.llvmEvidence=p.get('evidence') || '';
+  state.llvmScope=['all','a5-evidence'].includes(p.get('scope'))?p.get('scope'):'a5-sources';state.llvmSource=Object.hasOwn(llvmSourceLabels,p.get('source'))?p.get('source'):'';state.llvmEvidence=Array.from($('#llvm-evidence').options).some(o=>o.value===p.get('evidence'))?p.get('evidence'):'';
   const rawBackend = p.get('backend');
   state.backend = ['ptx','ascendc','cce-dialect','llvm','nvvm'].includes(rawBackend) ? rawBackend : 'ccec';
   state.ptxTarget = ['sm_103','sm_103f','sm_103a'].includes(p.get('target')) ? p.get('target') : 'sm_103a';
@@ -95,7 +95,7 @@ function readHash() {
   state.selected = p.get('r') || '';
   if (state.selected && byId.has(state.selected)) {
     const sel = byId.get(state.selected);
-    if (sel.backend === 'llvm') {state.backend='llvm';state.home=false;state.view=p.get('view')==='report'?'report':'llvm';if(sel.llvm.identity_status==='candidate_only')state.includeUnknown=true;if((!sel.llvm.static_target?.package_evidence && state.llvmScope==='a5-evidence') || (state.llvmScope==='a5-sources' && !sel.llvm.a5_source_lead && sel.llvm.domain!=='ordinary_ir'))state.llvmScope='all';configureBackend();}
+    if (sel.backend === 'llvm') {state.backend='llvm';state.home=false;state.view=p.get('view')==='report'?'report':'llvm';if(sel.llvm.identity_status==='candidate_only')state.includeUnknown=true;if((!sel.llvm.static_target?.package_evidence && state.llvmScope==='a5-evidence') || (state.llvmScope==='a5-sources' && !sel.llvm.a5_source_lead))state.llvmScope='all';configureBackend();}
     else if (sel.backend === 'ascendc') {state.backend = 'ascendc'; state.ascendcLayer = sel.ascendcLayer; configureBackend(); state.view = recordView(sel);}
     else if (sel.backend === 'cce-dialect') {state.backend = 'cce-dialect'; state.dialectLayer = sel.dialectLayer; configureBackend(); state.view = recordView(sel);}
     else if (!p.has('view') || state.view==='interfaces' && !sel.op && !sel.knowledge) state.view = recordView(sel);
@@ -199,7 +199,7 @@ function render(revealSelection = false) {
   $('#family-section').hidden = state.backend==='ptx'?state.view!=='interfaces':false;$('#mobile-family-label').hidden = state.backend==='ptx'?state.view!=='interfaces':false;
   $('#page-title').textContent = viewLabels()[state.view] || '来源详情';
   $('.toolbar').hidden = report;
-  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'nvvm' ? 'NVVM 符号' : state.backend === 'llvm' ? 'LLVM 名称 / IR 模型' : state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
+  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'nvvm' ? 'NVVM 符号' : state.backend === 'llvm' ? 'LLVM 名称' : state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
   document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'nvvm' ? '来源依据' : state.backend === 'llvm' ? '指令族' : state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
   document.querySelectorAll('.interface-table th')[3].textContent = depthEnabled() ? '记录数' : state.backend === 'llvm' ? '形式' : state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';

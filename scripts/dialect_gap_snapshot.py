@@ -11,23 +11,21 @@ def snapshot():
     llvm = json.loads((ROOT / 'data/llvm' / VERSION / 'index.json').read_text())
     mappings = {op['name']: op for op in dialect['intrinsics']}
     leads = {op['name']: op for op in llvm['ops']
-             if (op['a5_source_lead'] or op['domain'] == 'ordinary_ir')
+             if op['a5_source_lead']
              and op['identity_status'] != 'candidate_only'}
     rows = []
     domains = {'target_intrinsic': '目标 intrinsic', 'standard_intrinsic': '标准 LLVM intrinsic',
                'ordinary_ir': '普通 IR 阅读模型'}
-    for name in sorted(mappings.keys() ^ leads.keys()):
-        if name in leads:
-            op = leads[name]
-            sources = {llvm['sources'][key]['path'].split('/')[-1] if key in llvm['sources'] else 'CCE Dialect'
-                       for key, status in op['presence'].items() if status == 'observed'}
-            rows.append([name, op['family'], domains[op['domain']], '仅 A5 线索',
-                         ' / '.join(sorted(sources)) or 'LLVM LangRef', op['static_target']['call_count'], op['id']])
-        else:
-            op = mappings[name]
-            rows.append([name, op['family'], 'Dialect LLVM 映射', '仅 Dialect', op['source']['file'], None, op['id']])
+    for name in sorted(leads.keys() - mappings.keys()):
+        op = leads[name]
+        sources = sorted({Path(llvm['sources'][sid]['path']).name
+                          for sid, status in op['presence'].items() if status == 'observed'})
+        if not sources:
+            raise ValueError(f'Missing CANN provenance: {name}')
+        rows.append([name, op['family'], domains[op['domain']], '仅 A5 线索',
+                     ' / '.join(sources), op['static_target']['call_count'], op['id']])
     return {'dialect': len(mappings), 'a5': len(leads), 'common': len(mappings.keys() & leads.keys()),
-            'version': VERSION, 'commit': dialect['source']['commit'], 'rows': rows}
+            'dialect_only': len(mappings.keys() - leads.keys()), 'version': VERSION, 'commit': dialect['source']['commit'], 'rows': rows}
 
 
 if __name__ == '__main__':

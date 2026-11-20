@@ -19,7 +19,7 @@ TOOLS = {'hivmc_a5':'tools/bishengir/bin/hivmc-a5',
          'llc':'tools/bisheng_compiler/lib/libbisheng-llc.so'}
 LIMITATIONS = [
     '注册表是本版本编译器的跨架构注册范围，不是 950 支持清单，也不是硬件 ISA 全集。',
-    '默认 950 包内证据仅含 c310 模块声明或调用；A5 名称及外部映射放在线索范围。模块核归属不等于对其他核的排除结论。',
+    '950 包内证据来自 c310 模块；A5 相关线索还包括 hivmc-a5 中的名称。模块核归属不等于对其他核的排除结论。',
     'IIT 为按上游 LLVM 15 格式解释的类型约束，保留原编码；未知厂商编码不补造签名。',
     'c310 函数体只追踪已解析的直接调用；间接调用与未知编码单列。模块调用不证明入口可达、目标编译通过或运行验证。',
     'CCEDialect 是独立外部工程；名称候选关联不等于编译器 lowering 证明。',
@@ -42,14 +42,13 @@ def family(name):
     return family_for(n)
 
 
-def extract(toolkit, dialect_repo, output=OUTPUT):
+def extract(toolkit, output=OUTPUT):
     previous = json.loads(output.read_text()) if output.exists() else {}
     sources, ops, forms, edges, scans = {}, {}, {}, [], []
-    def source(key, path, origin='cann'):
-        base = toolkit if origin == 'cann' else dialect_repo
-        p = base/path
-        sources[key] = {'id':key, 'origin':origin, 'path':path, 'sha256':file_digest(p), 'bytes':p.stat().st_size,
-                        'package_status':'not_verified' if origin=='cann' else 'not_applicable'}
+    def source(key, path):
+        p = toolkit/path
+        sources[key] = {'id':key, 'origin':'cann', 'path':path, 'sha256':file_digest(p), 'bytes':p.stat().st_size,
+                        'package_status':'not_verified'}
         return p
     def get(name, domain=None):
         domain = domain or ('target_intrinsic' if name.startswith(('llvm.hivm.','llvm.cce.')) else 'standard_intrinsic')
@@ -114,31 +113,6 @@ def extract(toolkit, dialect_repo, output=OUTPUT):
             op['evidence'].append({'kind':'bitcode_declaration','source_id':sid,'bit_offset':fn['bit_offset'],'declaration':fn['declaration']})
             form(op,'observed_signature',{k:fn[k] for k in ('return_type','parameters','vararg','signature','signature_status')},sid,
                  {'bit_offset':fn['bit_offset'],'type_id':fn['type_id']})
-    dialect_path = ROOT/'data/cce_dialect/index.json'
-    dialect = json.loads(dialect_path.read_text())
-    for path, meta in dialect['source']['files'].items():
-        sid = 'dialect_'+hashlib.sha256(path.encode()).hexdigest()[:12]
-        p = source(sid,path,'cce_dialect')
-        if sources[sid]['sha256'] != meta['sha256']: raise ValueError('Dialect source changed: '+path)
-        sources[sid]['commit'] = dialect['source']['commit']
-        if p.suffix not in ('.td','.cpp','.h'): continue
-        lines = p.read_text().splitlines()
-        for i,line in enumerate(lines,1):
-            for name in re.findall(r'"(llvm\.(?:hivm|cce)\.[A-Za-z0-9_.]+)"',line):
-                op = get(name)
-                if op['identity_status']=='candidate_only': op['identity_status']='lowering_reference'
-                op['presence']['dialect'] = 'observed'; op['a5_source_lead']=True
-                op['evidence'].append({'kind':'lowering_source','source_id':sid,'line':i,'excerpt':line.strip()})
-    for intr in dialect['intrinsics']:
-        op = get(intr['llvm_intrinsic'])
-        op['presence']['dialect']='observed'; op['a5_source_lead']=True
-        if op['identity_status']=='candidate_only': op['identity_status']='lowering_reference'
-        op['family']=intr['family']
-        edges.append({'from':intr['id'],'to':op['id'],'kind':'exact_llvm_symbol','basis':intr['source']})
-        for upper in intr['upstream_op_ids']:
-            edges.append({'from':upper,'to':op['id'],'kind':'dialect_mapping','via':intr['id']})
-        for builtin in intr['ccec_candidate_op_ids']:
-            edges.append({'from':builtin,'to':op['id'],'kind':'naming_candidate','via':intr['id']})
     # Registered overloaded base names are kept separate from concrete observed symbols.
     bases = sorted((o for o in ops.values() if o.get('registry',{}).get('overloaded')),key=lambda o:-len(o['name']))
     for op in list(ops.values()):
@@ -147,27 +121,13 @@ def extract(toolkit, dialect_repo, output=OUTPUT):
             if op['name'].startswith(base['name']+'.'):
                 edges.append({'from':op['id'],'to':base['id'],'kind':'overload_name_candidate'})
                 break
-    ordinary = {
-        'load / store':('访存 / 布局','普通 LLVM IR 的 load / store 以指针地址空间区分存储位置；它们不是 llvm.hivm.* 调用。'),
-        'add / fadd / mul / fmul':('计算 / 其他','标量或向量算术可用普通 SSA 指令表达；最终选指令仍取决于目标 lowering。'),
-        'getelementptr / addrspacecast':('访存 / 布局','getelementptr 计算地址，addrspacecast 表达地址空间转换；合法空间组合须由目标验证。'),
-        'atomicrmw / cmpxchg / fence':('原子操作','普通 LLVM IR 表达原子更新与内存顺序；某一目标的支持不能由通用语法推断。'),
-        'br / phi / select':('控制 / 寄存器','控制流、SSA 合流与值选择属于普通 IR，不需要每项都有专用目标 intrinsic。'),
-        'address spaces':('访存 / 布局','外部 CCEDialect 定义 GM=1、L1=2、L0A=3、L0B=4、L0C=5、UB=6、PRIVATE=9。此映射不自动扩展到其他工具链版本。'),
-    }
-    for name,(fam,summary) in ordinary.items():
-        op=get(name,'ordinary_ir'); op.update(family=fam,identity_status='reference_model',summary=summary)
-        op['reference_url']='https://releases.llvm.org/15.0.0/docs/LangRef.html'
-        if name=='address spaces':
-            op['address_spaces']=dialect['target']['address_spaces']
-            op['evidence']=[{'kind':'external_model','source_id':sid} for sid,s in sources.items() if s['origin']=='cce_dialect' and s['path']=='include/Utils/AddressSpaces.td']
     # Absence means only that this exact spelling was absent from that completed scan.
     for op in ops.values():
-        for sid in [*TOOLS,'dialect',*[x['source_id'] for x in scans if x['method']=='bitcode_declarations' and x['status']=='complete']]:
+        for sid in [*TOOLS,*[x['source_id'] for x in scans if x['method']=='bitcode_declarations' and x['status']=='complete']]:
             op['presence'].setdefault(sid,'scanned_absent' if op['domain']=='target_intrinsic' or sid.startswith('bc_') else 'not_scanned')
     edges = list({json.dumps(e,sort_keys=True):e for e in edges}.values())
     model = {'schema_version':'ackb.llvm.index.v1','version':VERSION,'target':'Ascend950PR_9579',
-             'generator_sha256':generator_digest(),'dialect_index_sha256':file_digest(dialect_path),
+             'generator_sha256':generator_digest(),
              'sources':sources,'ops':sorted(ops.values(),key=lambda o:o['name']),
              'forms':sorted(forms.values(),key=lambda f:f['id']),'relations':sorted(edges,key=lambda e:(e['from'],e['to'],e['kind'])),
              'scans':scans,'limitations':LIMITATIONS,
@@ -188,6 +148,21 @@ def extract(toolkit, dialect_repo, output=OUTPUT):
     output.write_text(json.dumps(model,ensure_ascii=False,separators=(',',':'))+'\n')
     print(json.dumps(model['coverage'],ensure_ascii=False,indent=2))
     return model
+
+
+def dialect_navigation(model, dialect):
+    ops = {op['id']: op for op in model['ops']}
+    edges = []
+    for intr in dialect['intrinsics']:
+        op = ops.get(identity(intr['llvm_intrinsic']))
+        if op is None:
+            continue
+        edges.append({'from':intr['id'],'to':op['id'],'kind':'exact_llvm_symbol','basis':intr['source']})
+        for upper in intr['upstream_op_ids']:
+            edges.append({'from':upper,'to':op['id'],'kind':'dialect_mapping','via':intr['id']})
+        for builtin in intr['ccec_candidate_op_ids']:
+            edges.append({'from':builtin,'to':op['id'],'kind':'naming_candidate','via':intr['id']})
+    return edges
 
 
 def generator_digest():
@@ -213,7 +188,7 @@ def coverage(model):
     b={o['name'] for o in target if any(o['presence'].get(k)=='observed' for k in ('ccec','llc'))}
     return {'records':len(ops),'domains':dict(Counter(o['domain'] for o in ops)),
             'identities':dict(Counter(o['identity_status'] for o in ops)),
-            'default_a5_source_view':sum(o['domain']=='ordinary_ir' or o['a5_source_lead'] and o['identity_status']!='candidate_only' for o in ops),
+            'default_a5_source_view':sum(o['a5_source_lead'] and o['identity_status']!='candidate_only' for o in ops),
             'default_a5_evidence_view':sum(default_visible(o) for o in ops),
             'forms':len(model['forms']),'form_kinds':dict(Counter(f['kind'] for f in model['forms'])),
             'unparsed_registry_types':sum(f.get('status')=='unparsed_vendor_encoding' for f in model['forms']),
@@ -232,10 +207,15 @@ def validate_model(model, check_generator=True):
     errors=[]
     if model.get('schema_version')!='ackb.llvm.index.v1': errors.append('Unsupported LLVM schema')
     if check_generator and model.get('generator_sha256')!=generator_digest(): errors.append('Stale LLVM generator snapshot')
-    if model.get('dialect_index_sha256')!=file_digest(ROOT/'data/cce_dialect/index.json'): errors.append('Stale Dialect linkage')
     ids={o['id'] for o in model['ops']}; forms={f['id']:f for f in model['forms']}
     if len(ids)!=len(model['ops']) or len(forms)!=len(model['forms']): errors.append('Duplicate identity')
+    if any(s['origin'] != 'cann' for s in model['sources'].values()):
+        errors.append('Non-CANN evidence source')
     for op in model['ops']:
+        if not op['evidence'] or set(op['presence']) - model['sources'].keys():
+            errors.append('Missing or external LLVM evidence')
+        if op['a5_source_lead'] != (op['presence'].get('hivmc_a5') == 'observed' or op['target_status'] == 'c310_module_declaration'):
+            errors.append('Invalid package A5 scope')
         if op['id']!=identity(op['name'],op['domain']): errors.append('Unstable identity')
         if op['identity_status']=='candidate_only' and op['form_ids']: errors.append('Candidate fabricated signature')
         if op['target_status'] not in ('unknown','c310_module_declaration'): errors.append('Unsupported target conclusion')
@@ -311,10 +291,10 @@ def verify_package(model, package, work_dir):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__); p.add_argument('command',choices=['extract','validate','verify-package'])
-    p.add_argument('--toolkit',type=Path);p.add_argument('--repo',type=Path,default=Path('/home/zuomin/Projects/Compiler/CCEDialect'))
+    p.add_argument('--toolkit',type=Path);p.add_argument('--repo',type=Path,help=argparse.SUPPRESS)
     p.add_argument('--output',type=Path,default=OUTPUT);p.add_argument('--package',type=Path);p.add_argument('--work-dir',type=Path)
     a=p.parse_args()
-    if a.command=='extract': extract(a.toolkit,a.repo,a.output)
+    if a.command=='extract': extract(a.toolkit,a.output)
     else:
         m=json.loads(a.output.read_text())
         if a.command=='verify-package':

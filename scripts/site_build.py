@@ -43,7 +43,7 @@ def navigation_data(data, knowledge):
     if isinstance(ops, dict):
         ops = [dict(zip(ops['columns'], row)) for row in ops['rows']]
     rows += [[o['id'], o['name'], 'llvm'] for o in ops]
-    return {'labels': sorted(rows), 'llvm_relations': llvm.get('relations', [])}
+    return {'labels': sorted(rows), 'llvm_relations': llvm.get('relations', []) + knowledge.get('llvm_navigation', [])}
 
 
 def build_site(page, style, scripts, data, knowledge, output):

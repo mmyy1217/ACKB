@@ -81,6 +81,27 @@ class LLVMTests(unittest.TestCase):
         self.assertEqual(llvm_ir.identity('llvm.hivm.X'),llvm_ir.identity('llvm.hivm.X'))
         self.assertNotEqual(llvm_ir.identity('llvm.hivm.X'),llvm_ir.identity('llvm.hivm.X.i32'))
 
+    def test_gap_snapshot_uses_independent_package_names(self):
+        from dialect_gap_snapshot import snapshot
+        package_ids = set(self.model['sources'])
+        self.assertTrue(all(s['origin'] == 'cann' for s in self.model['sources'].values()))
+        ids = {o['id'] for o in self.model['ops']}
+        self.assertTrue(all(e['from'] in ids and e['to'] in ids for e in self.model['relations']))
+        a5 = set()
+        for op in self.model['ops']:
+            self.assertTrue(op['evidence'])
+            self.assertTrue(all(e['source_id'] in package_ids for e in op['evidence']))
+            observed = {e['source_id'] for e in op['evidence']}
+            if ('hivmc_a5' in observed or any('_c310_' in sid for sid in observed)) and op['identity_status'] != 'candidate_only':
+                a5.add(op['name'])
+        root = llvm_ir.ROOT
+        dialect = json.loads((root / 'data/cce_dialect/index.json').read_text())
+        mapped = {op['name'] for op in dialect['intrinsics']}
+        gap = snapshot()
+        self.assertEqual({row[0] for row in gap['rows']}, a5 - mapped)
+        self.assertEqual(gap['dialect_only'], len(mapped - a5))
+        self.assertEqual(gap, json.loads((root / 'web/insights/files/a5-gap-20261120.json').read_text()))
+
     def test_independent_signature_and_target_axes(self):
         barrier=self.by_name['llvm.hivm.BARRIER']
         self.assertEqual(barrier['identity_status'],'registered')
