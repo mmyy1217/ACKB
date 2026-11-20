@@ -543,5 +543,8 @@ body.data-loading #ascendc-map {display:none}
 .gap-results th {position:sticky;top:0;background:var(--subtle);padding:5px}
 .gap-results td {border-bottom:1px solid var(--line);padding:3px 5px;overflow-wrap:anywhere}
 .gap-results td:first-child {font-family:var(--mono)}
-.gap-results th:last-child {width:22%}
+.gap-results table {width:100%;table-layout:fixed}
+.gap-results th:nth-child(2) {width:40%}
+#gap-source {width:100%;max-width:18em;min-width:0}
+.gap-results th:last-child {width:17%}
 @media(max-width:600px){.gap-layout{grid-template-columns:1fr}.gap-tools a{margin-left:0}#gap-families{flex-direction:row;overflow-x:auto}#gap-families button{white-space:nowrap}}

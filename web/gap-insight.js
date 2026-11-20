@@ -15,14 +15,24 @@ async function openGapInsight() {
     const nav = box.querySelector('nav');
     let active = '';
     const query = box.querySelector('input');
+    const sourceFilter = box.querySelector('#gap-source');
+    const records = rows.map(([name, family, kind, , source]) => ({
+      name, family, kind, sources: source.split(' / ')
+    }));
+    const sources = new Set(records.flatMap(record => record.sources));
+    for (const source of Array.from(sources).sort()) {
+      sourceFilter.add(new Option(source, source));
+    }
     function display() {
       const term = query.value.trim().toLowerCase();
-      const items = rows.filter(([name,family]) => (!active || family===active) && name.toLowerCase().includes(term));
+      const items = records.filter(({name, family, sources}) =>
+        (!active || family === active) && name.toLowerCase().includes(term) &&
+        (!sourceFilter.value || sources.includes(sourceFilter.value)));
       box.querySelector('output').textContent = items.length+' / '+rows.length;
       const body = document.createDocumentFragment();
-      for (const [name,,kind] of items) {
+      for (const {name, kind, sources} of items) {
         const row = document.createElement('tr');
-        for (const text of [name,kind]) row.insertCell().textContent=text;
+        for (const text of [name, sources.join(' / '), kind]) row.insertCell().textContent=text;
         body.append(row);
       }
       box.querySelector('tbody').replaceChildren(body);
@@ -38,6 +48,7 @@ async function openGapInsight() {
       button.onclick=()=>{active=family;display();};
       nav.append(button);
     }
+    sourceFilter.onchange=display;
     query.oninput=display;
     display();
     box.dataset.ready='true';

@@ -27,6 +27,14 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT||'playwright');
   assert.equal(await page.locator('#gap-rows tr').count(),36);
   await page.locator('#gap-query').fill('ND.DMA.OUT.TO.UB');
   assert.equal(await page.locator('#gap-rows tr').count(),3);
+  const source = page.getByRole('combobox', {name:'来源'});
+  await source.selectOption('LLVM LangRef');
+  assert.equal(await page.locator('#gap-rows tr').count(),0);
+  await source.selectOption('libbisheng-llc.so');
+  assert.equal(await page.locator('#gap-rows tr').count(),3);
+  for (const cell of await page.locator('#gap-rows td:nth-child(2)').allTextContents())
+    assert(cell.split(' / ').includes('libbisheng-llc.so'));
+  await source.selectOption('');
   const download=page.waitForEvent('download');
   await page.locator('#gap-browser a[download]').click();
   const file=await download;
