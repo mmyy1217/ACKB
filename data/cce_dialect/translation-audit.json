@@ -1,0 +1,1778 @@
+{
+  "dialect_commit": "5639e581ef516650412b3f06104f27a3e7c661b5",
+  "baseline_ackb": "9a3ed01",
+  "llvm_version": "22.0.0git",
+  "translator_sha256": "121a73548cdd96dca5163fc9a828bb870ee05cf1c813507f5c96b0ac5480d174",
+  "cases": [
+    {
+      "name": "llvm.hivm.DCCI.DST",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.intr.print \"x\" %x : i64\n    llvm.return\n  }\n}",
+      "flags": [
+        "--enable-print"
+      ],
+      "helper_only": true
+    },
+    {
+      "name": "llvm.hivm.SET.CROSS.CORE",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.set.cross.core pipe = #cce.pipe<PIPE_V> config = %x : i64\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.SET.CROSS.CORE(i64 1, i64 %0)"
+    },
+    {
+      "name": "llvm.hivm.SET.FLAG.IMM",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.set_flag pipe = #cce.pipe<PIPE_V> tpipe = #cce.pipe<PIPE_M> pipeID = #cce.event<EVENT_ID0>\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.SET.FLAG.IMM(i64 1, i64 2, i64 0)"
+    },
+    {
+      "name": "llvm.hivm.SET.FLAG.REG",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.set_flag pipe = #cce.pipe<PIPE_V> tpipe = #cce.pipe<PIPE_M> event = %x : i64\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.SET.FLAG.REG(i64 1, i64 2, i64 %0)"
+    },
+    {
+      "name": "llvm.hivm.SET.INTRA.BLOCKI.mode",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.set.intra.blocki.mode pipe = #cce.pipe<PIPE_V> syncid = %x\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.SET.INTRA.BLOCKI.mode(i64 1, i64 %0)"
+    },
+    {
+      "name": "llvm.hivm.WAIT.FLAG.DEV.PIPE.IMM",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.wait.flag.dev.pipe.imm pipe = #cce.pipe<PIPE_V>, flag_id = 0\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.WAIT.FLAG.DEV.PIPE.IMM(i64 1, i64 0)"
+    },
+    {
+      "name": "llvm.hivm.WAIT.FLAG.DEV.PIPE.REG",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.wait.flag.dev.pipe.reg pipe = #cce.pipe<PIPE_V> flag_id = %x : i64\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.WAIT.FLAG.DEV.PIPE.REG(i64 1, i64 %0)"
+    },
+    {
+      "name": "llvm.hivm.WAIT.FLAG.IMM",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.wait_flag pipe = #cce.pipe<PIPE_V> tpipe = #cce.pipe<PIPE_M> pipeID = #cce.event<EVENT_ID0>\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.WAIT.FLAG.IMM(i64 1, i64 2, i64 0)"
+    },
+    {
+      "name": "llvm.hivm.WAIT.FLAG.REG",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.wait_flag pipe = #cce.pipe<PIPE_V> tpipe = #cce.pipe<PIPE_M> event = %x : i64\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.WAIT.FLAG.REG(i64 1, i64 2, i64 %0)"
+    },
+    {
+      "name": "llvm.hivm.WAIT.INTRA.BLOCKI.mode",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.wait.intra.blocki.mode pipe = #cce.pipe<PIPE_V> syncid = %x\n    llvm.return\n  }\n}",
+      "call": "call void @llvm.hivm.WAIT.INTRA.BLOCKI.mode(i64 1, i64 %0)"
+    },
+    {
+      "name": "llvm.hivm.bf16x2.to.f8e4m3x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<2xbf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.simt.cast(%src) : vector<2xbf16> to vector<2xf8E4M3FN>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.bf16x2.to.f8e5m2x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<2xbf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.simt.cast(%src) : vector<2xbf16> to vector<2xf8E5M2>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.chistv2.m",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.histv2\"(%a0, %a1, %a2, %a3) {kind = 1 : i32} : (vector<128xi16>, vector<256xi8>, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x i16> @llvm.hivm.chistv2.m(<128 x i16> %0, <256 x i8> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.dhistv2.m",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.histv2\"(%a0, %a1, %a2, %a3) {kind = 0 : i32} : (vector<128xi16>, vector<256xi8>, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x i16> @llvm.hivm.dhistv2.m(<128 x i16> %0, <256 x i8> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f16x2.to.f8e4m3x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<2xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.simt.cast(%src) : vector<2xf16> to vector<2xf8E4M3FN>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f16x2.to.f8e5m2x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<2xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.simt.cast(%src) : vector<2xf16> to vector<2xf8E5M2>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f32x2.to.f8e4m3x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<2xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.simt.cast(%src) : vector<2xf32> to vector<2xf8E4M3FN>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f32x2.to.f8e5m2x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<2xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.simt.cast(%src) : vector<2xf32> to vector<2xf8E5M2>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f8e4m3x2.to.bf16x2",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    %r = cce.simt.cast(%src) : vector<256xf8E4M3FN> to vector<2xbf16>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <2 x bfloat> @llvm.hivm.f8e4m3x2.to.bf16x2(<256 x i8> %3, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f8e4m3x2.to.f16x2",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    %r = cce.simt.cast(%src) : vector<256xf8E4M3FN> to vector<2xf16>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <2 x half> @llvm.hivm.f8e4m3x2.to.f16x2(<256 x i8> %3, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f8e4m3x2.to.f32x2",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    %r = cce.simt.cast(%src) : vector<256xf8E4M3FN> to vector<2xf32>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <2 x float> @llvm.hivm.f8e4m3x2.to.f32x2(<256 x i8> %3, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f8e4m3x2.to.f8e4m3x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    %r = cce.simt.cast(%src) : vector<256xf8E4M3FN> to vector<2xf8E4M3FN>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f8e4m3x2.to.f8e5m2x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    %r = cce.simt.cast(%src) : vector<256xf8E4M3FN> to vector<2xf8E5M2>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f8e5m2x2.to.bf16x2",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    %r = cce.simt.cast(%src) : vector<256xf8E5M2> to vector<2xbf16>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <2 x bfloat> @llvm.hivm.f8e5m2x2.to.bf16x2(<256 x i8> %3, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f8e5m2x2.to.f16x2",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    %r = cce.simt.cast(%src) : vector<256xf8E5M2> to vector<2xf16>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <2 x half> @llvm.hivm.f8e5m2x2.to.f16x2(<256 x i8> %3, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f8e5m2x2.to.f32x2",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    %r = cce.simt.cast(%src) : vector<256xf8E5M2> to vector<2xf32>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <2 x float> @llvm.hivm.f8e5m2x2.to.f32x2(<256 x i8> %3, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.f8e5m2x2.to.f8e4m3x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    %r = cce.simt.cast(%src) : vector<256xf8E5M2> to vector<2xf8E4M3FN>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.f8e5m2x2.to.f8e5m2x2",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    %r = cce.simt.cast(%src) : vector<256xf8E5M2> to vector<2xf8E5M2>\n    llvm.return\n  }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.get.sycl.fix.stack.object",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    cce.intr.print \"x\" %x : i64\n    llvm.return\n  }\n}",
+      "flags": [
+        "--enable-print"
+      ],
+      "helper_only": true
+    },
+    {
+      "name": "llvm.hivm.mem.bar.ld.st",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(14 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.ld.vst",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(10 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.ss.all",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(12 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.st.ld",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(13 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.st.st",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(15 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.st.vld",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(9 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.st.vst",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(11 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.sv.all",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(8 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vld.st",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(6 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vld.vst",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(2 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vs.all",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(4 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vst.ld",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(5 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vst.st",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(7 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vst.vld",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(1 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.mem.bar.vst.vst",
+      "status": "rejected",
+      "mlir": "module {\n  llvm.func @f(%x: i64) attributes { cce.core } {\n    %k = llvm.mlir.constant(3 : i32) : i32\n    cce.membar(%k) : (i32)\n    llvm.return\n  }\n}",
+      "emitted_instead": "llvm.hivm.mem.bar.vv.all"
+    },
+    {
+      "name": "llvm.hivm.movvp",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<64xi32>, %a1: i32) {\n \n %res0 = \"cce.movvp\"(%a0, %a1) {} : (vector<64xi32>, i32) -> (vector<256xi1>)\n llvm.return\n }\n}",
+      "call": "%3 = call <256 x i1> @llvm.hivm.movvp(<64 x i32> %0, i32 %1)"
+    },
+    {
+      "name": "llvm.hivm.pmov",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<256xi1>) {\n \n %res0 = \"cce.pmov\"(%a0) {mask_bitwidth = 8 : i32} : (vector<256xi1>) -> (vector<256xi1>)\n llvm.return\n }\n}",
+      "call": "%2 = call <256 x i1> @llvm.hivm.pmov(<256 x i1> %0)"
+    },
+    {
+      "name": "llvm.hivm.ppack.z",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<256xi1>, %a1: i32) {\n %part = llvm.mlir.constant(0 : i32) : i32\n %res0 = \"cce.ppack\"(%a0, %part) {src_mask_bitwidth = 16 : i32, dst_mask_bitwidth = 8 : i32} : (vector<256xi1>, i32) -> (vector<256xi1>)\n llvm.return\n }\n}",
+      "call": "%3 = call <256 x i1> @llvm.hivm.ppack.z(<256 x i1> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.punpack",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<256xi1>, %a1: i32) {\n %part = llvm.mlir.constant(0 : i32) : i32\n %res0 = \"cce.punpack\"(%a0, %part) {src_mask_bitwidth = 8 : i32, dst_mask_bitwidth = 16 : i32} : (vector<256xi1>, i32) -> (vector<256xi1>)\n llvm.return\n }\n}",
+      "call": "%3 = call <256 x i1> @llvm.hivm.punpack(<256 x i1> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vabsdif.s.x",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %res = \"cce.vabsdif\"(%a0, %a1, %a2) : (vector<64xf32>, vector<64xf32>, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vabsdif.s.x(<64 x float> %0, <64 x float> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vabsdif.u.x",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res = \"cce.vabsdif\"(%a0, %a1, %a2) {is_unsigned} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x i32> @llvm.hivm.vabsdif.u.x(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vaddc.v64s32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vaddc\"(%a0, %a1, %a2) : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vaddc.v64s32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vaddc.v64u32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vaddc\"(%a0, %a1, %a2) {is_unsigned} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vaddc.v64u32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vaddcs.v64s32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>, %a3: vector<256xi1>) {\n  %res:2 = \"cce.vaddcs\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, vector<64xi32>, vector<256xi1>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%5 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vaddcs.v64s32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vaddcs.v64u32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>, %a3: vector<256xi1>) {\n  %res:2 = \"cce.vaddcs\"(%a0, %a1, %a2, %a3) {is_unsigned} : (vector<64xi32>, vector<64xi32>, vector<256xi1>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%5 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vaddcs.v64u32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vaxpy.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: f16, %a3: vector<256xi1>) {\n  %res = \"cce.vaxpy\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, f16, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <128 x half> @llvm.hivm.vaxpy.m.v128f16(<128 x half> %0, <128 x half> %1, half %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vaxpy.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: f32, %a3: vector<256xi1>) {\n  %res = \"cce.vaxpy\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, f32, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <64 x float> @llvm.hivm.vaxpy.m.v64f32(<64 x float> %0, <64 x float> %1, float %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vbr.f32.v300",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: f32) {\n  %res = \"cce.vbr\"(%a0) : (f32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x float> @llvm.hivm.vbr.f32.v300(float %0)"
+    },
+    {
+      "name": "llvm.hivm.vbr.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: f16) {\n  %res = \"cce.vbr\"(%a0) : (f16) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x half> @llvm.hivm.vbr.v128f16(half %0)"
+    },
+    {
+      "name": "llvm.hivm.vbr.v128s16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test() {\n  %a0 = llvm.mlir.constant(0 : i16) : i16\n  %res = \"cce.vbr\"(%a0) : (i16) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%1 = call <128 x i16> @llvm.hivm.vbr.v128s16(i16 0)"
+    },
+    {
+      "name": "llvm.hivm.vbr.v256s8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: i8) {\n  %res = \"cce.vbr\"(%a0) : (i8) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <256 x i8> @llvm.hivm.vbr.v256s8(i8 %0)"
+    },
+    {
+      "name": "llvm.hivm.vbr.v64s32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test() {\n  %a0 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vbr\"(%a0) : (i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%1 = call <64 x i32> @llvm.hivm.vbr.v64s32(i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"m\"]} : (vector<128xf16>, vector<256xi1>) -> (vector<128xf16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x half>, <256 x i1> } @llvm.hivm.vcbmax.s.m.v128f16(<128 x half> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"m\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmax.s.m.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.m.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"m\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmax.s.m.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"m\"]} : (vector<64xf32>, vector<256xi1>) -> (vector<64xf32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x float>, <256 x i1> } @llvm.hivm.vcbmax.s.m.v64f32(<64 x float> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"m\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmax.s.m.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.x.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"x\"]} : (vector<128xf16>, vector<256xi1>) -> (vector<128xf16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x half>, <256 x i1> } @llvm.hivm.vcbmax.s.x.v128f16(<128 x half> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.x.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"x\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmax.s.x.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.x.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"x\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmax.s.x.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.x.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"x\"]} : (vector<64xf32>, vector<256xi1>) -> (vector<64xf32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x float>, <256 x i1> } @llvm.hivm.vcbmax.s.x.v64f32(<64 x float> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.s.x.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {mode = [\"x\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmax.s.x.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.u.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {is_unsigned, mode = [\"m\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmax.u.m.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.u.m.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {is_unsigned, mode = [\"m\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmax.u.m.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.u.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {is_unsigned, mode = [\"m\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmax.u.m.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.u.x.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {is_unsigned, mode = [\"x\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmax.u.x.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.u.x.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {is_unsigned, mode = [\"x\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmax.u.x.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmax.u.x.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmax\"(%a0, %a1) {is_unsigned, mode = [\"x\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmax.u.x.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"m\"]} : (vector<128xf16>, vector<256xi1>) -> (vector<128xf16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x half>, <256 x i1> } @llvm.hivm.vcbmin.s.m.v128f16(<128 x half> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"m\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmin.s.m.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.m.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"m\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmin.s.m.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"m\"]} : (vector<64xf32>, vector<256xi1>) -> (vector<64xf32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x float>, <256 x i1> } @llvm.hivm.vcbmin.s.m.v64f32(<64 x float> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"m\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmin.s.m.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.x.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"x\"]} : (vector<128xf16>, vector<256xi1>) -> (vector<128xf16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x half>, <256 x i1> } @llvm.hivm.vcbmin.s.x.v128f16(<128 x half> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.x.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"x\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmin.s.x.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.x.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"x\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmin.s.x.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.x.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"x\"]} : (vector<64xf32>, vector<256xi1>) -> (vector<64xf32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x float>, <256 x i1> } @llvm.hivm.vcbmin.s.x.v64f32(<64 x float> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.s.x.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {mode = [\"x\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmin.s.x.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.u.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {is_unsigned, mode = [\"m\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmin.u.m.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.u.m.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {is_unsigned, mode = [\"m\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmin.u.m.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.u.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {is_unsigned, mode = [\"m\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmin.u.m.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.u.x.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {is_unsigned, mode = [\"x\"]} : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <256 x i1> } @llvm.hivm.vcbmin.u.x.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.u.x.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {is_unsigned, mode = [\"x\"]} : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i1> } @llvm.hivm.vcbmin.u.x.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vcbmin.u.x.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res:2 = \"cce.vcbmin\"(%a0, %a1) {is_unsigned, mode = [\"x\"]} : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vcbmin.u.x.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vci.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: f16) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vci\"(%a0, %a1) : (f16, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x half> @llvm.hivm.vci.v128f16(half %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vci.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test() {\n  %a0 = llvm.mlir.constant(0 : i16) : i16\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vci\"(%a0, %a1) : (i16, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%1 = call <128 x i16> @llvm.hivm.vci.v128i16(i16 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vci.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: f32) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vci\"(%a0, %a1) : (f32, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x float> @llvm.hivm.vci.v64f32(float %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vci.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test() {\n  %a0 = llvm.mlir.constant(0 : i32) : i32\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vci\"(%a0, %a1) : (i32, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%1 = call <64 x i32> @llvm.hivm.vci.v64i32(i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.bf162f16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xbf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.cast(%src, %mask, %one, %z) : (vector<128xbf16>, vector<256xi1>, i32, i32) -> vector<128xf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vcvtff.bf162f16.x(<128 x bfloat> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.bf162f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xbf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.ext(%src, %mask, %z) : (vector<128xbf16>, vector<256xi1>, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vcvtff.bf162f32.x(<128 x bfloat> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f162bf16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.cast(%src, %mask, %one, %z) : (vector<128xf16>, vector<256xi1>, i32, i32) -> vector<128xbf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x bfloat> @llvm.hivm.vcvtff.f162bf16.x(<128 x half> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f162f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.ext(%src, %mask, %z) : (vector<128xf16>, vector<256xi1>, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vcvtff.f162f32.x(<128 x half> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f322bf16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.trunc(%src, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<128xbf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x bfloat> @llvm.hivm.vcvtff.f322bf16.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f322f16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.trunc(%src, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<128xf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vcvtff.f322f16.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f322f8e4m3.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.trunc(%src, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    llvm.return\n  }\n}",
+      "call": "%__cce_fp8_bridge_0 = call <256 x float8e4m3> @llvm.hivm.vcvtff.f322f8e4m3.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f322f8e5m2.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtff.trunc(%src, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    llvm.return\n  }\n}",
+      "call": "%__cce_fp8_bridge_0 = call <256 x float8e5m2> @llvm.hivm.vcvtff.f322f8e5m2.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f8e4m32f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E4M3FN>\n    %r = cce.vcvtff.ext(%src, %mask, %z) : (vector<256xf8E4M3FN>, vector<256xi1>, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vcvtff.f8e4m32f32.x(<256 x float8e4m3> %__cce_fp8_bridge_1, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtff.f8e5m22f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%x: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %src = cce.vcvtff.trunc(%x, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<256xf8E5M2>\n    %r = cce.vcvtff.ext(%src, %mask, %z) : (vector<256xf8E5M2>, vector<256xi1>, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vcvtff.f8e5m22f32.x(<256 x float8e5m2> %__cce_fp8_bridge_1, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.bf162s32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xbf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.ext(%src, %mask, %z, %one, %z) : (vector<128xbf16>, vector<256xi1>, i32, i32, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtfi.bf162s32.x(<128 x bfloat> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f162s16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.cast(%src, %mask, %z, %one) : (vector<128xf16>, vector<256xi1>, i32, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtfi.f162s16.x(<128 x half> %0, <256 x i1> %1, i32 0, i32 1)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f162s32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.ext(%src, %mask, %z, %one, %z) : (vector<128xf16>, vector<256xi1>, i32, i32, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtfi.f162s32.x(<128 x half> %0, <256 x i1> %1, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f162s8.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.trunc(%src, %mask, %z, %one, %z) : (vector<128xf16>, vector<256xi1>, i32, i32, i32) -> vector<256xi8>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vcvtfi.f162s8.x(<128 x half> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f162u8.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.trunc(%src, %mask, %z, %one, %z) {dst_unsigned} : (vector<128xf16>, vector<256xi1>, i32, i32, i32) -> vector<256xi8>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vcvtfi.f162u8.x(<128 x half> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f322s16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.trunc(%src, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtfi.f322s16.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f322s32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.cast(%src, %mask, %z, %one) : (vector<64xf32>, vector<256xi1>, i32, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtfi.f322s32.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1)"
+    },
+    {
+      "name": "llvm.hivm.vcvtfi.f322s64.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtfi.ext(%src, %mask, %z, %one, %z) : (vector<64xf32>, vector<256xi1>, i32, i32, i32) -> vector<32xi64>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <32 x i64> @llvm.hivm.vcvtfi.f322s64.x(<64 x float> %0, <256 x i1> %1, i32 0, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtif.s162f16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtif.cast(%src, %mask, %z) : (vector<128xi16>, vector<256xi1>, i32) -> vector<128xf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vcvtif.s162f16.x(<128 x i16> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtif.s162f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtif.ext(%src, %mask, %z) : (vector<128xi16>, vector<256xi1>, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vcvtif.s162f32.x(<128 x i16> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtif.s322f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtif.cast(%src, %mask, %z) : (vector<64xi32>, vector<256xi1>, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vcvtif.s322f32.x(<64 x i32> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtif.s642f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<32xi64>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtif.trunc(%src, %mask, %z, %z) : (vector<32xi64>, vector<256xi1>, i32, i32) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vcvtif.s642f32.x(<32 x i64> %0, <256 x i1> %1, i32 0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtif.s82f16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<256xi8>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtif.ext(%src, %mask, %z) : (vector<256xi8>, vector<256xi1>, i32) -> vector<128xf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vcvtif.s82f16.x(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtif.u82f16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<256xi8>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtif.ext(%src, %mask, %z) {src_unsigned} : (vector<256xi8>, vector<256xi1>, i32) -> vector<128xf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vcvtif.u82f16.x(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s162s32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) : (vector<128xi16>, vector<256xi1>, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtii.s162s32.x(<128 x i16> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s162u32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) {dst_unsigned} : (vector<128xi16>, vector<256xi1>, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtii.s162u32.x(<128 x i16> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s162u8.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {dst_unsigned} : (vector<128xi16>, vector<256xi1>, i32, i32) -> vector<256xi8>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vcvtii.s162u8.x(<128 x i16> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s322s16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) : (vector<64xi32>, vector<256xi1>, i32, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtii.s322s16.x(<64 x i32> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s322s64.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) : (vector<64xi32>, vector<256xi1>, i32) -> vector<32xi64>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <32 x i64> @llvm.hivm.vcvtii.s322s64.x(<64 x i32> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s322u16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {dst_unsigned} : (vector<64xi32>, vector<256xi1>, i32, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtii.s322u16.x(<64 x i32> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s322u8.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {dst_unsigned} : (vector<64xi32>, vector<256xi1>, i32, i32) -> vector<256xi8>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vcvtii.s322u8.x(<64 x i32> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s642s32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<32xi64>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) : (vector<32xi64>, vector<256xi1>, i32, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtii.s642s32.x(<32 x i64> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s82s16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<256xi8>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) : (vector<256xi8>, vector<256xi1>, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtii.s82s16.x(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.s82s32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<256xi8>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) : (vector<256xi8>, vector<256xi1>, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtii.s82s32.x(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u162u32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) {src_unsigned, dst_unsigned} : (vector<128xi16>, vector<256xi1>, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtii.u162u32.x(<128 x i16> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u162u8.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xi16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {src_unsigned, dst_unsigned} : (vector<128xi16>, vector<256xi1>, i32, i32) -> vector<256xi8>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vcvtii.u162u8.x(<128 x i16> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u322s16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {src_unsigned} : (vector<64xi32>, vector<256xi1>, i32, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtii.u322s16.x(<64 x i32> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u322u16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {src_unsigned, dst_unsigned} : (vector<64xi32>, vector<256xi1>, i32, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtii.u322u16.x(<64 x i32> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u322u8.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xi32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.trunc(%src, %mask, %one, %z) {src_unsigned, dst_unsigned} : (vector<64xi32>, vector<256xi1>, i32, i32) -> vector<256xi8>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vcvtii.u322u8.x(<64 x i32> %0, <256 x i1> %1, i32 1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u82u16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<256xi8>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) {src_unsigned, dst_unsigned} : (vector<256xi8>, vector<256xi1>, i32) -> vector<128xi16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vcvtii.u82u16.x(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vcvtii.u82u32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<256xi8>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vcvtii.ext(%src, %mask, %z) {src_unsigned, dst_unsigned} : (vector<256xi8>, vector<256xi1>, i32) -> vector<64xi32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vcvtii.u82u32.x(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>) {\n  %res:2 = \"cce.vdintlv\"(%a0, %a1) : (vector<128xbf16>, vector<128xbf16>) -> (vector<128xbf16>, vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x bfloat>, <128 x bfloat> } @llvm.hivm.vdintlv.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1)"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>) {\n  %res:2 = \"cce.vdintlv\"(%a0, %a1) : (vector<128xf16>, vector<128xf16>) -> (vector<128xf16>, vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x half>, <128 x half> } @llvm.hivm.vdintlv.v128f16(<128 x half> %0, <128 x half> %1)"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>) {\n  %res:2 = \"cce.vdintlv\"(%a0, %a1) : (vector<128xi16>, vector<128xi16>) -> (vector<128xi16>, vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <128 x i16> } @llvm.hivm.vdintlv.v128i16(<128 x i16> %0, <128 x i16> %1)"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v256f8e4m3fn",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E4M3FN>\n  %res:2 = \"cce.vdintlv\"(%bytes, %bytes) : (vector<256xf8E4M3FN>, vector<256xf8E4M3FN>) -> (vector<256xf8E4M3FN>, vector<256xf8E4M3FN>)\n  llvm.return\n }\n}",
+      "diagnostic": "this->_M_is_engaged()"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v256f8e5m2",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E5M2>\n  %res:2 = \"cce.vdintlv\"(%bytes, %bytes) : (vector<256xf8E5M2>, vector<256xf8E5M2>) -> (vector<256xf8E5M2>, vector<256xf8E5M2>)\n  llvm.return\n }\n}",
+      "diagnostic": "this->_M_is_engaged()"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>) {\n  %res:2 = \"cce.vdintlv\"(%a0, %a1) : (vector<256xi8>, vector<256xi8>) -> (vector<256xi8>, vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i8> } @llvm.hivm.vdintlv.v256i8(<256 x i8> %0, <256 x i8> %1)"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>) {\n  %res:2 = \"cce.vdintlv\"(%a0, %a1) : (vector<64xf32>, vector<64xf32>) -> (vector<64xf32>, vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x float>, <64 x float> } @llvm.hivm.vdintlv.v64f32(<64 x float> %0, <64 x float> %1)"
+    },
+    {
+      "name": "llvm.hivm.vdintlv.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>) {\n  %res:2 = \"cce.vdintlv\"(%a0, %a1) : (vector<64xi32>, vector<64xi32>) -> (vector<64xi32>, vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <64 x i32> } @llvm.hivm.vdintlv.v64i32(<64 x i32> %0, <64 x i32> %1)"
+    },
+    {
+      "name": "llvm.hivm.vdup.m.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, vector<128xbf16>, vector<256xi1>, i32) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x bfloat> @llvm.hivm.vdup.m.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdup.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, vector<256xi1>, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x half> @llvm.hivm.vdup.m.v128f16(<128 x half> %0, <128 x half> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdup.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xi16>, vector<128xi16>, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x i16> @llvm.hivm.vdup.m.v128i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdup.m.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<256xi8>, vector<256xi8>, vector<256xi1>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <256 x i8> @llvm.hivm.vdup.m.v256i8(<256 x i8> %0, <256 x i8> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdup.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, vector<256xi1>, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vdup.m.v64f32(<64 x float> %0, <64 x float> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdup.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, vector<64xi32>, vector<256xi1>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x i32> @llvm.hivm.vdup.m.v64i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdup.x.v128bf16",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, vector<128xbf16>, vector<256xi1>, i32) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v128bf16"
+    },
+    {
+      "name": "llvm.hivm.vdup.x.v128f16",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, vector<256xi1>, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v128f16"
+    },
+    {
+      "name": "llvm.hivm.vdup.x.v128i16",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xi16>, vector<128xi16>, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v128i16"
+    },
+    {
+      "name": "llvm.hivm.vdup.x.v256i8",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<256xi8>, vector<256xi8>, vector<256xi1>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v256i8"
+    },
+    {
+      "name": "llvm.hivm.vdup.x.v64f32",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, vector<256xi1>, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v64f32"
+    },
+    {
+      "name": "llvm.hivm.vdup.x.v64i32",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, vector<64xi32>, vector<256xi1>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v64i32"
+    },
+    {
+      "name": "llvm.hivm.vdup.z.v128bf16",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, vector<128xbf16>, vector<256xi1>, i32) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v128bf16"
+    },
+    {
+      "name": "llvm.hivm.vdup.z.v128f16",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, vector<256xi1>, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v128f16"
+    },
+    {
+      "name": "llvm.hivm.vdup.z.v128i16",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<128xi16>, vector<128xi16>, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v128i16"
+    },
+    {
+      "name": "llvm.hivm.vdup.z.v256i8",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<256xi8>, vector<256xi8>, vector<256xi1>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v256i8"
+    },
+    {
+      "name": "llvm.hivm.vdup.z.v64f32",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, vector<256xi1>, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v64f32"
+    },
+    {
+      "name": "llvm.hivm.vdup.z.v64i32",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdup\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, vector<64xi32>, vector<256xi1>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "emitted_instead": "llvm.hivm.vdup.m.v64i32"
+    },
+    {
+      "name": "llvm.hivm.vdups.z.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: bf16, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdups\"(%a0, %a1, %a2) : (bf16, vector<256xi1>, i32) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x bfloat> @llvm.hivm.vdups.z.v128bf16(bfloat %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdups.z.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: f16, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdups\"(%a0, %a1, %a2) : (f16, vector<256xi1>, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vdups.z.v128f16(half %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdups.z.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a1: vector<256xi1>) {\n  %a0 = llvm.mlir.constant(0 : i16) : i16\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdups\"(%a0, %a1, %a2) : (i16, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x i16> @llvm.hivm.vdups.z.v128i16(i16 0, <256 x i1> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdups.z.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: i8, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdups\"(%a0, %a1, %a2) : (i8, vector<256xi1>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vdups.z.v256i8(i8 %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdups.z.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: f32, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdups\"(%a0, %a1, %a2) : (f32, vector<256xi1>, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vdups.z.v64f32(float %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdups.z.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a1: vector<256xi1>) {\n  %a0 = llvm.mlir.constant(0 : i32) : i32\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vdups\"(%a0, %a1, %a2) : (i32, vector<256xi1>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x i32> @llvm.hivm.vdups.z.v64i32(i32 0, <256 x i1> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vdupv.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>) {\n  %a1 = llvm.mlir.constant(0 : i1) : i1\n  %res = \"cce.vdupv\"(%a0, %a1) : (vector<128xbf16>, i1) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x bfloat> @llvm.hivm.vdupv.v128bf16(<128 x bfloat> %0, i1 false)"
+    },
+    {
+      "name": "llvm.hivm.vdupv.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>) {\n  %a1 = llvm.mlir.constant(0 : i1) : i1\n  %res = \"cce.vdupv\"(%a0, %a1) : (vector<128xf16>, i1) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x half> @llvm.hivm.vdupv.v128f16(<128 x half> %0, i1 false)"
+    },
+    {
+      "name": "llvm.hivm.vdupv.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>) {\n  %a1 = llvm.mlir.constant(0 : i1) : i1\n  %res = \"cce.vdupv\"(%a0, %a1) : (vector<128xi16>, i1) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x i16> @llvm.hivm.vdupv.v128i16(<128 x i16> %0, i1 false)"
+    },
+    {
+      "name": "llvm.hivm.vdupv.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>) {\n  %a1 = llvm.mlir.constant(0 : i1) : i1\n  %res = \"cce.vdupv\"(%a0, %a1) : (vector<256xi8>, i1) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <256 x i8> @llvm.hivm.vdupv.v256i8(<256 x i8> %0, i1 false)"
+    },
+    {
+      "name": "llvm.hivm.vdupv.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>) {\n  %a1 = llvm.mlir.constant(0 : i1) : i1\n  %res = \"cce.vdupv\"(%a0, %a1) : (vector<64xf32>, i1) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x float> @llvm.hivm.vdupv.v64f32(<64 x float> %0, i1 false)"
+    },
+    {
+      "name": "llvm.hivm.vdupv.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>) {\n  %a1 = llvm.mlir.constant(0 : i1) : i1\n  %res = \"cce.vdupv\"(%a0, %a1) : (vector<64xi32>, i1) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x i32> @llvm.hivm.vdupv.v64i32(<64 x i32> %0, i1 false)"
+    },
+    {
+      "name": "llvm.hivm.vexpdif.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vexpdif\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, vector<128xbf16>, vector<256xi1>, i32) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x bfloat> @llvm.hivm.vexpdif.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vexpdif.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vexpdif\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, vector<256xi1>, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x half> @llvm.hivm.vexpdif.v128f16(<128 x half> %0, <128 x half> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vexpdif.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %a3 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vexpdif\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, vector<256xi1>, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vexpdif.v64f32(<64 x float> %0, <64 x float> %1, <256 x i1> %2, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vgather.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a1: vector<128xbf16>, %a2: vector<256xi1>) {\n  %res = \"cce.vgather\"(%a0, %a1, %a2) : (!llvm.ptr<6>, vector<128xbf16>, vector<256xi1>) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x bfloat> @llvm.hivm.vgather.v128bf16(ptr addrspace(6) %0, <128 x bfloat> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vgather.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a1: vector<128xf16>, %a2: vector<256xi1>) {\n  %res = \"cce.vgather\"(%a0, %a1, %a2) : (!llvm.ptr<6>, vector<128xf16>, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x half> @llvm.hivm.vgather.v128f16(ptr addrspace(6) %0, <128 x half> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vgather.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res = \"cce.vgather\"(%a0, %a1, %a2) : (!llvm.ptr<6>, vector<128xi16>, vector<256xi1>) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x i16> @llvm.hivm.vgather.v128i16(ptr addrspace(6) %0, <128 x i16> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vgather.v256f8e4m3fn",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %raw: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E4M3FN>\n  %res = \"cce.vgather\"(%a0, %bytes, %a2) : (!llvm.ptr<6>, vector<256xf8E4M3FN>, vector<256xi1>) -> (vector<256xf8E4M3FN>)\n  llvm.return\n }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.vgather.v256f8e5m2",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %raw: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E5M2>\n  %res = \"cce.vgather\"(%a0, %bytes, %a2) : (!llvm.ptr<6>, vector<256xf8E5M2>, vector<256xi1>) -> (vector<256xf8E5M2>)\n  llvm.return\n }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.vgather.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %res = \"cce.vgather\"(%a0, %a1, %a2) : (!llvm.ptr<6>, vector<256xi8>, vector<256xi1>) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <256 x i8> @llvm.hivm.vgather.v256i8(ptr addrspace(6) %0, <256 x i8> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vgather.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %res = \"cce.vgather\"(%a0, %a1, %a2) : (!llvm.ptr<6>, vector<64xf32>, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vgather.v64f32(ptr addrspace(6) %0, <64 x float> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vgather.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res = \"cce.vgather\"(%a0, %a1, %a2) : (!llvm.ptr<6>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x i32> @llvm.hivm.vgather.v64i32(ptr addrspace(6) %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>) {\n  %res:2 = \"cce.vintlv\"(%a0, %a1) : (vector<128xbf16>, vector<128xbf16>) -> (vector<128xbf16>, vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x bfloat>, <128 x bfloat> } @llvm.hivm.vintlv.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1)"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>) {\n  %res:2 = \"cce.vintlv\"(%a0, %a1) : (vector<128xf16>, vector<128xf16>) -> (vector<128xf16>, vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x half>, <128 x half> } @llvm.hivm.vintlv.v128f16(<128 x half> %0, <128 x half> %1)"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>) {\n  %res:2 = \"cce.vintlv\"(%a0, %a1) : (vector<128xi16>, vector<128xi16>) -> (vector<128xi16>, vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <128 x i16>, <128 x i16> } @llvm.hivm.vintlv.v128i16(<128 x i16> %0, <128 x i16> %1)"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v256f8e4m3fn",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E4M3FN>\n  %res:2 = \"cce.vintlv\"(%bytes, %bytes) : (vector<256xf8E4M3FN>, vector<256xf8E4M3FN>) -> (vector<256xf8E4M3FN>, vector<256xf8E4M3FN>)\n  llvm.return\n }\n}",
+      "diagnostic": "this->_M_is_engaged()"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v256f8e5m2",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E5M2>\n  %res:2 = \"cce.vintlv\"(%bytes, %bytes) : (vector<256xf8E5M2>, vector<256xf8E5M2>) -> (vector<256xf8E5M2>, vector<256xf8E5M2>)\n  llvm.return\n }\n}",
+      "diagnostic": "this->_M_is_engaged()"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>) {\n  %res:2 = \"cce.vintlv\"(%a0, %a1) : (vector<256xi8>, vector<256xi8>) -> (vector<256xi8>, vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <256 x i8> } @llvm.hivm.vintlv.v256i8(<256 x i8> %0, <256 x i8> %1)"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>) {\n  %res:2 = \"cce.vintlv\"(%a0, %a1) : (vector<64xf32>, vector<64xf32>) -> (vector<64xf32>, vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x float>, <64 x float> } @llvm.hivm.vintlv.v64f32(<64 x float> %0, <64 x float> %1)"
+    },
+    {
+      "name": "llvm.hivm.vintlv.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>) {\n  %res:2 = \"cce.vintlv\"(%a0, %a1) : (vector<64xi32>, vector<64xi32>) -> (vector<64xi32>, vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call { <64 x i32>, <64 x i32> } @llvm.hivm.vintlv.v64i32(<64 x i32> %0, <64 x i32> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x bfloat> @llvm.hivm.vld.v128bf16(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vld.v128f16(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vld.v128i16(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v256f8e4m3fn",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<256xf8E4M3FN>)\n  llvm.return\n }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.vld.v256f8e5m2",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<256xf8E5M2>)\n  llvm.return\n }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.vld.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vld.v256i8(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v32i64",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<32xi64>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <32 x i64> @llvm.hivm.vld.v32i64(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vld.v64f32(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vld.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vld\"(%a0, %a1, %a2) : (!llvm.ptr<6>, i32, vector<256xi1>) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vld.v64i32(ptr addrspace(6) %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vldus.v256f8e4m3",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: !llvm.ptr<6>, %a1: vector<32xi8>) {\n \n %res0, %res1, %res2 = \"cce.intr.vldus.f8e4m3\"(%a0, %a1) {} : (!llvm.ptr<6>, vector<32xi8>) -> (vector<256xi8>, vector<32xi8>, !llvm.ptr<6>)\n llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <32 x i8>, ptr addrspace(6) } @llvm.hivm.vldus.v256f8e4m3(ptr addrspace(6) %0, <32 x i8> %1)"
+    },
+    {
+      "name": "llvm.hivm.vldus.v256f8e5m2",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: !llvm.ptr<6>, %a1: vector<32xi8>) {\n \n %res0, %res1, %res2 = \"cce.intr.vldus.f8e5m2\"(%a0, %a1) {} : (!llvm.ptr<6>, vector<32xi8>) -> (vector<256xi8>, vector<32xi8>, !llvm.ptr<6>)\n llvm.return\n }\n}",
+      "call": "%3 = call { <256 x i8>, <32 x i8>, ptr addrspace(6) } @llvm.hivm.vldus.v256f8e5m2(ptr addrspace(6) %0, <32 x i8> %1)"
+    },
+    {
+      "name": "llvm.hivm.vlrelu.x.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: f16, %a2: vector<256xi1>) {\n  %res = \"cce.vlrelu\"(%a0, %a1, %a2) : (vector<128xf16>, f16, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x half> @llvm.hivm.vlrelu.x.v128f16(<128 x half> %0, half %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vlrelu.x.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: f32, %a2: vector<256xi1>) {\n  %res = \"cce.vlrelu\"(%a0, %a1, %a2) : (vector<64xf32>, f32, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vlrelu.x.v64f32(<64 x float> %0, float %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vmadd.m.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<128xbf16>, %a3: vector<256xi1>) {\n  %res = \"cce.vmadd\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, vector<128xbf16>, vector<128xbf16>, vector<256xi1>) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <128 x bfloat> @llvm.hivm.vmadd.m.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1, <128 x bfloat> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmadd.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<128xf16>, %a3: vector<256xi1>) {\n  %res = \"cce.vmadd\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, vector<128xf16>, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <128 x half> @llvm.hivm.vmadd.m.v128f16(<128 x half> %0, <128 x half> %1, <128 x half> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmadd.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<64xf32>, %a3: vector<256xi1>) {\n  %res = \"cce.vmadd\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, vector<64xf32>, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <64 x float> @llvm.hivm.vmadd.m.v64f32(<64 x float> %0, <64 x float> %1, <64 x float> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmula.s.m.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<128xbf16>, %a3: vector<256xi1>) {\n  %res = \"cce.vmula\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, vector<128xbf16>, vector<128xbf16>, vector<256xi1>) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <128 x bfloat> @llvm.hivm.vmula.s.m.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1, <128 x bfloat> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmula.s.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<128xf16>, %a3: vector<256xi1>) {\n  %res = \"cce.vmula\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, vector<128xf16>, vector<128xf16>, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <128 x half> @llvm.hivm.vmula.s.m.v128f16(<128 x half> %0, <128 x half> %1, <128 x half> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmula.s.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<128xi16>, %a3: vector<256xi1>) {\n  %res = \"cce.vmula\"(%a0, %a1, %a2, %a3) : (vector<128xi16>, vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <128 x i16> @llvm.hivm.vmula.s.m.v128i16(<128 x i16> %0, <128 x i16> %1, <128 x i16> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmula.s.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<64xf32>, %a3: vector<256xi1>) {\n  %res = \"cce.vmula\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, vector<64xf32>, vector<64xf32>, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <64 x float> @llvm.hivm.vmula.s.m.v64f32(<64 x float> %0, <64 x float> %1, <64 x float> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmula.s.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<64xi32>, %a3: vector<256xi1>) {\n  %res = \"cce.vmula\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%5 = call <64 x i32> @llvm.hivm.vmula.s.m.v64i32(<64 x i32> %0, <64 x i32> %1, <64 x i32> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.m.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xf16>, %a1: vector<256xf16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"m\"]} : (vector<256xf16>, vector<256xf16>, vector<256xi1>) -> (vector<128xf16>, vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <128 x half>, <128 x half> } @llvm.hivm.vmull.s.m.v128f16(<256 x half> %0, <256 x half> %1, <256 x i1> %2, <128 x half> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.m.v32i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"m\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<32xi32>, vector<32xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <32 x i32>, <32 x i32> } @llvm.hivm.vmull.s.m.v32i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <32 x i32> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.m.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf32>, %a1: vector<128xf32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"m\"]} : (vector<128xf32>, vector<128xf32>, vector<256xi1>) -> (vector<64xf32>, vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x float>, <64 x float> } @llvm.hivm.vmull.s.m.v64f32(<128 x float> %0, <128 x float> %1, <256 x i1> %2, <64 x float> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.m.v64i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"m\"]} : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<64xi16>, vector<64xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i16>, <64 x i16> } @llvm.hivm.vmull.s.m.v64i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, <64 x i16> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.x.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xf16>, %a1: vector<256xf16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"x\"]} : (vector<256xf16>, vector<256xf16>, vector<256xi1>) -> (vector<128xf16>, vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <128 x half>, <128 x half> } @llvm.hivm.vmull.s.x.v128f16(<256 x half> %0, <256 x half> %1, <256 x i1> %2, <128 x half> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.x.v32i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"x\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<32xi32>, vector<32xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <32 x i32>, <32 x i32> } @llvm.hivm.vmull.s.x.v32i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <32 x i32> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.x.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf32>, %a1: vector<128xf32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"x\"]} : (vector<128xf32>, vector<128xf32>, vector<256xi1>) -> (vector<64xf32>, vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x float>, <64 x float> } @llvm.hivm.vmull.s.x.v64f32(<128 x float> %0, <128 x float> %1, <256 x i1> %2, <64 x float> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.x.v64i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"x\"]} : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<64xi16>, vector<64xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i16>, <64 x i16> } @llvm.hivm.vmull.s.x.v64i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, <64 x i16> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.z.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xf16>, %a1: vector<256xf16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"z\"]} : (vector<256xf16>, vector<256xf16>, vector<256xi1>) -> (vector<128xf16>, vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <128 x half>, <128 x half> } @llvm.hivm.vmull.s.z.v128f16(<256 x half> %0, <256 x half> %1, <256 x i1> %2, <128 x half> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.z.v32i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"z\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<32xi32>, vector<32xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <32 x i32>, <32 x i32> } @llvm.hivm.vmull.s.z.v32i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <32 x i32> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.z.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf32>, %a1: vector<128xf32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"z\"]} : (vector<128xf32>, vector<128xf32>, vector<256xi1>) -> (vector<64xf32>, vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x float>, <64 x float> } @llvm.hivm.vmull.s.z.v64f32(<128 x float> %0, <128 x float> %1, <256 x i1> %2, <64 x float> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.s.z.v64i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {mode = [\"z\"]} : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<64xi16>, vector<64xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i16>, <64 x i16> } @llvm.hivm.vmull.s.z.v64i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, <64 x i16> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.u.m.v32i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"m\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<32xi32>, vector<32xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <32 x i32>, <32 x i32> } @llvm.hivm.vmull.u.m.v32i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <32 x i32> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.u.m.v64i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"m\"]} : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<64xi16>, vector<64xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i16>, <64 x i16> } @llvm.hivm.vmull.u.m.v64i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, <64 x i16> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.u.x.v32i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"x\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<32xi32>, vector<32xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <32 x i32>, <32 x i32> } @llvm.hivm.vmull.u.x.v32i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <32 x i32> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.u.x.v64i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"x\"]} : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<64xi16>, vector<64xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i16>, <64 x i16> } @llvm.hivm.vmull.u.x.v64i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, <64 x i16> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.u.z.v32i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"z\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<32xi32>, vector<32xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <32 x i32>, <32 x i32> } @llvm.hivm.vmull.u.z.v32i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <32 x i32> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.u.z.v64i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"z\"]} : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<64xi16>, vector<64xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i16>, <64 x i16> } @llvm.hivm.vmull.u.z.v64i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2, <64 x i16> undef)"
+    },
+    {
+      "name": "llvm.hivm.vmull.v64u32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vmull\"(%a0, %a1, %a2) {is_unsigned, mode = [\"x\"]} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i32>, <64 x i32> } @llvm.hivm.vmull.v64u32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vmulscvt.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<64xf32>, %a1: f32, %a2: vector<256xi1>, %a3: i32) {\n \n %res0 = \"cce.vmulscvt\"(%a0, %a1, %a2, %a3) {} : (vector<64xf32>, f32, vector<256xi1>, i32) -> (vector<128xf16>)\n llvm.return\n }\n}",
+      "call": "%5 = call <128 x half> @llvm.hivm.vmulscvt.v128f16(<64 x float> %0, float %1, <256 x i1> %2, i32 %3)"
+    },
+    {
+      "name": "llvm.hivm.vpack.x.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vpack\"(%a0, %a1) : (vector<128xbf16>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <256 x i8> @llvm.hivm.vpack.x.v128bf16(<128 x bfloat> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vpack.x.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vpack\"(%a0, %a1) : (vector<128xf16>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <256 x i8> @llvm.hivm.vpack.x.v128f16(<128 x half> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vpack.x.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vpack\"(%a0, %a1) : (vector<128xi16>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <256 x i8> @llvm.hivm.vpack.x.v128i16(<128 x i16> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vpack.x.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vpack\"(%a0, %a1) : (vector<64xf32>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x i16> @llvm.hivm.vpack.x.v64f32(<64 x float> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vpack.x.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vpack\"(%a0, %a1) : (vector<64xi32>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x i16> @llvm.hivm.vpack.x.v64i32(<64 x i32> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: !llvm.ptr<6>, %a2: vector<128xbf16>, %a3: vector<256xi1>) {\n  \"cce.vscatter\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, !llvm.ptr<6>, vector<128xbf16>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v128bf16(<128 x bfloat> %0, ptr addrspace(6) %1, <128 x bfloat> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: !llvm.ptr<6>, %a2: vector<128xf16>, %a3: vector<256xi1>) {\n  \"cce.vscatter\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, !llvm.ptr<6>, vector<128xf16>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v128f16(<128 x half> %0, ptr addrspace(6) %1, <128 x half> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: !llvm.ptr<6>, %a2: vector<128xi16>, %a3: vector<256xi1>) {\n  \"cce.vscatter\"(%a0, %a1, %a2, %a3) : (vector<128xi16>, !llvm.ptr<6>, vector<128xi16>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v128i16(<128 x i16> %0, ptr addrspace(6) %1, <128 x i16> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v256f8e4m3fn",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E4M3FN>\n  \"cce.vscatter\"(%bytes, %a1, %bytes, %a3) : (vector<256xf8E4M3FN>, !llvm.ptr<6>, vector<256xf8E4M3FN>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v256f8e4m3fn(<256 x i8> %4, ptr addrspace(6) %1, <256 x i8> %4, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v256f8e5m2",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E5M2>\n  \"cce.vscatter\"(%bytes, %a1, %bytes, %a3) : (vector<256xf8E5M2>, !llvm.ptr<6>, vector<256xf8E5M2>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v256f8e5m2(<256 x i8> %4, ptr addrspace(6) %1, <256 x i8> %4, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: !llvm.ptr<6>, %a2: vector<256xi8>, %a3: vector<256xi1>) {\n  \"cce.vscatter\"(%a0, %a1, %a2, %a3) : (vector<256xi8>, !llvm.ptr<6>, vector<256xi8>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v256i8(<256 x i8> %0, ptr addrspace(6) %1, <256 x i8> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: !llvm.ptr<6>, %a2: vector<64xf32>, %a3: vector<256xi1>) {\n  \"cce.vscatter\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, !llvm.ptr<6>, vector<64xf32>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v64f32(<64 x float> %0, ptr addrspace(6) %1, <64 x float> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vscatter.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: !llvm.ptr<6>, %a2: vector<64xi32>, %a3: vector<256xi1>) {\n  \"cce.vscatter\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, !llvm.ptr<6>, vector<64xi32>, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vscatter.v64i32(<64 x i32> %0, ptr addrspace(6) %1, <64 x i32> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vsel.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: vector<128xbf16>, %a2: vector<256xi1>) {\n  %res = \"cce.vsel\"(%a0, %a1, %a2) : (vector<128xbf16>, vector<128xbf16>, vector<256xi1>) -> (vector<128xbf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x bfloat> @llvm.hivm.vsel.v128bf16(<128 x bfloat> %0, <128 x bfloat> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsel.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>, %a2: vector<256xi1>) {\n  %res = \"cce.vsel\"(%a0, %a1, %a2) : (vector<128xf16>, vector<128xf16>, vector<256xi1>) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x half> @llvm.hivm.vsel.v128f16(<128 x half> %0, <128 x half> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsel.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>, %a2: vector<256xi1>) {\n  %res = \"cce.vsel\"(%a0, %a1, %a2) : (vector<128xi16>, vector<128xi16>, vector<256xi1>) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <128 x i16> @llvm.hivm.vsel.v128i16(<128 x i16> %0, <128 x i16> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsel.v256f8e4m3fn",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E4M3FN>\n  %res = \"cce.vsel\"(%bytes, %bytes, %a2) : (vector<256xf8E4M3FN>, vector<256xf8E4M3FN>, vector<256xi1>) -> (vector<256xf8E4M3FN>)\n  llvm.return\n }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.vsel.v256f8e5m2",
+      "status": "rejected",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>, %a2: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E5M2>\n  %res = \"cce.vsel\"(%bytes, %bytes, %a2) : (vector<256xf8E5M2>, vector<256xf8E5M2>, vector<256xi1>) -> (vector<256xf8E5M2>)\n  llvm.return\n }\n}",
+      "diagnostic": "isCompatibleVectorType"
+    },
+    {
+      "name": "llvm.hivm.vsel.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>, %a2: vector<256xi1>) {\n  %res = \"cce.vsel\"(%a0, %a1, %a2) : (vector<256xi8>, vector<256xi8>, vector<256xi1>) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <256 x i8> @llvm.hivm.vsel.v256i8(<256 x i8> %0, <256 x i8> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsel.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>, %a2: vector<256xi1>) {\n  %res = \"cce.vsel\"(%a0, %a1, %a2) : (vector<64xf32>, vector<64xf32>, vector<256xi1>) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x float> @llvm.hivm.vsel.v64f32(<64 x float> %0, <64 x float> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsel.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res = \"cce.vsel\"(%a0, %a1, %a2) : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%4 = call <64 x i32> @llvm.hivm.vsel.v64i32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vselr",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<64xi32>, %a1: vector<64xi32>) {\n \n %res0 = \"cce.vselr\"(%a0, %a1) {} : (vector<64xi32>, vector<64xi32>) -> (vector<64xi32>)\n llvm.return\n }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vselr(<64 x i32> %0, <64 x i32> %1)"
+    },
+    {
+      "name": "llvm.hivm.vsldb",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: !llvm.ptr<6>, %a1: i32, %a2: i32, %a3: vector<256xi1>) {\n \n %res0 = \"cce.intr.vsldb.f32\"(%a0, %a1, %a2, %a3) {} : (!llvm.ptr<6>, i32, i32, vector<256xi1>) -> (vector<64xf32>)\n llvm.return\n }\n}",
+      "call": "%5 = call <64 x float> @llvm.hivm.vsldb(ptr addrspace(6) %0, i32 %1, i32 %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vslide.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<128xf16>) {\n  %a2 = llvm.mlir.constant(0 : i16) : i16\n  %res = \"cce.vslide\"(%a0, %a1, %a2) : (vector<128xf16>, vector<128xf16>, i16) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vslide.v128f16(<128 x half> %0, <128 x half> %1, i16 0)"
+    },
+    {
+      "name": "llvm.hivm.vslide.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<128xi16>) {\n  %a2 = llvm.mlir.constant(0 : i16) : i16\n  %res = \"cce.vslide\"(%a0, %a1, %a2) : (vector<128xi16>, vector<128xi16>, i16) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vslide.v128i16(<128 x i16> %0, <128 x i16> %1, i16 0)"
+    },
+    {
+      "name": "llvm.hivm.vslide.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi8>) {\n  %a2 = llvm.mlir.constant(0 : i16) : i16\n  %res = \"cce.vslide\"(%a0, %a1, %a2) : (vector<256xi8>, vector<256xi8>, i16) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vslide.v256i8(<256 x i8> %0, <256 x i8> %1, i16 0)"
+    },
+    {
+      "name": "llvm.hivm.vslide.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<64xf32>) {\n  %a2 = llvm.mlir.constant(0 : i16) : i16\n  %res = \"cce.vslide\"(%a0, %a1, %a2) : (vector<64xf32>, vector<64xf32>, i16) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vslide.v64f32(<64 x float> %0, <64 x float> %1, i16 0)"
+    },
+    {
+      "name": "llvm.hivm.vslide.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>) {\n  %a2 = llvm.mlir.constant(0 : i16) : i16\n  %res = \"cce.vslide\"(%a0, %a1, %a2) : (vector<64xi32>, vector<64xi32>, i16) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vslide.v64i32(<64 x i32> %0, <64 x i32> %1, i16 0)"
+    },
+    {
+      "name": "llvm.hivm.vsqz.x.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vsqz\"(%a0, %a1, %a2) : (vector<128xf16>, vector<256xi1>, i32) -> (vector<128xf16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vsqz.x.v128f16(<128 x half> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vsqz.x.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vsqz\"(%a0, %a1, %a2) : (vector<128xi16>, vector<256xi1>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vsqz.x.v128i16(<128 x i16> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vsqz.x.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vsqz\"(%a0, %a1, %a2) : (vector<256xi8>, vector<256xi1>, i32) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vsqz.x.v256i8(<256 x i8> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vsqz.x.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vsqz\"(%a0, %a1, %a2) : (vector<64xf32>, vector<256xi1>, i32) -> (vector<64xf32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vsqz.x.v64f32(<64 x float> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vsqz.x.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vsqz\"(%a0, %a1, %a2) : (vector<64xi32>, vector<256xi1>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vsqz.x.v64i32(<64 x i32> %0, <256 x i1> %1, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vsstb.v256f8e4m3fn",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<256xi8>, %a1: !llvm.ptr<6>, %a2: i32, %a3: i32, %a4: vector<256xi1>) {\n \n \"cce.intr.vsstb.f8e4m3fn\"(%a0, %a1, %a2, %a3, %a4) {} : (vector<256xi8>, !llvm.ptr<6>, i32, i32, vector<256xi1>) -> ()\n llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vsstb.v256f8e4m3fn(<256 x i8> %0, ptr addrspace(6) %1, i32 %2, i32 %3, <256 x i1> %4)"
+    },
+    {
+      "name": "llvm.hivm.vsstb.v256f8e5m2",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @w(%a0: vector<256xi8>, %a1: !llvm.ptr<6>, %a2: i32, %a3: i32, %a4: vector<256xi1>) {\n \n \"cce.intr.vsstb.f8e5m2\"(%a0, %a1, %a2, %a3, %a4) {} : (vector<256xi8>, !llvm.ptr<6>, i32, i32, vector<256xi1>) -> ()\n llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vsstb.v256f8e5m2(<256 x i8> %0, ptr addrspace(6) %1, i32 %2, i32 %3, <256 x i1> %4)"
+    },
+    {
+      "name": "llvm.hivm.vst.v128bf16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xbf16>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<128xbf16>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v128bf16(<128 x bfloat> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v128f16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xf16>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<128xf16>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v128f16(<128 x half> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<128xi16>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v128i16(<128 x i16> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v256f8e4m3fn",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E4M3FN>\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%bytes, %a1, %a2, %a3) : (vector<256xf8E4M3FN>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v256f8e4m3fn(<256 x i8> %4, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v256f8e5m2",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%raw: !llvm.ptr<6>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %zero = llvm.mlir.constant(0 : i32) : i32\n  %bytes = \"cce.intr.vldsx1.i8\"(%raw, %zero, %zero, %zero) : (!llvm.ptr<6>, i32, i32, i32) -> vector<256xf8E5M2>\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%bytes, %a1, %a2, %a3) : (vector<256xf8E5M2>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v256f8e5m2(<256 x i8> %4, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<256xi8>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v256i8(<256 x i8> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v32i64",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<32xi64>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<32xi64>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v32i64(<32 x i64> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v64f32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xf32>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<64xf32>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v64f32(<64 x float> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vst.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: !llvm.ptr<6>, %a3: vector<256xi1>) {\n  %a2 = llvm.mlir.constant(0 : i32) : i32\n  \"cce.vst\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, !llvm.ptr<6>, i32, vector<256xi1>) -> ()\n  llvm.return\n }\n}",
+      "call": "call void @llvm.hivm.vst.v64i32(<64 x i32> %0, ptr addrspace(6) %1, i32 0, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsubc.v64s32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vsubc\"(%a0, %a1, %a2) : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vsubc.v64s32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsubc.v64u32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>) {\n  %res:2 = \"cce.vsubc\"(%a0, %a1, %a2) {is_unsigned} : (vector<64xi32>, vector<64xi32>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%4 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vsubc.v64u32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2)"
+    },
+    {
+      "name": "llvm.hivm.vsubcs.v64s32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>, %a3: vector<256xi1>) {\n  %res:2 = \"cce.vsubcs\"(%a0, %a1, %a2, %a3) : (vector<64xi32>, vector<64xi32>, vector<256xi1>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%5 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vsubcs.v64s32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vsubcs.v64u32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<64xi32>, %a2: vector<256xi1>, %a3: vector<256xi1>) {\n  %res:2 = \"cce.vsubcs\"(%a0, %a1, %a2, %a3) {is_unsigned} : (vector<64xi32>, vector<64xi32>, vector<256xi1>, vector<256xi1>) -> (vector<64xi32>, vector<256xi1>)\n  llvm.return\n }\n}",
+      "call": "%5 = call { <64 x i32>, <256 x i1> } @llvm.hivm.vsubcs.v64u32(<64 x i32> %0, <64 x i32> %1, <256 x i1> %2, <256 x i1> %3)"
+    },
+    {
+      "name": "llvm.hivm.vsunpack.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vunpack\"(%a0, %a1) : (vector<256xi8>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x i16> @llvm.hivm.vsunpack.v128i16(<256 x i8> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vsunpack.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vunpack\"(%a0, %a1) : (vector<128xi16>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x i32> @llvm.hivm.vsunpack.v64i32(<128 x i16> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vtrc.bf16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xbf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vtrc(%src, %z, %mask) : (vector<128xbf16>, i32, vector<256xi1>) -> vector<128xbf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x bfloat> @llvm.hivm.vtrc.bf16.x(<128 x bfloat> %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vtrc.f16.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<128xf16>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vtrc(%src, %z, %mask) : (vector<128xf16>, i32, vector<256xi1>) -> vector<128xf16>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <128 x half> @llvm.hivm.vtrc.f16.x(<128 x half> %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vtrc.f32.x",
+      "status": "confirmed",
+      "mlir": "module {\n  llvm.func @probe(%src: vector<64xf32>, %mask: vector<256xi1>) {\n    %z = llvm.mlir.constant(0 : i32) : i32\n    %one = llvm.mlir.constant(1 : i32) : i32\n    %r = cce.vtrc(%src, %z, %mask) : (vector<64xf32>, i32, vector<256xi1>) -> vector<64xf32>\n    llvm.return\n  }\n}",
+      "call": "%3 = call <64 x float> @llvm.hivm.vtrc.f32.x(<64 x float> %0, i32 0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vusqz.m.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>, %a1: vector<256xi1>) {\n  %res = \"cce.vusqz\"(%a0, %a1) : (vector<128xi16>, vector<256xi1>) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <128 x i16> @llvm.hivm.vusqz.m.v128i16(<128 x i16> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vusqz.m.v256i8",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>, %a1: vector<256xi1>) {\n  %res = \"cce.vusqz\"(%a0, %a1) : (vector<256xi8>, vector<256xi1>) -> (vector<256xi8>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <256 x i8> @llvm.hivm.vusqz.m.v256i8(<256 x i8> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vusqz.m.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<64xi32>, %a1: vector<256xi1>) {\n  %res = \"cce.vusqz\"(%a0, %a1) : (vector<64xi32>, vector<256xi1>) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%3 = call <64 x i32> @llvm.hivm.vusqz.m.v64i32(<64 x i32> %0, <256 x i1> %1)"
+    },
+    {
+      "name": "llvm.hivm.vzunpack.v128i16",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<256xi8>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vunpack\"(%a0, %a1) {is_unsigned} : (vector<256xi8>, i32) -> (vector<128xi16>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <128 x i16> @llvm.hivm.vzunpack.v128i16(<256 x i8> %0, i32 0)"
+    },
+    {
+      "name": "llvm.hivm.vzunpack.v64i32",
+      "status": "confirmed",
+      "mlir": "module {\n llvm.func @test(%a0: vector<128xi16>) {\n  %a1 = llvm.mlir.constant(0 : i32) : i32\n  %res = \"cce.vunpack\"(%a0, %a1) {is_unsigned} : (vector<128xi16>, i32) -> (vector<64xi32>)\n  llvm.return\n }\n}",
+      "call": "%2 = call <64 x i32> @llvm.hivm.vzunpack.v64i32(<128 x i16> %0, i32 0)"
+    }
+  ]
+}

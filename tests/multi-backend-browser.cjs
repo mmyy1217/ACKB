@@ -175,7 +175,11 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     await page.selectOption('#backend', 'cce-dialect-intrinsics');
     assert.equal(await page.locator('#dialect-path').inputValue(), 'confirmed');
-    assert.match(await page.locator('#result-count').innerText(), /989 个/);
+    assert.match(await page.locator('#result-count').innerText(), /1,234 个/);
+    await page.fill('#search', 'llvm.hivm.vmulscvt.v128f16');
+    await page.locator('#rows .row-button').click();
+    await page.click('#tab-experiments');
+    assert.match(await page.locator('#detail').innerText(), /call .*@llvm\.hivm\.vmulscvt\.v128f16/);
     await page.selectOption('#dialect-path', 'semantic');
     await page.fill('#search', 'llvm.hivm.atom.ADD.G.s16');
     assert.equal(await page.locator('#rows .row-button').count(), 0);

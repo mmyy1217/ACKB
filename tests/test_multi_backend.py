@@ -37,6 +37,23 @@ class MultiBackendTests(unittest.TestCase):
         self.assertEqual({x['opcode'] for x in data['ordinary_lowerings']},
                          {'load', 'store', 'sitofp', 'uitofp', 'fptosi', 'fptoui'})
 
+    def test_completed_dialect_translation_audit(self):
+        index = json.loads(cce_dialect.OUTPUT.read_text())
+        audit = json.loads((cce_dialect.OUTPUT.parent / 'translation-audit.json').read_text())
+        items = {item['name']: item for item in index['intrinsics']}
+        cases = audit['cases']
+        self.assertEqual(index['source']['commit'], audit['dialect_commit'])
+        self.assertEqual(index['counts']['path_status'], {'confirmed': 1234, 'rejected': 199})
+        self.assertEqual(len(cases), len({case['name'] for case in cases}))
+        self.assertEqual(len(cases), 294)
+        self.assertEqual(sum('call' in case for case in cases), 245)
+        for case in cases:
+            self.assertEqual(items[case['name']]['path_status'], case['status'])
+            self.assertIn('llvm.func', case['mlir'])
+            self.assertEqual('call' in case, case['status'] == 'confirmed')
+            if 'call' in case:
+                self.assertIn('@' + case['name'] + '(', case['call'])
+
     def test_ascendc_two_layers_are_valid_and_linked_to_ccec(self):
         data = json.loads(ascendc.OUTPUT.read_text())
         self.assertEqual(ascendc.validate_model(data), [])

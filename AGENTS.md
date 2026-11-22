@@ -192,6 +192,8 @@ python scripts/ascendc.py extract --toolkit "$CCE_OPS_TOOLKIT"
 python scripts/cce_dialect.py extract --repo /home/zuomin/Projects/Compiler/CCEDialect
 python scripts/ascendc.py validate
 python scripts/cce_dialect.py validate
+# Optional host-only replay using the pinned standalone translator
+python scripts/replay_dialect_audit.py /path/to/cce-translate
 python scripts/query.py --backend ascendc --layer capi search --name asc_cast
 python scripts/query.py --backend ascendc --limit 10 forms ascendc_capi_asc_cast
 python scripts/query.py --backend ascendc get ascendc_capi_asc_cast

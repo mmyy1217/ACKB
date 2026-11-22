@@ -8,6 +8,10 @@ from pathlib import Path
 import re
 import subprocess
 
+import dialect_cast_paths
+import dialect_control_paths
+import dialect_vector_paths
+
 from catalog import ROOT, VERSION
 from ccec_transfer import transfer_for
 from database import Database, stable_id
@@ -34,6 +38,8 @@ SCANNED_FILES = (
     'lib/Dialect/CCE/CCETranslateSIMT.cpp',
     'lib/Dialect/CCE/CCEBackendAdapt.cpp',
     'lib/Dialect/CCE/CCEPrintLibrary.cpp',
+    'lib/Dialect/CCE/CCEPrintBackendAdapt.cpp',
+    'tools/cce-translate/cce-translate.cpp',
     'lib/Dialect/CCE/CCEDialect.cpp',
     'doc/CCESpec.md',
     'doc/DebugPrintUserGuide.md',
@@ -41,7 +47,7 @@ SCANNED_FILES = (
 
 LIMITATIONS = [
     'CppNameRule enumerates possible translator spellings before verifier or backend checks. Global SIMT load/store widths come from IR; 8/16/32/64 are indexed, other widths are open.',
-    'Static extraction from CCEDialect TableGen (.td), translation passes (.cpp) and specification docs (.md); no MLIR compilation or NPU execution was performed.',
+    'Static extraction from CCEDialect TableGen (.td), translation passes (.cpp) and specification docs (.md); the 294-form host translation audit records emitted LLVM text or diagnostics. NPU execution was not performed.',
     'Upper-layer memref operations (e.g. cce.mad, cce.vgatherb) require upstream conversion to cce.intr.* before standalone cce-translate --cce-to-backend.',
     'Target hardware constants in CCEDialect are fixed to dav-351x (UB 248KiB/256KiB, 256-byte vector registers, Ascend 950 / A5 class).',
     'Cross-links to CCEC __builtin_cce_* ops are heuristic/lexical correspondences across LLVM IR (llvm.hivm.*) and Clang builtins, not formal equivalence proofs.',
@@ -50,6 +56,15 @@ LIMITATIONS = [
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def generator_digest():
+    files = [Path(__file__), *(Path(module.__file__) for module in
+                               (dialect_cast_paths, dialect_control_paths, dialect_vector_paths))]
+    digest = hashlib.sha256()
+    for path in files:
+        digest.update(path.name.encode() + b'\0' + bytes.fromhex(sha256(path)))
+    return digest.hexdigest()
 
 
 def classify_family(mnemonic: str, summary: str = '', op_class: str = '') -> tuple[str, dict | None]:
@@ -555,6 +570,36 @@ def cpp_mappings(repo, files_meta):
                        'source': {'file': path, 'line': number, 'end_line': number}}
 
 
+def assess_named_form(m, upper, lower, add):
+    """Use a concrete legal operand/result tuple for non-scalar name mappings."""
+    key = m['op_key']
+    predicate = 'vector<256xi1>'
+    witnesses = {
+        'movvp': f'vector<64xi32>，i32 part=0 → {predicate}',
+        'pmov': f'{predicate} → {predicate}，mask_bitwidth=8',
+        'ppack': f'{predicate} 函数参数，src/dst_mask_bitwidth=16/8，part 取 LLVM i32 常量 0',
+        'punpack': f'{predicate} 函数参数，src/dst_mask_bitwidth=8/16，part 取 LLVM i32 常量 0',
+        'vmulscvt': f'vector<64xf32>，f32，{predicate}，i32 part=0 → vector<128xf16>',
+        'vselr': '两个 vector<64xi32> → vector<64xi32>',
+    }
+    if key in witnesses:
+        add(upper[key][0], 'confirmed', witnesses[key], 'lib/Dialect/CCE/CCETranslate.cpp', 977)
+    elif key.startswith('intr.vsldb.'):
+        dtype = key.rsplit('.', 1)[1]
+        width = int(re.search(r'\d+', dtype).group())
+        add(lower[key], 'confirmed', f'UB 指针，两个 i32，{predicate} → vector<{2048 // width}x{dtype}>；按入口名查表',
+            'lib/Dialect/CCE/CCETranslate.cpp', 977)
+    elif key in ('intr.vldus.f8e4m3', 'intr.vldus.f8e5m2'):
+        add(lower[key], 'confirmed',
+            'UB 指针和 vector<32xi8> 对齐状态 → (vector<256xi8>, vector<32xi8>, UB 指针)。'
+            'ODS 允许 i8 载体；使用 FP8 数据结果会在 CCETranslate.cpp:911 被拒绝。',
+            'lib/Dialect/CCE/CCETranslate.cpp', 977)
+    elif key in ('intr.vsstb.f8e4m3fn', 'intr.vsstb.f8e5m2'):
+        add(lower[key], 'confirmed', f'vector<256xi8> 字节载体，UB 指针，两个 i32 和 {predicate} → void；'
+            'ODS 的 AnyType 接受字节载体，入口名选择 FP8 符号。',
+            'lib/Dialect/CCE/CCETranslate.cpp', 977)
+
+
 def assess_paths(mappings, upper, lower):
     """Construct witnesses only for dispatch branches reviewed at the source pin."""
     paths = []
@@ -576,8 +621,9 @@ def assess_paths(mappings, upper, lower):
                 add(op, 'rejected', '上层 verifier 拒绝该标量类型。', 'lib/Dialect/CCE/CCEDialect.cpp',
                     869 if key.endswith('rmw') else 902)
             else:
-                add(op, 'rejected' if '.S.' in name else 'pending',
-                    '当前翻译分支要求 LLVM 指针，memref 入口需先转换，低层原子入口仅接收 GM。', simt, 370)
+                add(op, 'rejected',
+                    '独立译器直接处理此语义 Op 时要求 LLVM 指针，其 ODS 要求 memref。外部预转换须另行核对。', simt,
+                    378 if key.endswith('rmw') else 488)
             if '.S.' in name:
                 add(low, 'rejected', 'LLVM_PointerGM 只接受地址空间 1，S 分支要求地址空间 6。', simt, m['source']['line'])
             else:
@@ -586,10 +632,10 @@ def assess_paths(mappings, upper, lower):
         elif cls == 'CppNameRule' and key in ('simt.load', 'simt.store'):
             add(lower[m['intr_op_key']], 'confirmed', '地址空间 1，标量 i' + suffix[1:] + '，' + name.split('.')[-2], simt, m['source']['line'])
         elif cls == 'CppNameRule' and key == 'simt.cast':
-            # LLVM conversion of the vendor FP8 type needs a carrier path.
-            status = 'pending' if 'f8e' in name else 'confirmed'
-            add(op, status, name.removeprefix('llvm.hivm.').replace('.to.', ' → ') +
-                ('，待追踪 FP8 的 LLVM 类型转换。' if status == 'pending' else ''), simt, 306)
+            if 'f8e' in name:
+                dialect_cast_paths.assess(m, upper, lower, add)
+            else:
+                add(op, 'confirmed', name.removeprefix('llvm.hivm.').replace('.to.', ' → '), simt, 306)
         elif cls == 'CCESIMTDtypeIntrinsic' and op:
             add(op, 'confirmed', '源与结果同型 ' + m['element_type'] + ('，三个控制操作数 i32' if '.shfl.' in key else ''),
                 simt, 77 if '.shfl.' in key else 181)
@@ -605,6 +651,11 @@ def assess_paths(mappings, upper, lower):
             add(op, 'confirmed', condition[name.removeprefix('llvm.hivm.')], simt, m['source']['line'])
         elif cls in ('CCENameMappedIntrinsic', 'CCESIMTNameMappedIntrinsic'):
             entry = lower.get(key) or op
+            prior = len(paths)
+            if cls == 'CCENameMappedIntrinsic':
+                assess_named_form(m, upper, lower, add)
+            if len(paths) != prior:
+                continue
             if not entry or entry.get('has_verifier') or key in ('intr.simt.print', 'intr.print'):
                 continue
             args = re.findall(r'(\w+):\$\w+', entry['arguments'])
@@ -661,6 +712,12 @@ def assess_paths(mappings, upper, lower):
             add(op, 'confirmed', f"vector<{m['lanes']}x{dtype}>，mode=[{m['merge_mode']}]，signedness={m['signedness']}", cpp, 825)
         elif key == 'barrier' and cls == 'CCEEnumIntrinsic':
             add(op, 'confirmed', 'pipe 属性选择 PIPE_V', cpp, 998)
+        elif cls == 'CCEVectorIntrinsic':
+            dialect_vector_paths.assess(m, upper, lower, add)
+        elif cls == 'CCEVcvtIntrinsic' or (cls == 'CppLiteral' and key == 'vcvtff'):
+            dialect_cast_paths.assess(m, upper, lower, add)
+        elif cls in ('CCEEnumIntrinsic', 'CCEMembarIntrinsic', 'EmbeddedIRCall', 'CppLiteral'):
+            dialect_control_paths.assess(m, upper, lower, add)
     states = {p['status'] for p in paths}
     status = 'confirmed' if 'confirmed' in states else 'rejected' if states == {'rejected'} else 'pending'
     return {'path_status': status, 'entry_paths': paths}
@@ -681,7 +738,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
     # The witness rules depend on verifier bodies, ODS constraints and dispatch order.
     reviewed = '5639e581ef516650412b3f06104f27a3e7c661b5'
     if head_commit != reviewed or subprocess.run(
-            ['git', '-C', str(repo), 'diff', '--quiet', reviewed, '--', 'include', 'lib', 'cmake']).returncode:
+            ['git', '-C', str(repo), 'diff', '--quiet', reviewed, '--', 'include', 'lib', 'cmake', 'tools']).returncode:
         raise ValueError('Review dialect reachability rules against the changed source tree')
 
     spec_sections = parse_spec_doc(repo / 'doc/CCESpec.md', repo / 'doc/DebugPrintUserGuide.md')
@@ -693,6 +750,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         for blk in parse_td_blocks(text):
             if blk['kind'] == 'class':
                 class_templates[blk['name']] = {
+                    'has_verifier': 'hasVerifier = 1' in blk['raw'],
                     'summary': extract_td_field(blk['raw'], 'summary'),
                     'description': extract_td_field(blk['raw'], 'description'),
                     'arguments': extract_td_field(blk['raw'], 'arguments'),
@@ -761,7 +819,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
                 'results': results,
                 'regions': regions,
                 'assembly_format': assembly,
-                'has_verifier': 'hasVerifier = 1' in raw,
+                'has_verifier': ('hasVerifier = 1' in raw or (tmpl.get('has_verifier', False) and 'hasVerifier = 0' not in raw)),
                 'lowering_mode': lowering_mode,
                 'lowering_mode_basis': 'type_and_name_heuristic',
                 'relation_resolution': 'lexical_name_candidate',
@@ -910,7 +968,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         'schema_version': SCHEMA_VERSION,
         'backend': 'cce-dialect',
         'version': f'git-{head_commit[:7]}',
-        'generator_sha256': sha256(Path(__file__)),
+        'generator_sha256': generator_digest(),
         'catalog_sha256': sha256(ROOT / 'data' / VERSION / 'catalog.json'),
         'target': {
             'architecture': 'dav-351x',
@@ -978,7 +1036,7 @@ def validate_model(data: dict) -> list[str]:
         for oid in i.get('upstream_op_ids', []):
             if oid not in op_ids:
                 errors.append(f'Dangling upstream_op_id {oid} in {i["id"]}')
-    if data.get('generator_sha256') != sha256(Path(__file__)):
+    if data.get('generator_sha256') != generator_digest():
         errors.append('Stale CCE Dialect generator snapshot')
     if data.get('catalog_sha256') != sha256(ROOT / 'data' / VERSION / 'catalog.json'):
         errors.append('Stale CCEC catalog binding')
@@ -992,6 +1050,12 @@ def validate_model(data: dict) -> list[str]:
         errors.append('Invalid lowering coverage counts')
     for item in data.get('intrinsics', []):
         paths = item.get('entry_paths', [])
+        if not paths or item.get('path_status') == 'pending':
+            errors.append('Missing final reachability assessment: ' + item['name'])
+        for path in paths:
+            for source in (path['definition'], path['dispatch']):
+                if source['file'] not in data['source']['files'] or source['line'] < 1:
+                    errors.append('Invalid reachability source: ' + item['name'])
         if (item.get('path_status') == 'confirmed') != any(p['status'] == 'confirmed' for p in paths):
             errors.append('Missing or inconsistent entry witness: ' + item['name'])
     if data.get('counts', {}).get('intrinsics') != len(intr_ids):

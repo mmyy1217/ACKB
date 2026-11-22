@@ -51,7 +51,12 @@ def build(source, output, site=False):
             dialect_errors = validate_dialect(dialect_data)
             if dialect_errors:
                 raise ValueError('; '.join(dialect_errors))
-            knowledge['cce_dialect'] = dialect_web_payload(dialect_data)
+            dialect = dialect_web_payload(dialect_data)
+            audit = json.loads(DIALECT_OUTPUT.with_name('translation-audit.json').read_text())
+            if audit['dialect_commit'] != dialect['source']['commit']:
+                raise ValueError('Dialect translation audit source mismatch')
+            dialect['translation_audit'] = {case['name']: case for case in audit['cases']}
+            knowledge['cce_dialect'] = dialect
     from llvm_ir import OUTPUT as LLVM_OUTPUT, validate_model as validate_llvm
     if LLVM_OUTPUT.exists():
         llvm = json.loads(LLVM_OUTPUT.read_text())
