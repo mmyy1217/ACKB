@@ -26,7 +26,7 @@ function openOp(id) {
   else if(target.backend==='ascendc'){
     state.backend='ascendc';state.ascendcLayer=target.ascendcLayer;configureBackend();
   }else if(target.backend==='cce-dialect'){
-    state.backend='cce-dialect';state.dialectLayer=target.dialectLayer;configureBackend();
+    state.backend='cce-dialect';state.dialectLayer=target.dialectLayer;if(target.dialectIntr)state.dialectPath=target.dialectIntr.path_status;configureBackend();
   }else{
     if(state.backend!=='ccec'){state.backend='ccec';configureBackend();}
     if(target.op)state.ccecLayer='interfaces';else if(ccecIsInterface(target))state.ccecLayer='wrappers';

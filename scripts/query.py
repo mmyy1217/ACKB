@@ -37,6 +37,7 @@ def parser():
     forms = commands.add_parser('forms')
     forms.add_argument('identity')
     commands.add_parser('unresolved')
+    commands.add_parser('ordinary-lowerings')
     schema = commands.add_parser('schema')
     schema.add_argument('--layer', choices=['declarations', 'ops', 'calls', 'basic', 'capi', 'intrinsics'], default='declarations')
     for operation in ('topics', 'builtins', 'categories'):
@@ -51,6 +52,7 @@ def parser():
     ops = commands.add_parser('ops')
     ops.add_argument('query', nargs='?', default='')
     ops.add_argument('--name')
+    ops.add_argument('--path-status', choices=('confirmed', 'semantic', 'raw', 'pending', 'rejected', 'all'), default='confirmed')
     ops.add_argument('--chip')
     ops.add_argument('--architecture')
     ops.add_argument('--core')
@@ -63,6 +65,7 @@ def parser():
             sub.add_argument('identity')
         else:
             sub.add_argument('query', nargs='?', default='')
+            sub.add_argument('--path-status', choices=('confirmed', 'semantic', 'raw', 'pending', 'rejected', 'all'), default='confirmed')
         sub.add_argument('--name')
         sub.add_argument('--scope', choices=['a5-evidence','a5-sources','all'], default=None)
         sub.add_argument('--include-candidates', action='store_true')
@@ -109,7 +112,7 @@ def dispatch_ascendc_or_dialect(args):
     backend = 'cce-dialect' if identity.startswith('cce_dialect_') else 'ascendc' if identity.startswith('ascendc_') else args.backend
     module = cce_dialect if backend == 'cce-dialect' else ascendc
     allowed = {'info', 'search', 'get', 'relations', 'evidence', 'interfaces', 'ops'}
-    allowed |= {'forms'} if backend == 'ascendc' else {'unresolved'}
+    allowed |= {'forms'} if backend == 'ascendc' else {'unresolved', 'ordinary-lowerings'}
     if args.command not in allowed:
         raise ValueError(f'{args.command} is not implemented for {backend}')
     for field in ('builtin', 'signature', 'support', 'category', 'core', 'deprecation'):
@@ -144,6 +147,8 @@ def dispatch_ascendc_or_dialect(args):
         return page([{'counts': data['counts'], 'target': data['target']}], args, context)
     if args.command == 'unresolved':
         return page(data['unresolved_lowerings'], args, context)
+    if args.command == 'ordinary-lowerings':
+        return page(data['ordinary_lowerings'], args, context)
     keys = ('ops', 'intrinsics') if backend == 'cce-dialect' else ('basic_api', 'c_api')
     by_id = {r['id']: r for key in keys for r in data[key]}
     if identity:
@@ -171,6 +176,7 @@ def dispatch_ascendc_or_dialect(args):
                              'caller_definition': traced_node(edge['caller']),
                              **({'callee_definition': traced_node(edge['callee'])} if 'callee' in edge else {}),
                              'call_sha256': data['files'][edge['call']['source']['file']]['sha256']})
+            rels.extend({'relation': 'entry_lowering_path', **p} for p in rec.get('entry_paths', []))
             rels += [{'relation': 'candidate_intrinsic_mapping', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('intrinsic_ids', [])]
             rels += [{'relation': 'candidate_source_op', 'source_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('upstream_op_ids', [])]
             rels += [{'relation': 'candidate_ccec_op', 'target_id': i, 'resolution': 'lexical_name_candidate'} for i in rec.get('ccec_candidate_op_ids', [])]
@@ -196,11 +202,19 @@ def dispatch_ascendc_or_dialect(args):
         cond = 'possible' if getattr(args, 'include_unknown', False) else 'matches'
     items = []
     for x in pool:
+        if backend == 'cce-dialect' and layer == 'intrinsics':
+            scope = getattr(args, 'path_status', 'confirmed')
+            if scope in ('semantic', 'raw'):
+                if not any(p['status'] == 'confirmed' and p['entry'].startswith('cce.intr.') == (scope == 'raw')
+                           for p in x['entry_paths']):
+                    continue
+            elif scope not in ('all', x['path_status']):
+                continue
         if cond and x['condition_3510'] not in (('matches', 'unknown') if cond == 'possible' else (cond,)):
             continue
         if q and q not in json.dumps({k: x.get(k) for k in ('id', 'name', 'qualified_name', 'mnemonic', 'def_name', 'summary', 'family', 'group', 'ccec_candidate_op_ids')}, ensure_ascii=False).lower():
             continue
-        item = {k: x[k] for k in ('id', 'name', 'qualified_name', 'family', 'group', 'condition_3510', 'overload_count', 'source', 'relation_resolution') if k in x}
+        item = {k: x[k] for k in ('id', 'name', 'qualified_name', 'family', 'group', 'condition_3510', 'overload_count', 'source', 'relation_resolution', 'path_status') if k in x}
         item['sample_signature'] = (x.get('forms') or [{}])[0].get('signature', '')
         items.append(item)
     return page(items, args, context)

@@ -25,6 +25,18 @@ class MultiBackendTests(unittest.TestCase):
         self.assertTrue(len(ops_by_name['cce.mad']['intrinsic_ids']) >= 8)
         self.assertIsNotNone(ops_by_name['cce.mad']['spec'])
 
+    def test_lowering_depends_on_entry_and_address_space(self):
+        data = json.loads(cce_dialect.OUTPUT.read_text())
+        intrinsics = {item['name']: item for item in data['intrinsics']}
+        gm = intrinsics['llvm.hivm.atom.ADD.G.s16']
+        self.assertEqual(gm['path_status'], 'confirmed')
+        self.assertEqual({p['entry']: p['status'] for p in gm['entry_paths']}, {
+            'cce.simt.atomic_rmw': 'rejected', 'cce.intr.simt.atomic_rmw': 'confirmed'})
+        self.assertEqual(intrinsics['llvm.hivm.atom.ADD.S.s16']['path_status'], 'rejected')
+        self.assertEqual(intrinsics['llvm.hivm.vrec.x.v64f32']['path_status'], 'rejected')
+        self.assertEqual({x['opcode'] for x in data['ordinary_lowerings']},
+                         {'load', 'store', 'sitofp', 'uitofp', 'fptosi', 'fptoui'})
+
     def test_ascendc_two_layers_are_valid_and_linked_to_ccec(self):
         data = json.loads(ascendc.OUTPUT.read_text())
         self.assertEqual(ascendc.validate_model(data), [])

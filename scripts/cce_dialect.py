@@ -29,6 +29,7 @@ SCANNED_FILES = (
     'include/Target/CCE/CCEIntrinsicMap.td',
     'include/Target/CCE/CCESIMTIntrinsicMap.td',
     'include/Utils/AddressSpaces.td',
+    'cmake/GenerateCCEIntrinsicMap.cmake',
     'lib/Dialect/CCE/CCETranslate.cpp',
     'lib/Dialect/CCE/CCETranslateSIMT.cpp',
     'lib/Dialect/CCE/CCEBackendAdapt.cpp',
@@ -554,6 +555,117 @@ def cpp_mappings(repo, files_meta):
                        'source': {'file': path, 'line': number, 'end_line': number}}
 
 
+def assess_paths(mappings, upper, lower):
+    """Construct witnesses only for dispatch branches reviewed at the source pin."""
+    paths = []
+    cpp = 'lib/Dialect/CCE/CCETranslate.cpp'
+    simt = 'lib/Dialect/CCE/CCETranslateSIMT.cpp'
+
+    def add(op, status, witness, file, line):
+        paths.append({'entry': op['mnemonic'] if op.get('op_key') else op['name'],
+                      'status': status, 'condition': witness,
+                      'definition': op['source'], 'dispatch': {'file': file, 'line': line}})
+
+    for m in mappings:
+        key, cls, name = m['op_key'], m['mapping_class'], m['llvm_intrinsic']
+        suffix = name.rsplit('.', 1)[1]
+        op = next(iter(upper.get(key, [])), None)
+        if key in ('simt.atomic_rmw', 'simt.atomic_cas'):
+            low = lower[m['intr_op_key']]
+            if m['restriction']:
+                add(op, 'rejected', '上层 verifier 拒绝该标量类型。', 'lib/Dialect/CCE/CCEDialect.cpp',
+                    869 if key.endswith('rmw') else 902)
+            else:
+                add(op, 'rejected' if '.S.' in name else 'pending',
+                    '当前翻译分支要求 LLVM 指针，memref 入口需先转换，低层原子入口仅接收 GM。', simt, 370)
+            if '.S.' in name:
+                add(low, 'rejected', 'LLVM_PointerGM 只接受地址空间 1，S 分支要求地址空间 6。', simt, m['source']['line'])
+            else:
+                _, kind, _, dtype = name.split('.')[-4:]
+                add(low, 'confirmed', f'地址空间 1，{kind}，类型键 {dtype}，返回类型与值相同。', simt, m['source']['line'])
+        elif cls == 'CppNameRule' and key in ('simt.load', 'simt.store'):
+            add(lower[m['intr_op_key']], 'confirmed', '地址空间 1，标量 i' + suffix[1:] + '，' + name.split('.')[-2], simt, m['source']['line'])
+        elif cls == 'CppNameRule' and key == 'simt.cast':
+            # LLVM conversion of the vendor FP8 type needs a carrier path.
+            status = 'pending' if 'f8e' in name else 'confirmed'
+            add(op, status, name.removeprefix('llvm.hivm.').replace('.to.', ' → ') +
+                ('，待追踪 FP8 的 LLVM 类型转换。' if status == 'pending' else ''), simt, 306)
+        elif cls == 'CCESIMTDtypeIntrinsic' and op:
+            add(op, 'confirmed', '源与结果同型 ' + m['element_type'] + ('，三个控制操作数 i32' if '.shfl.' in key else ''),
+                simt, 77 if '.shfl.' in key else 181)
+        elif cls in ('CCESIMTReduceIntrinsic', 'CppNameRule') and key.startswith('simt.reduce'):
+            add(upper['simt.reduce'][0], 'confirmed', name.removeprefix('llvm.hivm.redux.'), simt, 241 if cls == 'CppNameRule' else 247)
+        elif cls == 'CppNameRule' and op and key in ('simt.vote', 'simt.mulhi', 'simt.mul_i32toi64'):
+            add(op, 'confirmed', name.removeprefix('llvm.hivm.'), simt, m['source']['line'])
+        elif cls == 'CppLiteral' and op and key in ('simt.fence', 'simt.query_ptr', 'simt.ffma', 'simt.dcci', 'simt.mul64hi'):
+            condition = {'isgm': 'kind=global', 'isub': 'kind=ubuf', 'islocal': 'kind=local',
+                         'DCCI': '省略 dst_context', 'DCCI_DST_CONTEXT': '设置 dst_context',
+                         'fence.workitems': 'scope=device', 'fenceblock.workitems': 'scope=block',
+                         'ffma_f32_rrr': '三个 f32 操作数', 'mul64hi_ui': '两个 i64 操作数'}
+            add(op, 'confirmed', condition[name.removeprefix('llvm.hivm.')], simt, m['source']['line'])
+        elif cls in ('CCENameMappedIntrinsic', 'CCESIMTNameMappedIntrinsic'):
+            entry = lower.get(key) or op
+            if not entry or entry.get('has_verifier') or key in ('intr.simt.print', 'intr.print'):
+                continue
+            args = re.findall(r'(\w+):\$\w+', entry['arguments'])
+            results = re.findall(r'(\w+):\$\w+', entry['results'])
+            if entry['op_class'] == 'CCE_SIMTInfoOp':
+                results = ['I64' if key == 'simt.clock64' else 'I32']
+            witness_types = {'CCE_PredVecType': 'vector<256xi1>', 'CCE_AlignVecType': 'vector<32xi8>'}
+            if key in lower:
+                vector = re.search(r'\.v(\d+)(bf16|f16|f32|[siu]\d+)$', name)
+                if entry['op_class'] == 'CCE_IntrCreateCbufMatrixOp':
+                    witness_types['valueType'] = 'I64' if key.endswith('f32') else 'bf16' if '.bf16.' in key else 'f16'
+                if vector:
+                    lanes, dtype = vector.groups()
+                    dtype = re.sub(r'^[su]', 'i', dtype)
+                    witness_types['AnyType'] = f'vector<{lanes}x{dtype}>'
+                    witness_types['CCE_MemVecElemVecType'] = witness_types['AnyType']
+                elif key in ('intr.vstus', 'intr.vstur'):
+                    witness_types['CCE_MemVecElemVecType'] = 'vector<256xi8>'
+                # A predicate operand uses the predicate register type even if
+                # the raw-pointer ODS entry accepts AnyType for that operand.
+                args = [witness_types['CCE_PredVecType'] if arg == 'AnyType' and role in ('mask', 'preg') else arg
+                        for arg, role in re.findall(r'(\w+):\$(\w+)', entry['arguments'])]
+            fixed = r'LLVM_(?:AnyPointer|Pointer(?:UB|GM|L1|L0[ABC]))|I(?:1|8|16|32|64)'
+            if (all(re.fullmatch(fixed, t) or t in witness_types or t in witness_types.values() for t in args + results)
+                    and len(args) == m['operand_count'] and len(results) == m['result_count']):
+                types = [witness_types.get(t, t) for t in args + results]
+                add(entry, 'confirmed', '(' + ', '.join(types[:len(args)]) + ') → ' +
+                    (', '.join(types[len(args):]) or 'void'), cpp, 977)
+        elif cls == 'CCEPredIntrinsic' and op and m['mask_bitwidth'] in (8, 16, 32):
+            add(op, 'confirmed', f"mask_bitwidth={m['mask_bitwidth']}；谓词取同型，pset 的 pat 可取 0。", cpp, 615)
+        elif cls == 'CCEMembarIntrinsic' and m['barrier_kind'] == 0:
+            add(op, 'confirmed', 'i32 函数参数，翻译器选择默认 barrierKind=0。', cpp, 1612)
+        elif cls == 'CCEVectorIntrinsic' and key.startswith(('cmp.', 'cmps.')):
+            base, predicate = key.split('.')
+            sign = 'u' if predicate in ('ule', 'uge', 'ult', 'ugt') else 's'
+            if (m['signedness'], m['merge_mode'], m['operand_count'], m['result_count']) == (sign, 'z', 3, 1):
+                add(upper[base][0], 'confirmed', f"vector<{m['lanes']}x{m['element_type']}>，predicate={predicate}，结果为谓词向量",
+                    cpp, 1142 if base == 'cmp' else 1185)
+        elif cls == 'CCEVectorIntrinsic' and op and not op['has_verifier'] and op['op_class'] in (
+                'UnaryVector', 'BinaryVector', 'BinaryVectorShift', 'BinaryVectorShiftByVector', 'VecScalarOp', 'ReductionOp'):
+            if key == 'vmuls' and m['element_type'] == 'bf16':
+                add(op, 'rejected', 'bf16 分支调用 vdups 和 vmul。', cpp, 757)
+                continue
+            if key in ('vrec', 'vrsqrt'):
+                add(op, 'rejected', '翻译器将该操作分解为 vbr、vdiv 及可选 vsqrt。', cpp, 688)
+                continue
+            if key in ('vand', 'vor', 'vxor') and m['signedness'] != 's':
+                add(op, 'rejected', '翻译器固定使用 s 查表。', cpp, 809)
+                continue
+            dtype = m['element_type']
+            if ('Shift' in op['op_class'] and dtype not in ('i8', 'i16', 'i32')
+                    or m['result_count'] != 1 or m['operand_count'] != (2 if op['op_class'] in ('UnaryVector', 'ReductionOp') else 3)):
+                continue
+            add(op, 'confirmed', f"vector<{m['lanes']}x{dtype}>，mode=[{m['merge_mode']}]，signedness={m['signedness']}", cpp, 825)
+        elif key == 'barrier' and cls == 'CCEEnumIntrinsic':
+            add(op, 'confirmed', 'pipe 属性选择 PIPE_V', cpp, 998)
+    states = {p['status'] for p in paths}
+    status = 'confirmed' if 'confirmed' in states else 'rejected' if states == {'rejected'} else 'pending'
+    return {'path_status': status, 'entry_paths': paths}
+
+
 def extract(repo: Path = DEFAULT_REPO) -> dict:
     repo = repo.resolve()
     if not repo.exists():
@@ -565,6 +677,12 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
         if not fp.exists():
             raise ValueError(f'Missing expected CCEDialect file: {rel}')
         files_meta[rel] = {'path': rel, 'sha256': sha256(fp), 'bytes': fp.stat().st_size}
+
+    # The witness rules depend on verifier bodies, ODS constraints and dispatch order.
+    reviewed = '5639e581ef516650412b3f06104f27a3e7c661b5'
+    if head_commit != reviewed or subprocess.run(
+            ['git', '-C', str(repo), 'diff', '--quiet', reviewed, '--', 'include', 'lib', 'cmake']).returncode:
+        raise ValueError('Review dialect reachability rules against the changed source tree')
 
     spec_sections = parse_spec_doc(repo / 'doc/CCESpec.md', repo / 'doc/DebugPrintUserGuide.md')
 
@@ -763,6 +881,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             'id': intr_id,
             'name': llvm_name,
             'llvm_intrinsic': llvm_name,
+            **assess_paths(g['mappings'], upper_by_mnemonic, mlir_intr_ops),
             'group': group_domain,
             'family': family,
             'transfer': transfer,
@@ -811,6 +930,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             'ops_with_spec_doc': sum(1 for u in upper_ops if u.get('spec')),
             'ops_by_lowering_mode': dict(Counter(u['lowering_mode'] for u in upper_ops)),
             'intrinsics': len(lower_intrinsics),
+            'path_status': dict(Counter(i['path_status'] for i in lower_intrinsics)),
             'tablegen_names': len({m['llvm_intrinsic'] for m in raw_mappings}),
             'unresolved_lowerings': len(unresolved_lowerings),
             'explicit_mlir_intr_ops': len(mlir_intr_ops),
@@ -818,6 +938,16 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             'spec_sections': len(spec_sections),
             'unmatched_spec_sections': unmatched_specs,
         },
+        'ordinary_lowerings': [
+            {'entry': 'cce.intr.simt.' + op, 'opcode': op, 'condition': '地址空间 6，i32',
+             'source': {'file': 'lib/Dialect/CCE/CCETranslateSIMT.cpp', 'line': line}}
+            for op, line in [('load', 583), ('store', 587)]
+        ] + [
+            {'entry': 'cce.simt.cast', 'opcode': op, 'condition': witness,
+             'source': {'file': 'lib/Dialect/CCE/CCETranslateSIMT.cpp', 'line': line}}
+            for op, witness, line in [('sitofp', 'i32 → f32，signed', 329), ('uitofp', 'i32 → f32，unsigned', 328),
+                                      ('fptosi', 'f32 → i32，signed', 333), ('fptoui', 'f32 → i32，unsigned', 332)]
+        ],
         'limitations': LIMITATIONS,
         'unresolved_lowerings': unresolved_lowerings,
         'ops': sorted(upper_ops, key=lambda x: x['name']),
@@ -857,6 +987,13 @@ def validate_model(data: dict) -> list[str]:
             errors.append('Non-concrete LLVM symbol: ' + item['name'])
         if not item['mappings'] or any(m['llvm_intrinsic'] != item['name'] for m in item['mappings']):
             errors.append('Inconsistent static mapping: ' + item['id'])
+    states = Counter(i.get('path_status') for i in data.get('intrinsics', []))
+    if states != data.get('counts', {}).get('path_status') or set(states) - {'confirmed', 'rejected', 'pending'}:
+        errors.append('Invalid lowering coverage counts')
+    for item in data.get('intrinsics', []):
+        paths = item.get('entry_paths', [])
+        if (item.get('path_status') == 'confirmed') != any(p['status'] == 'confirmed' for p in paths):
+            errors.append('Missing or inconsistent entry witness: ' + item['name'])
     if data.get('counts', {}).get('intrinsics') != len(intr_ids):
         errors.append('Incorrect concrete intrinsic count')
     return errors

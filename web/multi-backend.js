@@ -185,6 +185,7 @@ function renderDialectDetail(r) {
     $('#copy-signature').onclick = () => copyText(`${o.name} ${o.assembly_format || ''}`.trim());
   } else {
     const intr = r.dialectIntr;
+    const labels = {confirmed:'源码可达',pending:'待核对',rejected:'入口已拒绝'};
     const upLinks = (intr.upstream_op_ids || []).map(id => opLink(id, lookupRecord(id)?.name || id)).join(' ');
     const ccecLinks = (intr.ccec_candidate_op_ids || []).map(id => opLink(id, id.replace('ccec_op___builtin_cce_', '__builtin_cce_'))).join(' ');
     const mlirOpsHTML = (intr.mlir_intr_ops || []).length
@@ -216,10 +217,14 @@ function renderDialectDetail(r) {
       body = `<pre class="signature"><code>${esc(intr.llvm_intrinsic)}</code></pre><dl class="detail-meta"><dt>后端目标符号</dt><dd><code>${esc(intr.llvm_intrinsic)}</code></dd><dt>映射规则类</dt><dd><code>${esc((intr.mapping_classes || []).join(', '))}</code></dd><dt>来源位置</dt><dd class="source-ref">${esc(sourceLabel(intr.source))}</dd></dl>${mlirOpsHTML}<h3>lowering 条目 · ${(intr.mappings || []).length}</h3>${mapRowsHTML}<h3>上游语义 Op (CCE Dialect 语义 Ops) · ${(intr.upstream_op_ids || []).length}</h3>${upLinks ? `<p>以下为按映射键关联的上游候选，点击查看定义与规格：${upLinks}</p>` : '<p>当前未建立上游语义 Op 关联。</p>'}${ccecLinks ? `<h3>候选 CCEC Builtins · ${(intr.ccec_candidate_op_ids || []).length}</h3><p>${ccecLinks}</p>` : ''}`;
     }
     pane.innerHTML = `<div class="detail-heading"><h2>${esc(intr.name)}</h2><div class="detail-domain"><span>${esc(intr.group)}</span><span>${esc(intr.family)}</span></div><div class="qualified">${esc((intr.op_keys || []).map(k => 'cce.' + k).join(', '))}</div><div class="detail-actions"><button id="back-to-list" class="mobile-return text-button">返回列表</button><button id="copy-signature" class="quiet-button">复制符号</button><button id="copy-link" class="quiet-button">复制链接</button><span class="detail-status">CCE Dialect LLVM Intrinsic</span></div></div><div class="detail-tabs" role="tablist" aria-label="详情内容">${tabs.map(([id, title]) => `<button id="tab-${id}" role="tab" data-tab="${id}" aria-controls="detail-content" tabindex="${state.tab === id ? 0 : -1}" aria-selected="${state.tab === id}">${title}</button>`).join('')}</div><div class="detail-body" id="detail-content" role="tabpanel" aria-labelledby="tab-${state.tab}">${body}</div>`;
+    if (state.tab === 'definition') {
+      const paths = intr.entry_paths.map(p => `<p><b>${labels[p.status]}</b> · <code>${esc(p.entry)}</code><br>${esc(p.condition)}<br><small>${esc(sourceLabel(p.definition))} → ${esc(sourceLabel(p.dispatch))}</small></p>`).join('');
+      $('#detail-content').insertAdjacentHTML('afterbegin', paths || '<p>待核对 · 仍需核对入口约束和实际翻译分支。</p>');
+    }
     $('#copy-signature').onclick = () => copyText(intr.llvm_intrinsic);
   }
 
-  if (r.backend === 'cce-dialect') $('#detail-content').insertAdjacentHTML('afterbegin', '<p class="callout">TableGen 映射行来自源码。上游 Op 关联及 CCEC 对应为名称规则生成的候选，尚未验证语义等价或编译结果。</p>');
+  if (r.dialectOp) $('#detail-content').insertAdjacentHTML('afterbegin', '<p class="callout">TableGen 映射行来自源码。上游 Op 关联及 CCEC 对应为名称规则生成的候选，尚未验证语义等价或编译结果。</p>');
   $('#copy-link').onclick = () => copyText(location.href);
   $('#back-to-list').onclick = () => {
     readingDetail = false;
@@ -247,7 +252,13 @@ function renderAscendcReport() {
 function renderDialectReport() {
   const c = dialectData.counts || {};
   const modes = c.ops_by_lowering_mode || {};
-  $('#report').innerHTML = `<h2>CCE Dialect 双层知识库 · MLIR ⇄ BiSheng LLVM IR</h2><p>固定来源仓库 <code>${esc(dialectData.source?.repository || '')}</code> · Commit <code>${esc((dialectData.source?.commit || '').slice(0, 12))}</code> · 目标硬件 <code>dav-351x</code>（UB 256KiB，向量寄存器 256B，对应 Huawei Ascend 950 / A5）。</p><table class="parameter-table"><thead><tr><th>纵向层级</th><th>条目数</th><th>说明</th></tr></thead><tbody><tr><td>上层：CCE Dialect 语义 Ops (语义算子层)</td><td>${c.ops || 0}</td><td>来自 <code>CCEOps.td</code> (207) 与 <code>CCESIMTOps.td</code> (40)，挂载 <code>CCESpec.md</code> 中文规格 (${c.ops_with_spec_doc || 0} 项匹配)</td></tr><tr><td>下层：CCE Dialect LLVM Intrinsics (后端 Intrinsic 层)</td><td>${c.intrinsics || 0}</td><td>仅计具体 <code>llvm.hivm.*</code> 符号；来源 <code>CCEIntrinsicOps.td</code> (${c.explicit_mlir_intr_ops || 0} 个 <code>cce.intr.*</code>) 与 <code>CCEIntrinsicMap.td</code> / <code>CCESIMTIntrinsicMap.td</code> (${c.tablegen_mapping_rows || 0} 行 TableGen 映射)，另计 C++ 调用、内嵌 IR 和按翻译分支生成的名称。动态拼名未验证入口可达性；访存位宽取自输入类型，当前展开 8/16/32/64 位。</td></tr></tbody></table><h3>上层 Op 翻译分类（启发式）</h3><table class="parameter-table"><thead><tr><th>翻译模式</th><th>Op 数量</th></tr></thead><tbody>${Object.entries(modes).map(([k, v]) => `<tr><td>${esc(loweringModeLabels[k] || k)}</td><td>${v}</td></tr>`).join('')}</tbody></table><h3>未建立静态 LLVM 映射 · ${c.unresolved_lowerings || 0}</h3><p>以下 MLIR Op 保留为待解析项，不生成占位 LLVM 符号，也不计入上面的具体 intrinsic 数量。</p>${(dialectData.unresolved_lowerings || []).map(item => `<details><summary><code>${esc(item.mnemonic)}</code> · ${esc(sourceLabel(item.source))}</summary><pre><code>${esc(item.excerpt)}</code></pre></details>`).join('')}`;
+  $('#report').innerHTML = `<h2>CCE Dialect 双层知识库 · MLIR ⇄ BiSheng LLVM IR</h2><p>固定来源仓库 <code>${esc(dialectData.source?.repository || '')}</code> · Commit <code>${esc((dialectData.source?.commit || '').slice(0, 12))}</code> · 目标硬件 <code>dav-351x</code>（UB 256KiB，向量寄存器 256B，对应 Huawei Ascend 950 / A5）。</p><table class="parameter-table"><thead><tr><th>纵向层级</th><th>条目数</th><th>说明</th></tr></thead><tbody><tr><td>上层：CCE Dialect 语义 Ops (语义算子层)</td><td>${c.ops || 0}</td><td>来自 <code>CCEOps.td</code> (207) 与 <code>CCESIMTOps.td</code> (40)，挂载 <code>CCESpec.md</code> 中文规格 (${c.ops_with_spec_doc || 0} 项匹配)</td></tr><tr><td>下层：CCE Dialect LLVM Intrinsics (后端 Intrinsic 层)</td><td>${c.intrinsics || 0}</td><td>仅计具体 <code>llvm.hivm.*</code> 符号；来源 <code>CCEIntrinsicOps.td</code> (${c.explicit_mlir_intr_ops || 0} 个 <code>cce.intr.*</code>) 与 <code>CCEIntrinsicMap.td</code> / <code>CCESIMTIntrinsicMap.td</code> (${c.tablegen_mapping_rows || 0} 行 TableGen 映射)，另计 C++ 调用、内嵌 IR 和按翻译分支生成的名称。动态拼名未验证入口可达性；访存位宽取自输入类型，当前展开 8/16/32/64 位。</td></tr></tbody></table><h3>源码可达 · ${c.path_status?.confirmed || 0} 个目标符号</h3><p>待核对 ${c.path_status?.pending || 0} 个，入口已拒绝 ${c.path_status?.rejected || 0} 个。直接编写 cce.intr.* 与上层语义 Op 分别核对。</p><h3>已追踪的普通 LLVM IR</h3>${(dialectData.ordinary_lowerings || []).map(p=>`<p><code>${esc(p.entry)} → ${esc(p.opcode)}</code> · ${esc(p.condition)}</p>`).join('')}<h3>上层 Op 翻译分类（启发式）</h3><table class="parameter-table"><thead><tr><th>翻译模式</th><th>Op 数量</th></tr></thead><tbody>${Object.entries(modes).map(([k, v]) => `<tr><td>${esc(loweringModeLabels[k] || k)}</td><td>${v}</td></tr>`).join('')}</tbody></table><h3>未建立静态 LLVM 映射 · ${c.unresolved_lowerings || 0}</h3><p>以下 MLIR Op 保留为待解析项，不生成占位 LLVM 符号，也不计入上面的具体 intrinsic 数量。</p>${(dialectData.unresolved_lowerings || []).map(item => `<details><summary><code>${esc(item.mnemonic)}</code> · ${esc(sourceLabel(item.source))}</summary><pre><code>${esc(item.excerpt)}</code></pre></details>`).join('')}`;
+}
+
+function dialectPathMatches(item, scope) {
+  if (!item || scope === 'all' || item.path_status === scope) return true;
+  if (scope !== 'semantic' && scope !== 'raw') return false;
+  return item.entry_paths.some(p => p.status === 'confirmed' && p.entry.startsWith('cce.intr.') === (scope === 'raw'));
 }
 
 function dialectSourceCell(record) {
