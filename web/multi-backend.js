@@ -67,7 +67,7 @@ function createDialectRecords() {
     builtins: [...(i.upstream_op_ids || []), ...(i.ccec_candidate_op_ids || [])],
     conditions: i.mapping_classes || [],
     source: i.source,
-    files: [i.source.file, ...(i.mlir_intr_ops || []).map(m => m.source.file)],
+    files: [...new Set([...i.mappings, ...i.mlir_intr_ops].map(m => m.source.file))],
     compatibility: {profiles: {[A5_PROFILE]: 'unknown'}},
     deprecation: {status: 'unmarked'},
   }));
@@ -192,6 +192,7 @@ function renderDialectDetail(r) {
       : '';
     const mapRowsHTML = `<table class="parameter-table"><thead><tr><th>定义 / 源码行</th><th>映射类型</th><th>Op 键</th><th>规格参数 (Lanes / Type / Mode)</th></tr></thead><tbody>${(intr.mappings || []).map(m => {
       const spec = [
+        m.name_pattern ? m.name_pattern + '（N 取自输入元素位宽）' : '',
         m.restriction ? '上层原子 Op 的类型校验拒绝此形式' : '',
         m.mapping_class === 'CppNameRule' ? '按翻译分支拼名，未编译验证' : '',
         m.lanes ? `lanes=${m.lanes}` : '',
@@ -247,4 +248,31 @@ function renderDialectReport() {
   const c = dialectData.counts || {};
   const modes = c.ops_by_lowering_mode || {};
   $('#report').innerHTML = `<h2>CCE Dialect 双层知识库 · MLIR ⇄ BiSheng LLVM IR</h2><p>固定来源仓库 <code>${esc(dialectData.source?.repository || '')}</code> · Commit <code>${esc((dialectData.source?.commit || '').slice(0, 12))}</code> · 目标硬件 <code>dav-351x</code>（UB 256KiB，向量寄存器 256B，对应 Huawei Ascend 950 / A5）。</p><table class="parameter-table"><thead><tr><th>纵向层级</th><th>条目数</th><th>说明</th></tr></thead><tbody><tr><td>上层：CCE Dialect 语义 Ops (语义算子层)</td><td>${c.ops || 0}</td><td>来自 <code>CCEOps.td</code> (207) 与 <code>CCESIMTOps.td</code> (40)，挂载 <code>CCESpec.md</code> 中文规格 (${c.ops_with_spec_doc || 0} 项匹配)</td></tr><tr><td>下层：CCE Dialect LLVM Intrinsics (后端 Intrinsic 层)</td><td>${c.intrinsics || 0}</td><td>仅计具体 <code>llvm.hivm.*</code> 符号；来源 <code>CCEIntrinsicOps.td</code> (${c.explicit_mlir_intr_ops || 0} 个 <code>cce.intr.*</code>) 与 <code>CCEIntrinsicMap.td</code> / <code>CCESIMTIntrinsicMap.td</code> (${c.tablegen_mapping_rows || 0} 行 TableGen 映射)，另计 C++ 调用、内嵌 IR 和按翻译分支生成的名称。动态拼名未验证入口可达性；访存位宽取自输入类型，当前展开 8/16/32/64 位。</td></tr></tbody></table><h3>上层 Op 翻译分类（启发式）</h3><table class="parameter-table"><thead><tr><th>翻译模式</th><th>Op 数量</th></tr></thead><tbody>${Object.entries(modes).map(([k, v]) => `<tr><td>${esc(loweringModeLabels[k] || k)}</td><td>${v}</td></tr>`).join('')}</tbody></table><h3>未建立静态 LLVM 映射 · ${c.unresolved_lowerings || 0}</h3><p>以下 MLIR Op 保留为待解析项，不生成占位 LLVM 符号，也不计入上面的具体 intrinsic 数量。</p>${(dialectData.unresolved_lowerings || []).map(item => `<details><summary><code>${esc(item.mnemonic)}</code> · ${esc(sourceLabel(item.source))}</summary><pre><code>${esc(item.excerpt)}</code></pre></details>`).join('')}`;
+}
+
+function dialectSourceCell(record) {
+  const labels = record.files.map(path => path.split('/').pop());
+  return `<td title="${esc(record.files.join(' · '))}">${esc(labels.join(' · '))}</td>`;
+}
+
+function configureDialectSourceColumn() {
+  if (state.backend !== 'cce-dialect' || state.dialectLayer !== 'intrinsics') return;
+  const heading = document.createElement('th');
+  heading.id = 'dialect-source-heading';
+  const select = document.createElement('select');
+  select.id = 'dialect-source';
+  select.setAttribute('aria-label', '筛选 Dialect LLVM 来源');
+  select.add(new Option('来源', ''));
+  const paths = new Set(dialectRecords.filter(r => r.dialectIntr).flatMap(r => r.files));
+  if (state.file) paths.add(state.file);
+  for (const path of [...paths].sort()) select.add(new Option(path.split('/').pop(), path));
+  select.value = state.file;
+  select.onchange = () => {
+    state.file = select.value;
+    state.selected = '';
+    render();
+    $('#dialect-source')?.focus();
+  };
+  heading.append(select);
+  $('#classification-heading').before(heading);
 }

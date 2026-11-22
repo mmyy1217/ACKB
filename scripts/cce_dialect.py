@@ -539,11 +539,17 @@ def cpp_mappings(repo, files_meta):
             elif 'call ' in line and '@llvm.hivm.' in line:
                 values = [(name, 'print', 'EmbeddedIRCall') for name in re.findall(r'@(llvm\.hivm\.[\w.]+)\(', line)]
             for name, key, kind in values:
+                extra = {}
+                if kind == 'CppNameRule' and key in ('simt.load', 'simt.store', 'simt.atomic_rmw', 'simt.atomic_cas'):
+                    extra['intr_op_key'] = 'intr.' + key
+                if key in ('simt.load', 'simt.store'):
+                    extra['name_pattern'] = ('llvm.hivm.ldg.{cache|uncache}.s<N>' if key == 'simt.load'
+                                             else 'llvm.hivm.stg.{cache|uncache}.b<N>')
                 restriction = ''
                 if key in ('simt.atomic_rmw', 'simt.atomic_cas') and name.rsplit('.', 1)[-1] in (
                         's8', 'u8', 's16', 'u16', 'fp16', 'bf16'):
                     restriction = 'Semantic atomic op verifier rejects this scalar type'
-                yield {'op_key': key, 'llvm_intrinsic': name, 'mapping_class': kind, 'restriction': restriction,
+                yield {**extra, 'op_key': key, 'llvm_intrinsic': name, 'mapping_class': kind, 'restriction': restriction,
                        'def_name': Path(path).name + ':' + str(number), 'raw': raw.strip(),
                        'source': {'file': path, 'line': number, 'end_line': number}}
 
@@ -713,6 +719,8 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             }
         intr_groups[llvm_name]['mappings'].append(m)
         intr_groups[llvm_name]['op_keys'].add(m['op_key'])
+        if 'intr_op_key' in m:
+            intr_groups[llvm_name]['op_keys'].add(m['intr_op_key'])
 
     unresolved_lowerings = []
     # Attach mlir_intr_ops (from CCEIntrinsicOps.td) to their corresponding intr_group or create standalone entry

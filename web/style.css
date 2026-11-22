@@ -526,8 +526,11 @@ body.data-loading #ascendc-map {display:none}
 .llvm-mode .interface-table th {position:relative}
 .llvm-mode .interface-table th:nth-child(2) {width:25%}
 .llvm-mode .interface-table th:nth-child(3) {width:16%}
-#llvm-source {max-width:100%;width:100%;min-width:0;font:inherit;color:inherit;background:transparent;border:0;cursor:pointer}
+#llvm-source, #dialect-source {max-width:100%;width:100%;min-width:0;font:inherit;color:inherit;background:transparent;border:0;cursor:pointer}
 .llvm-column-resizer {position:absolute;inset:0 0 0 auto;width:7px;border-right:1px solid var(--line);cursor:col-resize;touch-action:none;user-select:none}
 .llvm-column-resizer:hover,.llvm-column-resizer:focus-visible {background:var(--line)}
 
 .llvm-mode .interface-table th {overflow:hidden;text-overflow:ellipsis}
+
+.interface-table #dialect-source-heading {width:24%}
+.interface-table:has(#dialect-source-heading) th:nth-child(4) {width:13%}

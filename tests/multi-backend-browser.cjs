@@ -175,8 +175,18 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
 
     await page.selectOption('#backend', 'cce-dialect-intrinsics');
     assert.match(await page.locator('#result-count').innerText(), /1,433/);
+    await page.selectOption('#dialect-source', 'lib/Dialect/CCE/CCETranslateSIMT.cpp');
+    await page.fill('#search', 'llvm.hivm.ldg.cache.s32');
+    assert.equal(await page.locator('#rows tr').count(), 1);
+    assert.match(await page.locator('#rows td:nth-child(2)').innerText(), /CCETranslateSIMT.cpp/);
+    await page.locator('#rows .row-button').click();
+    assert.match(await page.locator('#detail').innerText(), /cce.intr.simt.load/);
+    assert.match(await page.locator('#detail').innerText(), /ldg\.\{cache\|uncache\}\.s<N>/);
+    await page.reload();
+    assert.equal(await page.locator('#dialect-source').inputValue(), 'lib/Dialect/CCE/CCETranslateSIMT.cpp');
+    await page.click('#reset');
     await page.click('#coverage');
-    assert.match(await page.locator('#report').innerText(), /未建立静态 LLVM 映射 · 5/);
+    assert.match(await page.locator('#report').innerText(), /未建立静态 LLVM 映射 · 1/);
     assert.doesNotMatch(await page.locator('#report').innerText(), /42\.5%/);
 
     // Inspect each new surface on desktop and narrow layouts, not only the final CCEC jump.
