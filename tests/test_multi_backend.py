@@ -160,7 +160,11 @@ inline void f(int x);
         self.assertTrue(any('Truncated forms' in e for e in ascendc.validate_model(broken)))
 
     def test_only_concrete_llvm_symbols_are_counted(self):
-        self.assertEqual(self.dialect['counts']['intrinsics'], 1069)
+        self.assertEqual(self.dialect['counts']['tablegen_names'], 1069)
+        records = {item['name']: item for item in self.dialect['intrinsics']}
+        self.assertIn('CppNameRule', records['llvm.hivm.atom.ADD.G.s32']['mapping_classes'])
+        self.assertIn('CppLiteral', records['llvm.hivm.SET.FLAG.IMM']['mapping_classes'])
+        self.assertIn('EmbeddedIRCall', records['llvm.hivm.DCCI.DST']['mapping_classes'])
         self.assertEqual(self.dialect['counts']['unresolved_lowerings'], 5)
         for item in self.dialect['intrinsics']:
             self.assertRegex(item['name'], r'^llvm\.hivm\.[A-Za-z0-9_.]+$')

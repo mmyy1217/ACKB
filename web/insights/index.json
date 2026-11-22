@@ -1,11 +1,5 @@
 [
   {
-    "slug": "dialect-a5-gap",
-    "title": "CCE Dialect 与 LLVM IR 的 A5 名称差距",
-    "date": "2026-11-20",
-    "summary": "按指令族查看 802 个 CANN A5 侧未命中名称，下载完整 Excel 明细。"
-  },
-  {
     "slug": "ascend-and-ptx-contracts",
     "title": "Huawei Ascend 与 PTX：编程契约、编译层级与建库方法",
     "date": "2026-11-17",

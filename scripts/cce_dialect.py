@@ -32,11 +32,14 @@ SCANNED_FILES = (
     'lib/Dialect/CCE/CCETranslate.cpp',
     'lib/Dialect/CCE/CCETranslateSIMT.cpp',
     'lib/Dialect/CCE/CCEBackendAdapt.cpp',
+    'lib/Dialect/CCE/CCEPrintLibrary.cpp',
+    'lib/Dialect/CCE/CCEDialect.cpp',
     'doc/CCESpec.md',
     'doc/DebugPrintUserGuide.md',
 )
 
 LIMITATIONS = [
+    'CppNameRule enumerates possible translator spellings before verifier or backend checks. Global SIMT load/store widths come from IR; 8/16/32/64 are indexed, other widths are open.',
     'Static extraction from CCEDialect TableGen (.td), translation passes (.cpp) and specification docs (.md); no MLIR compilation or NPU execution was performed.',
     'Upper-layer memref operations (e.g. cce.mad, cce.vgatherb) require upstream conversion to cce.intr.* before standalone cce-translate --cce-to-backend.',
     'Target hardware constants in CCEDialect are fixed to dav-351x (UB 248KiB/256KiB, 256-byte vector registers, Ascend 950 / A5 class).',
@@ -482,6 +485,69 @@ def match_ccec_ops(llvm_intrinsic: str, ccec_ops_by_short: dict[str, list[str]])
     return sorted(candidates)
 
 
+def cpp_mappings(repo, files_meta):
+    """Enumerate name-building branches of the pinned translator, before verifier checks."""
+    from itertools import product
+
+    fp = ('f32', 'bf16', 'f16', 'f8e4m3', 'f8e5m2')
+    atom = ('ADD', 'SUB', 'AND', 'OR', 'XOR', 'INC', 'DEC', 'MIN', 'MAX', 'EXCH')
+    floats = ('fp32', 'fp64', 'fp16', 'bf16')
+    integers = [s + w for s, w in product('su', ('8', '16', '32', '64'))]
+    # Load/store additionally accepts widths supplied by the input IR. Enumerate
+    # common scalar widths and preserve the open rule separately in limitations.
+    widths = ('8', '16', '32', '64')
+    cache = ('cache', 'uncache')
+    rules = {
+        241: ('simt.reduce', 'redux.{}.{}32', [('add', 'max', 'min'), 'su']),
+        306: ('simt.cast', '{}x2.to.{}x2', [fp, fp]),
+        458: ('simt.atomic_rmw', 'atom.{}.{}.{}', [atom, 'GS', [*floats, 'f16x2', 'bf16x2', *integers]]),
+        517: ('simt.atomic_cas', 'atom.CAS.{}.{}', ['GS', [*floats, 's32', 's64']]),
+        688: ('simt.load', 'ldg.{}.s{}', [cache, widths]),
+        690: ('simt.store', 'stg.{}.b{}', [cache, widths]),
+        852: ('simt.vote', 'vote.{}', [('all', 'any', 'uni', 'ballot')]),
+        886: ('simt.mulhi', 'mulhi_{}', [('i', 'ui')]),
+        888: ('simt.mul_i32toi64', 'mul_i32toi64_{}', [('i', 'ui')]),
+    }
+    simt = 'lib/Dialect/CCE/CCETranslateSIMT.cpp'
+    if files_meta[simt]['sha256'] != 'ab8cce489b57ce8dce37748c42dc68055f1a08b29d38b6c2c200327ab0e6bcff':
+        raise ValueError('Review SIMT name-building rules for the changed translator')
+    literal_keys = {'GET.BLOCK.IDX': 'get_block_idx', 'DCCI_DST_CONTEXT': 'simt.dcci',
+                    'DCCI': 'simt.dcci', 'ffma_f32_rrr': 'simt.ffma', 'mul64hi_ui': 'simt.mul64hi'}
+    for path in sorted(files_meta):
+        if not path.endswith('.cpp'):
+            continue
+        for number, raw in enumerate((repo / path).read_text().splitlines(), 1):
+            line = raw.partition('//')[0]
+            values = []
+            if path == simt and number in rules:
+                key, template, parts = rules[number]
+                values = [('llvm.hivm.' + template.format(*v), key, 'CppNameRule') for v in product(*parts)]
+            elif '"llvm.hivm.' in line:
+                for suffix in re.findall(r'"llvm\.hivm\.([A-Za-z0-9_.]+)"', line):
+                    if suffix.startswith(('SET.', 'WAIT.')):
+                        key = suffix.lower() if not suffix.endswith(('.IMM', '.REG')) or 'FLAG.DEV' in suffix else suffix.split('.')[0].lower() + '_flag'
+                    elif suffix in ('isgm', 'isub', 'islocal'):
+                        key = 'simt.query_ptr'
+                    elif suffix.startswith('fence'):
+                        key = 'simt.fence'
+                    else:
+                        if suffix.startswith('vcvtff.') and path.endswith('CCEBackendAdapt.cpp'):
+                            key = 'vcvtff'
+                        else:
+                            key = literal_keys[suffix]
+                    values.append(('llvm.hivm.' + suffix, key, 'CppLiteral'))
+            elif 'call ' in line and '@llvm.hivm.' in line:
+                values = [(name, 'print', 'EmbeddedIRCall') for name in re.findall(r'@(llvm\.hivm\.[\w.]+)\(', line)]
+            for name, key, kind in values:
+                restriction = ''
+                if key in ('simt.atomic_rmw', 'simt.atomic_cas') and name.rsplit('.', 1)[-1] in (
+                        's8', 'u8', 's16', 'u16', 'fp16', 'bf16'):
+                    restriction = 'Semantic atomic op verifier rejects this scalar type'
+                yield {'op_key': key, 'llvm_intrinsic': name, 'mapping_class': kind, 'restriction': restriction,
+                       'def_name': Path(path).name + ':' + str(number), 'raw': raw.strip(),
+                       'source': {'file': path, 'line': number, 'end_line': number}}
+
+
 def extract(repo: Path = DEFAULT_REPO) -> dict:
     repo = repo.resolve()
     if not repo.exists():
@@ -636,7 +702,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
     # Parse all backend llvm.hivm.* mappings and group into unique lower-layer CCE Dialect Intrinsics
     raw_mappings = parse_intrinsic_maps(repo)
     intr_groups = {}
-    for m in raw_mappings:
+    for m in [*raw_mappings, *cpp_mappings(repo, files_meta)]:
         llvm_name = m['llvm_intrinsic']
         if llvm_name not in intr_groups:
             intr_groups[llvm_name] = {
@@ -737,6 +803,7 @@ def extract(repo: Path = DEFAULT_REPO) -> dict:
             'ops_with_spec_doc': sum(1 for u in upper_ops if u.get('spec')),
             'ops_by_lowering_mode': dict(Counter(u['lowering_mode'] for u in upper_ops)),
             'intrinsics': len(lower_intrinsics),
+            'tablegen_names': len({m['llvm_intrinsic'] for m in raw_mappings}),
             'unresolved_lowerings': len(unresolved_lowerings),
             'explicit_mlir_intr_ops': len(mlir_intr_ops),
             'tablegen_mapping_rows': len(raw_mappings),

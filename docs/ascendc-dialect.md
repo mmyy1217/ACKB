@@ -9,7 +9,7 @@
 | AscendC basic | 命名空间分组与函数名；当前 617 组 | 固定 CANN weekly 的 basic_api、寄存器接口、SIMT C++ 接口及选定实现 |
 | AscendC capi | C / SIMT 函数名；当前 1,876 组 | c_api、simt_api 与 reg_base_impl / experimental / SIMT 实现 |
 | CCE Dialect ops | TableGen 定义的语义 Op；247 项 | CCEDialect 的 CCEOps.td / CCESIMTOps.td |
-| CCE Dialect intrinsics | 静态映射表出现的完整 llvm.hivm.* 符号；1,069 项 | CCEIntrinsicMap.td / CCESIMTIntrinsicMap.td，附关联 cce.intr.* 定义 |
+| CCE Dialect intrinsics | 1,433 个 llvm.hivm.* 名称，含按源码规则生成的候选 | CCEIntrinsicMap.td / CCESIMTIntrinsicMap.td，附关联 cce.intr.* 定义 |
 
 AscendC 扫描 395 个头文件，392 个文件的哈希与已有原包核验快照相符；其余 3 个只记录本地文件哈希，不声称原包已核验。版本固定为 9.3.0~weekly.20261104.01。Dialect 扫描 17 个源码及文档文件，保留 Git commit、工作区是否有修改及逐文件哈希；实际内容以哈希为准。两个数据文件同时绑定生成器与 CCEC catalog 哈希，陈旧快照会拒绝构建。
 
@@ -36,7 +36,7 @@ AscendC 到 CCEC 的关系来自函数名与词法引用，候选实现关联还
 
 ## 具体 intrinsic 与待解析条目
 
-1,069 个 LLVM 符号都实际出现在静态 TableGen 映射行中。另有 5 个 `cce.intr.*` 条目没有静态映射，放在 `unresolved_lowerings`，在覆盖页和 CLI 独立提供；不为它们编造含 `<dtype>` 的 LLVM 名称，也不将运行时打印函数计作 intrinsic。这不表示它们没有动态翻译实现。
+1,069 个名称来自 TableGen。补扫翻译器、FP8 适配和打印库的直接调用与动态规则后，按完整拼写去重为 1,433 个。CppNameRule 表示按翻译函数的分支组合得到的可能拼写，未证明高层入口可达或后端接受；窄类型原子操作在记录中标明上层 verifier 限制。SIMT 全局访存按输入位宽拼名，展开常见的 8/16/32/64 位，其他位宽保留为开放规则。另有 5 个 `cce.intr.*` 条目没有静态映射，放在 `unresolved_lowerings`，在覆盖页和 CLI 独立提供；不为它们编造含 `<dtype>` 的 LLVM 名称，也不将运行时打印函数计作 intrinsic。这不表示它们没有动态翻译实现。
 
 ## AI 查询契约
 

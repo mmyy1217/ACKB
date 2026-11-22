@@ -174,7 +174,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     assert.equal(await page.locator('#rows .row-button').count(), 0);
 
     await page.selectOption('#backend', 'cce-dialect-intrinsics');
-    assert.match(await page.locator('#result-count').innerText(), /1,069/);
+    assert.match(await page.locator('#result-count').innerText(), /1,433/);
     await page.click('#coverage');
     assert.match(await page.locator('#report').innerText(), /未建立静态 LLVM 映射 · 5/);
     assert.doesNotMatch(await page.locator('#report').innerText(), /42\.5%/);
