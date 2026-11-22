@@ -1,5 +1,11 @@
 [
   {
+    "slug": "dialect-a5-gap",
+    "title": "CCE Dialect 与 LLVM IR 的 A5 名称差距",
+    "date": "2026-11-22",
+    "summary": "从 CANN 950 的 1,256 个目标名称反查 CCE Dialect，按指令族和包内来源查看 684 项差距。"
+  },
+  {
     "slug": "ascend-and-ptx-contracts",
     "title": "Huawei Ascend 与 PTX：编程契约、编译层级与建库方法",
     "date": "2026-11-17",

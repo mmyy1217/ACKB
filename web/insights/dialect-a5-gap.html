@@ -1,0 +1,8 @@
+<p class="insight-lead"><strong>CANN 的 1,256 个 950 相关目标名称中，684 个尚未找到 CCE Dialect 的可达映射。</strong>其余 572 个中，455 个有同名入口，117 个是已注册的重载基名，Dialect 可以生成其具体变体。</p>
+<p><strong>CANN 侧如何取数？</strong> 固定 Huawei Ascend 950PR_9579（dav-c310）和 CANN 9.3.0~weekly.20261104.01。读取八个 c310 Bitcode 模块的直接调用，在 <code>hivmc-a5</code> 中查找目标名称，再与 <code>ccec</code>、<code>libbisheng-llc.so</code> 的名称与注册信息交叉核对。按完整名称去重，仅计 <code>llvm.hivm.*</code> 和 <code>llvm.cce.*</code>。487 个名称有 c310 直接调用，614 个有 A5 工具名称及包内注册或声明，另有 155 个仅见于 A5 工具字符串。表中「来源」列出该名称出现的包内文件。</p>
+<p><strong>Dialect 侧如何取数？</strong> 固定 CCE Dialect 提交 <code>5639e581</code>，从 TableGen 映射和 C++ 翻译代码提取目标名，包括动态拼接的名称。核对 Op 的类型约束、校验器与翻译分支后，得到 1,234 个至少有一条源码可达路径的 LLVM 名称。先比完整拼写，再检查 CANN 注册的重载基名是否有 Dialect 具体变体。同基名的其他类型不能证明当前类型已经覆盖。</p>
+<p><strong>优先看有直接调用的 215 项。</strong>例如 <code>llvm.hivm.ND.DMA.OUT.TO.UB</code> 的 b8、b16、b32 均有 950 包内调用。其余缺口中，324 项有 A5 工具名称及注册或声明，145 项仅有字符串线索。这 684 项衡量符号映射覆盖；等价实现和硬件能力需要另行核对。</p>
+<div id="gap-browser" data-url="__GAP_JSON__">
+<div class="gap-tools"><label>搜索 <input id="gap-query" type="search" placeholder="完整名称或片段"></label><output id="gap-count" aria-live="polite"></output><a download="a5-gap-20261122.xlsx" href="__GAP_XLSX__">下载全部差距（Excel）</a></div>
+<div class="gap-layout"><nav id="gap-families" aria-label="差距指令族"></nav><div class="gap-results" tabindex="0" aria-label="差距列表"><table><thead><tr><th>名称</th><th><label for="gap-source">来源</label> <select id="gap-source"><option value="">全部</option></select></th><th>950 证据</th></tr></thead><tbody id="gap-rows"></tbody></table><p id="gap-message" role="status"></p></div></div></div>
+<p class="insight-note">2026-11-22 快照 · 指令族沿用 CANN LLVM IR 数据库。Excel 收录全部 684 项及逐项证据。</p>

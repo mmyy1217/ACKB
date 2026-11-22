@@ -2,6 +2,8 @@
 """Build a self-contained, offline CCE interface manual."""
 
 import argparse
+import base64
+import hashlib
 import json
 from pathlib import Path
 
@@ -79,9 +81,21 @@ def build(source, output, site=False):
     knowledge['ptx']['forms'] = json.loads((ROOT / 'data/ptx/forms.json').read_text())
     scripts = '\n'.join((ROOT / 'web' / name).read_text() for name in [
         'loading.js', 'knowledge.js', 'ptx-reader.js', 'ccec-static.js', 'ccec-ops.js',
-        'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'symbol-depth.js', 'app.js'])
+        'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'symbol-depth.js', 'gap-insight.js', 'app.js'])
     style = (ROOT / 'web/style.css').read_text()
     from site_build import inline_json, build_site
+    for extension, mime in [('json', 'application/json'), ('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]:
+        asset = ROOT / 'web/insights/files' / f'a5-gap-20261122.{extension}'
+        content = asset.read_bytes()
+        if site:
+            relative = Path('insights') / asset.name
+            destination = output.parent / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(content)
+            url = f'{relative}?v={hashlib.sha256(content).hexdigest()[:16]}'
+        else:
+            url = 'data:' + mime + ';base64,' + base64.b64encode(content).decode('ascii')
+        page = page.replace('__GAP_' + extension.upper() + '__', url)
     if site:
         build_site(page, style, scripts, data, knowledge, output)
         return
