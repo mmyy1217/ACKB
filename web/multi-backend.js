@@ -218,7 +218,7 @@ function renderDialectDetail(r) {
         const label = audit.call ? '发出的 LLVM 调用' : audit.diagnostic ? '主机翻译诊断' : audit.emitted_instead ? '实际发出的目标' : '打印库注入';
         body = `<h3>${label}</h3><pre><code>${esc(outcome)}</code></pre><h3>MLIR 输入</h3><pre><code>${esc(audit.mlir)}</code></pre><p class="condition">cce-translate --cce-to-backend ${esc((audit.flags || []).join(' '))} · LLVM 22.0.0git · 主机翻译</p>`;
       } else {
-        body = experimentsContent();
+        body = intr.cann_correspondence?.experiment ? '<p>运行及性能未验证。</p>' : experimentsContent();
       }
     } else {
       body = `<pre class="signature"><code>${esc(intr.llvm_intrinsic)}</code></pre><dl class="detail-meta"><dt>后端目标符号</dt><dd><code>${esc(intr.llvm_intrinsic)}</code></dd><dt>映射规则类</dt><dd><code>${esc((intr.mapping_classes || []).join(', '))}</code></dd><dt>来源位置</dt><dd class="source-ref">${esc(sourceLabel(intr.source))}</dd></dl>${mlirOpsHTML}<h3>lowering 条目 · ${(intr.mappings || []).length}</h3>${mapRowsHTML}<h3>上游语义 Op (CCE Dialect 语义 Ops) · ${(intr.upstream_op_ids || []).length}</h3>${upLinks ? `<p>以下为按映射键关联的上游候选，点击查看定义与规格：${upLinks}</p>` : '<p>当前未建立上游语义 Op 关联。</p>'}${ccecLinks ? `<h3>候选 CCEC Builtins · ${(intr.ccec_candidate_op_ids || []).length}</h3><p>${ccecLinks}</p>` : ''}`;
@@ -227,6 +227,9 @@ function renderDialectDetail(r) {
     if (state.tab === 'definition') {
       const paths = intr.entry_paths.map(p => `<p><b>${labels[p.status]}</b> · <code>${esc(p.entry)}</code><br>${esc(p.condition)}<br><small>${esc(sourceLabel(p.definition))} → ${esc(sourceLabel(p.dispatch))}</small></p>`).join('');
       $('#detail-content').insertAdjacentHTML('afterbegin', paths || '<p>待核对 · 仍需核对入口约束和实际翻译分支。</p>');
+    }
+    if (state.tab === 'definition' || state.tab === 'experiments') {
+      $('#detail-content').insertAdjacentHTML('afterbegin', dialectCannDetail(intr));
     }
     $('#copy-signature').onclick = () => copyText(intr.llvm_intrinsic);
   }
@@ -272,5 +275,51 @@ function configureDialectSourceColumn() {
   const heading = document.createElement('th');
   heading.id = 'dialect-source-heading';
   heading.textContent = '来源';
-  $('#classification-heading').before(heading);
+  const target = document.createElement('th');
+  target.id = 'dialect-cann-heading';
+  target.textContent = 'CANN LLVM intrinsic';
+  target.title = '包内同名、注册重载基名或 CCEC 编译诊断';
+  $('#classification-heading').before(heading, target);
+}
+
+function dialectCannLink(match) {
+  const url = '#backend=llvm&r=' + encodeURIComponent(match.id);
+  const label = match.kind === 'exact' ? '同名' : '重载基名';
+  return '<a href="' + url + '">' + label + ' · <code>' + esc(match.name) + '</code></a>';
+}
+
+function dialectCannCell(record) {
+  const match = record.dialectIntr.cann_correspondence || {};
+  if (match.id) {
+    const context = match.package_file ? '安装包另见全名 · ' : '';
+    return '<td title="' + esc(context + match.name) + '">' + context + dialectCannLink(match) + '</td>';
+  }
+  const diagnostic = match.experiment?.diagnostic || '未找到对应记录';
+  const short = diagnostic.includes('exit code 139') ? '编译子进程退出 139'
+    : diagnostic.includes('stack smashing') ? 'stack smashing detected'
+    : diagnostic.includes('different width') ? '寄存器宽度不一致'
+    : diagnostic.startsWith('UND ') ? '目标符号未解析' : diagnostic;
+  return '<td title="' + esc(diagnostic) + '">' + esc(short) + '</td>';
+}
+
+function dialectCannDetail(intr) {
+  const match = intr.cann_correspondence || {};
+  const versions = dialectData.cann_versions;
+  if (!versions) return '';
+  const parts = ['<h3>CANN LLVM intrinsic</h3>'];
+  if (match.id) {
+    parts.push('<p>' + dialectCannLink(match) + '</p>');
+    const basis = match.kind === 'overload_base' ? '类型后缀匹配到注册基名，具体重载尚待验证。'
+      : match.identity === 'candidate_only' ? '包内字符串同名。' : '包内索引有同名记录。';
+    parts.push('<p>' + basis + ' CANN ' + esc(versions.index_version) + '</p>');
+  }
+  if (match.package_file) parts.push('<p>安装包中另见完整名称 · <code>' + esc(match.package_file) + '</code></p>');
+  if (match.experiment) {
+    const run = match.experiment;
+    parts.push('<p>CCEC ' + esc(versions.compiler_version) + ' · ' + esc(versions.target)
+      + ' · 退出码 ' + esc(String(run.exit_code)) + '</p><pre><code>' + esc(run.diagnostic)
+      + '</code></pre><p>' + esc(run.control) + '</p>');
+  }
+  if (!match.id && !match.experiment) parts.push('<p>未找到对应记录，尚无编译诊断。</p>');
+  return parts.join('');
 }

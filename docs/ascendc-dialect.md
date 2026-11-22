@@ -78,3 +78,5 @@ Dialect LLVM 列表的「来源」列列出映射或调用文件和关联的 MLI
 22 个向量排除项包括 12 个被 `vdup` 改写成 `m` 形式的名称、6 个 LLVM 无法直接表示 FP8 结果的名称、4 个交错操作的 FP8 查表键不匹配。另有 10 个 SIMT 转换因 FP8 结果类型被拒绝，15 个非零屏障分支依赖独立驱动未注册的 `arith.constant`。两个打印名称可以随开关出现在注入的辅助函数内；空 kernel 也会出现相同调用，本仓源码缺少从用户打印入口连到它们的调用边。
 
 六个可达的 SIMT FP8 输入转换发出了带 `x2` 的名称，实测 LLVM 实参是 `<256 x i8>` 字节载体。这里计数的是能发出的**确切符号名**。核对 CANN 是否接受其参数签名、950 后端是否能生成机器码，需要独立证据。[294 项 MLIR 输入、实际调用与诊断](../data/cce_dialect/translation-audit.json)
+
+CCE Dialect LLVM 表中的「CANN LLVM intrinsic」按完整名称连接 CANN LLVM 核心记录，其次按点号逐段回退到已注册且标有 overloaded 的最长基名。基名链接只证明名称匹配。安装树另有一条完整名称见于 libPTOASCompiler.so，详情保留文件路径。编译诊断绑定外部 Dialect 提交、索引版本与 CCEC 版本，快照在 data/cce_dialect/cann-correspondence.json。20261104.01 的静态比对与 20261009.01 的 dav-c310-vec 编译实验分别展示，18 项 vmull 保留对照限制。

@@ -1,0 +1,1273 @@
+{
+  "dialect_commit": "5639e581ef516650412b3f06104f27a3e7c661b5",
+  "index_version": "9.3.0~weekly.20261104.01",
+  "compiler_version": "9.3.0~weekly.20261009.01",
+  "compiler_sha256": "f306403b26802c03cc171004b3346786792d25b63980f258401cf653446d6d4d",
+  "target": "dav-c310-vec",
+  "csv_sha256": "973432ef5b712c372ff4a7cf5d06085b184eb22b37bd8f2d52040f24b4ff2fcc",
+  "installation_hits": {
+    "llvm.hivm.vexpdif.v64f32": "python/site-packages/ptoas/mlir/_mlir_libs/libPTOASCompiler.so"
+  },
+  "results": {
+    "llvm.hivm.DCCI_DST_CONTEXT": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.SET.ATOMIC.f16": {
+      "exit_code": 0,
+      "diagnostic": "UND llvm.hivm.SET.ATOMIC.f16",
+      "control": "ELF 符号表和重定位均引用该完整名称"
+    },
+    "llvm.hivm.SET.ATOMIC.f32": {
+      "exit_code": 0,
+      "diagnostic": "UND llvm.hivm.SET.ATOMIC.f32",
+      "control": "ELF 符号表和重定位均引用该完整名称"
+    },
+    "llvm.hivm.SET.ATOMIC.s16": {
+      "exit_code": 0,
+      "diagnostic": "UND llvm.hivm.SET.ATOMIC.s16",
+      "control": "ELF 符号表和重定位均引用该完整名称"
+    },
+    "llvm.hivm.atom.ADD.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.ADD.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.ADD.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.ADD.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.ADD.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.AND.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.AND.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.AND.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.AND.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.AND.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.CAS.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.DEC.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.DEC.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.DEC.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.DEC.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.DEC.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.EXCH.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.EXCH.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.EXCH.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.EXCH.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.EXCH.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.INC.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.INC.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.INC.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.INC.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.INC.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MAX.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MAX.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MAX.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MAX.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MAX.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MIN.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MIN.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MIN.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MIN.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.MIN.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.OR.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.OR.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.OR.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.OR.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.OR.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.SUB.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.SUB.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.SUB.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.SUB.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.SUB.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.XOR.G.fp64": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.XOR.G.s16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.XOR.G.s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.XOR.G.u16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.atom.XOR.G.u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.bf16x2.to.bf16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.bf16x2.to.f16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ceilf": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ceilh": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ceily": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f16x2.to.bf16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f16x2.to.f16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f32x2.to.f32x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f8e4m3x2.to.bf16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f8e4m3x2.to.f16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f8e5m2x2.to.bf16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.f8e5m2x2.to.f16x2": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ffma_f32_rrr": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.floorf": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.floorh": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.floory": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.m.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.m.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.m.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.x.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.x.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.x.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.m.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.m.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.m.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.x.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.x.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.x.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.max.si.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.m.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.m.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.m.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.x.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.x.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.x.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.m.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.m.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.m.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.x.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.x.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.x.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.min.si.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.mul64hi_ui": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.mul_i32toi64_i": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.mul_i32toi64_ui": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.mulhi_i": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.mulhi_ui": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.rintf": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.rinth": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.rinty": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.roundf": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.roundh": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.roundy": {
+      "exit_code": 1,
+      "diagnostic": "fatal error: error in backend: Copy one register into another with a different width",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.sadd.v128s16.m": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.sadd.v128s16.x": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.sadd.v128s16.z": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ssub.v128s16.m": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ssub.v128s16.x": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.ssub.v128s16.z": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.s.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vadd.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vand.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vand.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vand.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vand.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vand.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vand.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.s.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdiv.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdupv.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdupv.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdupv.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdupv.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdupv.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vdupv.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vgather.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vgather.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vgather.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vgather.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vgather.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vgather.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v32i64": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vld.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.s.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmax.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.s.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmin.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmod.v256s8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmod.v256u8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.s.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmul.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vmull.s.m.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.m.v32i32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.m.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.m.v64i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.x.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.x.v32i32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.x.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.x.v64i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.z.v32i32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.s.z.v64i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.u.m.v32i32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.u.m.v64i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.u.x.v32i32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.u.x.v64i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.u.z.v32i32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vmull.u.z.v64i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "SDK 独立对照也失败；补充 -x ir 模式对照通过，目标调用仍失败"
+    },
+    "llvm.hivm.vor.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vor.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vor.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vor.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vor.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vor.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vprelu.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vprelu.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vscatter.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vscatter.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vscatter.v256f8e4m3fn": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vscatter.v256f8e5m2": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vscatter.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vscatter.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v256f8e4m3fn": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v256f8e5m2": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v32i64": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vst.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.s.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.s.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.s.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.s.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.s.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.s.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.u.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.u.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vsub.u.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vxor.z.v128bf16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vxor.z.v128f16": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vxor.z.v128i16": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vxor.z.v256i8": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vxor.z.v64f32": {
+      "exit_code": 1,
+      "diagnostic": "ccec: error: clang frontend command failed with exit code 139 (use -v to see invocation)",
+      "control": "同形状独立对照通过"
+    },
+    "llvm.hivm.vxor.z.v64i32": {
+      "exit_code": 1,
+      "diagnostic": "*** stack smashing detected ***: terminated",
+      "control": "同形状独立对照通过"
+    }
+  }
+}

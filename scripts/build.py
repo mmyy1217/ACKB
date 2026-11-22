@@ -69,6 +69,10 @@ def build(source, output, site=False):
         if errors: raise ValueError('; '.join(errors))
         from llvm_ir import web_payload as llvm_web_payload
         knowledge['llvm'] = llvm_web_payload(llvm)
+        if 'cce_dialect' in knowledge:
+            from dialect_correspondence import add_correspondence
+            evidence = json.loads(DIALECT_OUTPUT.with_name('cann-correspondence.json').read_text())
+            add_correspondence(knowledge['cce_dialect'], llvm, evidence)
         from llvm_ir import dialect_navigation
         knowledge['llvm_navigation'] = dialect_navigation(llvm, knowledge.get('cce_dialect', {'intrinsics': []}))
     knowledge['nvvm'] = json.loads((ROOT / 'data/nvvm/index.json').read_text())

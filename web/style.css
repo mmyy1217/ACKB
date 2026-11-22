@@ -532,5 +532,12 @@ body.data-loading #ascendc-map {display:none}
 
 .llvm-mode .interface-table th {overflow:hidden;text-overflow:ellipsis}
 
-.interface-table #dialect-source-heading {width:24%}
-.interface-table:has(#dialect-source-heading) th:nth-child(4) {width:13%}
+.interface-table #dialect-source-heading {width:14%}
+.interface-table #dialect-cann-heading {width:27%}
+.interface-table:has(#dialect-source-heading) th:nth-child(4) {width:10%}
+.interface-table:has(#dialect-source-heading) th:nth-child(5) {width:10%}
+@media(max-width:650px) {
+  .interface-table:has(#dialect-cann-heading) {min-width:620px}
+  .table-scroll:has(#dialect-cann-heading) {overflow-x:auto}
+  .interface-table:has(#dialect-cann-heading) thead {top:0}
+}

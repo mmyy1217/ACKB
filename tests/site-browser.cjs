@@ -114,6 +114,11 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.locator('.llvm-links > summary').click();
     await page.locator('.llvm-links [data-op-ref^="llvm_ir_"]').first().click(); await ready(page,'llvm');
 
+    await page.selectOption('#backend','cce-dialect-intrinsics'); await ready(page,'cce-dialect');
+    await page.fill('#search','llvm.hivm.vadd.s.m.v128f16');
+    await page.locator('#rows a').first().click(); await ready(page,'llvm');
+    assert.equal(await page.locator('#detail h2').textContent(), 'llvm.hivm.vadd.s.m');
+
     for (const [value, backend] of [['ccec','ccec'],['ccec-intrinsics','ccec'],['ascendc','ascendc'],['ascendc-capi','ascendc'],['cce-dialect','cce-dialect'],['cce-dialect-intrinsics','cce-dialect'],['ptx','ptx'],['nvvm','nvvm']]) {
       await page.selectOption('#backend',value); await ready(page,backend);
       assert.equal(await page.locator('#backend').inputValue(), value);
