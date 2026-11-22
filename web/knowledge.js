@@ -95,7 +95,7 @@ function configureBackend() {
   $('#footer-source').textContent = state.backend==='nvvm' ? 'NVVM IR 官方规范 · 文档索引 · 设备支持未验证' : isLLVM ? `${Object.keys(llvmData.sources).length} 个版本化来源 · CANN ${data.version} · LLVM IR` : ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : isDialect ? `${activeFiles.length} 个 TableGen/文档源文件 · CCEDialect ${dialectData.version || ''} · dav-351x` : isAscendc ? `${activeFiles.length} 个 AscendC 头文件 · CANN ${data.version} · 950 / dav_3510` : `${data.files.length} 个源文件 · CANN ${data.version}`;
   $('#search').placeholder = isLLVM ? '搜索 LLVM 名称、类型…' : ptx ? '搜索指令、章节、目标条件…' : isDialect ? '搜索 cce.* Op、llvm.hivm.*、语法…' : '搜索名称、类型、builtin、条件…';
   $('#search').setAttribute('aria-label',ptx ? '搜索 PTX 指令与章节' : '搜索接口或配套定义');
-  for(const node of [$('#group').closest('label'),$('#file').closest('label')]) node.hidden=ptx;
+  for(const node of [$('#group').closest('label'),$('#file').closest('label')]) node.hidden=ptx || (isDialect && state.dialectLayer==='intrinsics');
   $('#fixed-chip').hidden=ptx || state.backend==='nvvm';$('#unknown-filter').hidden=ptx || isDialect || state.backend==='nvvm';$('#unknown-label').textContent=isLLVM?'含字符串候选':'显示待确认';document.querySelectorAll('.llvm-filter').forEach(n=>n.hidden=!isLLVM);$('#coverage').hidden=false;
   $('#mobile-view').closest('label').hidden=true;
   document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);

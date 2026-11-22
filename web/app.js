@@ -12,7 +12,7 @@ const kinds = {interface:'函数接口',interface_macro:'宏接口',type:'类型
 const shortGroup = {'AI Core':'AI Core','Vector / AVE':'AVE','Legacy SIMD':'Legacy','SIMT':'SIMT','配套定义':'辅助'};
 const families = ['搬运 / DMA','矩阵 / Cube','访存 / 布局','计算 / 其他','类型转换','同步 / 流水','原子操作','控制 / 寄存器'];
 const BATCH_SIZE = 60;
-const state = {home:false,llvmSource:'',llvmScope:'a5-sources',llvmEvidence:'',backend:'ccec',ccecLayer:'wrappers',ascendcLayer:'basic',dialectLayer:'ops',dialectPath:'confirmed',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
+const state = {home:false,llvmSource:'',llvmScope:'a5-sources',llvmEvidence:'',backend:'ccec',ccecLayer:'wrappers',ascendcLayer:'basic',dialectLayer:'ops',includeUnknown:false,opForm:'',opCaller:'',observedCall:'',ptxTarget:'sm_103a',support:'',proof:'',view:'interfaces',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',limit:BATCH_SIZE,selected:'',tab:'definition'};
 const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
@@ -65,7 +65,7 @@ function saveHash(replace = true) {
   if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
   if(state.backend==='ccec'){p.set('layer',state.ccecLayer==='interfaces'?'intrinsics':'interfaces');if(state.includeUnknown)p.set('unknown','1');}
   if(state.backend==='ascendc'){p.set('backend','ascendc');p.set('layer',state.ascendcLayer);if(state.includeUnknown)p.set('unknown','1');}
-  if(state.backend==='cce-dialect'){p.set('backend','cce-dialect');p.set('layer',state.dialectLayer);if(state.dialectPath!=='confirmed')p.set('path',state.dialectPath);}
+  if(state.backend==='cce-dialect'){p.set('backend','cce-dialect');p.set('layer',state.dialectLayer);}
   if (state.support) p.set('support',state.support);
   if (state.backend === 'ccec' && state.view !== 'interfaces' || state.backend === 'ptx' && state.view !== 'interfaces' || (state.backend === 'ascendc' || state.backend === 'cce-dialect') && state.view === 'report') p.set('view',state.view);
   for (const key of ['family','query','group','file','selected']) if (state[key]) p.set(key === 'selected' ? 'r' : key,state[key]);
@@ -85,7 +85,6 @@ function readHash() {
   state.ptxTarget = ['sm_103','sm_103f','sm_103a'].includes(p.get('target')) ? p.get('target') : 'sm_103a';
   state.support = Object.hasOwn(supportLabels,p.get('support')) ? p.get('support') : '';
   state.ascendcLayer = p.get('layer') === 'capi' ? 'capi' : 'basic';
-  state.dialectPath=['pending','rejected','all','semantic','raw'].includes(p.get('path'))?p.get('path'):'confirmed';
   state.dialectLayer = p.get('layer') === 'intrinsics' ? 'intrinsics' : 'ops';
   configureBackend();
   state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'nvvm' ? 'nvvm' : state.backend === 'llvm' ? 'llvm' : state.backend === 'ptx' ? 'interfaces' : state.backend === 'ascendc' ? state.ascendcLayer : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops') : 'interfaces';
@@ -98,10 +97,11 @@ function readHash() {
     const sel = byId.get(state.selected);
     if (sel.backend === 'llvm') {state.backend='llvm';state.home=false;state.view=p.get('view')==='report'?'report':'llvm';if(sel.llvm.identity_status==='candidate_only')state.includeUnknown=true;if((!sel.llvm.static_target?.package_evidence && state.llvmScope==='a5-evidence') || (state.llvmScope==='a5-sources' && !sel.llvm.a5_source_lead))state.llvmScope='all';configureBackend();}
     else if (sel.backend === 'ascendc') {state.backend = 'ascendc'; state.ascendcLayer = sel.ascendcLayer; configureBackend(); state.view = recordView(sel);}
-    else if (sel.backend === 'cce-dialect') {state.backend = 'cce-dialect'; state.dialectLayer = sel.dialectLayer; if(sel.dialectIntr && !dialectPathMatches(sel.dialectIntr,state.dialectPath))state.dialectPath=sel.dialectIntr.path_status; configureBackend(); state.view = recordView(sel);}
+    else if (sel.backend === 'cce-dialect') {state.backend = 'cce-dialect'; state.dialectLayer = sel.dialectLayer; configureBackend(); state.view = recordView(sel);}
     else if (!p.has('view') || state.view==='interfaces' && !sel.op && !sel.knowledge) state.view = recordView(sel);
   }
   if(state.backend==='ccec'){if(ccecIsInterface(byId.get(state.selected) || {}))state.ccecLayer='wrappers';else if(byId.get(state.selected)?.op || opModel?.record_layers[state.selected]?.layer==='intrinsic_entry')state.ccecLayer='interfaces';fixedA5();const chosen=byId.get(state.selected),status=chosen?.compatibility?.profiles[A5_PROFILE];if(status==='unknown'){state.includeUnknown=true;fixedA5();}if(status==='excluded')state.view='references';}
+  if(state.backend==='cce-dialect' && state.dialectLayer==='intrinsics'){state.file='';state.group='';}
   if(state.backend==='ascendc'){fixedA5();const chosen=byId.get(state.selected),status=chosen?.compatibility?.profiles?.[A5_PROFILE];if(status==='unknown'){state.includeUnknown=true;fixedA5();}}
   state.limit = BATCH_SIZE;
 }
@@ -162,7 +162,7 @@ function makeGroups(items) {
 function compatibilityMatches(r) {
   if(state.backend==='nvvm')return true;
   if(state.backend==='llvm')return llvmMatches(r);
-  if(state.backend==='cce-dialect')return dialectPathMatches(r.dialectIntr,state.dialectPath);
+  if(state.backend==='cce-dialect')return true;
   if(state.backend==='ascendc'){const st=r.compatibility?.profiles?.[A5_PROFILE] || 'matches';return state.includeUnknown ? st!=='excluded' : st==='matches';}
   if(state.backend==='ccec' && !['wrappers','interfaces'].includes(state.view))return true;
   if(r.op) return !state.architecture || !state.availability || (state.availability==='possible'?r.compatibility.profiles[state.architecture]!=='excluded':r.compatibility.profiles[state.architecture]===state.availability);
@@ -176,8 +176,6 @@ function filtered(ignoreCompatibility = false) {
 }
 function syncControls() {
   $('#backend').value = state.backend==='nvvm'?'nvvm':state.backend==='llvm'?'llvm':state.backend==='ptx'?'ptx':state.backend==='ascendc'?(state.ascendcLayer==='capi'?'ascendc-capi':'ascendc'):state.backend==='cce-dialect'?(state.dialectLayer==='intrinsics'?'cce-dialect-intrinsics':'cce-dialect'):state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
-  $('#dialect-path-filter').hidden=state.backend!=='cce-dialect' || state.dialectLayer!=='intrinsics';
-  $('#dialect-path').value=state.dialectPath;
   $('#include-unknown').checked=state.includeUnknown;
   $('#llvm-scope').value=state.llvmScope;$('#llvm-evidence').value=state.llvmEvidence;
   $('#coverage').textContent=state.view==='report'?'返回指令':'说明 / 覆盖';
@@ -503,7 +501,7 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {state.dialectPath='confirmed';state.llvmScope='a5-sources';state.llvmSource='';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function reset() {state.llvmScope='a5-sources';state.llvmSource='';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
@@ -525,7 +523,6 @@ $('#backend').onchange=e=>{
 };
 $('#llvm-scope').onchange=e=>{state.llvmScope=e.target.value;state.selected='';render();};
 $('#llvm-evidence').onchange=e=>{state.llvmEvidence=e.target.value;state.selected='';render();};
-$('#dialect-path').onchange=e=>{state.dialectPath=e.target.value;state.selected='';render();};
 $('#include-unknown').onchange=e=>{state.includeUnknown=e.target.checked;state.selected='';render();};
 $('#coverage').onclick=()=>switchView(state.view==='report'?activeLayerView():'report');
 $('#ptx-target').onchange=e=>{state.ptxTarget=e.target.value;render();};

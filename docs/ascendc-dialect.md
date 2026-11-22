@@ -9,7 +9,7 @@
 | AscendC basic | 命名空间分组与函数名；当前 617 组 | 固定 CANN weekly 的 basic_api、寄存器接口、SIMT C++ 接口及选定实现 |
 | AscendC capi | C / SIMT 函数名；当前 1,876 组 | c_api、simt_api 与 reg_base_impl / experimental / SIMT 实现 |
 | CCE Dialect ops | TableGen 定义的语义 Op；247 项 | CCEDialect 的 CCEOps.td / CCESIMTOps.td |
-| CCE Dialect intrinsics | 默认列出源码可达的 LLVM 名称，可切换到语义入口、cce.intr 入口或全部 1,433 个名称 | CCEIntrinsicMap.td / CCESIMTIntrinsicMap.td，附关联 cce.intr.* 定义 |
+| CCE Dialect intrinsics | 网页收录 1,234 个源码可达的 LLVM 名称 | CCEIntrinsicMap.td / CCESIMTIntrinsicMap.td，附关联 cce.intr.* 定义 |
 
 AscendC 扫描 395 个头文件，392 个文件的哈希与已有原包核验快照相符；其余 3 个只记录本地文件哈希，不声称原包已核验。版本固定为 9.3.0~weekly.20261104.01。Dialect 扫描 19 个源码及文档文件，保留 Git commit、工作区是否有修改及逐文件哈希；实际内容以哈希为准。两个数据文件同时绑定生成器与 CCEC catalog 哈希，陈旧快照会拒绝构建。
 
@@ -53,13 +53,13 @@ AscendC 到 CCEC 的关系来自函数名与词法引用，候选实现关联还
 
 这次补链不提升 CCEC builtin 的架构状态。`vldsx1_*`、`vstsx1_*` 各 34 个 builtin 只在调用处取得身份，仍缺明确入口声明，保持待确认。页面搜索在存在隐藏结果时显示数量，并允许一键启用“显示待确认”；已有可见名称组中的未知重载不重复计为隐藏条目。宽泛搜索 `vlds` 还会匹配 34 个 `vldsx2_*`（合计 68），`vsts` 还会匹配 3 个 `vstsx2_*`（合计 37），这些也保持待确认。
 
-Dialect LLVM 列表的「来源」列列出映射或调用文件和关联的 MLIR 定义文件。表头可按文件筛选，与顶部文件选择器同步。四个低层入口 cce.intr.simt.load / store / atomic_rmw / atomic_cas 保留在具体记录的 mlir_intr_ops；访存映射的 name_pattern 描述 N 随元素位宽变化的拼名规则。
+Dialect LLVM 列表的「来源」列列出映射或调用文件和关联的 MLIR 定义文件。列表支持名称搜索与指令族导航，来源以文本显示。四个低层入口 cce.intr.simt.load / store / atomic_rmw / atomic_cas 保留在具体记录的 mlir_intr_ops；访存映射的 name_pattern 描述 N 随元素位宽变化的拼名规则。
 
 ## 哪些入口能发出 LLVM 调用
 
 固定 CCEDialect 提交 `5639e581`。默认列表有 1,234 个完整 LLVM 名称。每个名称至少有一个入口满足 Op 定义、已核对的 verifier 和翻译分支。详情给出入口、条件、定义位置和翻译位置。同名目标按名称计一次。本次从语义 Op 直接确认 916 个，从可独立编写的 `cce.intr.*` 入口确认 318 个。第二组的上层 memref 转换需要另外追踪。
 
-例如 `llvm.hivm.atom.ADD.G.s16` 的上层原子 verifier 拒绝 i16，底层入口接受 GM 指针和 i16，能发出这个名字。选择「语义入口可达」即可排除仅靠底层入口确认的名称。`llvm.hivm.atom.ADD.S.s16` 在两个入口都受到约束。另一个例子是 `cce.vrec`，源码通过广播常数和除法实现倒数，因此映射表中的原生 vrec 名称不能用于统计该分支的输出。
+例如 `llvm.hivm.atom.ADD.G.s16` 的上层原子 verifier 拒绝 i16，底层入口接受 GM 指针和 i16，能发出这个名字。详情分别标出语义入口与底层入口的条件。`llvm.hivm.atom.ADD.S.s16` 在两个入口都受到约束。另一个例子是 `cce.vrec`，源码通过广播常数和除法实现倒数，因此映射表中的原生 vrec 名称不能用于统计该分支的输出。
 
 固定源码中的 1,433 个候选名称已全部判定。1,234 个有入口能生成同名 LLVM 调用，199 个在这个独立翻译驱动的统计范围内排除。普通 LLVM 指令单列于「说明 / 覆盖」及 CLI 的 `ordinary-lowerings`。
 

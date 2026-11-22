@@ -55,7 +55,12 @@ def build(source, output, site=False):
             audit = json.loads(DIALECT_OUTPUT.with_name('translation-audit.json').read_text())
             if audit['dialect_commit'] != dialect['source']['commit']:
                 raise ValueError('Dialect translation audit source mismatch')
-            dialect['translation_audit'] = {case['name']: case for case in audit['cases']}
+            dialect['intrinsics'] = [item for item in dialect['intrinsics'] if item['path_status'] == 'confirmed']
+            visible_ids = {item['id'] for item in dialect['intrinsics']}
+            for op in dialect['ops']:
+                op['intrinsic_ids'] = [identity for identity in op['intrinsic_ids'] if identity in visible_ids]
+            dialect['counts']['intrinsics'] = len(visible_ids)
+            dialect['translation_audit'] = {case['name']: case for case in audit['cases'] if case['status'] == 'confirmed'}
             knowledge['cce_dialect'] = dialect
     from llvm_ir import OUTPUT as LLVM_OUTPUT, validate_model as validate_llvm
     if LLVM_OUTPUT.exists():
