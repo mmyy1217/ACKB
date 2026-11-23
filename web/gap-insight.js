@@ -1,10 +1,8 @@
 'use strict';
-let gapLoading = false;
-async function openGapInsight() {
-  const box = document.querySelector('#gap-browser');
-  if (gapLoading || box.dataset.ready) return;
-  gapLoading = true;
-  const message = box.querySelector('#gap-message');
+async function openGapInsight(box) {
+  if (box.dataset.loading || box.dataset.ready) return;
+  box.dataset.loading = 'true';
+  const message = box.querySelector('[role=status]');
   message.textContent = '正在读取差距列表…';
   try {
     const response = await fetch(box.dataset.url);
@@ -15,24 +13,24 @@ async function openGapInsight() {
     const nav = box.querySelector('nav');
     let active = '';
     const query = box.querySelector('input');
-    const sourceFilter = box.querySelector('#gap-source');
+    const sourceFilter = box.querySelector('select');
     const records = rows.map(([name, family, kind, , source]) => ({
       name, family, kind, sources: source.split(' / ')
     }));
     const sources = new Set(records.flatMap(record => record.sources));
     for (const source of Array.from(sources).sort()) {
-      sourceFilter.add(new Option(source, source));
+      sourceFilter?.add(new Option(source, source));
     }
     function display() {
       const term = query.value.trim().toLowerCase();
       const items = records.filter(({name, family, sources}) =>
         (!active || family === active) && name.toLowerCase().includes(term) &&
-        (!sourceFilter.value || sources.includes(sourceFilter.value)));
+        (!sourceFilter?.value || sources.includes(sourceFilter.value)));
       box.querySelector('output').textContent = items.length+' / '+rows.length;
       const body = document.createDocumentFragment();
       for (const {name, kind, sources} of items) {
         const row = document.createElement('tr');
-        for (const text of [name, sources.join(' / '), kind]) row.insertCell().textContent=text;
+        for (const text of (sourceFilter ? [name, sources.join(' / '), kind] : [name, kind])) row.insertCell().textContent=text;
         body.append(row);
       }
       box.querySelector('tbody').replaceChildren(body);
@@ -48,16 +46,16 @@ async function openGapInsight() {
       button.onclick=()=>{active=family;display();};
       nav.append(button);
     }
-    sourceFilter.onchange=display;
+    if (sourceFilter) sourceFilter.onchange=display;
     query.oninput=display;
     display();
     box.dataset.ready='true';
   } catch {
     const retry=document.createElement('button');
     retry.textContent='重新读取';
-    retry.onclick=openGapInsight;
+    retry.onclick=()=>openGapInsight(box);
     message.replaceChildren('列表读取失败。',retry);
   } finally {
-    gapLoading=false;
+    delete box.dataset.loading;
   }
 }

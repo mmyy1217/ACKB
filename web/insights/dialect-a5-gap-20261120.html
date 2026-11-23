@@ -1,0 +1,6 @@
+<p class="insight-lead"><strong>1,069 个名称重合，823 个仅见于 A5 相关线索，0 个仅见于 Dialect 映射表。</strong>对照采用两页默认范围，按完整名称精确匹配。A5 共 1,892 条，其中包含外部 CCE Dialect 的映射，因此这两个集合有来源上的依赖。</p>
+<p>多出的 823 条含 <strong>782 个目标 intrinsic、35 个标准 LLVM intrinsic 和 6 个普通 IR 阅读模型</strong>。其中 266 个目标名称在 c310 Bitcode 中还有直接调用证据。一个 Dialect Op 可以动态生成多个 LLVM 名称，因此实际能力差距仍需逐项核查 lowering。<a href="https://github.com/mmyy1217/tilelang-ascend-docs/releases/tag/ackb-cce-dialect-a5-audit-20261117">950 直接调用差集复核</a></p>
+<div class="gap-browser" id="archive-gap-browser" data-url="__GAP_20261120_JSON__">
+<div class="gap-tools"><label>搜索 <input id="archive-gap-query" type="search" placeholder="完整名称或片段"></label><output id="archive-gap-count" aria-live="polite"></output><a download="a5-gap-20261120.xlsx" href="__GAP_20261120_XLSX__">下载全部差距（Excel）</a></div>
+<div class="gap-layout"><nav class="gap-families" id="archive-gap-families" aria-label="差距指令族"></nav><div class="gap-results" tabindex="0" aria-label="差距列表"><table><thead><tr><th>名称</th><th>记录类型</th></tr></thead><tbody id="archive-gap-rows"></tbody></table><p id="archive-gap-message" role="status"></p></div></div></div>
+<p class="insight-note">2026-11-20 快照 · CANN 9.3.0~weekly.20261104.01 · CCE Dialect 5639e581。左侧沿用 LLVM IR 库的指令族。Excel 保留完整名称、来源、直接调用位置数和 ACKB ID。</p>

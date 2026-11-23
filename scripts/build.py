@@ -84,8 +84,10 @@ def build(source, output, site=False):
         'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'symbol-depth.js', 'gap-insight.js', 'app.js'])
     style = (ROOT / 'web/style.css').read_text()
     from site_build import inline_json, build_site
-    for extension, mime in [('json', 'application/json'), ('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]:
-        asset = ROOT / 'web/insights/files' / f'a5-gap-20261122.{extension}'
+    for asset in sorted((ROOT / 'web/insights/files').glob('a5-gap-*.*')):
+        date = asset.stem.removeprefix('a5-gap-')
+        extension = asset.suffix[1:]
+        mime = {'json': 'application/json', 'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}[extension]
         content = asset.read_bytes()
         if site:
             relative = Path('insights') / asset.name
@@ -95,7 +97,7 @@ def build(source, output, site=False):
             url = f'{relative}?v={hashlib.sha256(content).hexdigest()[:16]}'
         else:
             url = 'data:' + mime + ';base64,' + base64.b64encode(content).decode('ascii')
-        page = page.replace('__GAP_' + extension.upper() + '__', url)
+        page = page.replace(f'__GAP_{date}_{extension.upper()}__', url)
     if site:
         build_site(page, style, scripts, data, knowledge, output)
         return

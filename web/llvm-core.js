@@ -101,7 +101,8 @@ function syncHome() {
   $('#insights-index').hidden=!!slug || location.hash.startsWith('#insight=');
   articles.forEach(article=>{article.hidden=!reading || article!==selected;});
   $('#insight-missing').hidden=!reading || !location.hash.startsWith('#insight=') || !!selected;
-  if(reading && selected?.dataset.insight==='dialect-a5-gap') openGapInsight();
+  const gapBrowser = selected?.querySelector('.gap-browser');
+  if (reading && gapBrowser) openGapInsight(gapBrowser);
   if(reading) $('.insights-link').setAttribute('aria-current','page');
   else $('.insights-link').removeAttribute('aria-current');
   document.title=reading?(selected?selected.querySelector('h1').textContent+' · ACKB':'洞察 · ACKB'):'ACKB · AI Compiler 目标知识库';

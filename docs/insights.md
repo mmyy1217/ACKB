@@ -7,3 +7,5 @@
 `scripts/insights.py` 构建目录、文章页及未找到状态，拒绝重复或非法 slug。重新构建在线和离线页面，运行 `node tests/insights-browser.cjs` 与 `npm run test:site`。浏览器环境变量同 AGENTS.md。
 
 「CCE Dialect 与 LLVM IR 的 A5 名称差距」使用稳定地址 #insight=dialect-a5-gap。2026-11-22 快照由 scripts/dialect_gap_snapshot.py 从两个已提交索引生成，684 行均为 CANN 一侧的目标名称。在线页进入文章时才取 JSON，离线页内嵌同一 JSON 与 Excel。更新快照时需同步正文计数、文件名和工作簿，逐行核对 JSON 与 Excel。
+
+2026-11-20 首版另存于 `#insight=dialect-a5-gap-20261120`。其 823 行 JSON 与 Excel 取自提交 `cafe06b`，按当日包含外部映射的 A5 范围统计。两版独立提供查询与下载。
