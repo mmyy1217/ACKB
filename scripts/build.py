@@ -18,7 +18,7 @@ def build(source, output, site=False):
     validate(data)
     page = (ROOT / 'web/index.html').read_text()
     page = page.replace('<!--__ASCENDC_MAP__-->', (ROOT / 'web/ascendc-map.html').read_text())
-    page = page.replace('<!--__INSIGHTS__-->', render_insights())
+    insights = render_insights()
     ptx = Knowledge('ptx')
     ccec = Knowledge('ccec')
     knowledge = {'ptx': {'records': ptx.records, 'notes': ptx.notes, 'source': ptx.tree['source'], 'scan': ptx.tree['scan'], 'learning': ptx.learning, 'taxonomy': ptx.taxonomy},
@@ -97,10 +97,15 @@ def build(source, output, site=False):
             url = f'{relative}?v={hashlib.sha256(content).hexdigest()[:16]}'
         else:
             url = 'data:' + mime + ';base64,' + base64.b64encode(content).decode('ascii')
-        page = page.replace(f'__GAP_{date}_{extension.upper()}__', url)
+        insights = insights.replace(f'__GAP_{date}_{extension.upper()}__', url)
     if site:
+        page = page.replace('<!--__INSIGHTS__-->', '<template id="insights-slot"></template>')
+        scripts = ("'use strict';\nconst insightsSlot = document.getElementById('insights-slot');\n"
+                   + "insightsSlot.insertAdjacentHTML('beforebegin'," + inline_json(insights) + ");\n"
+                   + "insightsSlot.remove();\n" + scripts)
         build_site(page, style, scripts, data, knowledge, output)
         return
+    page = page.replace('<!--__INSIGHTS__-->', insights)
     payload = inline_json(data)
     encoded = inline_json(knowledge)
     page = page.replace('/*__STYLE__*/', style).replace('/*__DATA__*/', payload)
