@@ -562,3 +562,5 @@ body.data-loading #ascendc-map {display:none}
 .alignment-browser .gap-results th:nth-child(n) {width:22%}
 .alignment-browser .gap-results th:last-child {width:12%}
 .alignment-browser .gap-results td:nth-child(2) {font-family:var(--mono)}
+.alignment-browser th label {display:grid;gap:3px}
+.alignment-browser th :is(input,select) {box-sizing:border-box;width:100%;min-width:0;font:inherit;font-weight:400}

@@ -24,12 +24,26 @@ async function openGapInsight(box) {
     for (const source of Array.from(sources).sort()) {
       sourceFilter?.add(new Option(source, source));
     }
+    const nameFilters = [...box.querySelectorAll('[data-name-column]')];
+    const fileFilters = [...box.querySelectorAll('[data-source-column]')];
+    for (const filter of fileFilters) {
+      const index = Number(filter.dataset.sourceColumn);
+      const paths = new Set();
+      for (const record of records) {
+        const files = record.cells[index].split(' / ').filter(Boolean).map(path => path.replace(/:\d+$/, ''));
+        (record.files ??= {})[index] = files;
+        for (const file of files) paths.add(file);
+      }
+      for (const path of [...paths].sort()) filter.add(new Option(path, path));
+    }
     function display() {
       const term = query.value.trim().toLowerCase();
-      const items = records.filter(({name, family, sources, cells}) =>
+      const items = records.filter(({name, family, sources, cells, files}) =>
         (!active || family === active) && name.toLowerCase().includes(term) &&
         (!sourceFilter?.value || sources.includes(sourceFilter.value)) &&
-        (!matchFilter?.value || cells[4] === matchFilter.value));
+        (!matchFilter?.value || cells[4] === matchFilter.value) &&
+        nameFilters.every(filter => cells[filter.dataset.nameColumn].toLowerCase().includes(filter.value.trim().toLowerCase())) &&
+        fileFilters.every(filter => !filter.value || files[filter.dataset.sourceColumn].includes(filter.value)));
       box.querySelector('output').textContent = items.length+' / '+rows.length;
       const body = document.createDocumentFragment();
       for (const {cells} of items) {
@@ -52,6 +66,8 @@ async function openGapInsight(box) {
     }
     if (sourceFilter) sourceFilter.onchange=display;
     if (matchFilter) matchFilter.onchange=display;
+    for (const filter of nameFilters) filter.oninput = display;
+    for (const filter of fileFilters) filter.onchange = display;
     query.oninput=display;
     display();
     box.dataset.ready='true';

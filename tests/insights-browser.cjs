@@ -66,12 +66,25 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT||'playwright');
   const alignment=page.locator('.alignment-browser[data-ready="true"]');
   await alignment.waitFor();
   assert.equal(await alignment.locator('tbody tr').count(),1885);
-  await alignment.locator('select').selectOption('注册重载基名');
+  await alignment.locator('[data-match-filter]').selectOption('注册重载基名');
   assert.equal(await alignment.locator('tbody tr').count(),509);
-  await alignment.locator('select').selectOption('');
-  await alignment.locator('input').fill('llvm.hivm.ceilf');
+  await alignment.locator('[data-match-filter]').selectOption('');
+  await alignment.locator('.gap-tools input').fill('llvm.hivm.ceilf');
   assert.deepEqual((await alignment.locator('tbody td').allTextContents()).slice(0,2),['','llvm.hivm.ceilf']);
-  await alignment.locator('input').fill('');
+  await alignment.locator('.gap-tools input').fill('');
+  for (const [index,term] of [[0,'llvm.hivm.vabs.x'],[1,'v128f16']]) {
+   await alignment.locator('[data-name-column="'+index+'"]').fill(term);
+  }
+  for (const index of [2,3]) {
+   const file=(await alignment.locator('tbody tr').first().locator('td').nth(index).innerText()).split(' / ')[0].replace(/:\d+$/,'');
+   await alignment.locator('[data-source-column="'+index+'"]').selectOption(file);
+   assert((await alignment.locator('tbody tr').count())>0);
+   for(const cell of await alignment.locator('tbody td:nth-child('+(index+1)+')').allTextContents()) assert(cell.includes(file));
+  }
+  assert(await alignment.locator('tbody tr').count()<509);
+  for(const filter of await alignment.locator('[data-source-column]').all()) await filter.selectOption('');
+  for(const filter of await alignment.locator('[data-name-column]').all()) await filter.fill('');
+  assert.equal(await alignment.locator('tbody tr').count(),1885);
   await alignment.locator('nav button').nth(1).click();
   assert(await alignment.locator('tbody tr').count()<1885);
   const fullDownload=page.waitForEvent('download');
