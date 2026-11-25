@@ -27,6 +27,7 @@ function wrapKnowledge(k,backend) {
     signature:'',namespace:'',builtins:[],conditions:[],source:{file:backend === 'ptx' ? 'PTX ISA 9.4' : 'CANN 头文件'}};
 }
 function recordView(r) {
+  if(r.def)return 'hivm-defs';
   if(r.backend==='nvvm')return 'nvvm';
   if(r.backend==='llvm')return 'llvm';
   if (r.backend === 'ascendc') return r.ascendcLayer === 'capi' ? 'capi' : 'basic';
@@ -46,6 +47,7 @@ function recordView(r) {
   return 'definitions';
 }
 function viewLabels() {
+  if(state.backend==='hivm-defs')return {'hivm-defs':'A5 Intrinsic 定义',report:'来源与覆盖'};
   if(state.backend==='nvvm')return {nvvm:'NVVM IR',report:'来源与覆盖'};
   if(state.backend==='llvm')return {llvm:'LLVM IR',report:'来源与覆盖'};
   if (state.backend === 'ascendc') return {basic:'AscendC 基础 C++ API',capi:'AscendC C / SIMT API',report:'说明 / 覆盖'};
@@ -54,11 +56,12 @@ function viewLabels() {
 }
 function configureBackend() {
   const ptx = state.backend === 'ptx';
+  const definitions=state.backend==='hivm-defs';
   const isLLVM=state.backend==='llvm';
   const isAscendc = state.backend === 'ascendc';
   const isDialect = state.backend === 'cce-dialect';
   $('#page-title').hidden=true;
-  records = state.backend==='nvvm' ? nvvmRecords : isLLVM ? llvmRecords : ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : isAscendc ? ascendcRecords : isDialect ? dialectRecords : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
+  records = definitions ? hivmDefs : state.backend==='nvvm' ? nvvmRecords : isLLVM ? llvmRecords : ptx ? knowledgeRecords.filter(r => r.backend === 'ptx') : isAscendc ? ascendcRecords : isDialect ? dialectRecords : [...opRecords,...data.records,...knowledgeRecords.filter(r => r.backend === 'ccec')];
   document.body.classList.toggle('ptx-mode',ptx);
   document.body.classList.toggle('llvm-mode',isLLVM);
   const labels = viewLabels();
@@ -84,22 +87,22 @@ function configureBackend() {
   } else {
     $('#family-section h2').textContent = '指令族';
     $('#family-section h2').title = '按接口名称关键词归类，仅用于导航';
-    $('#families').innerHTML = [['','全部指令'],...(state.backend==='nvvm'?[...new Set(records.map(r=>r.family))]:families).map(f=>[f,f])].map(([key,label])=>`<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
-    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + (state.backend==='nvvm'?[...new Set(records.map(r=>r.family))]:families).map(f=>`<option>${esc(f)}</option>`).join('');
+    $('#families').innerHTML = [['','全部指令'],...(definitions || state.backend==='nvvm'?[...new Set(records.map(r=>r.family))]:families).map(f=>[f,f])].map(([key,label])=>`<button class="family" data-family="${esc(key)}">${esc(label)}<span></span></button>`).join('');
+    $('#mobile-family').innerHTML = '<option value="">全部指令</option>' + (definitions || state.backend==='nvvm'?[...new Set(records.map(r=>r.family))]:families).map(f=>`<option>${esc(f)}</option>`).join('');
   }
-  const activePool = state.backend==='nvvm' ? records : isLLVM || isAscendc || isDialect ? records : data.records;
-  const activeFiles = state.backend==='nvvm' ? ['NVVM IR Specification 13.4.3'] : isLLVM ? Object.values(llvmData.sources).map(s=>s.path).sort() : isAscendc ? Object.keys(ascendcData.files || {}).sort() : isDialect ? Object.keys(dialectData.source?.files || {}).sort() : data.files.map(f => f.path);
+  const activePool = definitions || state.backend==='nvvm' ? records : isLLVM || isAscendc || isDialect ? records : data.records;
+  const activeFiles = definitions ? [knowledgeData['hivm-defs'].source] : state.backend==='nvvm' ? ['NVVM IR Specification 13.4.3'] : isLLVM ? Object.values(llvmData.sources).map(s=>s.path).sort() : isAscendc ? Object.keys(ascendcData.files || {}).sort() : isDialect ? Object.keys(dialectData.source?.files || {}).sort() : data.files.map(f => f.path);
   $('#group').innerHTML = '<option value="">全部接口域</option>' + [...new Set(activePool.map(r => r.group))].sort().map(g => `<option>${esc(g)}</option>`).join('');
   $('#file').innerHTML = '<option value="">全部源文件</option>' + activeFiles.map(f => `<option>${esc(f)}</option>`).join('');
-  $('#version').textContent = state.backend==='nvvm' ? knowledgeData.nvvm?.version || 'NVVM IR' : ptx ? 'PTX ISA 9.4' : isDialect ? `CCEDialect ${dialectData.version || ''}` : data.version;
-  $('#footer-source').textContent = state.backend==='nvvm' ? 'NVVM IR 官方规范 · 文档索引 · 设备支持未验证' : isLLVM ? `${Object.keys(llvmData.sources).length} 个版本化来源 · CANN ${data.version} · LLVM IR` : ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : isDialect ? `${activeFiles.length} 个 TableGen/文档源文件 · CCEDialect ${dialectData.version || ''} · dav-351x` : isAscendc ? `${activeFiles.length} 个 AscendC 头文件 · CANN ${data.version} · 950 / dav_3510` : `${data.files.length} 个源文件 · CANN ${data.version}`;
+  $('#version').textContent = definitions ? 'Issue 33 · A5' : state.backend==='nvvm' ? knowledgeData.nvvm?.version || 'NVVM IR' : ptx ? 'PTX ISA 9.4' : isDialect ? `CCEDialect ${dialectData.version || ''}` : data.version;
+  $('#footer-source').textContent = definitions ? 'Issue 33 · 工作簿记录' : state.backend==='nvvm' ? 'NVVM IR 官方规范 · 文档索引 · 设备支持未验证' : isLLVM ? `${Object.keys(llvmData.sources).length} 个版本化来源 · CANN ${data.version} · LLVM IR` : ptx ? 'PTX ISA 9.4 · CUDA 文档归档 13.4.3 · NVIDIA B300' : isDialect ? `${activeFiles.length} 个 TableGen/文档源文件 · CCEDialect ${dialectData.version || ''} · dav-351x` : isAscendc ? `${activeFiles.length} 个 AscendC 头文件 · CANN ${data.version} · 950 / dav_3510` : `${data.files.length} 个源文件 · CANN ${data.version}`;
   $('#search').placeholder = isLLVM ? '搜索 LLVM 名称、类型…' : ptx ? '搜索指令、章节、目标条件…' : isDialect ? '搜索 cce.* Op、llvm.hivm.*、语法…' : '搜索名称、类型、builtin、条件…';
   $('#search').setAttribute('aria-label',ptx ? '搜索 PTX 指令与章节' : '搜索接口或配套定义');
   for(const node of [$('#group').closest('label'),$('#file').closest('label')]) node.hidden=ptx || (isDialect && state.dialectLayer==='intrinsics');
-  $('#fixed-chip').hidden=ptx || state.backend==='nvvm';$('#unknown-filter').hidden=ptx || isDialect || state.backend==='nvvm';$('#unknown-label').textContent=isLLVM?'含字符串候选':'显示待确认';document.querySelectorAll('.llvm-filter').forEach(n=>n.hidden=!isLLVM);$('#coverage').hidden=false;
+  $('#fixed-chip').hidden=ptx || definitions || state.backend==='nvvm';$('#unknown-filter').hidden=ptx || definitions || isDialect || state.backend==='nvvm';$('#unknown-label').textContent=isLLVM?'含字符串候选':'显示待确认';document.querySelectorAll('.llvm-filter').forEach(n=>n.hidden=!isLLVM);$('#coverage').hidden=false;
   $('#mobile-view').closest('label').hidden=true;
   document.querySelectorAll('.ptx-filter').forEach(n => n.hidden=!ptx);
-  $('.sidebar-note').innerHTML = state.backend==='nvvm' ? 'NVVM IR<p>官方规范显式符号</p><p>编译与运行未验证</p>' : isLLVM ? 'Huawei Ascend · LLVM IR<p>950 包内证据 · 3510</p><p>目标编译 / 运行未验证</p>' : ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
+  $('.sidebar-note').innerHTML = definitions ? 'A5 Intrinsic 定义<p>按工作簿原分类浏览</p>' : state.backend==='nvvm' ? 'NVVM IR<p>官方规范显式符号</p><p>编译与运行未验证</p>' : isLLVM ? 'Huawei Ascend · LLVM IR<p>950 包内证据 · 3510</p><p>目标编译 / 运行未验证</p>' : ptx ? '官方文档索引<p>NVIDIA B300 · CC 10.3</p><p>编译与运行尚未验证</p>' : isDialect ? 'CCE Dialect · dav-351x<p>MLIR ⇄ llvm.hivm.* 双层映射</p>' : 'Huawei Ascend 950 / A5<p>声明条件符合 ≠ 已验证支持</p>';
 }
 function knowledgeLink(r,label) {
   return `<button class="related-link" data-knowledge-ref="${esc(r.id)}">${esc(label || r.name)}</button>`;

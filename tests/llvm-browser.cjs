@@ -11,7 +11,7 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  const url=pathToFileURL(path.resolve('dist/index.html')).href;
  await page.goto(url);await page.waitForSelector('#home:not([hidden])');
  assert.equal(await page.locator('.workspace').isVisible(),false);
- assert.equal(await page.locator('#home a[data-database]').count(),9);
+ assert.equal(await page.locator('#home a[data-database]').count(),10);
  for(const width of [1440,1024,390,320]){
   await page.setViewportSize({width,height:950});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`home overflow ${width}`);
@@ -19,7 +19,7 @@ const {chromium}=require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
  }
  await page.evaluate(()=>location.hash='ascendc-map');
  await page.locator('#ascendc-map:not([hidden])').waitFor();
- assert.equal(await page.locator('[data-library]').count(),7);
+ assert.equal(await page.locator('[data-library]').count(),8);
  const libraryLinks=await page.locator('[data-library]').evaluateAll(nodes=>nodes.map(n=>n.hash));
  for(const link of libraryLinks){
   await page.evaluate(hash=>location.hash=hash,link);

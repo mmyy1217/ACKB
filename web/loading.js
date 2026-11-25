@@ -8,7 +8,7 @@ const siteLoader = siteManifest ? (() => {
   const stale = new Set();
   const states = new Map(), listeners = new Set(), transfers = new Map();
   const emit = () => listeners.forEach(fn => fn());
-  const names = backend => backend === 'ptx' ? [backend] : [backend, 'navigation'];
+  const names = backend => ['ptx','hivm-defs'].includes(backend) ? [backend] : [backend, 'navigation'];
   const entryFor = name => manifest.datasets[name][typeof DecompressionStream === 'function' ? 'gzip' : 'plain'];
   const status = backend => stale.has(backend) ? {phase:'update'} : states.get(backend) || {phase:'checking'};
   const cacheName = 'ackb-data-v1:' + new URL('.', location.href).pathname;
@@ -81,7 +81,7 @@ const siteLoader = siteManifest ? (() => {
     await initialized;
     states.set(backend,{phase:'downloading'}); emit();
     try {
-      const [payload, navigation] = await Promise.all([dataset(backend), backend === 'ptx' ? null : dataset('navigation')]);
+      const [payload, navigation] = await Promise.all([dataset(backend), ['ptx','hivm-defs'].includes(backend) ? null : dataset('navigation')]);
       states.set(backend,{phase:'ready'}); emit();
       const storage = await cache();
       const keep = new Set(names(backend).flatMap(name => Object.values(manifest.datasets[name]).map(assetURL)));
@@ -136,6 +136,7 @@ function refreshSite(backend = null) {
 function backendForLink(id, fallback = 'ccec') {
   const known = siteLoader?.lookup(id)?.backend;
   if (known) return known;
+  if(id.startsWith('def_int_'))return 'hivm-defs';
   if(id.startsWith('nvvm_'))return 'nvvm';
   if (id.startsWith('llvm_')) return 'llvm';
   if (id.startsWith('ascendc_')) return 'ascendc';
@@ -253,7 +254,7 @@ if (siteLoader) {
   siteLoader.initialized.then(() => {
     renderDownloads();
     const url = new URL(location.href), backend = url.searchParams.get('download');
-    if (['llvm','ccec','ascendc','cce-dialect','ptx','nvvm'].includes(backend)) {
+    if (['llvm','ccec','ascendc','cce-dialect','ptx','nvvm','hivm-defs'].includes(backend)) {
       url.searchParams.delete('download'); history.replaceState(null,'',url); downloadDatabase(backend,true);
     }
   });

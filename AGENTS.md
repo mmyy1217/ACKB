@@ -232,7 +232,7 @@ python scripts/build.py
 
 ## AscendC API 全景阅读页
 
-首页 `#ascendc-map` 的结构图与七个知识库入口见 [全景维护说明](docs/ascendc-api-map.md)。修改 `web/ascendc-map.html` 后同时构建在线与离线页面；`test:site` 与 LLVM 浏览器回归覆盖入口、下载门控与深链接。来源快照独立于设备支持证据，不据此扩展 API 全量扫描。
+首页 `#ascendc-map` 的结构图与八个知识库入口见 [全景维护说明](docs/ascendc-api-map.md)。修改 `web/ascendc-map.html` 后同时构建在线与离线页面；`test:site` 与 LLVM 浏览器回归覆盖入口、下载门控与深链接。来源快照独立于设备支持证据，不据此扩展 API 全量扫描。
 
 ## PTX / LLVM / NVVM 符号展开
 
@@ -241,3 +241,10 @@ python scripts/build.py
 ## 洞察文章
 
 首页顶部文章入口和离线维护见 [洞察维护](docs/insights.md)。正文、来源与快照口径随构建发布；回归入口 `node tests/insights-browser.cjs`。
+
+## 工作簿 A5 Intrinsic 定义
+
+```sh
+python scripts/hivm_defs.py /path/to/Issue-33-A5-Intrinsics.xlsx
+python scripts/query.py --backend hivm-defs search --name vsstb
+```

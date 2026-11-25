@@ -75,7 +75,7 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
       await page.screenshot({path:`.impeccable/review/api-map-${width}.png`,fullPage:true});
     }
-    assert.equal(await page.locator('[data-library]').count(),7);
+    assert.equal(await page.locator('[data-library]').count(),8);
     const libraryLinks = await page.locator('[data-library]').evaluateAll(nodes=>nodes.map(n=>n.hash));
     for (const link of libraryLinks) {
       await page.evaluate(hash=>location.hash=hash,link);
@@ -119,11 +119,14 @@ const {chromium} = require(process.env.CCE_OPS_PLAYWRIGHT || 'playwright');
     await page.locator('#rows a').first().click(); await ready(page,'llvm');
     assert.equal(await page.locator('#detail h2').textContent(), 'llvm.hivm.vadd.s.m');
 
-    for (const [value, backend] of [['ccec','ccec'],['ccec-intrinsics','ccec'],['ascendc','ascendc'],['ascendc-capi','ascendc'],['cce-dialect','cce-dialect'],['cce-dialect-intrinsics','cce-dialect'],['ptx','ptx'],['nvvm','nvvm']]) {
+    for (const [value, backend] of [['ccec','ccec'],['ccec-intrinsics','ccec'],['ascendc','ascendc'],['ascendc-capi','ascendc'],['cce-dialect','cce-dialect'],['cce-dialect-intrinsics','cce-dialect'],['ptx','ptx'],['nvvm','nvvm'],['hivm-defs','hivm-defs']]) {
       await page.selectOption('#backend',value); await ready(page,backend);
       assert.equal(await page.locator('#backend').inputValue(), value);
       assert.ok(await page.evaluate(() => records.length) > 0, value);
     }
+    await page.fill('#search','int_hivm_vsstb_post');
+    assert.equal(await page.locator('#rows .row-button').count(),1);
+    assert.match(await page.locator('#detail').innerText(),/llvm\.hivm\.vsstb\.post\.v64f32/);
     await page.selectOption('#backend','ccec'); await ready(page,'ccec');
     await page.fill('#search','copy_gm_to_cbuf');
     assert.ok(await page.locator('#rows .row-button').count() > 0);

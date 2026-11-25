@@ -24,7 +24,7 @@ class Parser(argparse.ArgumentParser):
 
 def parser():
     p = Parser(description=__doc__)
-    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx', 'llvm', 'nvvm'], default='ccec')
+    p.add_argument('--backend', choices=['ccec', 'ascendc', 'cce-dialect', 'ptx', 'llvm', 'nvvm', 'hivm-defs'], default='ccec')
     p.add_argument('--layer', choices=['declarations', 'ops', 'basic', 'capi', 'intrinsics'])
     p.add_argument('--data', help='Versioned catalog path; defaults to the repository snapshot')
     p.add_argument('--limit', type=int, default=10)
@@ -223,6 +223,24 @@ def dispatch_ascendc_or_dialect(args):
 def run(args):
     if not 1 <= args.limit <= 50 or args.offset < 0 or not 2000 <= args.max_chars <= 100000:
         raise ValueError('Expected limit 1..50, offset >= 0, max-chars 2000..100000')
+    if args.backend == 'hivm-defs':
+        from hivm_defs import OUTPUT
+        db = json.loads(OUTPUT.read_text())
+        context = {key: value for key, value in db.items() if key != 'records'}
+        context['backend'] = args.backend
+        if args.command == 'info':
+            items = [{'definitions': len(db['records'])}]
+        elif args.command == 'search':
+            term = (args.name or args.query or '').lower()
+            items = [r for r in db['records'] if term in r['name'].lower()]
+        elif args.command == 'get':
+            items = [r for r in db['records'] if r['name'] == args.identity.removeprefix('def_')]
+            if not items:
+                raise ValueError('Unknown A5 intrinsic definition')
+        else:
+            raise ValueError('Use info, search or get for hivm-defs')
+        return page(items, args, context)
+
     if args.backend == 'nvvm':
         from nvvm_index import OUTPUT, validate as validate_nvvm
         d = json.loads(OUTPUT.read_text()); validate_nvvm(d)

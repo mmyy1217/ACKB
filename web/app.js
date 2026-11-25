@@ -2,7 +2,7 @@
 const $ = selector => document.querySelector(selector);
 let data = JSON.parse($('#catalog-data').textContent);
 let opRecords = createOpRecords(data);
-let allRecords = [...opRecords, ...data.records, ...knowledgeRecords, ...ascendcRecords, ...dialectRecords, ...llvmRecords,...nvvmRecords];
+let allRecords = [...opRecords, ...data.records, ...knowledgeRecords, ...ascendcRecords, ...dialectRecords, ...llvmRecords,...nvvmRecords,...hivmDefs];
 let records = data.records;
 const byId = new Map(allRecords.map(r => [r.id, r]));
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,7 +17,7 @@ const mobile = window.matchMedia('(max-width:800px)');
 let visible = [], timer, readingDetail = false, loadScheduled = false, progressScheduled = false;
 let updatePanelWidths = () => {};
 const sourceLabel = s => `${s.file}:${s.line}${s.end_line > s.line ? '–' + s.end_line : ''}`;
-function searchText(r) {return [r.name,r.signature,r.group,r.family,r.namespace,r.transfer?.label || '',r.transfer?.search_alias || '',...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : r.ascendc ? [r.ascendc.qualified_name || '',...(r.ascendc.ccec_callees || []).map(c=>c.name)].join(' ') : r.dialectOp ? [r.dialectOp.def_name,r.dialectOp.summary,r.dialectOp.spec?.title_zh || ''].join(' ') : r.dialectIntr ? [...(r.dialectIntr.op_keys || []),...(r.dialectIntr.mlir_intr_ops || []).map(m=>m.mnemonic)].join(' ') : ''].join(' ').toLowerCase();}
+function searchText(r) {return [r.name,r.def?.probe?.ir,r.signature,r.group,r.family,r.namespace,r.transfer?.label || '',r.transfer?.search_alias || '',...r.builtins,...r.conditions,r.source.file,r.knowledge ? JSON.stringify(r.knowledge) : r.op ? r.op.aliases.join(' ') : r.ascendc ? [r.ascendc.qualified_name || '',...(r.ascendc.ccec_callees || []).map(c=>c.name)].join(' ') : r.dialectOp ? [r.dialectOp.def_name,r.dialectOp.summary,r.dialectOp.spec?.title_zh || ''].join(' ') : r.dialectIntr ? [...(r.dialectIntr.op_keys || []),...(r.dialectIntr.mlir_intr_ops || []).map(m=>m.mnemonic)].join(' ') : ''].join(' ').toLowerCase();}
 const searchTexts = new Map(allRecords.map(r => [r.id, searchText(r)]));
 let fileMap = new Map(data.files.map(f => [f.path,f]));
 
@@ -38,10 +38,11 @@ function installBackend(backend, payload, navigation) {
     knowledgeData.ascendc=payload; ascendcData=payload; ascendcRecords=createAscendcRecords();
   } else if(backend==='cce-dialect') {
     knowledgeData.cce_dialect=payload; dialectData=payload; dialectRecords=createDialectRecords();
+  } else if(backend==='hivm-defs'){knowledgeData[backend]=payload;hivmDefs=definitionRecords();
   } else if(backend==='nvvm'){knowledgeData.nvvm=payload;refreshNVVM();}
   else if(backend==='llvm') knowledgeData.llvm=payload;
   if(backend==='llvm' || navigation) refreshLLVM();
-  allRecords=[...opRecords,...data.records,...knowledgeRecords,...ascendcRecords,...dialectRecords,...llvmRecords,...nvvmRecords];
+  allRecords=[...opRecords,...data.records,...knowledgeRecords,...ascendcRecords,...dialectRecords,...llvmRecords,...nvvmRecords,...hivmDefs];
   // Previously loaded databases retain their search index when another is opened.
   for(const record of allRecords) {
     byId.set(record.id,record);
@@ -51,7 +52,7 @@ function installBackend(backend, payload, navigation) {
 function navigateHash(reveal) {
   const params=new URLSearchParams(location.hash.slice(1));
   const home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map' || location.hash==='#insights' || location.hash.startsWith('#insight=');
-  const requested=['ptx','ascendc','cce-dialect','llvm','nvvm'].includes(params.get('backend'))?params.get('backend'):'ccec';
+  const requested=['ptx','ascendc','cce-dialect','llvm','nvvm','hivm-defs'].includes(params.get('backend'))?params.get('backend'):'ccec';
   const backend=home?null:backendForLink(params.get('r') || '',requested);
   navigateWithData(backend,()=>{readHash();render(reveal);});
 }
@@ -59,7 +60,7 @@ function navigateHash(reveal) {
 function saveHash(replace = true) {
   if(state.home)return;
   const p = new URLSearchParams();
-  if(state.backend==='nvvm')p.set('backend','nvvm');
+  if(['nvvm','hivm-defs'].includes(state.backend))p.set('backend',state.backend);
   if(state.symbolDepth)p.set('depth',state.symbolDepth);
   if(state.backend==='llvm'){p.set('backend','llvm');p.set('scope',state.llvmScope);if(state.llvmSource)p.set('source',state.llvmSource);if(state.llvmEvidence)p.set('evidence',state.llvmEvidence);if(state.includeUnknown)p.set('unknown','1');if(state.opForm)p.set('form',state.opForm);if(state.view==='report')p.set('view','report');}
   if (state.backend === 'ptx') {p.set('backend','ptx');p.set('target',state.ptxTarget);}
@@ -81,13 +82,13 @@ function readHash() {
   state.home=!location.hash || location.hash==='#home' || location.hash==='#ascendc-map' || location.hash==='#insights' || location.hash.startsWith('#insight=');
   state.llvmScope=['all','a5-evidence'].includes(p.get('scope'))?p.get('scope'):'a5-sources';state.llvmSource=Object.hasOwn(llvmSourceLabels,p.get('source'))?p.get('source'):'';state.llvmEvidence=Array.from($('#llvm-evidence').options).some(o=>o.value===p.get('evidence'))?p.get('evidence'):'';
   const rawBackend = p.get('backend');
-  state.backend = ['ptx','ascendc','cce-dialect','llvm','nvvm'].includes(rawBackend) ? rawBackend : 'ccec';
+  state.backend = ['ptx','ascendc','cce-dialect','llvm','nvvm','hivm-defs'].includes(rawBackend) ? rawBackend : 'ccec';
   state.ptxTarget = ['sm_103','sm_103f','sm_103a'].includes(p.get('target')) ? p.get('target') : 'sm_103a';
   state.support = Object.hasOwn(supportLabels,p.get('support')) ? p.get('support') : '';
   state.ascendcLayer = p.get('layer') === 'capi' ? 'capi' : 'basic';
   state.dialectLayer = p.get('layer') === 'intrinsics' ? 'intrinsics' : 'ops';
   configureBackend();
-  state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : state.backend === 'nvvm' ? 'nvvm' : state.backend === 'llvm' ? 'llvm' : state.backend === 'ptx' ? 'interfaces' : state.backend === 'ascendc' ? state.ascendcLayer : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops') : 'interfaces';
+  state.view = Object.hasOwn(viewLabels(),p.get('view')) ? p.get('view') : ['nvvm','hivm-defs'].includes(state.backend) ? state.backend : state.backend === 'llvm' ? 'llvm' : state.backend === 'ptx' ? 'interfaces' : state.backend === 'ascendc' ? state.ascendcLayer : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops') : 'interfaces';
   for (const key of ['family','query','group','file','chip','architecture','availability','deprecation','proof']) state[key] = p.get(key) || '';
   state.includeUnknown=p.get('unknown')==='1';state.opForm=p.get('form') || '';state.opCaller=p.get('caller') || '';state.observedCall=p.get('call') || '';
   state.ccecLayer=p.get('layer')==='intrinsics' || p.get('view')==='interfaces'?'interfaces':'wrappers';
@@ -122,14 +123,14 @@ async function copyText(value) {
 }
 function activeLayerView() {
   if(state.backend==='ptx')return 'interfaces';
-  if(state.backend==='nvvm')return 'nvvm';
+  if(['nvvm','hivm-defs'].includes(state.backend))return state.backend;
   if(state.backend==='llvm')return 'llvm';
   if (state.backend === 'ascendc') return state.ascendcLayer === 'capi' ? 'capi' : 'basic';
   if (state.backend === 'cce-dialect') return state.dialectLayer === 'intrinsics' ? 'dialect_intrinsics' : 'dialect_ops';
   return state.ccecLayer;
 }
 function download() {
-  if(state.backend==='nvvm'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({...knowledgeData.nvvm,records:filtered().map(r=>r.nvvm)})],{type:'application/json'}));a.href=u;a.download='ackb-nvvm.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);return;}
+  if(['nvvm','hivm-defs'].includes(state.backend)){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({...knowledgeData[state.backend],records:filtered().map(r=>r.def || r.nvvm)})],{type:'application/json'}));a.href=u;a.download='ackb-'+state.backend+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);return;}
   if(state.backend==='llvm')return downloadLLVM();
   if (state.backend === 'ptx' || state.view === 'topics') return downloadKnowledge();
   if (state.backend === 'ascendc' || state.backend === 'cce-dialect') {
@@ -160,7 +161,7 @@ function makeGroups(items) {
   return [...groups.values()];
 }
 function compatibilityMatches(r) {
-  if(state.backend==='nvvm')return true;
+  if(['nvvm','hivm-defs'].includes(state.backend))return true;
   if(state.backend==='llvm')return llvmMatches(r);
   if(state.backend==='cce-dialect')return true;
   if(state.backend==='ascendc'){const st=r.compatibility?.profiles?.[A5_PROFILE] || 'matches';return state.includeUnknown ? st!=='excluded' : st==='matches';}
@@ -175,11 +176,11 @@ function filtered(ignoreCompatibility = false) {
   return baseRecords().filter(r => (ignoreCompatibility || compatibilityMatches(r)) && (!state.family || (state.backend === 'ptx' ? ptxCategoryMatches(r,state.family) : ccecFamilyMatches(r,state.family))) && (!state.group || r.group === state.group) && (!state.file || (r.files || [r.source.file]).includes(state.file)) && terms.every(t => searchTexts.get(r.id).includes(t)));
 }
 function syncControls() {
-  $('#backend').value = state.backend==='nvvm'?'nvvm':state.backend==='llvm'?'llvm':state.backend==='ptx'?'ptx':state.backend==='ascendc'?(state.ascendcLayer==='capi'?'ascendc-capi':'ascendc'):state.backend==='cce-dialect'?(state.dialectLayer==='intrinsics'?'cce-dialect-intrinsics':'cce-dialect'):state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
+  $('#backend').value = ['nvvm','hivm-defs'].includes(state.backend)?state.backend:state.backend==='llvm'?'llvm':state.backend==='ptx'?'ptx':state.backend==='ascendc'?(state.ascendcLayer==='capi'?'ascendc-capi':'ascendc'):state.backend==='cce-dialect'?(state.dialectLayer==='intrinsics'?'cce-dialect-intrinsics':'cce-dialect'):state.ccecLayer==='interfaces'?'ccec-intrinsics':'ccec';$('#ptx-support').value=state.support;
   $('#include-unknown').checked=state.includeUnknown;
   $('#llvm-scope').value=state.llvmScope;$('#llvm-evidence').value=state.llvmEvidence;
   $('#coverage').textContent=state.view==='report'?'返回指令':'说明 / 覆盖';
-  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.backend==='llvm'?true:state.backend==='ascendc'?recordView(r)===activeLayerView():state.backend==='cce-dialect'?recordView(r)===activeLayerView():state.backend==='nvvm'?true:state.ccecLayer==='wrappers'?ccecIsInterface(r):r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
+  document.querySelectorAll('[data-family] span').forEach(span => {const family = span.parentElement.dataset.family;span.textContent = fmt(state.backend === 'ptx' ? ptxInstructionCount(family) : makeGroups(records.filter(r => (state.backend==='llvm'?true:state.backend==='ascendc'?recordView(r)===activeLayerView():state.backend==='cce-dialect'?recordView(r)===activeLayerView():['nvvm','hivm-defs'].includes(state.backend)?true:state.ccecLayer==='wrappers'?ccecIsInterface(r):r.op) && compatibilityMatches(r) && (!family || ccecFamilyMatches(r,family)))).length);});
   document.querySelectorAll('[data-cat-subs]').forEach(el => {const cid = el.dataset.catSubs;el.hidden = !(state.family === cid || state.family.startsWith(cid + '.'));});
   $('#search').value = state.query;$('#group').value = state.group;$('#file').value = state.file;
   $('#mobile-view').value = state.view;$('#mobile-family').value = state.family;
@@ -202,10 +203,10 @@ function render(revealSelection = false) {
   $('.toolbar').hidden = report;
   $('#dialect-source-heading')?.remove();
   $('#dialect-cann-heading')?.remove();
-  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'nvvm' ? 'NVVM 符号' : state.backend === 'llvm' ? 'LLVM 名称' : state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
-  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'nvvm' ? '来源依据' : state.backend === 'llvm' ? '指令族' : state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
+  document.querySelectorAll('.interface-table th')[0].textContent = state.backend === 'hivm-defs' ? '定义名' : state.backend === 'nvvm' ? 'NVVM 符号' : state.backend === 'llvm' ? 'LLVM 名称' : state.backend === 'ptx' ? '指令 / 章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? 'LLVM intrinsic' : 'Dialect Op') : state.view==='interfaces'?'op / builtin':'声明 / 名称';
+  document.querySelectorAll('.interface-table th')[2].textContent = state.backend === 'hivm-defs' ? '工作簿探针' : state.backend === 'nvvm' ? '来源依据' : state.backend === 'llvm' ? '指令族' : state.backend === 'ptx' ? '文档条件' : state.backend === 'cce-dialect' ? '分类' : '950 条件';
   document.querySelectorAll('.interface-table th')[2].title = state.backend === 'ptx' ? '按官方文档判断 '+state.ptxTarget+' 的适用条件，不代表编译或运行验证' : '按来源头文件分组，不代表设备支持范围';
-  document.querySelectorAll('.interface-table th')[3].textContent = depthEnabled() ? '记录数' : state.backend === 'llvm' ? '形式' : state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
+  document.querySelectorAll('.interface-table th')[3].textContent = state.backend === 'hivm-defs' ? '原序号' : depthEnabled() ? '记录数' : state.backend === 'llvm' ? '形式' : state.backend === 'ptx' ? '章节' : state.backend === 'cce-dialect' ? (state.dialectLayer === 'intrinsics' ? '映射' : '关联') : state.backend === 'ascendc' ? '重载' : state.view==='interfaces'?'形式':'声明';
   $('#classification-heading').title = state.backend === 'ptx' ? '按官方手册章节归类' : '按名称关键词归类';
   $('#classification-heading').textContent = state.backend === 'ptx' ? '类别' : state.view === 'definitions' ? '定义类型' : '指令族';
   configureLLVMColumns();configureDialectSourceColumn();syncControls();syncPtxNavigation();syncDepthControl();
@@ -245,8 +246,8 @@ function rowHTML(groups) {
     const classification = r0.knowledge ? g.family : state.view === 'definitions' ? kinds[r0.kind] : r0.transfer?.label || g.family;
     const secondColumn = r0.llvm ? [...new Set(g.items.flatMap(r=>r.sourceKeys))].map(k=>llvmSourceLabels[k]).join(' · ') : classification;
     const qualified = [r0.namespace,g.name].filter(Boolean).join('::');
-    const col3 = r0.knowledge?.concrete_form ? '形式支持待核对' : g.symbolGroup && g.items.length>1 ? '逐条查看' : r0.nvvm ? '文档符号' : r0.llvm ? llvmIdentities[r0.llvm.identity_status] : state.backend === 'ptx' ? supportLabels[r0.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : state.backend === 'cce-dialect' ? (r0.dialectOp ? (loweringModeLabels[r0.dialectOp.lowering_mode] || r0.group) : r0.group) : a5GroupLabel(g.items);
-    const col4 = g.symbolGroup ? g.items.length : r0.llvm ? (r0.llvm.form_ids.length || '—') : state.backend === 'ptx' ? esc(r0.knowledge.section_number || '—') : r0.dialectOp ? (r0.dialectOp.intrinsic_ids?.length || '—') : r0.dialectIntr ? (r0.dialectIntr.mappings?.length || 1) : r0.ascendc ? (r0.ascendc.overload_count || 1) : r0.op ? (scopedA5Op(r0.op).forms.length || '—') : g.items.length;
+    const col3 = r0.def ? (r0.def.probe?.result || '无记录') : r0.knowledge?.concrete_form ? '形式支持待核对' : g.symbolGroup && g.items.length>1 ? '逐条查看' : r0.nvvm ? '文档符号' : r0.llvm ? llvmIdentities[r0.llvm.identity_status] : state.backend === 'ptx' ? supportLabels[r0.knowledge.target_assessments?.[state.ptxTarget]?.support || 'unknown'] : state.backend === 'cce-dialect' ? (r0.dialectOp ? (loweringModeLabels[r0.dialectOp.lowering_mode] || r0.group) : r0.group) : a5GroupLabel(g.items);
+    const col4 = r0.def ? r0.def.number : g.symbolGroup ? g.items.length : r0.llvm ? (r0.llvm.form_ids.length || '—') : state.backend === 'ptx' ? esc(r0.knowledge.section_number || '—') : r0.dialectOp ? (r0.dialectOp.intrinsic_ids?.length || '—') : r0.dialectIntr ? (r0.dialectIntr.mappings?.length || 1) : r0.ascendc ? (r0.ascendc.overload_count || 1) : r0.op ? (scopedA5Op(r0.op).forms.length || '—') : g.items.length;
     return `<tr class="${selected ? 'selected' : ''}"><td><button class="row-button" title="${esc(qualified)}" data-id="${r0.id}" ${selected ? 'aria-current="true"' : ''}><span class="row-name">${esc(g.name)}${directEntryIDs.has(r0.id)?' · 直连':''}</span></button></td>${r0.dialectIntr ? dialectSourceCell(r0) + dialectCannCell(r0) : ''}<td title="${esc(secondColumn)}">${esc(secondColumn)}</td><td>${esc(r0.llvm ? classification : col3)}</td><td class="number">${col4}</td></tr>`;
   }).join('');
 }
@@ -382,6 +383,7 @@ function renderDetail() {
 function renderDetailBody() {
   const r = byId.get(state.selected), pane = $('#detail');
   if (!r) {pane.innerHTML = '<div class="empty detail-empty"><h2>选择条目，阅读详情</h2><p>调整左侧筛选后即可查看接口与来源。</p></div>';return;}
+  if(r.def){renderDefinition(r);return;}
   if(r.nvvm){renderNVVMDetail(r);return;}
   if (r.llvm) {renderLLVMDetail(r);return;}
   if (r.ascendc) {renderAscendcDetail(r);return;}
@@ -441,7 +443,7 @@ function sourceContent(r) {
 function experimentsContent() {
   return `<h3>尚未开展设备实验</h3><p>当前依据来自头文件静态提取。本条接口尚无编译、运行正确性或性能记录。</p><dl class="detail-meta"><dt>静态声明</dt><dd>已提取，来源可追溯</dd><dt>编译验证</dt><dd>未执行</dd><dt>运行验证</dt><dd>未执行</dd><dt>性能测量</dt><dd>未执行</dd></dl><div class="callout">后续实验将附目标设备、完整工具链版本、样例、执行命令与原始结果。</div>`;
 }
-function renderReport() {if(state.backend==='nvvm')$('#report').innerHTML='<h2>NVVM IR 来源与覆盖</h2><pre>'+esc(JSON.stringify({version:knowledgeData.nvvm.version,source:knowledgeData.nvvm.source,records:nvvmRecords.length,limitations:knowledgeData.nvvm.limitations},null,2))+'</pre>';else if(state.backend==='llvm')renderLLVMReport();else if(state.backend==='ccec')renderA5Report();else if(state.backend==='ascendc')renderAscendcReport();else if(state.backend==='cce-dialect')renderDialectReport();else renderKnowledgeReport();}
+function renderReport() {if(state.backend==='hivm-defs'){definitionReport();return;}if(state.backend==='nvvm')$('#report').innerHTML='<h2>NVVM IR 来源与覆盖</h2><pre>'+esc(JSON.stringify({version:knowledgeData.nvvm.version,source:knowledgeData.nvvm.source,records:nvvmRecords.length,limitations:knowledgeData.nvvm.limitations},null,2))+'</pre>';else if(state.backend==='llvm')renderLLVMReport();else if(state.backend==='ccec')renderA5Report();else if(state.backend==='ascendc')renderAscendcReport();else if(state.backend==='cce-dialect')renderDialectReport();else renderKnowledgeReport();}
 function initPanelResize() {
   const root = document.documentElement, storageKey = 'cce-ops.panel-widths.v1';
   const preferences = {sidebar:null,detail:null};
@@ -502,7 +504,7 @@ function initPanelResize() {
   window.addEventListener('resize',() => {apply();queueMore();queueProgress();});
   apply();
 }
-function reset() {state.llvmScope='a5-sources';state.llvmSource='';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
+function reset() {state.llvmScope='a5-sources';state.llvmSource='';state.llvmEvidence='';if(['ccec','ascendc','cce-dialect','llvm','nvvm','hivm-defs'].includes(state.backend))state.view=activeLayerView();state.includeUnknown=false;Object.assign(state,{support:'',proof:'',family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 function switchView(view) {Object.assign(state,{support:'',proof:'',view,family:'',query:'',group:'',file:'',chip:'',architecture:'',availability:'',deprecation:'',selected:'',tab:'definition'});render();}
 
 $('#expand-lookup').onclick=()=>{document.body.classList.remove('lookup-collapsed');$('#detail').focus({preventScroll:true});};
@@ -513,7 +515,7 @@ $('#backend').onchange=e=>{
   const backend=val.startsWith('ccec')?'ccec':val.startsWith('ascendc')?'ascendc':val.startsWith('cce-dialect')?'cce-dialect':val;
   navigateWithData(backend,()=>{
   state.home=false;
-  if(val==='nvvm'){state.backend='nvvm';}
+  if(['nvvm','hivm-defs'].includes(val)){state.backend=val;}
   else if(val==='llvm'){state.backend='llvm';}
   else if(val==='ptx'){state.backend='ptx';}
   else if(val==='ascendc' || val==='ascendc-capi'){state.backend='ascendc';state.ascendcLayer=val==='ascendc-capi'?'capi':'basic';}
@@ -528,13 +530,13 @@ $('#include-unknown').onchange=e=>{state.includeUnknown=e.target.checked;state.s
 $('#coverage').onclick=()=>switchView(state.view==='report'?activeLayerView():'report');
 $('#ptx-target').onchange=e=>{state.ptxTarget=e.target.value;render();};
 $('#ptx-support').onchange = e => {state.support=e.target.value;state.selected='';render();};
-$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
+$('#search').addEventListener('input',e => {state.query=e.target.value;state.selected='';if(['ccec','ascendc','cce-dialect','llvm','nvvm','hivm-defs'].includes(state.backend))state.view=activeLayerView();if(state.backend==='ptx' && isPtxReading())state.view=state.query?'search':'overview';render();});
 for(const key of ['group','file'])$('#'+key).onchange=e=>{state[key]=e.target.value;state.selected='';render();};
 $('#reset').onclick = reset;$('#empty-reset').onclick = reset;
 $('#mobile-view').onchange = e => switchView(e.target.value);
-$('#mobile-family').onchange = e => {if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.family=e.target.value;state.selected='';render();};
+$('#mobile-family').onchange = e => {if(['ccec','ascendc','cce-dialect','llvm','nvvm','hivm-defs'].includes(state.backend))state.view=activeLayerView();state.family=e.target.value;state.selected='';render();};
 $('.views').onclick = e => {const b=e.target.closest('[data-view]');if(b) switchView(b.dataset.view);};
-$('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){if(['ccec','ascendc','cce-dialect','llvm','nvvm'].includes(state.backend))state.view=activeLayerView();state.family=b.dataset.family;state.selected='';render();}};
+$('#families').onclick = e => {const b=e.target.closest('[data-family]');if(b){if(['ccec','ascendc','cce-dialect','llvm','nvvm','hivm-defs'].includes(state.backend))state.view=activeLayerView();state.family=b.dataset.family;state.selected='';render();}};
 $('#rows').addEventListener('click',e => {
   const button = e.target.closest('[data-id]');if (!button) return;
   if(state.backend==='ptx' && !depthEnabled()){openPtxEntry(button.dataset.id);return;}

@@ -40,6 +40,7 @@ class SiteBuildTests(unittest.TestCase):
                     'navigation': site_build.navigation_data(self.data, self.knowledge),
                     **{name: self.knowledge[key] for name, key in [('ptx', 'ptx'), ('llvm', 'llvm'), ('ascendc', 'ascendc'), ('cce-dialect', 'cce_dialect')]}}
         expected['nvvm'] = {}
+        expected['hivm-defs'] = {}
         for name, pair in manifest['datasets'].items():
             raw = (self.root / pair['plain']['url']).read_bytes()
             self.assertEqual(gzip.decompress((self.root / pair['gzip']['url']).read_bytes()), raw)

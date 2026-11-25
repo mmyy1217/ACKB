@@ -77,11 +77,12 @@ def build(source, output, site=False):
             add_correspondence(knowledge['cce_dialect'], llvm, evidence)
         from llvm_ir import dialect_navigation
         knowledge['llvm_navigation'] = dialect_navigation(llvm, knowledge.get('cce_dialect', {'intrinsics': []}))
+    knowledge['hivm-defs'] = json.loads((ROOT / 'data/hivm_defs/index.json').read_text())
     knowledge['nvvm'] = json.loads((ROOT / 'data/nvvm/index.json').read_text())
     knowledge['ptx']['forms'] = json.loads((ROOT / 'data/ptx/forms.json').read_text())
     scripts = '\n'.join((ROOT / 'web' / name).read_text() for name in [
         'loading.js', 'knowledge.js', 'ptx-reader.js', 'ccec-static.js', 'ccec-ops.js',
-        'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'symbol-depth.js', 'gap-insight.js', 'app.js'])
+        'ccec-a5.js', 'ccec-calls.js', 'multi-backend.js', 'llvm-core.js', 'symbol-depth.js', 'hivm-defs.js', 'gap-insight.js', 'app.js'])
     style = (ROOT / 'web/style.css').read_text()
     from site_build import inline_json, build_site
     for asset in sorted((ROOT / 'web/insights/files').glob('a5-gap-*.*')):
