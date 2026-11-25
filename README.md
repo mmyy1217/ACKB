@@ -1,45 +1,38 @@
 <h1 align="center">ACKB</h1>
 
 <p align="center"><strong>AI Compiler Knowledge Base</strong></p>
-<p align="center">面向 AI as Compiler 的底层目标知识库 · CCEC / PTX</p>
-<p align="center"><a href="https://mmyy1217.github.io/ACKB/">在线阅读</a> · <a href="docs/knowledge.md">知识索引</a> · <a href="docs/ai-entry.md">AI 入口</a> · <a href="docs/scope.md">范围与证据</a> · <a href="docs/roadmap.md">路线</a> · <a href="AGENTS.md">开发入口</a></p>
+<p align="center">面向 AI as Compiler 的目标知识库 · Huawei Ascend 950 / A5 与 NVIDIA B300</p>
+<p align="center"><a href="https://mmyy1217.github.io/ACKB/">打开知识库</a> · <a href="https://mmyy1217.github.io/ACKB/#insights">洞察</a> · <a href="docs/ai-entry.md">AI 查询入口</a> · <a href="AGENTS.md">开发与构建</a></p>
 
----
+ACKB 帮助编译器开发者和 AI 回答三个问题：一个操作在哪一层表达？它有哪些签名和重载？哪些源码、IR 或编译记录能证明它在指定目标上的行为？首页按各自的编译体系组织了 Huawei Ascend 的八个入口和 NVIDIA 的两个入口。[查看编译体系图](https://mmyy1217.github.io/ACKB/)
 
-AI 直接生成底层代码，需要知道目标的执行模型、地址空间、接口、架构条件与约束。ACKB 为这个过程提供可查询、有来源的知识和验证入口。以 Huawei Ascend LLVM IR 目标层为核心，向上追踪 CCEC / AscendC / CCE Dialect，并独立建立 PTX；先分别建立知识库，再研究两者的设计逻辑与差异。
+## Huawei Ascend · 950 / A5
 
-## 当前覆盖
+CANN 包内索引固定于 `9.3.0~weekly.20261104.01`，主目标为 `Ascend950PR_9579`（`NpuArch=3510`）。CCE Dialect 和 Issue 33 工作簿独立建库，各自保留来源和版本。
 
-| 后端 | 索引范围 | 深度补充 |
-| --- | --- | --- |
-| LLVM IR 核心 | 12,363 个包内注册名称；535 种 Bitcode 声明类型；12 个来源文件已核对原包 | 950 包内调用证据、类型选择、工具链差异、跨层关联与显式未知项 |
-| CCEC | CANN 9.3.0 weekly：23 个头文件、5,714 条接口记录、4,353 个唯一 builtin 身份 | 8 个主题：执行、存储、搬运、同步、类型、计算、生命周期、控制 |
-| AscendC | 395 个头文件：617 个 basic 分组、1,876 个底层接口分组 | 全部声明形式、局部架构条件、候选 CCEC 关联 |
-| CCE Dialect | 247 个语义 Op、1,433 个 LLVM 名称（含 C++ 拼名候选） | TableGen、C++ lowering 与内嵌 IR；4 个 SIMT 低层入口已关联；print 单列待解析 |
-| PTX | ISA 9.4：743 个章节、221 个指令条目、39 个伪指令、35 个特殊寄存器 | 7 个学习层次、15 篇中文主题、3 份教学 kernel；221 条指令的官方语法 |
+| 知识库 | 可以查什么 |
+| --- | --- |
+| [AscendC 基础 C++ API](https://mmyy1217.github.io/ACKB/#backend=ascendc&layer=basic) · [AscendC C / SIMT API](https://mmyy1217.github.io/ACKB/#backend=ascendc&layer=capi) | 617 个基础 C++ 接口分组、1,876 个 C / SIMT 接口分组。可查声明、重载和实现中追踪到的 CCEC 调用。 |
+| [CCEC 编程接口](https://mmyy1217.github.io/ACKB/#layer=interfaces) · [CCEC Builtins](https://mmyy1217.github.io/ACKB/#layer=intrinsics) | 从开发者使用的接口追到具体的 `__builtin_cce_*`。950 默认显示 368 个声明条件符合的编程接口；跨架构头文件索引共识别 4,353 个唯一 builtin 名称。 |
+| [LLVM IR](https://mmyy1217.github.io/ACKB/#backend=llvm) | 从 CANN 包内编译器注册信息、工具和 Bitcode 查名称、声明及直接调用。默认「A5 相关线索」覆盖 1,136 个名称，可按来源筛选。 |
+| [A5 Intrinsic 定义](https://mmyy1217.github.io/ACKB/#backend=hivm-defs) | Issue 33 工作簿中的 1,977 个 `int_hivm_*` 定义名及签名。其中 994 项附有工作簿记录的 CANN 9.1.0 / CCEC 15.0.5 编译探针结果。 |
+| [CCE Dialect 语义 Ops](https://mmyy1217.github.io/ACKB/#backend=cce-dialect&layer=ops) · [CCE Dialect LLVM Intrinsics](https://mmyy1217.github.io/ACKB/#backend=cce-dialect&layer=intrinsics) | 固定源码提交 `5639e581`，收录 247 个语义 Op。LLVM 入口列出经 Op 定义、校验条件和翻译分支核对后，源码可生成的 1,234 个 LLVM 名称。 |
 
-CCEC 保留完整签名、重载、原始条件、宏来源与 29 个待处理项；23 个扫描头文件已与原包逐字节匹配。主要目标为 `Ascend950PR_9579`，同时保留 74 个芯片配置的条件证据。新增 1,608 个与原包一致的 AscendC 文件，形成 5,714 条接口 × 14 个架构的静态证据矩阵，可追踪架构分支、核保护及缺失宏；这仍不是经过编译验证的支持清单。
+例如，查 `vsstb` 时，工作簿给出泛型定义 `int_hivm_vsstb_post`，同一行的探针记录了具体调用 `llvm.hivm.vsstb.post.v64f32`。这解释了首页为何把两个入口放在同一虚线组内：一个提供定义和类型约束，另一个可以独立核对指定 CANN 包中观察到的 IR。[查看这条定义与探针记录](https://mmyy1217.github.io/ACKB/#backend=hivm-defs&r=def_int_hivm_vsstb_post)
 
-PTX 固定官方手册版本与哈希，当前主目标为 NVIDIA B300（CC 10.3），分别核对 `sm_103`、`sm_103f`、`sm_103a`，默认 `sm_103a`。从执行模型、存储、基本指令、协作、矩阵到完整程序建立理解；历史 `sm_89` 快照保留用于追溯。条目不是全部语法变体的数量，文档支持不等于设备验证。
+## NVIDIA · NVVM IR 与 PTX
 
-## 人与 AI 共用的入口
+| 知识库 | 可以查什么 |
+| --- | --- |
+| [NVVM IR](https://mmyy1217.github.io/ACKB/#backend=nvvm) | CUDA 13.4.3 官方 NVVM IR 规范代码块中的 287 个名称记录，保留泛型占位符、声明及章节出处。 |
+| [PTX 虚拟指令集](https://mmyy1217.github.io/ACKB/#backend=ptx) | 以 NVIDIA B300（默认 `sm_103a`）阅读 PTX ISA 9.4。按指令族检索 221 个手册指令条目及已索引的 1,033 种不同拼写，详情可查语法和目标条件。 |
 
-原生离线 HTML 手册保留黑白高密度列表、可调左右栏、连续加载、全结果进度轨道、架构筛选和 JSON 导出。首页提供文字层级图和数据库入口。当前网页支持 **LLVM IR / CCEC / AscendC / CCE Dialect / PTX**，可直接[在线阅读](https://mmyy1217.github.io/ACKB/)。PTX 以正文为中心，术语与代码旁的指令可在侧栏随手查；按 [开发入口](AGENTS.md) 构建后打开 `dist/index.html`。
+PTX、NVVM IR 和 Huawei Ascend LLVM IR 都支持按点号调整名称展开深度，默认全部展开。滑块可用于观察同一前缀下的变体数量；合法类型和修饰符组合仍需查对应规范。[符号展开与收录规则](docs/symbol-depth.md)
 
-在线版首页仅约 0.20 MB（含代码和样式），数据库按需压缩加载。页面与数据分别缓存，更新时只重新下载发生变化的资源；单文件离线版继续保留。详见 [加载与更新](docs/loading.md)。
+## 跨库对照与使用方式
 
-统一 JSON CLI 提供 `--backend llvm|ccec|ascendc|cce-dialect|ptx`、分页搜索、主题、关联和证据查询。CCEC 原有声明协议保持兼容；新增知识查询带来源哈希、未知项和验证状态。先读 [AI 使用入口](docs/ai-entry.md)，无需将整份数据库塞入上下文。
+- **对照两侧名称**　「洞察」中的全量对应表把 1,136 个 CANN A5 线索名称与 1,234 个 Dialect 可生成名称对齐。可区分完整同名、重载基名对应及仅单侧收录，按指令族或来源筛选，也可下载 Excel。[打开全量对应表](https://mmyy1217.github.io/ACKB/#insight=llvm-full-alignment)
+- **在线与离线阅读**　在线版可在首页入口旁下载或更新所选库，完成后进入。离线版将全部数据内嵌在单个 HTML 中，构建后直接打开 `dist/index.html`。[加载与更新](docs/loading.md) · [构建入口](AGENTS.md)
+- **供 AI 查询**　仓库提供结构化数据与分页 JSON CLI，可按后端搜索名称，再按条目查签名、关联和可用证据。[数据目录](data/) · [AI 使用入口](docs/ai-entry.md) · [各库查询命令](AGENTS.md)
 
-LLVM 核心默认聚焦 A5 来源，注册范围与 950 支持严格分开。120 项厂商类型编码未解析，16 种模块签名含未知类型；完整边界见 [LLVM 核心](docs/llvm-core.md)。
-
-## 证据边界
-
-“全面索引”始终限定来源版本和文件范围：CCEC 头文件引用不等于编译器内部 builtin 全集，PTX 章节索引不等于所有变体的完整调用规范。当前编译、运行、性能实验均未开展；跨版本弃用历史、参数与同步语义深挖、两端对比仍在建设中。
-
-仓库负责知识与验证工具；AI 代码生成和优化循环属于使用方。不会把 CCEC 编程接口、PTX 虚拟 ISA 与硬件机器指令假定为一一对应。
-
-CCEC 页面固定 **950 / A5**，提供 **CCEC 编程接口 / CCEC Builtins** 两层。默认阅读 368 个声明条件符合的调用接口（357 个封装及 11 个已追踪的搬运直连入口），191 个待确认接口可按需显示；底层 builtin 保持唯一身份，原始来源完整保留。声明条件符合不等于设备验证；详见 [层级模型](docs/ccec-ops.md)。
-
-AscendC 与 CCE Dialect 的跨层关联标明候选性质，不能代替重载解析或语义等价证明；详见 [扩展索引与证据边界](docs/ascendc-dialect.md)。
-
-LLVM 默认显示 1,136 个 CANN 包内 A5 线索名称。切换到「950 包内证据」可查看 522 个有 c310 模块直接调用的名称，完整保留 308,558 个调用位置；静态模块证据不等于目标编译或运行验证，详见 [950 判定](docs/llvm-core.md)。
+判断某个目标是否支持一条操作时，先看证据来自哪里。头文件条件说明声明何时可见，Dialect 翻译分支说明能生成什么 IR，包内 Bitcode 调用说明该形式实际出现过。编译探针只覆盖记录中的工具链、目标与具体签名；运行正确性和性能还需要独立实验。[LLVM 核心的证据口径](docs/llvm-core.md) · [CCE Dialect 的可达性判定](docs/ascendc-dialect.md)
