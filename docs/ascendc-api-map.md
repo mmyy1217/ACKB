@@ -22,4 +22,4 @@ CUDA 侧展示计算库、模板与 C++ 类库、CUDA C++ 设备编程，以及 
 
 ## A5 Intrinsic 定义
 
-`#backend=hivm-defs` 与 LLVM IR 并列。数据来自 Issue-33-A5-Intrinsics.xlsx 工作簿「全量条目」的 C 列，保留定义名、签名、标签、原序号、行号和 B 列分类。「待补签名」按原序号及名称补充工作簿报告的探针结果。定义记录不参与 CANN 9.3 包内证据统计。仓库内的机器可读快照为 `data/hivm_defs/index.json`，其中保存工作簿 SHA-256。
+`#backend=hivm-defs` 在 LLVM IR 入口下方。两个独立入口以虚线分组，表示定义与 IR 的关联。数据来自 Issue-33-A5-Intrinsics.xlsx 工作簿「全量条目」的 C 列，保留定义名、签名、标签、原序号、行号和 B 列分类。「待补签名」按原序号及名称补充工作簿报告的探针结果。定义记录不参与 CANN 9.3 包内证据统计。仓库内的机器可读快照为 `data/hivm_defs/index.json`，其中保存工作簿 SHA-256。
