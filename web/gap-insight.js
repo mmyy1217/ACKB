@@ -13,9 +13,9 @@ async function openGapInsight(box) {
     let active = '';
     const query = box.querySelector('input');
     const sourceFilter = box.querySelector('#gap-source');
-    const matchFilter = box.querySelector('[data-match-filter]');
+    const statusFilters = [...box.querySelectorAll('[data-status-column]')];
     const records = columns
-      ? rows.map(row => ({name: row.slice(0, 3).join(' '), family: row[5], sources: [], cells: row.slice(0, 5).concat(row[6])}))
+      ? rows.map(row => ({name: row.slice(0, 3).join(' '), family: row[5], sources: [], cells: row.slice(0, 5).concat(row.slice(6))}))
       : rows.map(([name, family, kind, , source]) => ({
           name, family, sources: source.split(' / '), cells: sourceFilter ? [name, source, kind] : [name, kind]
         }));
@@ -36,12 +36,16 @@ async function openGapInsight(box) {
       }
       for (const path of [...paths].sort()) filter.add(new Option(path, path));
     }
+    for (const filter of statusFilters) {
+      const values = new Set(records.map(r => r.cells[filter.dataset.statusColumn]).filter(Boolean));
+      for (const value of values) filter.add(new Option(value, value));
+    }
     function display() {
       const term = query.value.trim().toLowerCase();
       const items = records.filter(({name, family, sources, cells, files}) =>
         (!active || family === active) && name.toLowerCase().includes(term) &&
         (!sourceFilter?.value || sources.includes(sourceFilter.value)) &&
-        (!matchFilter?.value || cells.at(-1) === matchFilter.value) &&
+        statusFilters.every(filter => !filter.value || cells[filter.dataset.statusColumn] === filter.value) &&
         nameFilters.every(filter => cells[filter.dataset.nameColumn].toLowerCase().includes(filter.value.trim().toLowerCase())) &&
         fileFilters.every(filter => !filter.value || files[filter.dataset.sourceColumn].includes(filter.value)));
       box.querySelector('output').textContent = items.length+' / '+rows.length;
@@ -65,7 +69,7 @@ async function openGapInsight(box) {
       nav.append(button);
     }
     if (sourceFilter) sourceFilter.onchange=display;
-    if (matchFilter) matchFilter.onchange=display;
+    for (const filter of statusFilters) filter.onchange=display;
     for (const filter of nameFilters) filter.oninput = display;
     for (const filter of fileFilters) filter.onchange = display;
     query.oninput=display;
