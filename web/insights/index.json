@@ -3,7 +3,7 @@
     "slug": "llvm-full-alignment",
     "title": "CANN 与 CCE Dialect 的 LLVM 全量对应表",
     "date": "2026-11-23",
-    "summary": "逐行对照 1,136 个 CANN 名称与 1,234 个 Dialect 名称，查看同名、重载和单侧记录。"
+    "summary": "逐行对照 1,977 个 A5 定义、1,136 个 CANN 名称与 1,234 个 Dialect 名称，查看同名、重载和单侧记录。"
   },
   {
     "slug": "dialect-a5-gap",

@@ -559,9 +559,9 @@ body.data-loading #ascendc-map {display:none}
 #gap-source {width:100%;max-width:18em;min-width:0}
 .gap-results th:last-child {width:17%}
 @media(max-width:600px){.gap-layout{grid-template-columns:1fr}.gap-tools a{margin-left:0}.gap-families{flex-direction:row;overflow-x:auto}.gap-families button{white-space:nowrap}}
-.alignment-browser .gap-results table {min-width:800px}
-.alignment-browser .gap-results th:nth-child(n) {width:22%}
+.alignment-browser .gap-results table {min-width:960px}
+.alignment-browser .gap-results th:nth-child(n) {width:17.6%}
 .alignment-browser .gap-results th:last-child {width:12%}
-.alignment-browser .gap-results td:nth-child(2) {font-family:var(--mono)}
+.alignment-browser .gap-results td:nth-child(-n+3) {font-family:var(--mono)}
 .alignment-browser th label {display:grid;gap:3px}
 .alignment-browser th :is(input,select) {box-sizing:border-box;width:100%;min-width:0;font:inherit;font-weight:400}

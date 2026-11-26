@@ -15,7 +15,7 @@ async function openGapInsight(box) {
     const sourceFilter = box.querySelector('#gap-source');
     const matchFilter = box.querySelector('[data-match-filter]');
     const records = columns
-      ? rows.map(row => ({name: row.slice(0, 2).join(' '), family: row[4], sources: [], cells: row.slice(0, 4).concat(row[5])}))
+      ? rows.map(row => ({name: row.slice(0, 3).join(' '), family: row[5], sources: [], cells: row.slice(0, 5).concat(row[6])}))
       : rows.map(([name, family, kind, , source]) => ({
           name, family, sources: source.split(' / '), cells: sourceFilter ? [name, source, kind] : [name, kind]
         }));
@@ -41,7 +41,7 @@ async function openGapInsight(box) {
       const items = records.filter(({name, family, sources, cells, files}) =>
         (!active || family === active) && name.toLowerCase().includes(term) &&
         (!sourceFilter?.value || sources.includes(sourceFilter.value)) &&
-        (!matchFilter?.value || cells[4] === matchFilter.value) &&
+        (!matchFilter?.value || cells.at(-1) === matchFilter.value) &&
         nameFilters.every(filter => cells[filter.dataset.nameColumn].toLowerCase().includes(filter.value.trim().toLowerCase())) &&
         fileFilters.every(filter => !filter.value || files[filter.dataset.sourceColumn].includes(filter.value)));
       box.querySelector('output').textContent = items.length+' / '+rows.length;

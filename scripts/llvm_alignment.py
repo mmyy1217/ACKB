@@ -44,12 +44,25 @@ def snapshot():
             append(left, name, kind)
     for name in cann.keys() - matched:
         append(name, '', '仅 CANN')
-    counts = Counter(row[4] for row in rows)
-    rows.sort(key=lambda r: (counts[r[4]], r[4], r[0] or r[1], r[1]))
     assert {r[0] for r in rows if r[0]} == set(cann)
     assert {r[1] for r in rows if r[1]} == set(entries)
     assert len({(r[0], r[1]) for r in rows}) == len(rows)
-    return {'columns': ['CANN LLVM IR', 'CCE Dialect LLVM', 'CANN 来源', 'Dialect 来源', '指令族', '对应方式'],
+    definitions = json.loads((ROOT / 'data/hivm_defs/index.json').read_text())['records']
+    by_name = {record['name']: record for record in definitions}
+    used = set()
+    aligned = []
+    for row in rows:
+        names = {name.replace('llvm.', 'int_', 1).replace('.', '_')
+                 for name in row[:2] if name.startswith('llvm.hivm.')}
+        hits = sorted(names & by_name.keys())
+        used.update(hits)
+        aligned.extend([[name, *row] for name in hits or ['']])
+    for name in by_name.keys() - used:
+        aligned.append([name, '', '', '', '', by_name[name]['family'], '仅定义'])
+    counts = Counter(row[5] for row in aligned)
+    rows = sorted(aligned, key=lambda r: (counts[r[5]], r[5], r[1] or r[2] or r[0], r[2], r[0]))
+    assert {r[0] for r in rows if r[0]} == set(by_name)
+    return {'columns': ['A5 Intrinsic 定义', 'CANN LLVM IR', 'CCE Dialect LLVM', 'CANN 来源', 'Dialect 来源', '指令族', 'LLVM 两列对应方式'],
             'rows': rows}
 
 
